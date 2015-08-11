@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>届信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cBlue"><div class="title">专家届信息查询</div></div>
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    <table align="center" width="60%"><tr><td>
+          <table  class="adminlist">
+            <thead>
+              <tr>
+                <th nowrap>届</th>
+                <th nowrap>专家编号</th>
+                <th nowrap>专家姓名</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%if @expire!=nil%>
+                <%for a in @expire%>
+                  <tr class="row<%=i % 2%>">
+                    <td nowrap><%=a.expire%></td>
+                    <td nowrap><%=a.code%></td>
+                    <td nowrap><%=a.name%></td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+              <%end%>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3">
+                  <%= link_to '上一页', { :page => @expire_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @expire_pages.current.previous %>
+                  <%=pagination_links( @expire_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+                  <%= link_to '下一页', { :page => @expire_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @expire_pages.current.next %>
+
+                  <%if @expire_pages.current.previous or @expire_pages.current.next%>
+                    <form action="/expire_check/list" method="get" >
+                      每页<input type=text name='page_lines' size=5 class="SingleLineInput" value=<%=@page_lines%> />条记录,第
+                      <input type=text name='page'  size=5 class="SingleLineInput" value=<%= @expire_pages.current.number %> />
+                      <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                      页
+                      <input type=hidden name='order' value="<%=@order%>" />
+                      <input type='submit' value='确定' />
+                    </form>
+                  <%end%>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </td></tr></table>
+  </body>
+</html>

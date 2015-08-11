@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>当事人统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <br/>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案日期</th>
+          <th  nowrap>立案号</th>
+          <th  nowrap>申请人(地区)</th>
+          <th  nowrap>被申请人(地区)</th>
+          <th  nowrap>争议金额(￥)</th>
+          <th  nowrap>办案助理</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+            <%@v_list.each do |vv|%>
+
+                    <tr class="row<%=i % 2%>">
+                      <td nowrap><%=vv.nowdate%></td>
+                      <td nowrap><%=link_to "#{vv.case_code}",{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>vv.recevice_code},:target=>"_black" %></td>
+                      <td>
+                        <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{vv.recevice_code}' and used='Y' and partytype=1")%>
+                        <%ttpp=''%>
+                        <%for tp in @tp%>
+                          <%if tp!=nil%>
+                            <%ttpp=ttpp  + tp.partyname + "(" + Region.find_by_code(tp.area).name + ")" + " <br/>"%>
+                          <%end%>
+                        <%end%>
+                        <%=ttpp%>
+                      </td>
+                      <td>
+                        <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{vv.recevice_code}' and used='Y' and partytype=2")%>
+                        <%ttpp=''%>
+                        <%for tp in @party2%>
+                          <%if tp!=nil%>
+                            <%ttpp=ttpp + tp.partyname + "(" + Region.find_by_code(tp.area).name + ")"+ " <br/>"%>
+                          <%end%>
+                        <%end%>
+                        <%=ttpp%>
+                      </td>
+                      <td nowrap><%=SysArg.compart2(vv.amount)%></td>
+                      <td nowrap><%=User.find(:first,:conditions=>["used='Y' and code=?",vv.clerk]).name %></td>
+                    </tr>
+              <%i=i+1%>
+            <% end%>
+
+      </tbody>
+    </table>
+  </body>
+</html>

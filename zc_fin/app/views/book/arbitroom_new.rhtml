@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>预订安排</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+  <div class="cDGray" align="right">
+ <%=link_to "返回",:action=>"arbitroom_book"%>
+ &nbsp;&nbsp;&nbsp;&nbsp;
+ <div style="color:red" align="center"><%=flash[:notice]%></div>
+ </div>
+ <div class="cDGray" align="center">预订信息(带<i>*</i>为必填项)
+ </div>
+    <%form_for :arbitroom ,:url=>{:action=>"arbitroom_create"}  do |f|%>
+      <table class="list" >
+        <tr>
+          <th style=" text-align:  right">
+            预订人
+          </th>
+          <td>
+            <%=f.text_field(:userId)%>
+          </td>
+        </tr>
+        <tr >
+          <th style=" text-align:  right">
+            仲裁庭
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0023' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sittingplace,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr >
+          <th style=" text-align:  right">
+            使用类型
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0028' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:usestyle,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th style=" text-align:  right">
+            使用日期
+           </th>
+          <td nowrap>
+            <%=f.text_field(:sittingdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('arbitroom_sittingdate'),'yyyy-MM-dd')" >
+          <i><%=error_message_on(:arbitroom,:sittingdate)%></i>
+          </td>
+        </tr>
+        <tr >
+          <th style=" text-align:  right">
+            开始时间
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0024' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:open_t,op,:data_text,:data_text)%>
+            <div style="color:red"><%=error_message_on(:arbitroom,:open_t)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th style=" text-align:  right">
+            结束时间
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0024' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:close_t,op,:data_text,:data_text)%>
+            <div style="color:red"><%=error_message_on(:arbitroom,:close_t)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th style=" text-align:  right">
+            <i>*</i>占用时间
+          </th>
+          <td>
+            <%=f.text_field(:usetime,:size=>8)%>小时<i><%=error_message_on(:arbitroom,:usetime)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th style=" text-align:  right">
+            备注
+          </th>
+          <td>
+            <%=f.text_area(:remark,:rows=>4)%>
+          </td>
+        </tr>
+       </table>
+        <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

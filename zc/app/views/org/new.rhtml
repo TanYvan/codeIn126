@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加机构信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <br>
+  <div class="cDGray" align="center">添加机构信息(带<i>*</i>为必填项)   <%=link_to "返回",:action=>"list"%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :org ,:url=>{:action=>"create"}  do |f|%>
+      <table class="list">
+        <tr >
+          <th>
+           <i>*</i>名称:
+          </th>
+          <td>
+            <%=f.text_field(:name)%><i><%=error_message_on(:expertconsult,:name)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>地址:
+          </th>
+          <td>
+            <%=f.text_field(:addr)%><i><%=error_message_on(:expertconsult,:addr)%></i>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            <i>*</i>联系电话:
+          </th>
+          <td>
+            <%=f.text_field(:tel)%><i><%=error_message_on(:expertconsult,:tel)%></i>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            电子邮件:
+          </th>
+          <td>
+            <%=f.text_field(:email,:style=>"width:15em")%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            邮政编码:
+          </th>
+          <td>
+            <%=f.text_field(:postcode)%>
+          </td>
+        </tr>
+       </table>
+        <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+
+  </body>
+</html>

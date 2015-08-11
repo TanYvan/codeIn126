@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员账号维护</title>
+    <%= javascript_include_tag "prototype" %>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员账号信息列表</span></div>
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <div align="left"><%if @hant_search_1_text!=nil%>查询条件：<%=@hant_search_1_text%><%end%></div>
+    <table class="adminlist" cellspacing="1">
+      <thead>
+        <tr>
+          <th nowrap>修改时间</th>
+          <th nowrap>资料完整</th>
+          <th nowrap>备注</th>
+          <th nowrap>
+             <%if @order=="a.name desc"%>
+              <%=link_to '姓名(系统唯一)↑',:action=>"list_account",:order=>"a.name asc",:page=>@account_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="a.name asc"%>
+              <%=link_to '姓名(系统唯一)↓',:action=>"list_account",:order=>"a.name desc",:page=>@account_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '姓名(系统唯一)',:action=>"list_account",:order=>"a.name asc",:page=>@account_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>姓名(身份证 中文)</th>
+          <th nowrap>姓名(英文证件)</th>
+          <th nowrap>性别</th>
+          <th nowrap>姓名拼音缩写</th>
+          <th nowrap>手机号</th>
+          <th nowrap >银行类别</th>
+          <th nowrap >户名</th>
+          <th nowrap>银行账号</th>
+          <th nowrap>详细开户行名称</th>
+          <th nowrap>银行编号</th>
+          <th nowrap>身份证号</th>
+          <th nowrap>通讯地址</th>
+          <th nowrap>email</th>
+          <th nowrap>附件</th>
+          <th nowrap>编辑</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=1%>
+        <%for p in @account %>
+          <tr class="row<%=i % 2%>">
+            <td><%=p.bank_t.to_s(:db)  if p.bank_t%></td>
+            <td><%=h p.complete%></td>
+            <td><%=h p.bankremark%></td>
+            <td><%=p.name%></td>
+            <td><%=p.name_idcard%></td>
+            <td><%=p.name_idcard_en%></td>
+            <td><%=p.sex%></td>
+            <td><%=p.spell%></td>
+            <td><%=p.mobiletel%></td>
+            <td>
+              <%if p.bank_typ!=nil and p.bank_typ!=''%>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='8201' and data_val='#{p.bank_typ}'").data_text%>
+              <%end%>
+
+            </td>
+            <td><%=p.bank_username%></td>
+            <td><%=p.bankaccount%></td>
+            <td><%=p.bankname%></td>
+            <td><%=p.bank_code%></td>
+            <td><%=p.id_card%></td>
+            <td><%=p.addr%></td>
+            <td><%=p.email%></td>
+            <td><%=link_to  "附件信息", {:controller=>"arbitman", :action => "list_att", :id=> p.id, :show=>1}, :target => "_blank" %></td>
+            <td><%=link_to "编辑",{:action => "edit_account",:id => p} %></td>
+          </tr>
+          <%i+=1%>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="9">
+            <%= link_to '上一页', { :page => @account_pages.current.previous  ,:search_condit=>@search_condit,:page_lines=>@page_lines  } if @account_pages.current.previous %>
+            <%=pagination_links( @account_pages,{:params=>{:search_condit=>@search_condit,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @account_pages.current.next ,:search_condit=>@search_condit,:page_lines=>@page_lines  } if @account_pages.current.next %>
+
+            <%if @account_pages.current.previous or @account_pages.current.next%>
+              <form action="/account/list_account" method="get" onsubmit="return page_check('page_lines','page');">
+                每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                <input type=text name='page' size=5 class="SingleLineInput" value=<%= @account_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

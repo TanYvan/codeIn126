@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员已结案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员<%=@name%>的已结案件：<%=@arbitman_case.length%>件</span></div>
+    <br/>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案日期</th>
+          <th  nowrap>立案号</th>
+          <th  nowrap>申请人</th>
+          <th  nowrap>被申请人</th>
+          <th  nowrap>争议金额(￥)</th>
+          <th  nowrap>仲裁员</th>
+          <th>延期情况、结案天数、助理评价、裁决起草人、裁决书校核评价</th>
+          <th  nowrap>经办人</th>
+          <th  nowrap>结案时间</th>
+          <th  nowrap>结案号</th>
+          <th  nowrap>结案方式</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for a in @arbitman_case%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=a.nowdate%></td>
+            <td nowrap><%=link_to "#{a.case_code}",{:controller=>"every_casebase",:action=>'every_list_2',:recevice_code=>a.recevice_code},:target=>"_black" %></td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=1")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=2")%>
+              <%ttpp=''%>
+              <%for tp in @party2%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <%@case=TbCase.find_by_recevice_code(a.recevice_code)%>
+            <td nowrap><%=SysArg.compart2(@case.amount)%></td>
+            <td nowrap>
+              <%if @case.aribitprog_num=='0002' or @case.aribitprog_num=='0004' or @case.aribitprog_num=='0006' or @case.aribitprog_num=='0008'%>
+                独:<%=SysArg.new.independent_arbitrator(a.recevice_code)%>
+              <%else%>
+                首:<%=SysArg.new.chief_arbitrator(a.recevice_code)%><br/>
+                申:<%=SysArg.new.applicant_arbitrator(a.recevice_code)%><br/>
+                被:<%=SysArg.new.respondent_arbitrator(a.recevice_code)%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%=User.find(:first,:conditions=>["used='Y' and code=?",@case.clerk]).name %>
+            </td>
+            <td nowrap>
+              <%cend=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",a.recevice_code])%>
+              <%if cend!=nil%><%=cend.decideDate%><%end%>
+            </td>
+            <td nowrap><%=a.end_code%></td>
+            <td nowrap><%if cend!=nil%><%=TbDictionary.find(:first,:conditions=>["typ_code='8117' and state='Y' and data_val=?",cend.endStyle]).data_text%><%end%></td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+<table id="table_1" class="adminlist" cellspacing="1">
+  <thead>
+    <tr>
+      <th nowrap="nowrap">姓名</th>
+      <th nowrap>选择</th>
+      <th nowrap="nowrap">姓名拼音缩写</th>
+      <th nowrap="nowrap">性别</th>
+      <th nowrap="nowrap">地区</th>
+      <th nowrap="nowrap">单位</th>
+      <th nowrap>手机</th>
+      <th nowrap>家庭电话</th>
+      <th nowrap>传真</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%j=0%>
+    <%i=1%>
+    <%for tb_arbitman in @tb_arbitmen %>
+      <tr class="row<%=j % 2%>">
+        <%@a1=tb_arbitman.area_code%>
+        <%@reg=Region.find_by_code(@a1)%>
+        <%if @reg==nil%>
+          <%@rate_code="0001"%>
+          <%@arbitman_cost=0%>
+        <%else%>
+          <%@rate_code=@reg.rate_code%>
+          <%@arbitman_cost=@reg.arbitman_cost%>
+        <%end%>
+        <%@m_name=Money.find(:first,:conditions=>"used='Y' and code='#{@rate_code}'").name%>
+        <%@a=tb_arbitman.code+",,"+@m_name+",,"+@arbitman_cost.to_s+",,"+tb_arbitman.name %>
+        <td><%= tb_arbitman.name%></td>
+        <td><input type='button' value="选择" onclick="window.returnValue='<%=@a%>';window.close();"/></td>
+        <td><%= tb_arbitman.spell%></td>
+        <td><%= tb_arbitman.sex%></td>
+        <td>
+          <%@region= Region.find_by_code(tb_arbitman.area_code)%>
+          <%if @region!=nil%>
+            <%=@region.name%>
+          <%end%>
+        </td>
+        <td><%= tb_arbitman.company%></td>
+        <td><%= tb_arbitman.mobiletel%></td>
+        <td><%= tb_arbitman.telh%></td>
+        <td><%= tb_arbitman.fax%></td>
+      </tr>
+      <%i+=1%>
+      <%j=j+1%>
+    <%end%>
+  </tbody>
+</table>
+
+

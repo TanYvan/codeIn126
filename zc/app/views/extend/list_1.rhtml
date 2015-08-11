@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>本单位报酬</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+      function checkall() {
+        var a='';
+        if (document.getElementsByName("cheall").value == 't'){
+          document.getElementsByName("cheall").value = 'f';
+        }else{
+          a = 'true';
+          document.getElementsByName("cheall").value = 't';
+        }
+        var chec = document.getElementsByName("che");
+        for(i = 0; i < chec.length; i++){
+          chec[i].checked = a;
+        }
+      }
+      function getcondi(){
+        if(window.confirm('确认转为已发放吗？')) {
+        }else{
+          return false;
+        }
+        var chec = document.getElementsByName("che");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+',';
+
+        }
+        aa=a.substr(0, a.length -1 )
+        if (aa==''){
+          alert("请选择发放信息");
+          return false;
+        }
+        var c = document.getElementById("condi");
+        c.value=aa;
+
+        var commit = document.getElementsByName("commit");
+        for(i=0; i<commit.length; i++)
+        {
+          commit[i].style.display='none';
+        }
+
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">本单位报酬</span></div>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <div align="left"><%if @hant_search_1_text!=nil%>查询条件：<%=@hant_search_1_text%><%end%></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr>
+          <th nowrap>
+            <input type='checkbox'  id='cheall' name='cheall' value='f'  onclick="checkall()"/>
+          </th>
+          <th nowrap>人员类别</th>
+          <th nowrap>姓名</th>
+          <th nowrap>银行类别</th>
+          <th nowrap>银行</th>
+          <th nowrap>帐号</th>
+          <th nowrap>身份证号</th>
+          <th nowrap>咨询流水号</th>
+          <th nowrap>立案号</th>
+          <th nowrap>结案号</th>
+          <th nowrap>类型</th>
+          <th nowrap>应发数额</th>
+      </tr>
+      </thead>
+        <tbody>
+          <%i=0%>
+      <% for pp in @provide_p %>
+          <% tb_arbitman = TbArbitman.find_by_code(pp.p) %>
+          <% user = User.find_by_code(pp.p) %>
+          <% tb_Remu23 = TbRemuneration23.find(pp.id_id) if pp.typ == '4' or pp.typ == '5'%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <input type='checkbox'  id='che' name='che' value='<%=pp.typ%>_<%=pp.p_typ%>_<%=pp.id_id%>' />
+        </td>
+        <td><!-- 人员类别 -->
+          <%=@typ1[pp.p_typ]%>
+        </td>
+        <td><!-- 姓名 -->
+          <%if pp.p_typ=="0001"%>
+          <%=tb_arbitman.name%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <%=user.name if user%>
+          <%else%>
+          <%end%>
+        </td>
+        <td><!-- 银行类别 -->
+          <%if pp.p_typ=="0001"%>
+          <%bank_typ=tb_arbitman.bank_typ%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <%bank_typ=user.bank_typ if user%>
+          <%else%>
+          <%end%>
+          <%if bank_typ!=nil and bank_typ!=''%>
+            <%=@bank_typ[bank_typ]%>
+          <%end%>
+        </td>
+        <td><!-- 银行 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankname%>
+          <%else%>
+            <%=user.bankname if user%>
+          <%end%>
+        </td>
+        <td><!-- 账号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankaccount%>
+          <%else%>
+            <%=user.bankaccount if user%>
+          <%end%>
+        </td>
+        <td><!-- 身份证号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.id_card%>
+          <%else%>
+            <%=user.id_card if user%>
+          <%end%>
+        </td>
+        <td><%=pp.recevice_code%></td><!-- 咨询流水号 -->
+        <td><%=pp.case_code%></td><!-- 案号 -->
+        <td><%=pp.end_code%></td><!-- 结案号 -->
+
+        <td><!-- 类型 -->
+          <%if pp.typ=='4' or pp.typ=='5'%>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{tb_Remu23.typ}'").data_text%>
+          <%else%>
+            <%=@typ2[pp.typ]%>
+          <%end%>
+        </td>
+        <td><!-- 应发 -->
+          <%if pp.typ=="1" %>
+          <%=pp.yf_rmb.round%>
+          <%elsif pp.typ=="2" %>
+            <%=pp.yf_rmb%>
+          <%elsif pp.typ=="3"%>
+            <%=pp.yf_rmb * -1%>
+          <%elsif pp.typ=="4" or pp.typ=="5" %>
+            <%=tb_Remu23.should_rmb%>
+          <%else%>
+          <%end%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <%form_tag({:action=>'extend_do_1'},{:onsubmit=>'return getcondi()'}) do %>
+       <%=hidden_field_tag :condi,''%>
+       <%=submit_tag '转为待发放'%>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>案件校核人员指定</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件校核人员指定</span></div>
+    <br/>
+    <%=link_to "返回",:action=>"list",:recevice_code=>params[:recevice_code],:search_condit=>params[:search_condit],:order=>params[:order],:page_lines=>params[:page_lines]%>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :check_staff ,:url=>{:action=>"update",:id=>params[:id], :recevice_code=>params[:recevice_code],:search_condit=>params[:search_condit],:order=>params[:order],:page_lines=>params[:page_lines]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>校核类型：</th>
+          <td>
+            <%if @check_staff.typ!=nil%>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0040' and data_val='#{@check_staff.typ}'").data_text%>
+            <%end%>
+          </td>
+        </tr>
+        <tr bgcolor="white">
+          <th>校核时间：</th>
+          <td align="left">
+            <%=@check_staff.check_time%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>校核返回时间:</th>
+          <td>
+            <%=f.text_field :return_t,:readonly=>'Y',:size=>10%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('check_staff_return_t'),'yyyy-MM-dd')" />
+          </td>
+        </tr>
+        <tr bgcolor="white">
+          <th>校核人员：</th>
+          <td align="left">
+            <%=User.find_by_code(@check_staff.staff).name%>
+          </td>
+        </tr>            
+      
+      </table>
+        <div align="center"><%=submit_tag "提交" %></div>
+    
+     <%end%>
+        
+      </body>
+    </html>

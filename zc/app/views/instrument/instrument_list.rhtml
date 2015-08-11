@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>文书签字</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%if session[:recevice_code]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list?contr_r=instrument&act_r=instrument_list","mainFrame")
+       </script>
+    <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+    文书签字
+    </span></div>
+    <%if @case==nil%>
+    <div align="center">
+      请选择您要办理的案件
+    <%end%>
+    <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"instrument",:act_r=>"instrument_list"%>
+    <%if @case!=nil%>
+     当前案件
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <%=h @case.recevice_code%>
+        </td>
+        <td>
+          <%=h @case.receivedate%>
+        </td>
+        <td>
+          <%=h @case.case_code%>
+        </td>
+        <td>
+          <%=h @case.nowdate%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+      </tr>         
+      </tbody>
+    </table>
+    <br>
+    <br>
+      <hr size="1" color="#99CCFF" noshade>
+      <div align="center" class="cDGray">
+    文书签字信息表    <%=link_to  "创建", :action=>"instrument_new"%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr>
+          <th nowrap>
+            文书类别
+          </th>
+          <th nowrap>
+            类别
+          </th>
+          <th nowrap>
+            仲裁员
+          </th>
+          <th nowrap>
+            个人意见
+          </th>
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            删除
+          </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%if @instrument!=nil %>
+      <%for p in @instrument%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='8135' and data_val='#{p.instrument_type}'").data_text%>
+        </td>
+        <td>
+          <%=@state[p.typ]%>
+        </td>
+        <td>
+          <%=TbArbitman.find_by_code(p.arbitman).name%>
+        </td>
+        <td>
+          <%=p.remark%>
+        </td> 
+        <td>
+          <%=link_to "修改",:action=>"instrument_edit",:id=>p%>
+        </td>
+        <td>
+           <%=button_to "删除",{:action=>"instrument_delete",:id=>p},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <%end%>
+    <%end%>
+  </body>
+</html>

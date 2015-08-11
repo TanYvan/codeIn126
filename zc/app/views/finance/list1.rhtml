@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>财务统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <table><tr><td>
+          <div class="title"><span class="cBlue">财务统计</span></div>
+          <%form_tag :url=>{:action=>"list1"} do%>
+            <table align="center">
+              <tr><td nowrap align="right">
+                  时间段类型：</td>
+                <td align="left" nowrap> <%=select_tag (:datestyle,options_for_select([["立案时间段","01"],["结案时间段","02"],["立案结案时间段","03"]],@datestyle))%>
+                </td></tr>
+              <tr><td nowrap align="right">
+                  统计时间段：</td>
+                <td align="left" nowrap>
+                  <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" >
+                    --
+                    <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+                    <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" >
+                      </td></tr>
+                      <tr><td nowrap align="right">
+                          助理：</td>
+                        <td align="left" nowrap>
+                          <%@assistant_all=User.find_by_sql("select users.code as code,users.name as name from users,user_duties where user_duties.duty_code='0003' and user_duties.user_code=users.code and users.states='Y' and  users.used='Y'  order by  users.ord")%>
+                          <%=select_tag(:assistant,options_for_select(@assistant_all.collect{|p|[p.name,p.code]}.insert(0,["全部","1"]),@assistant))%>
+                        </td></tr>
+                      <tr><td nowrap align="right">
+                          仲裁程序：</td>
+                        <td align="left" nowrap><%@prog_all=TbDictionary.find(:all,:order=>"data_val",:conditions=>"typ_code='0001' and state='Y'")%>
+                          <%=select_tag(:prog,options_for_select(@prog_all.collect{|p|[p.data_text,p.data_val]}.insert(0,["全部","1"]),@prog))%>
+                        </td></tr>
+                      </table>
+                      <%=submit_tag "查询" %>
+                    <%end%>
+                    <br/><br/>
+                    <i><%=flash[:notice]%></i>
+                    <div class="cGreen">
+                        时间段类型：<%=@dispute[@datestyle]%>&nbsp;&nbsp;
+                        统计时间段：<%=@date1%>至<%=@date2%>&nbsp;&nbsp;
+                        助理：<%if @assistant!="1"%><%=User.find(:first,:conditions=>"used='Y' and code='#{@assistant}'").name%>&nbsp;&nbsp;<%else%>全部<%end%>
+                        仲裁程序：<%if @prog=='1'%>全部
+                        <%else%>
+                          <%=TbDictionary.find(:first,:order=>"data_val",:conditions=>"typ_code='0001' and state='Y' and data_val='#{@prog}'").data_text%>
+                        <%end%>
+                    </div>
+                    <table class="adminlist" cellspacing="1">
+                      <thead>
+                        <tr>
+                          <th nowrap rowspan="2">
+                            <%if @order=="right(case_code,7) desc"%>
+                              <%=link_to '立案号↑',:action=>"list1",:order=>"right(case_code,7) asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                            <%elsif @order=="right(case_code,7) asc"%>
+                              <%=link_to '立案号↓',:action=>"list1",:order=>"right(case_code,7) desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                            <%else%>
+                              <%=link_to '立案号',:action=>"list1",:order=>"right(case_code,7) asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                            <%end%>
+                          </th>
+                          <th nowrap rowspan="2">总案号</th>
+                          <th nowrap rowspan="2">
+                            助理
+                          </th>
+                          <th nowrap colspan="3" style="text-align: center">本请求</th>
+                          <th nowrap colspan="3" style="text-align: center">反请求</th>
+                          <th></th>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                        <tr>
+                          <th >明确争议金额</th>
+                          <th >不明确争议金额</th>
+                          <th >无明确争议金额收费</th>
+                          <th >明确争议金额</th>
+                          <th >不明确争议金额</th>
+                          <th >无明确争议金额收费</th>
+                          <th nowrap>实收</th>
+                          <th nowrap>减免</th>
+                          <th nowrap>欠缴</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <%i=0%>
+                        <%if @case!=nil%>
+                          <%for c in @case%>
+                            <tr class="row<%=i % 2%>">
+                              <%#=link_to "#{c.case_code}",{:controller=>'every_casebase',:action=>"every_list_2",:recevice_code=>"#{c.recevice_code}"},:target=>"_black"%>
+                              <td nowrap><%=c.case_code%></td>
+                              <td nowrap><%=c.general_code%></td>
+                              <td nowrap><%=User.find(:first,:conditions=>"used='Y' and code='#{c.clerk}'").name%></td>
+                              <td nowrap>
+                                <%@amout1=TbCaseAmount.sum(:rmb_money,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='1' and typ<>'0003' and amount_typ='0001'")%>
+                                <%@amout2=TbCaseAmount.sum(:rmb_money,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='1' and typ='0003' and amount_typ='0001'")%>
+                                <%=SysArg.compart2(@amout1.to_i - @amout2.to_i)%>
+                              </td>
+                              <td nowrap>
+                                <%@amout1=TbCaseAmount.sum(:rmb_money,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='1' and typ<>'0003' and amount_typ='0002'")%>
+                                <%@amout2=TbCaseAmount.sum(:rmb_money,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='1' and typ='0003' and amount_typ='0002'")%>
+                                <%=SysArg.compart2(@amout1.to_i - @amout2.to_i)%>
+                              </td>
+                              <td>
+                                <%should_charge=TbShouldCharge.sum(:rmb_money,:conditions=>["recevice_code=? and used='Y' and typ='0004' and payment='0001'",c.recevice_code])%>
+                                <%=SysArg.compart2(should_charge)%>
+                              </td>
+
+                              <td nowrap>
+                                <%@amout1=TbCaseAmount.sum(:rmb_money,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='2' and typ<>'0003' and amount_typ='0001'")%>
+                                <%@amout2=TbCaseAmount.sum(:rmb_money,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='2' and typ='0003' and amount_typ='0001'")%>
+                                <%=SysArg.compart2(@amout1.to_i - @amout2.to_i)%>
+                              </td>
+                              <td nowrap>
+                                <%@amout1=TbCaseAmount.sum(:rmb_money,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='2' and typ<>'0003' and amount_typ='0002'")%>
+                                <%@amout2=TbCaseAmount.sum(:rmb_money,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='2' and typ='0003' and amount_typ='0002'")%>
+                                <%=SysArg.compart2(@amout1.to_i - @amout2.to_i)%>
+                              </td>
+                              <td>
+                                <%should_charge=TbShouldCharge.sum(:rmb_money,:conditions=>["recevice_code=? and used='Y' and typ='0004' and payment='0002'",c.recevice_code])%>
+                                <%=SysArg.compart2(should_charge)%>
+                              </td>
+
+                              <td nowrap><!--实收-->
+                                <%@recome=TbCharge.sum(:rmb_money,:conditions=>"used='Y' and recevice_code='#{c.recevice_code}' and state=2")%>
+                                <%=SysArg.compart2(@recome)%>
+                              </td>
+                              <td nowrap>
+                                <%@reduction=TbReduction.sum(:rmb_money,:conditions=>"used='Y' and recevice_code='#{c.recevice_code}'")%>
+                                <%=SysArg.compart2(@reduction)%>
+                              </td>
+                              <td nowrap><!--欠缴 = 应收 -（应退 - 减退 ）- 实交 - 减交       应交-（应退 - 减退）-(实交 -  实退)- 减交 --->
+                                <%a_f1=TbShouldCharge.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and (typ='0001' or typ='0004')",c.recevice_code])  %>
+                                <%a_f2=TbShouldRefund.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and (typ='0001' or typ='0004') and state<>3",c.recevice_code])%>
+                                <%a_f3=TbShouldRefund.sum(:redu_rmb_money,:conditions=>["used='Y' and recevice_code=? and (typ='0001' or typ='0004') and state<>3",c.recevice_code])%>
+                                <%a_f5=TbShouldRefund.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and (typ='0001' or typ='0004') and state<>3",c.recevice_code])%>            
+                                <%a_f4=TbShouldCharge.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and (typ='0001' or typ='0004')",c.recevice_code])  %>
+                                <%aff=a_f1.to_f - (a_f2.to_f - a_f3.to_f) - (a_f4.to_f - a_f5.to_f)- @reduction.to_f%>
+                                <%if aff!=0%><%=SysArg.compart2(aff) %><%end%>
+                              </td>
+                            </tr>
+                            <%i=i+1%>
+                          <%end%>
+                        <%end%>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="12">
+                            <%= link_to '上一页', { :page => @case_pages.current.previous ,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.previous %>
+                            <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+                            <%= link_to '下一页', { :page => @case_pages.current.next ,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.next %>
+
+                            <%if @case_pages.current.previous or @case_pages.current.next%>
+                              <form action="/finance/list1" method="get" onsubmit="return page_check('page_lines','page');">
+                                每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                                <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+                                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                                页
+                                <input type=hidden name='order' value="<%=@order%>" />
+                                <input type='submit' value='确定' />
+                              </form>
+                            <%end%>
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                    </td></tr></table>
+                    </body>
+                    </html>

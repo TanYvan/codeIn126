@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>案件 助理发文量维护</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  <%if session[:recevice_code_1]==nil%>
+    <script language="javascript">
+      window.open("/case_p/list_1?contr_r=remuneration9&act_r=list","mainFrame")
+    </script>
+  <%end%>
+</head>
+<body>
+<div class="title"><span class="cBlue">助理发文量维护</span></div>
+  <div align="center" class="cDGray">
+    助理发文量维护
+    <%=link_to  "创建", :action=>"new_2"%>
+    <div style="color:red"><%=flash[:notice]%></div>
+  </div>
+  <table cellspacing="1" class="adminlist">
+  <thead>
+    <tr >
+      <th nowrap>
+        助理
+      </th>
+      <th nowrap>
+        类别
+      </th>
+      <th nowrap>
+        数量
+      </th>
+      <th nowrap>
+        备注
+      </th>
+      <th nowrap>
+        删除
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  <%i=0%>
+  <%for p in @remun%>
+    <tr class="row<%=i % 2%>">
+      <td>
+        <%=User.find_by_code(p.assistant).name%>
+      </td>
+      <td>
+        <%=TbDictionary.find(:first,:conditions=>"typ_code='0048' and data_val='#{p.page_typ}'").data_text%>
+      </td>
+      <td>
+        <%=p.page_num%>
+      </td>
+      <td>
+        <%=p.remark%>
+      </td>
+      <td>
+        <%if  p.rmb==0%>
+          <%=button_to "删除",{:action=>"delete_2",:id=>p},:confirm=>"您确认要删除吗？"%>
+        <%end%>
+      </td>
+    </tr>
+    <%i=i+1%>
+  <%end%>
+  </tbody>
+  </table>
+</body>
+</html>

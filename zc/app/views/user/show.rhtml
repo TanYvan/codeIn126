@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>用户信息维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div align="center"><br>
+      <br>
+      <table class="list">
+        <tr >
+          <th>
+          用户名:              </th>
+          <td >
+          <%= @user.code%>            </td>
+        </tr>
+
+        <tr >
+          <th>
+          用户信息:              </th>
+          <td >
+           <%= @user.name%>            </td>
+        </tr>
+
+        <tr >
+          <th>
+          状态:              </th>
+          <td >
+          <%=@user.states %>            </td>
+        </tr>
+      </table>
+      <br>
+      <%=link_to "编辑" ,:action=>"edit",:id=>@user.id %>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<table id="table_1" class="adminlist" cellspacing="1">
+  <thead>
+    <tr> 
+      <th nowrap>选择</th>
+      <th nowrap>姓名</th>
+      <th nowrap>姓名拼音缩写</th>
+      <th nowrap>性别</th>
+      <th nowrap>地址</th>
+      <th nowrap>单位</th>
+      <th nowrap>电话号码</th>
+      <th nowrap>邮政编码</th>
+      
+    </tr>
+  </thead>
+  <tbody>         
+    <%j=0%>
+<%i=1%>
+<%for ta in @tb_arbitmen %>
+      <tr class="row<%=j % 2%>">
+       <td><input type='button' value="选择" onclick="window.returnValue='<%=ta.code %>';window.close();"></td>
+        <td><%= ta.name%></td>
+        <td><%= ta.spell%></td>
+        <td><%= ta.sex%></td>
+        <td><%= ta.addr%></td>
+        <td><%= ta.company%></td>
+        <td><%= ta.telo%></td>
+        <td><%= ta.postcode%></td>
+      </tr>
+      <%i+=1%>
+      <%j=j+1%>
+<%end%>
+  </tbody>  
+</table>
+
+

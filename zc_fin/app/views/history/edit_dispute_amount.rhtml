@@ -1,0 +1,394 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>维护争议金额</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">维护争议金额</span></div>
+    <div align="center">
+    <%=link_to "返回",:action=>"tern_edit",:recevice_code=>params[:recevice_code],
+                        :search_condit=>params[:search_condit],:order=>params[:order],
+                        :page=>params[:page],:page_lines=>params[:page_lines]%>
+   <%if @case!=nil%>
+     当前案件
+     </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <%=h @case.recevice_code%>
+        </td>
+        <td>
+          <%=h @case.receivedate%>
+        </td>
+        <td>
+          <%=h @case.case_code%>
+        </td>
+        <td>
+          <%=h @case.nowdate%>
+        </td>
+        <td>
+          <%tp=TbParty.find(:first,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%if tp!=nil%>
+            <%=h tp.partyname%>
+          <%end%>
+        </td>
+        <td>
+          <%tp=TbParty.find(:first,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%if tp!=nil%>
+            <%=h tp.partyname%>
+          <%end%>
+        </td>
+      </tr>         
+      </tbody>
+    </table>
+    <br>
+    <br>
+      <hr size="1" color="#99CCFF" noshade>
+      <br>
+        <br>
+   <div class="cDGray">本请求（申请人的） <%=link_to  "创建", :action=>"new_amount",:partytype=>1,:recevice_code=>params[:recevice_code],
+                        :search_condit=>params[:search_condit],:order=>params[:order],
+                        :page=>params[:page],:page_lines=>params[:page_lines]%> </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          类型
+        </th>
+        <th nowrap>
+          类别
+        </th>
+        <th nowrap>
+          提出时间
+        </th>
+        <th nowrap>
+          币种
+        </th>
+        <th nowrap>
+          外币金额
+        </th>
+        <th nowrap>
+          汇率
+        </th>
+        <th nowrap>
+          金额(￥)
+        </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @amount1%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=@typ[p.typ]%>
+        </td>
+        <td>
+          <%=@amount_typ[p.amount_typ]%>
+        </td>
+        <td>
+          <%=p.dt%>
+        </td>
+        <td>
+          <%=Money.find_by_code(p.currency).name%>
+        </td>
+        <td>
+          <%=p.f_money%>
+        </td>
+        <td>
+          <%=p.rate%>
+        </td>
+        
+        <td>
+          <%=p.rmb_money%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"edit_amount",:id=>p,:partytype=>1,:recevice_code=>params[:recevice_code],
+                        :search_condit=>params[:search_condit],:order=>params[:order],
+                        :page=>params[:page],:page_lines=>params[:page_lines]%>
+        </td>
+        <td>
+            <%=button_to "删除",{:action=>"delete_amount",:id=>p,:recevice_code=>params[:recevice_code],
+                        :search_condit=>params[:search_condit],:order=>params[:order],
+                        :page=>params[:page],:page_lines=>params[:page_lines]},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+      
+    </table>
+    <br/>
+    <br/>
+    <hr  size="1" color="#99CCFF" noshade>
+    <div class="cDGray">反请求（被申请人的） <%=link_to  "创建", :action=>"new_amount",:partytype=>2,:recevice_code=>params[:recevice_code],
+                        :search_condit=>params[:search_condit],:order=>params[:order],
+                        :page=>params[:page],:page_lines=>params[:page_lines]%> </div>
+
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          类型
+        </th>
+        <th nowrap>
+          类别
+        </th>
+        <th nowrap>
+          提出时间
+        </th>
+        <th nowrap>
+          币种
+        </th>
+        <th nowrap>
+          外币金额
+        </th>
+        <th nowrap>
+          汇率
+        </th>
+        <th nowrap>
+          金额(￥)
+        </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @amount2%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=@typ[p.typ]%>
+        </td>
+        <td>
+          <%=@amount_typ[p.amount_typ]%>
+        </td>
+        <td>
+          <%=p.dt%>
+        </td>
+        <td>
+          <%=Money.find_by_code(p.currency).name%>
+        </td>
+        <td>
+          <%=p.f_money%>
+        </td>
+        <td>
+          <%=p.rate%>
+        </td>
+        
+        <td>
+          <%=p.rmb_money%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"edit_amount",:id=>p,:partytype=>2,:recevice_code=>params[:recevice_code],
+                        :search_condit=>params[:search_condit],:order=>params[:order],
+                        :page=>params[:page],:page_lines=>params[:page_lines]%>
+        </td>
+        <td>
+            <%=button_to "删除",{:action=>"delete_amount",:id=>p,:recevice_code=>params[:recevice_code],
+                        :search_condit=>params[:search_condit],:order=>params[:order],
+                        :page=>params[:page],:page_lines=>params[:page_lines]},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <br/>
+    <hr  size="1" color="#99CCFF" noshade>
+    <div class="cDGray">各项费用计算：（各项费用都是人民币）</div>
+
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          
+        </th>
+        <th nowrap>
+          明确争议金额
+        </th>
+        <th nowrap>
+          不明确争议金额
+        </th>
+        <th nowrap>
+          无明确争议金额收费
+        </th>
+        <th nowrap>
+          仲裁费
+        </th>
+        <th nowrap>
+          立案费
+        </th>
+        <th nowrap>
+          受理费
+        </th>
+        <th nowrap>
+          处理费
+        </th>
+        <th nowrap>
+          计收
+        </th>
+        <th nowrap>
+          实收
+        </th>
+        <th nowrap>
+          欠缴
+        </th>        
+      </tr>
+      </thead>
+      <tbody>
+      <!--申请人费用-->
+      <tr class="row<%=0%>">
+        <td>
+          申请人
+        </td>
+        <td>
+          <%=@applicant_definites%>
+        </td>
+        <td>
+          <%=@applicant_undefinites%>
+        </td>
+        <td>
+          <%=@applicant_no_definites%>
+        </td>
+        <td>
+          <%=@applicant_arbitration_fee%>
+        </td>
+        <td>
+          <%=@applicant_registration_fee%>
+        </td>
+        
+        <td>
+          <%=@applicant_litigation_fee%>
+        </td>
+        <td>
+          <%=@applicant_processing_fee%>
+        </td>
+        <td>
+          <%=@applicant_sum%>
+        </td>
+        <td>
+          <%=%>
+        </td>
+        <td>
+          <%=%>
+        </td>        
+      </tr>          
+     <!--被申请人费用-->
+      <tr class="row<%=1%>">
+        <td>
+          被申请人
+        </td>
+        <td>
+          <%=@respondent_definites%>
+        </td>
+        <td>
+          <%=@respondent_undefinites%>
+        </td>
+        <td>
+          <%=@respondent_no_definites%>
+        </td>
+        <td>
+          <%=@respondent_arbitration_fee%>
+        </td>
+        <td>
+          <%=@respondent_registration_fee%>
+        </td>
+        
+        <td>
+          <%=@respondent_litigation_fee%>
+        </td>
+        <td>
+          <%=@respondent_processing_fee%>
+        </td>
+        <td>
+          <%=@respondent_sum%>
+        </td>
+        <td>
+          <%=%>
+        </td>
+        <td>
+          <%=%>
+        </td>        
+      </tr> 
+     <!--总计-->
+      <tr class="row<%=0%>">
+        <td>
+          总计
+        </td>
+        <td>
+          <%=@applicant_definites+@respondent_definites%>
+        </td>
+        <td>
+          <%=@applicant_undefinites+@respondent_undefinites%>
+        </td>
+        <td>
+          <%=@applicant_no_definites+@respondent_no_definites%>
+        </td>
+        <td>
+          <%=@applicant_arbitration_fee+@respondent_arbitration_fee%>
+        </td>
+        <td>
+          <%=@applicant_registration_fee+@respondent_registration_fee%>
+        </td>
+        
+        <td>
+          <%=@applicant_litigation_fee+@respondent_litigation_fee%>
+        </td>
+        <td>
+          <%=@applicant_processing_fee+@respondent_processing_fee%>
+        </td>
+        <td>
+          <%=@applicant_sum+@respondent_sum%>
+        </td>
+        <td>
+          <%=%>
+        </td>
+        <td>
+          <%=%>
+        </td>        
+      </tr>       
+      </tbody>
+    </table>      
+    <%end%>
+    <%if params[:recevice_code]!=nil%>
+      <hr size="1" color="#99CCFF" noshade>
+      <iframe frameborder=0 src="/should_charge/list?recevice_code=<%=params[:recevice_code]%>"  noresize  style="width:100%;height:300px" align=center> </iframe>
+    <%end%>
+
+  </body>
+</html>

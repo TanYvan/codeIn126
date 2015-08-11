@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件基本情况信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%if session[:recevice_code]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list?contr_r=casebase&act_r=list","mainFrame")
+      </script>
+    <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件基本情况信息</span></div>
+    <div align="center">
+      <%#=button_to "返回", :controller=>'case_p',:action=>"select_base",:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+     <!-- ,:controller=>"case_p",:action=>"select1",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r],:contr_r=>"casebase",:act_r=>"list" -->
+      <br/>
+      <%if @case!=nil%>
+        当前案件
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              咨询流水号
+            </th>
+            <th nowrap>
+              咨询日期
+            </th>
+            <th nowrap>
+              立案号
+            </th>
+            <th nowrap>
+              立案日期
+            </th>
+            <th nowrap>
+              申请人
+            </th>
+            <th nowrap>
+              被申请人
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @case.recevice_code%>
+            </td>
+            <td>
+              <%=h @case.receivedate%>
+            </td>
+            <td>
+              <%=h @case.case_code%>
+            </td>
+            <td>
+              <%=h @case.nowdate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br/>
+      <br/>
+      <hr size="1" color="#99CCFF" noshade/>
+      <div align="center" class="cDGray">
+        案件基本情况信息
+      </div>
+      <table class="list">
+        <tr>
+          <th nowrap>咨询流水号:</th>
+          <td><%=@case.recevice_code%></td>
+        </tr>
+        <tr>
+          <th nowrap>总案号:</th>
+          <td><%=@case.general_code%></td>
+        </tr>
+        <tr>
+          <th nowrap>立案号:</th>
+          <td><%=@case.case_code%></td>
+        </tr>
+        <tr>
+          <th nowrap>结案号:</th>
+          <td><%if @case.end_code=="" or @case.end_code==nil%>
+              该案件尚未结案
+            <%else%>
+              <%=@case.end_code%>
+            <%end%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            仲裁员组成：
+          </th>
+          <td>
+            <%if @case.aribitprog_num=='0002' or @case.aribitprog_num=='0004' or @case.aribitprog_num=='0006' or @case.aribitprog_num=='0008'%>
+              <%a1=PubTool.arbitrator(@case.recevice_code,'0001')%>
+              <%if a1!=""%>
+                独：<%=a1%>
+              <%else%>
+                未组庭
+              <%end%>
+            <%else%>
+              <%a2=PubTool.arbitrator(@case.recevice_code,'0002')%>
+              <%a3=PubTool.arbitrator(@case.recevice_code,'0003')%>
+              <%a4=PubTool.arbitrator(@case.recevice_code,'0004')%>
+              <%if a2!="" and a3!="" and a4!=""%>
+                首：<%=a2%>&nbsp;&nbsp;
+                仲：<%=a3%>&nbsp;&nbsp;<%=a4%>
+              <%else%>
+                未组庭
+              <%end%>
+            <%end%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>
+              办案助理：
+            </th>
+            <td>
+              <%=@zl%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>总会案件分类：</th>
+            <td>
+              <%@a=TbDictionary.find(:first,:conditions=>"typ_code='0043' and data_val='#{@case.t_casetype_num}' and state='Y'") %>
+              <%if @a!=nil%>
+                <%=@a.data_val%> <%=@a.data_text%>
+              <%end%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>争议类别：</th>
+            <td><%=TbDictionary.find(:first,:conditions=>["state='Y' and typ_code=? and data_val=?",'0002',@case.casetype_num2]).data_text%></td>
+          </tr>
+          <tr>
+            <th nowrap>仲裁协议类型：</th>
+            <td><%=@pro_tp%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>仲裁类型：</th>
+            <td><%=@arbit_tp%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>主体类型：</th>
+            <td>
+              <%@a=TbDictionary.find(:first,:conditions=>"typ_code='8140' and data_val='#{@case.case_type1}' and state='Y'") %>
+              <%if @a!=nil%>
+                <%=@a.data_text%>
+              <%end%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>仲裁条款达成日期：</th>
+            <td><%=@case.acceptt%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>审理方式：</th>
+            <td><%if @case.trial_typ!=nil %>  <%= TbDictionary.find(:first,:conditions=>"typ_code='0046'  and  data_val='#{@case.trial_typ}' and state='Y'").data_text %> <%end%></td>
+          </tr>
+          <tr>
+            <th nowrap>案件类型大分类：</th>
+            <td><%=TbDictionary.find(:first,:conditions=>"typ_code='0002' and data_val='#{@case.casetype_num}' and state='Y' and data_parent=''").data_text%></td>
+          </tr>
+          <tr>
+            <th nowrap>案件类型小分类：</th>
+            <td><%=TbDictionary.find(:first,:conditions=>"typ_code='0002' and data_val='#{@case.casetype_num2}' and state='Y' and data_parent!=''").data_text%></td>
+          </tr>
+          <tr>
+            <th nowrap>结案方式：</th>
+            <td><%= @endstyle %></td>
+          </tr>
+          <tr>
+            <th nowrap>受理日期：</th>
+            <td><%=@case.accepttime%></td>
+          </tr>
+          <tr>
+            <th nowrap>组庭日期：</th>
+            <td><%=@orgdate%></td>
+          </tr>
+          <%caseorg=TbCaseorg.find(:first,:conditions=>["used='Y' and recevice_code=?",@case.recevice_code],:order=>"id desc")%>
+          <tr>
+            <th nowrap>（原）审限日期：</th>
+            <td><%if caseorg!=nil%><%=caseorg.limitdate %><%end%></td>
+          </tr>
+          <%@n1=TbCasedelay.count(:id,:conditions=>["used='Y' and recevice_code=?",@case.recevice_code],:order=>"id")%>
+          <tr>
+            <th nowrap>延期次数：</th>
+            <td><%=@n1 %></td>
+          </tr>
+    <%#@case_dely=TbCasedelay.find(:first,:conditions=>["used='Y' and recevice_code=?",@case.recevice_code],:order=>"id",:limit=>2)%>
+          <tr>
+            <th nowrap>最终审限：</th>
+            <td><%=@case.finally_limit_dat%></td>
+          </tr>
+          <%@endDate=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",@case.recevice_code],:order=>"id desc")%>
+          <tr>
+            <th nowrap>结案日期：</th>
+            <td><%if @endDate!=nil%><%=@endDate.decideDate%><%end%></td>
+          </tr>
+          <tr>
+            <th nowrap>是否结案：</th>
+            <td>
+              <%if @case.end_t="" or @case.end_code==nil%>
+                该案件尚未结案
+              <%else%>
+                该案件已经结案
+              <%end%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>选定的仲裁机构：</th>
+            <td><%= @arbit_agent %></td>
+          </tr>
+          <tr>
+            <th nowrap>咨询接待:</th>
+            <td>
+              <%if @case.clerk_2!=nil and @case.clerk_2!=''%>
+                <%=User.find_by_code(@case.clerk_2).name%>
+              <%end%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>案由：</th>
+            <td><%=@case.casereason  %></td>
+          </tr>
+          <tr>
+            <th nowrap>仲裁协议备注：</th>
+            <td><%=@case.arbitprot%></td>
+          </tr>
+          <tr>
+            <th nowrap>案件备注：</th>
+            <td><%=@case.special%></td>
+          </tr>
+          <tr>
+            <th nowrap>申请人地区：</th>
+            <td><%=@area11%></td>
+          </tr>
+          <tr>
+            <th nowrap>被申请人地区：</th>
+            <td><%=@area22%></td>
+          </tr>
+        </table>
+      <%end%>
+      <br/>
+    </body>
+  </html>

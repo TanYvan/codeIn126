@@ -1,0 +1,2 @@
+module ReportTotal4Helper
+end

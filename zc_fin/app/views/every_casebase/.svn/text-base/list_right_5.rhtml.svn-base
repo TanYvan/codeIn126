@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>已结未终审阶段案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">已结未终审阶段案件</span></div>
+    <%=link_to "返回",:controller=>params[:p_contr_r],:action=>params[:p_act_r],:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            立案日期
+          </th>
+          <th nowrap>
+            立案号
+          </th>
+          <th nowrap>
+            仲裁程序
+          </th>
+          <th nowrap>
+            选择
+          </th>
+          <th nowrap>
+            发文
+          </th>
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            案件阶段
+          </th>
+          <th nowrap>
+            结案号
+          </th>
+          <th nowrap>
+            结案日期
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+          <th nowrap>
+            咨询助理
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @case%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap>
+              <%=h c.nowdate%>
+            </td>
+            <td nowrap>
+              <%=c.case_code%>
+            </td>
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text%>
+            </td>
+            <td>
+              <%=button_to "选择",:controller=>"case_p",:action=>"select",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+            </td>
+            <td>
+              <%=link_to  "发文" ,:action=>"case_doc",:recevice_code=>c.recevice_code%>
+            </td>
+            <td>
+              <%=link_to "修改",:id=>c.id,:controller=>"case_p",:action=>"select",:contr_r=>'casebase',:act_r=>'edit'%>
+            </td>
+            <td>
+              <%=@state[c.state]%>
+            </td>
+            <td>
+              <%=c.end_code%>
+            </td>
+            <%@endDate=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",c.recevice_code],:order=>"id desc")%>
+            <td nowrap>
+              <%if @endDate!=nil%><%=@endDate.decideDate%><%end%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td nowrap>
+              <%if c.clerk_2!=nil and c.clerk_2!=""%>
+                <%=User.find_by_code(c.clerk_2).name%>
+              <%end%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

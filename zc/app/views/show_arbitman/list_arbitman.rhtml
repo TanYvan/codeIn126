@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员信息维护</title>
+    <%= javascript_include_tag "prototype" %>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员列表</span></div>
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    <table class="adminlist" cellspacing="1">
+      <thead>
+        <tr> 
+          <th nowrap>编码</th>
+          <th nowrap>姓名(系统内唯一)</th>
+          <th nowrap>姓名(身份证)</th>
+          <th nowrap>性别</th>
+          <th nowrap>地区</th>
+          <th nowrap>通讯地址</th>
+          <th nowrap>单位</th>
+          <th nowrap>手机号码</th>
+          <th nowrap>邮政编码</th>
+          <th nowrap>查看</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%j=0%>
+        <%i=1%>
+
+        <% if @tb_arbitmen != nil
+            @region = Region.find(:all,:select=>"code,name").inject({}){|f,e| f[e.code]=e.name;f}
+            for a in @tb_arbitmen %>
+                <tr class="row<%=j % 2%>">
+                  <td><%=a.tb_arbitmen_code %></td>
+                  <td><%=a.tb_arbitmen_name%></td>
+                  <td><%=a.tb_arbitmen_name_idcard%></td>
+                  <td><%=a.tb_arbitmen_sex %></td>
+                  <td><%= @region[a.tb_arbitmen_area_code] %></td>
+                  <td><%=a.tb_arbitmen_addr%></td>
+                  <td><%=a.tb_arbitmen_company%></td>
+                  <td><%=a.tb_arbitmen_mobiletel%></td>
+                  <td><%=a.tb_arbitmen_postcode%></td>
+                  <td><%=link_to "查看",{:action => "show_arbitman",:id => a.tb_arbitmen_id , :search_condit=>@search_condit,:order=>@order,:page=>@tb_arbitman_pages.current.number,:page_lines=>@page_lines} %></td>
+              </tr>
+                <%j=j+1%>
+            <%end%>
+        
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="9">
+            <%= link_to '上一页', { :page => @tb_arbitman_pages.current.previous ,:search_condit=>@search_condit,:hant_search_1_r=>params[:hant_search_1_r],:order=>@order,:page_lines=>@page_lines  } if @tb_arbitman_pages.current.previous %>
+            <%=pagination_links( @tb_arbitman_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @tb_arbitman_pages.current.next ,:search_condit=>@search_condit,:hant_search_1_r=>params[:hant_search_1_r],:order=>@order,:page_lines=>@page_lines  } if @tb_arbitman_pages.current.next %>
+            
+            <%if @tb_arbitman_pages.current.previous or @tb_arbitman_pages.current.next%>
+                <form action="/show_arbitman/list_arbitman" method="get" >
+                  每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                  <input type=text name='page' size=5 class="SingleLineInput" value=<%= @tb_arbitman_pages.current.number %> />
+                         <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                  页
+                  <input type=hidden name='order' value="<%=@order%>" />
+                  <input type=hidden name='hant_search_1_r' value="<%=params[:hant_search_1_r]%>" />
+                  <input type='submit' value='跳转' />
+                </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+      
+    </table>
+  </body>
+</html>

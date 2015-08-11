@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员修改信息同步</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <link href="/stylesheets/tab.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员修改信息同步</span></div>
+    <div class="tabs" align="center">
+      <ul>
+        <li><a href="/arbitman_syn_check/list" ><span>未确认</span></a></li>
+        <li><a href="/arbitman_syn_check/list_2" class="selected"><span>已确认</span></a></li>
+        <br/>
+        <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+      </ul>
+    </div>
+    <div align="center">
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            修改时间
+          </th>
+          <th nowrap>
+            执行时间
+          </th>
+          <th nowrap>
+            执行结果
+          </th>
+          <th nowrap>
+            仲裁员编码
+          </th>
+          <th nowrap>
+            仲裁员姓名
+          </th>
+          <th nowrap>
+            类别
+          </th>
+          <th nowrap>
+            修改项类别
+          </th>
+          <th nowrap>
+            修改项
+          </th>
+          <th nowrap>
+            修改前
+          </th>
+          <th nowrap>
+            修改后
+          </th>
+          <th nowrap>
+            说明
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @syn%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%=h c.change_time.to_s(:db) if c.change_time%>
+            </td>
+            <td>
+              <%=h c.action_time.to_s(:db) if c.action_time%>
+            </td>
+            <td>
+              <%=h @action_type[c.action_type] if c.action_type%>
+            </td>
+            <td>
+              <%=h c.arbitman %>
+            </td>
+            <td>
+              <%=h c.arbitman_name %>
+            </td>
+            <td nowrap>
+              <%=h @change_type[c.change_type] %>
+            </td>
+            <td>
+              <%=h @item_type[c.item_type] %>
+            </td>
+            <td nowrap>
+              <%=h c.item_name%>
+            </td>
+            <td nowrap>
+              <%=h c.change_before_text%>
+            </td>
+            <td>
+              <%=h c.change_after_text%>
+            </td>
+            <td>
+              <%=h c.remark%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <tfoot>
+      <tr>
+        <td colspan="8">
+          <%= link_to '上一页', { :page => @syn_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @syn_pages.current.previous %>
+          <%=pagination_links( @syn_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @syn_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @syn_pages.current.next %>
+
+          <%if @syn_pages.current.previous or @syn_pages.current.next%>
+            <form action="/arbitman_syn_check/list" method="get" onsubmit="return page_check('page_lines','page');">
+              每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+              <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @syn_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </tfoot>
+  </body>
+</html>

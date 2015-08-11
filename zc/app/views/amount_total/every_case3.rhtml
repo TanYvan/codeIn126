@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>查看所有案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><%=@data_text%>案件</span></div>
+    <br/>
+   <div align="left"><%if @hant_search_1_text!=nil%>&nbsp;查询条件：<%=@hant_search_1_text%><%end%></div>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案日期</th>
+          <th  nowrap>立案号</th>
+          <th  nowrap>申请人</th>
+          <th  nowrap>被申请人</th>
+          <th  nowrap>办案助理</th>
+          <th  nowrap>争议金额(￥)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for a in @case%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=a.nowdate%></td>
+            <td nowrap><%=a.case_code%></td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=1")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=2")%>
+              <%ttpp=''%>
+              <%for tp in @party2%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td nowrap><%=User.find(:first,:conditions=>["code=?",a.clerk]).name %></td>
+            <td nowrap><%=SysArg.compart2(a.amount)%></td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

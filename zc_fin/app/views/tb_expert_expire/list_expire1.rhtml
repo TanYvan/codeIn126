@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>届信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cGray">专家届信息列表</div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>届</th>
+          <th nowrap>备注</th>
+          <th nowrap>修改</th>
+          <th nowrap>删除</th>
+        </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%if @period_expires!=nil%>
+        <%for a in @period_expires%>
+          <tr>
+            <td nowrap><%=a.expire%></td>
+            <td nowrap><%=a.remark%></td>
+            <td nowrap><%=link_to "修改",:action=>"expire_edit",:id=>a%></td>
+            <td nowrap><%=button_to "删除",{:action=>"expire_delete",:id=>a},{:confirm=>"您确认要删除吗?",:method => "post"}%></td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

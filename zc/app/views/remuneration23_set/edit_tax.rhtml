@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>税计算</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">税计算</span></div>
+    <div align="center">
+      <%=link_to "返回",:action=> "list", :hant_search_1_word=>params[:hant_search_1_word] ,:hant_search_1_text =>params[:hant_search_1_text], :search_condit => params[:search_condit]%>
+    </div>
+    <br/>
+    参考值:<%=@tax_a.rmb if @tax_a%>
+    <%form_for :user ,:url=>{:action=>"update_tax" ,:mark=> params[:mark], :hant_search_1_word=>params[:hant_search_1_word] ,:hant_search_1_text =>params[:hant_search_1_text], :search_condit => params[:search_condit]} do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            税种
+          </th>
+          <th >
+            金额
+          </th>
+          <th >
+            备注
+          </th>
+        </tr>
+        <%for tax in @tax%>
+        <tr>
+          <td>
+            <%=tax.name%>
+          </td>
+          <td >
+            <input type="text" id="rmb_<%=tax.id%>" name="rmb_<%=tax.id%>" value="<%=tax.rmb%>" />
+          </td>
+          <td >
+            <input type="text" id="remark_<%=tax.id%>" name="remark_<%=tax.id%>" value="<%=tax.remark%>" />
+          </td>
+        </tr>
+        <%end%>
+      </table>
+      <br/>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

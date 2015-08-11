@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改机构评价信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+  <div class="cDGray" align="center">修改机构评价信息(带<i>*</i>为必填项)   <%=link_to "返回",:action=>"list"%>
+  <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%@org_typ={"0001"=>"机构","0002"=>"专家"}%>
+    <%form_for :org_appraisal ,:url=>{:action=>"update",:id=>params[:id]}  do |f|%>
+      <table class="list">
+        <tr >
+          <th nowrap colspan="2">
+            机构类别:
+          </th>
+          <td>
+            <%=@org_typ[@org_appraisal.org_typ]%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap colspan="2">
+            机构名称:
+          </th>
+          <td>
+            <%if @org_appraisal.org_typ=='0001'%>
+              <%=TbOrg.find_by_code(@org_appraisal.org_code).name%>
+            <%else%>
+              <%=TbExpertconsult.find_by_code(@org_appraisal.org_code).name%>
+            <%end%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap colspan="2">
+            委托日期:
+          </th>
+          <td>
+            <%=f.text_field(:consign_t,:size=>8)%> 
+             <input type="button" value="..." onclick="SelectDate(document.getElementById('org_appraisal_consign_t'),'yyyy-MM-dd');" />
+          </td>
+        </tr>
+        <tr >
+          <th nowrap colspan="2">
+            选定方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0057' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sign,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th rowspan="5">收费情况</th>
+          <th >最初报价：</th>
+          <td ><%=f.text_field(:quote_price)%></td>
+        </tr>
+        <tr>
+          <th>实际收取：</th>
+          <td ><%=f.text_field(:price)%></td>
+        </tr>
+        <tr>
+          <th>收费比例：</th>
+          <td ><%=f.text_field(:charge_ratio,:size=>2)%>%</td>
+        </tr>
+        <tr>
+          <th>特殊情况：</th>
+          <td ><%=f.text_field(:special)%></td>
+        </tr>
+        <tr>
+          <th>是否合理：</th>
+          <td><%=f.select(:wise,[["是","Y"],["否","N"]])%></td>
+        </tr>
+        <tr>
+          <th rowspan="3">效率情况</th>
+          <th >鉴定期限:</th>
+          <td ><%=f.text_field(:time_limit,:size=>2)%></td>
+        </tr>
+        <tr>
+          <th >特殊情况:</th>
+          <td ><%=f.text_field(:special_2)%></td>
+        </tr>
+        <tr>
+          <th >工作效率：</th>
+          <td ><%=f.select(:efficiency,[["A","A"],["B","B"],["C","C"]])%></td>
+        </tr>
+        <tr>
+          <th  colspan="2">咨询报告质量:</th>
+          <td>
+            <%=f.select(:report_quality,[["A","A"],["B","B"],["C","C"]])%>
+            <br/>
+            <%=f.text_field(:report_remark)%>
+            <br/>
+            （描述有无漏项、超项、条理不清、计算错误等需反复更正的情况）
+          </td>
+        </tr>
+        <tr>
+          <th  colspan="2">是否公正:</th>
+          <td>
+            <%=f.select(:sign,[["是","Y"],["否","N"]])%>
+            <br/>
+            <%=f.text_field(:fair_remark)%>
+          </td>
+        </tr>
+        <tr>
+          <th  colspan="2">是否有异议:</th>
+          <td>
+            <%=f.select(:obj,[["否","N"],["是","Y"]])%>
+          </td>
+        </tr>
+      </table>
+        <br/><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

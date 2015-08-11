@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+    <script src="/javascripts/pub.js"></script>
+    <title>代开发票</title>
+  </head>
+
+  <body>
+    <input  id='to_word' type='button' value='导出word' onclick="document.getElementById('to_word').style.display='none';to_word();document.getElementById('to_word').style.display='block';"/>
+    <%if @p_extends != nil%>
+    <%for p_ext in @p_extends %>
+      <%@tb_extends =TbExtend.find_by_sql(["select distinct recevice_code,t_extend_code,p,p_name,id_card from tb_extends where typ<>'5' and  used='Y' and t_extend_code=? and p=? and p_name=? order by  p_name, recevice_code",p_ext.t_extend_code, p_ext.p, p_ext.p_name])%>
+      <%for tb_extend in @tb_extends %>
+       <%arb = TbArbitman.find_by_code(tb_extend.p)%>
+    <div align="center">
+      <table border="1" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="654" colspan="9" bordercolor="#FFFFFF">
+            <p align="left"><img src="/images/dkfp.jpg" alt="a" width="638" height="162" /></p>
+          </td> 
+        </tr>
+        <tr>
+          <td width="654" colspan="9" bordercolor="#FFFFFF">
+            <p align="left">
+              <table border="1" cellspacing="0" cellpadding="0" align="left">
+                <tr>
+                  <td width="100" valign="top">
+                    纳税人识别号 </td>
+                  <%unless tb_extend.id_card.blank?%>
+                    <%tb_extend.id_card.split("").each{|c|%>
+                      <td width="15" valign="top"><%=h c%></td>
+                    <%}%>
+                  <%end%>
+                      <%if (tb_extend.id_card.size<20)%>
+                        <% (20 - tb_extend.id_card.size).times{%>
+                          <td width="15" valign="top">&nbsp;</td>
+                        <%}%>
+                      <%end%>
+                </tr>
+              </table>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td width="654" colspan="9" bordercolor="#FFFFFF">
+            <p align="left">
+              <table border="1" cellspacing="0" cellpadding="0" align="left">
+                <tr>
+                  <td width="100" valign="top">纳税人编码</td>
+                  <td width="15" valign="top">&nbsp;</td>
+                  <td width="15" valign="top">&nbsp;</td>
+                  <td width="15" valign="top">&nbsp;</td>
+                  <td width="15" valign="top">&nbsp;</td>
+                  <td width="15" valign="top">&nbsp;</td>
+                  <td width="15" valign="top">&nbsp;</td>
+                  <td width="15" valign="top">&nbsp;</td>
+                  <td width="15" valign="top">&nbsp;</td>
+                </tr>
+              </table>
+            </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="654" colspan="9" bordercolor="#FFFFFF">
+            <p align="left">纳税人名称:<%=h tb_extend.p_name%> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;联系电话：83501190</p>
+            </td>
+        </tr>
+        <tr>
+          <td width="177" colspan="2"><br />
+            申请代开发票类别 </td>
+          <td width="477" colspan="7"><p>□普通发票 □免税普通发票 □临时经营代开普通发票 </p></td>
+        </tr>
+        <tr>
+          <td width="177" colspan="2"><p align="center">发票用途 </p></td>
+          <td width="477" colspan="7"><p>□货物销售 □加工修理修配    □应税服务    □其他收入 </p></td>
+        </tr>
+        <tr>
+          <td width="177" colspan="2"><p align="left">购货方名称 </p></td>
+          <td width="477" colspan="7"><p align="left">华南国际经济贸易仲裁委员会（深圳国际仲裁院）</p></td>
+        </tr>
+        <tr>
+          <td width="177" colspan="2"><p align="center">货物、应税劳务或服务名称 </p></td>
+          <td width="47"><p align="center">单位 </p></td>
+          <td width="76"><p align="center">数量A</p></td>
+          <td width="94" colspan="2"><p align="center">含税单价B</p></td>
+          <td width="85"><p align="center">含税金额 <br />
+              C＝A×B</p></td>
+          <td width="78"><p align="center">征收率D</p></td>
+          <td width="96"><p align="center">税 额 <br />
+              E=C×D/(1+D)</p></td>
+        </tr>
+        <%@extends =TbExtend.find(:all,:select=>"recevice_code as recevice_code,t_extend_code as t_extend_code,p,p_name,should_rmb",:conditions=>["used='Y' and t_extend_code=? and p=? and p_name=? and recevice_code=?",params[:t_extend_code],tb_extend.p,tb_extend.p_name,tb_extend.recevice_code],:order=>"p_typ,typ")%>
+        <%should_rmb_sum=0%>
+        <%for extend in @extends %>
+        <tr>
+          <td width="177" colspan="2"><p align="center">咨询服务 </p></td>
+          <td width="47"><p align="center">案</p></td>
+          <td width="76"><p align="center">1</p></td>
+          <td width="94" colspan="2"><p align="center"><%=h extend.should_rmb%></p></td>
+          <td width="85"><p align="center"><%=h extend.should_rmb%></p></td>
+          <%should_rmb_sum=should_rmb_sum + extend.should_rmb%>
+          <td width="78"><p align="center">&nbsp;</p></td>
+          <td width="96"><p align="center">&nbsp;</p></td>
+        </tr>
+        <%end%>
+        <tr>
+          <td width="177" colspan="2"><p align="center">合计</p></td>
+          <td width="47"><p align="center">―― </p></td>
+          <td width="76"><p align="center">――― </p></td>
+          <td width="94" colspan="2"><p align="center">――― </p></td>
+          <td width="85"><p align="center"><%= h should_rmb_sum%></p></td>
+          <td width="78"><p align="center">――― </p></td>
+          <td width="96"><p align="center">&nbsp;</p></td>
+        </tr>
+        <tr>
+          <td width="654" colspan="9"><p>申请理由： </p>
+            <p align="right"> 经办人身份证号：440301197207312113&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+              经办人联系电话：83501190&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+              经办人：万里涛&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;日 </p>
+          </td>
+        </tr>
+        <tr>
+          <td width="654" colspan="9"><p align="center">&nbsp;</p></td>
+        </tr>
+        <tr>
+          <td width="654" colspan="9"><p align="center"><strong>以 </strong><strong>下 </strong><strong>由 </strong><strong>税 </strong><strong>务 </strong><strong>机 </strong><strong>关 </strong><strong>填 </strong><strong>列 </strong></p></td>
+        </tr>
+        <tr>
+          <td width="91"><p align="center">税票种类 </p></td>
+          <td width="236" colspan="4"><p>□税收完税证 □通用缴款书 </p>
+            <p>□专用缴款书 </p></td>
+          <td width="327" colspan="4" rowspan="2"><p>申请开具减免税销售发票审批意见 </p>
+            <p>&nbsp;</p>
+            <p align="center">科长签字：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 年&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp; &nbsp;&nbsp;日 </p></td>
+        </tr>
+        <tr>
+          <td width="91"><p align="center">税票号码 </p></td>
+          <td width="236" colspan="4"><p align="center">&nbsp;</p></td>
+        </tr>
+        <tr bordercolor="#FFFFFF">
+          <td width="654" colspan="9"><p align="left">申请理由：
+              填表说明:<br />
+              &nbsp;&nbsp;1、请在指定区域内盖纳税人公章； <br />
+              &nbsp;&nbsp;2、纳税人如需代开的发票（单张）上的货物或应税劳务项目超过4项的，应提供销货清单一式两份，并在申请表的货物或应税劳务名 <br />
+              称栏填写“货物一批（详见清单）”其中如有不同税率的货物应按税率分别汇总； <br />
+              &nbsp;&nbsp;3、纳税人缴纳税款完毕后，凭本表到代开发票窗口代开发票。 <br />
+              &nbsp;&nbsp;4、本表一式二份,税务机关、纳税人各一份。 </p>
+          </td>
+        </tr>
+        
+
+      </table>
+    </div>
+
+      <%end%>
+    <%end%>
+    <%end%>
+  </body>
+</html>

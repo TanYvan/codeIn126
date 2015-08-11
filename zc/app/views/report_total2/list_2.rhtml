@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件综合信息查询</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/javascripts/check.js"></script>
+    <script type="text/javascript" src="/javascripts/pub.js"></script>
+    <script type="text/javascript" src="/javascripts/prototype.js"></script>
+    <script type="text/javascript">
+      function to_e(){
+        to_excel($("report_excel"));
+      }
+    </script>
+    <%= javascript_include_tag  'WebCalendar' %>
+  </head>
+  <body>
+    <div align="left">
+      <div class="title"><span class="cBlue">案件综合信息查询</span></div>
+      <% form_tag ({:action => "list_2"})  do %>
+        立案时间：<%= text_field_tag(:d1, @d1, :readonly => "yes") %>
+        <input type="button" value="..." onclick="SelectDate($('d1'), 'yyyy-MM-dd')" />
+        至<%= text_field_tag(:d2, @d2, :readonly => "yes") %>
+        <input type="button" value="..." onclick="SelectDate($('d2'), 'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+      <%end%>
+        <br/><br/>共有<%= @count %>条记录&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="to_e()">导出所有数据为Excel文档</a>
+    </div>
+
+    <%if @case != nil %>
+      <br/>
+      <table class="adminlist" id="report_excel">
+        <thead>
+          <tr>
+            <th nowrap="nowrap">通知日期</th>
+            <th nowrap="nowrap">总案号</th>
+            <th nowrap="nowrap">立案号</th>
+            <th nowrap="nowrap">经办人</th>
+            <th nowrap="nowrap">明确争议金额b</th>
+            <th nowrap="nowrap">不明确争议金额b</th>
+            <th nowrap="nowrap">无明确争议金额收费b</th>
+            <th nowrap="nowrap">应收b</th>
+            <th nowrap="nowrap">减交b</th>
+            <th nowrap="nowrap">实收b</th>
+            <th nowrap="nowrap">欠缴b</th>
+            <th nowrap="nowrap">明确争议金额f</th>
+            <th nowrap="nowrap">不明确争议金额f</th>
+            <th nowrap="nowrap">无明确争议金额收费f</th>
+            <th nowrap="nowrap">应收f</th>
+            <th nowrap="nowrap">减交f</th>
+            <th nowrap="nowrap">实收f</th>
+            <th nowrap="nowrap">欠缴f</th>
+            <th nowrap="nowrap">案由</th>
+            <th nowrap="nowrap">申请人</th>
+            <th nowrap="nowrap">被申请人</th>
+            <th nowrap="nowrap">仲裁员</th>
+            <th nowrap="nowrap">结案号</th>
+            <th nowrap="nowrap">结案时间</th>
+            <th nowrap="nowrap">结案方式</th>
+            <th nowrap="nowrap">申请人行业</th>
+            <th nowrap="nowrap">被申请人行业</th>
+            <th nowrap="nowrap">申请人地区</th>
+            <th nowrap="nowrap">被申请人地区</th>
+            <th nowrap="nowrap">申请人代理人</th>
+            <th nowrap="nowrap">申请人代理人律所</th>
+            <th nowrap="nowrap">被申请人代理人</th>
+            <th nowrap="nowrap">被申请人代理人律所</th>
+            <th nowrap="nowrap">选定的仲裁机构</th>
+            <th nowrap="nowrap">适用规则项目</th>
+            <th nowrap="nowrap">依据仲裁协议类型</th>
+            <th nowrap="nowrap">仲裁程序</th>
+            <th nowrap="nowrap">仲裁语言</th>
+            <th nowrap="nowrap">主体类型</th>
+            <th nowrap="nowrap">和解特别程序</th>
+            <th nowrap="nowrap">总会案件分类编号</th>
+            <th nowrap="nowrap">总会案件分类</th>
+            <th nowrap="nowrap">案件类型大分类</th>
+            <th nowrap="nowrap">案件类型小分类</th>
+            <th nowrap="nowrap">争议类型</th>
+            <th nowrap="nowrap">仲裁协议备注</th>
+            <th nowrap="nowrap">仲裁条款达成日期</th>
+            <th nowrap="nowrap">仲裁协议类型</th>
+            <th nowrap="nowrap">仲裁条款起草方</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"} %>
+          <%i=0%>
+          <%for c in @case%>
+            <%@tp1 = TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.ca_rc}'",:order=>"id")%>
+            <%@tp2 = TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.ca_rc}'",:order=>"id")%>
+            <%@ag1 = TbAgent.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.ca_rc}'",:order=>"id")%>
+            <%@ag2 = TbAgent.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.ca_rc}'",:order=>"id")%>
+            <%@tb_case = TbCase.find_by_recevice_code(c.ca_rc)%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap><%=c.ca_nowdate.to_s(:db)%></td>
+              <td><%=c.ca_gc%></td>
+              <td nowrap><%=c.ca_cc%></td>
+              <td><%=c.ca_clerk_name%></td>
+              <td>
+                <%if c.je1_f == 'Y'%>
+                  <% if c.je1.to_i != 0 %>
+                    <strong><%= SysArg.compart3(c.je1.round) %></strong>
+                  <% else %>
+                    0
+                  <%end%>
+                <%else%>
+                  <%=SysArg.compart3(c.je1.round)%>
+                <%end%>
+              </td>
+              <td>
+                <%if c.je2_f == 'Y'%>
+                  <% if c.je2.to_i!=0%>
+                    <strong><%=SysArg.compart3(c.je2.round)%></strong>
+                  <%else%>
+                    0
+                  <%end%>
+                <%else%>
+                  <%=SysArg.compart3(c.je2.round)%>
+                <%end%>
+              </td>
+              <td><%=SysArg.compart3(c.je3.round)%></td>
+              <td><%=SysArg.compart3(c.c_rmb_money.round)%></td>
+              <td><%=SysArg.compart3(c.c_redu_rmb_money.round)%></td>
+              <td><%=SysArg.compart3(c.c_re_rmb_money.round)%></td>
+              <td>
+                <% if c.c_c_out == 'Y' %>
+                  <% if c.c_c > 0 %>
+                    <div style="color:red"><%= SysArg.compart3(c.c_c.round) %></div>
+                  <% else %>
+                    0
+                  <% end %>
+                <% else %>
+                  <%= SysArg.compart3(c.c_c.round)%>
+                <%end%>
+              </td>
+              <td>
+                <% if c.je1_2_f == 'Y' %>
+                  <% if c.je1_2 != 0 %>
+                    <strong><%= SysArg.compart3(c.je1_2.round) %></strong>
+                  <% else %>
+                    0
+                  <% end %>
+                <% else %>
+                  <%= SysArg.compart3(c.je1_2.round) %>
+                <% end %>
+              </td>
+              <td>
+                <% if c.je2_2_f == 'Y' %>
+                  <% if c.je2_2 != 0 %>
+                    <strong><%= SysArg.compart3(c.je2_2.round) %></strong>
+                  <% else %>
+                    0
+                  <% end %>
+                <% else %>
+                  <%= SysArg.compart3(c.je2_2.round) %>
+                <% end %>
+              </td>
+              <td><%=SysArg.compart3(c.je3_2.round)%></td>
+              <td><%=SysArg.compart3(c.c_rmb_money_2.round)%></td>
+              <td><%=SysArg.compart3(c.c_redu_rmb_money_2.round)%></td>
+              <td><%=SysArg.compart3(c.c_re_rmb_money_2.round)%></td>
+              <td>
+                <%if c.c_c_2_out == 'Y'%>
+                  <% if c.c_c_2 > 0 %>
+                    <div style="color:red"><%= SysArg.compart3(c.c_c_2.round) %></div>
+                  <% else %>
+                    0
+                  <% end %>
+                <% else %>
+                  <%= SysArg.compart3(c.c_c_2.round) %>
+                <% end %>
+              </td>
+              <td><%= @tb_case.casereason %></td>
+              <td><!--申请人-->
+                <%ttpp=''%>
+                <%for tp in @tp1%>
+                  <%ttpp=ttpp+ "【"+ tp.partyname + "】"%>
+                <%end%>
+                <%=ttpp%>
+              </td>
+              <td><!--被申请人-->
+                <%ttpp=''%>
+                <%for tp in @tp2%>
+                  <%ttpp= ttpp + "【"+tp.partyname + "】"%>
+                <%end%>
+                <%=ttpp%>
+              </td>
+              <td nowrap="nowrap">
+                 <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",c.ca_rc])%>
+                <%if @arbit.empty?%>
+                  未组成
+                <%else%>
+                  <%for arb in @arbit%>
+                    <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)&nbsp;
+                  <%end%>
+                <%end%>
+              </td>
+              <td><%=c.ca_en%></td>
+              <td nowrap><%=c.ca_ed%></td>
+              <td nowrap><%= @ca_es[c.ca_es] %></td>
+              <td><!--申请人行业-->
+                <%ttpp=''%>
+                <%for tp in @tp1
+                  if @hy[tp.profession]
+                    ttpp=ttpp + @hy[tp.profession] + " "
+                  else
+                    ttpp=ttpp + tp.profession + " "
+                  end
+                end%>
+                <%=ttpp%>
+              </td>
+              <td><!--被申请人行业-->
+                <%ttpp=''%>
+                <%for tp in @tp2
+                  if @hy[tp.profession]
+                    ttpp=ttpp + @hy[tp.profession] + " "
+                  else
+                    ttpp=ttpp + tp.profession + " "
+                  end
+                end%>
+                <%=ttpp%>
+              </td>
+              <td><!--申请人地区-->
+                <%ttpp=[]%>
+                <%for tp in @tp1%>
+                  <%ttpp.push(@region[tp.area]) %>
+                <%end%>
+                <%=ttpp.join(",")%>
+              </td>
+              <td><!--被申请人地区-->
+                <%ttpp=[]%>
+                <%for tp in @tp2%>
+                  <% ttpp.push(@region[tp.area]) %>
+                <%end%>
+                <%=ttpp.join(",")%>
+              </td>
+              <td><!--申请人代理人-->
+                <%ttpp=''%>
+                <%for tp in @ag1%>
+                  <%ttpp=ttpp + tp.name + " "%>
+                <%end%>
+                <%=ttpp%>
+              </td>
+              <td><!--申请人代理人律所-->
+                <%ttpp=[]%>
+                <%for tp in @ag1%>
+                  <%ttpp.push(tp.company)%>
+                <%end%>
+                <%=ttpp.join(",")%>
+              </td>
+              <td><!--被申请人代理人-->
+                <%ttpp=''%>
+                <%for tp in @ag2%>
+                  <%ttpp=ttpp + tp.name + " "%>
+                <%end%>
+                <%=ttpp%>
+              </td>
+              <td><!--被申请人代理人律所-->
+                <%ttpp=[]%>
+                <%for tp in @ag2%>
+                  <%ttpp.push(tp.company)%>
+                <%end%>
+                <%=ttpp.join(",")%>
+              </td>
+              <td><!--选定的仲裁机构-->
+                <%= @agent[@tb_case.agent] %>
+              </td>
+              <td><!--适用规则项目-->
+                <%= @app_rules[@tb_case.app_rules] %>
+              </td>
+              <td><!--依据仲裁协议类型-->
+                <%= @aribitprotprog_num[@tb_case.aribitprotprog_num] %>
+              </td>
+              <td><!--仲裁程序-->
+                <%= @aribitprog_num[@tb_case.aribitprog_num] %>
+              </td>
+              <td><!--仲裁语言-->
+                <%= @language[@tb_case.language] %>
+              </td>
+              <td><!--主体类型-->
+                <%= @case_type1[@tb_case.case_type1] %>
+              </td>
+              <td><!--和解特别程序-->
+                <%= @tb_case.compromise %>
+              </td>
+              <td><!--总会案件分类编号-->
+                <%= @tb_case.t_casetype_num %>
+              </td>
+              <td><!--总会案件分类-->
+                <%= @t_casetype_num[@tb_case.t_casetype_num] %>
+              </td>
+              <td><!--案件类型大分类-->
+                <%= @casetype_num[@tb_case.casetype_num] %>
+              </td>
+              <td><!--案件类型小分类-->
+                <%= @casetype_num2[@tb_case.casetype_num2] %>
+              </td>
+              <td><!--争议类型-->
+                <%= @tb_case.dispute_type %>
+              </td>
+              <td><!--仲裁协议备注-->
+                <%= @tb_case.special %>
+              </td>
+              <td><!--仲裁条款达成日期-->
+                <%= @tb_case.acceptt %>
+              </td>
+              <td><!--仲裁协议类型-->
+                <%= @aribittype[@tb_case.aribittype] %>
+              </td>
+              <td><!--仲裁条款起草方-->
+                <%= @tb_case.terms_drafting_party %>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+      </table>
+    <%end%>
+  </body>
+</html>

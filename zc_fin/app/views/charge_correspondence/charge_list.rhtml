@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  
+  <head>
+    <title>未确认的收款信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">收款信息 共<%=@charge.size%>条</span></div>
+   <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>
+          选择
+        </th>
+        
+        <th nowrap>
+          <%if @order=="code desc"%>
+            <%=link_to '收款号↑',:action=>"charge_list",:order=>"code asc"%>
+          <%elsif @order=="code asc"%>
+            <%=link_to '收款号↓',:action=>"charge_list",:order=>"code desc"%>
+          <%else%>
+            <%=link_to '收款号',:action=>"charge_list",:order=>"code asc"%>
+          <%end%>
+        </th>
+        <!--
+        <th nowrap>
+          <%if @order=="ptyp desc"%>
+            <%=link_to '付款方↑',:action=>"charge_list",:order=>"ptyp asc"%>
+          <%elsif @order=="ptyp asc"%>
+            <%=link_to '付款方↓',:action=>"charge_list",:order=>"ptyp desc"%>
+          <%else%>
+            <%=link_to '付款方',:action=>"charge_list",:order=>"ptyp asc"%>
+          <%end%>
+        </th>
+        -->
+        <th nowrap>
+          <%if @order=="p desc"%>
+            <%=link_to '付款方名称↑',:action=>"charge_list",:order=>"p asc"%>
+          <%elsif @order=="ptyp asc"%>
+            <%=link_to '付款方名称↓',:action=>"charge_list",:order=>"p desc"%>
+          <%else%>
+            <%=link_to '付款方名称',:action=>"charge_list",:order=>"p asc"%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="mode desc"%>
+            <%=link_to '付款方式↑',:action=>"charge_list",:order=>"mode asc"%>
+          <%elsif @order=="ptyp asc"%>
+            <%=link_to '付款方式↓',:action=>"charge_list",:order=>"mode desc"%>
+          <%else%>
+            <%=link_to '付款方式',:action=>"charge_list",:order=>"mode asc"%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="c_dt desc"%>
+            <%=link_to '付款时间↑',:action=>"charge_list",:order=>"c_dt asc"%>
+          <%elsif @order=="ptyp asc"%>
+            <%=link_to '付款时间↓',:action=>"charge_list",:order=>"c_dt desc"%>
+          <%else%>
+            <%=link_to '付款时间',:action=>"charge_list",:order=>"c_dt asc"%>
+          <%end%>
+        </th>
+        <th nowrap>
+          币种
+        </th>
+        <th nowrap>
+          金额
+        </th>
+        <th nowrap>
+          汇率
+        </th>
+        <th nowrap>
+          实收费用(￥)
+        </th>
+        <th nowrap>
+          备注
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @charge%>
+      <tr class="row<%=i % 2%>">
+        <td>
+            <%=button_to "选择",:action=>"case_list",:charge_id=>c%>
+        </td>
+        
+        <td>
+          <%=c.code%>
+        </td>
+        <td>
+          <%=c.p%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0034' and data_val='#{c.mode}'").data_text%>
+        </td>
+        <td>
+          <%=c.c_dt%>
+        </td>
+        <td>
+          <%=Money.find_by_code(c.currency).name%>
+        </td>
+        <td>
+          <%=c.f_money%>
+        </td>
+        <td>
+          <%=c.rate%>
+        </td>
+        <td>
+          <%=c.rmb_money%>
+        </td>
+        <td>
+          <%=h c.remark%>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

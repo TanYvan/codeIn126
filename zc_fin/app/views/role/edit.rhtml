@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>角色信息修改</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">角色信息修改</span></div>
+    <br>
+    <br>
+    <div style="color:red" align="center">
+      <%=flash[:notice]%>
+    </div>
+    <%form_for :r ,:url=>{:action=>"update" ,:id=> @r.id} do |f|%>
+      <table class="list">
+        <tr >
+          <th> 编码:          </th>
+          <td><%= @r.code%>
+            <div style="color:red">
+              <%=error_message_on(:r,:code)%>
+          </div>
+          </td>
+        </tr>
+
+        <tr >
+          <th>名称:          </th>
+          <td>
+            <%=f.text_field :name,:style=>"width:20em"%>
+            <div style="color:red">
+              <%=error_message_on(:r,:name)%>
+          </div>          </td>
+        </tr>
+
+        <tr >
+          <th>注释:          </th>
+          <td>
+            <%=f.text_field :description ,:style=>"width:20em"%>
+            <div style="color:red">
+              <%=error_message_on(:r,:description)%>
+          </div>
+          </td>
+        </tr>
+        
+      </table>
+      <br>
+      <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+  </body>
+</html>

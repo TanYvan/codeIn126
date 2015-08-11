@@ -1,0 +1,8 @@
+<% for column in DataOldT.content_columns %>
+<p>
+  <b><%= column.human_name %>:</b> <%=h @data_old_t.send(column.name) %>
+</p>
+<% end %>
+
+<%= link_to 'Edit', :action => 'edit', :id => @data_old_t %> |
+<%= link_to 'Back', :action => 'list' %>

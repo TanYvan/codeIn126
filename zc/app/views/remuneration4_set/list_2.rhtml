@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>案件 裁决书和管辖决定等的起草和修改信息维护</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="title"><span class="cBlue">裁决书和管辖决定等的起草和修改信息维护</span></div>
+  <div align="center" class="cDGray">
+    裁决书和管辖决定等的起草和修改信息维护
+    <%if @remun.empty?%>
+    <%else%>
+      <%if @case.remun_state!="Y"%>
+         <%=link_to  "批量修改",{:action=>"edit_all_2"}%>
+      <%end%>
+    <%end%>
+    <div style="color:red"><%=flash[:notice]%></div>
+  </div>
+  <table cellspacing="1" class="adminlist">
+  <thead>
+    <tr >
+      <th nowrap>
+        事项
+      </th>
+      <th nowrap>
+        人员类型
+      </th>
+      <th nowrap>
+        人员
+      </th>
+      <th nowrap>
+        金额
+      </th>
+      <th nowrap>
+        类别和档次
+      </th>
+      <th nowrap>
+        备注
+      </th>
+      <th nowrap>
+        修改
+      </th>
+      <th nowrap>
+        删除
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  <%i=0%>
+  <%for p in @remun%>
+    <tr class="row<%=i % 2%>">
+        <td>
+      <%=TbDictionary.find(:first,:conditions=>"typ_code='0039' and data_val='#{p.typ}'").data_text%>
+      </td>
+      <td>
+        <%=@p_typ[p.p_typ]%>
+      </td>
+      <td>
+        <%if p.p_typ=='0001'%>
+            <%=TbArbitman.find_by_code(p.p).name%>
+        <%else%>
+            <%=User.find_by_code(p.p).name%>
+        <%end%>
+      </td>
+      <td>
+        <%=p.rmb%>
+      </td>
+      <td>
+        <%=p.grade%>
+      </td>
+      <td>
+        <%=p.remark%>
+      </td>
+      <td>
+        <%if TbBonusPenalty.find(:first,:conditions=>"recevice_code='#{session[:recevice_code_2]}' and typ='#{p.p_typ}' and p='#{p.p}' and used='Y' and extend_code=''")!=nil %>
+          <%if @case.remun_state!="Y"%>
+            <%=link_to "修改",:action=>"edit_2",:id=>p%>
+          <%end%>
+        <%end%>
+      </td>
+      <td>
+        <%if TbBonusPenalty.find(:first,:conditions=>"recevice_code='#{session[:recevice_code_2]}' and typ='#{p.p_typ}' and p='#{p.p}' and used='Y' and extend_code=''")!=nil %>
+          <%if @case.remun_state!="Y"%>
+            <%=button_to "删除",{:action=>"delete_2",:id=>p},:confirm=>"您确认要删除吗？"%>
+          <%end%>
+        <%end%>
+      </td>
+    </tr>
+    <%i=i+1%>
+  <%end%>
+  </tbody>
+  </table>
+  <%if flash[:notice]!=nil%>
+    <script language="javascript">
+     parent.bonus_penalty.location.href=parent.bonus_penalty.location.href;
+     parent.bonus_penalty.location.reload();  
+    </script>
+  <%end%>
+</body>
+</html>

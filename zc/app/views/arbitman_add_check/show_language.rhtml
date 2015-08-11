@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员语种</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/tab.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="tabs" align="center">
+      <ul>
+        <li><a href="/arbitman_add_check/show_base?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>仲裁员基本信息</span></a></li>
+        <li><a href="/arbitman_add_check/show_educate?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>教育情况</span></a></li>
+        <li><a href="/arbitman_add_check/show_industry?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>行业</span></a></li>
+        <li><a href="/arbitman_add_check/show_resume?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>简历</span></a></li>
+        <li><a href="/arbitman_add_check/show_language?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" class="selected"><span>语种</span></a></li>
+        <li><a href="/arbitman_add_check/show_att?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>个人附件</span></a></li>
+      </ul>
+    </div>
+    <caption>
+      <%unless params[:show] == "1"%>
+        <%= link_to "返回" ,:action => "list"%>
+      <%end%>
+      &nbsp
+    </caption>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>语种</th>
+        <th nowrap>语言序号</th>
+        <th nowrap>听说能力</th>
+        <th nowrap>读写能力</th>
+        <th nowrap>备注</th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @res.status == "1" && @res.dataset.size != "0"%>
+            <%for r in @res.dataset.rows %>
+                <tr class="row<%=i % 2%>">
+                  <td>
+                      <%@a= TbDictionary.find_by_typ_code_and_data_val("9008", r.get_data("language")) %>
+                      <%if @a!=nil%>
+                        <%=@a.data_text%>
+                      <%end%>
+                   </td>
+                  <td><%=h r.get_data("lannum") %> </td>
+                  <td>
+                      <%@a= TbDictionary.find_by_typ_code_and_data_val("9009", r.get_data("ability")) %>
+                      <%if @a!=nil%>
+                        <%=@a.data_text%>
+                      <%end%>
+                  </td>
+                  <td>
+                      <%@a= TbDictionary.find_by_typ_code_and_data_val("9009", r.get_data("literacy")) %>
+                      <%if @a!=nil%>
+                        <%=@a.data_text%>
+                      <%end%>
+                  </td>
+                  <td><%=h r.get_data("remark") %> </td>
+                </tr>
+                <%i=i+1%>
+            <%end%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加自定义提醒</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%=javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <br>
+    <div class="cDGray" align="center">
+      添加自定义提醒(带<i>*</i>为必填项) <%=link_to "返回",:action=>"will_list"%>
+
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <br>
+    <%form_for :remind ,:url=>{:action=>"will_update",:id=>@remind.id}  do |f|%>
+      <table class="list">
+        <tr>
+          <th nowrap>
+            提醒日期:
+          </th>
+          <td>
+            <%=f.text_field(:dt1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('remind_dt1'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            <i>*</i>提醒内容:
+          </th>
+          <td>
+            <%=@remind.contents%>
+          </td>
+        </tr>
+      </table>
+      <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+  </body>
+</html>

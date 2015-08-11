@@ -1,0 +1,730 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>办理案件选择</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">办理案件选择</span></div> 
+    <div style="color:red"><%=flash[:notice]%></div>
+    <div align="left">
+      &nbsp;&nbsp;办理案件：<%= @case_2.length + @case_3.length + @case_4.length + @case_5.length%>件待处理案件；在办案件<%=  @case_2.length + @case_3.length + @case_4.length %>件，其中<%=@case_2.length%>件属于组庭前阶段，<%=@case_3.length%>件属于审理阶段，<%=@case_4.length%>件属于待结阶段；<%=@case_5.length%>件属于已结未终审阶段。
+    </div>
+    <br/>
+    <div align="center">
+      组庭前阶段案件<%=@case_2.length%>件
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            立案日期
+          </th>
+          <th nowrap>
+            立案号
+          </th>
+          <th nowrap>
+            仲裁程序
+          </th>
+          <th nowrap>
+            选择
+          </th>
+          <th nowrap>
+            发文
+          </th>
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            案件阶段
+          </th>
+          <th nowrap>
+            审限或最终延期日期
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @case_2%>
+          <%da=PubTool.getd(c.recevice_code)%>
+          <%if da!=""%>
+            <tr class="<%if c.aribitprog_num=='0001' or c.aribitprog_num=='0003' or c.aribitprog_num=='0005' or c.aribitprog_num=='0007'%>
+              <%if da>30 and da<=60%>
+                    row5
+                  <%elsif da>15 and da<=30%>
+                    row3
+                  <%elsif da<=15%>
+                    row4
+                  <%#else%>
+                    <%#*row0%>
+                  <%end%>
+                <%else%>
+                  <%if da>15 and da<=30%>
+                    row5
+                  <%elsif da>7 and da<=15%>
+                    row3
+                  <%elsif da<=7%>
+                    row4
+                  <%#else%>
+                    <%#*row0%>
+                  <%end%>
+                <%end%>
+                ">
+              <td>
+                <%=c.nowdate%>
+              </td>
+              <td>
+                <%=c.case_code%>
+              </td>
+              <td>
+                <%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text%>
+              </td>
+              <td>
+                <%=button_to "选择",:controller=>"case_p",:action=>"select",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+              </td>
+              <td>
+                <%=link_to  "发文" ,:action=>"case_doc",:recevice_code=>c.recevice_code%>
+              </td>
+              <td>
+                <%=link_to "修改",:id=>c.id,:controller=>"case_p",:action=>"select",:contr_r=>'casebase',:act_r=>'edit'%>
+              </td>
+              <td>
+                <%s=TbCase.find_by_recevice_code(c.recevice_code).stoped%>
+                <%=@state[c.state]%><%if s==1%>(中止)<%end%>
+              </td>
+              <td nowrap>
+                <%#case_dely=TbCasedelay.find(:first,:conditions=>["used='Y' and recevice_code=?",c.recevice_code],:order=>"id desc")%>
+                <%#if case_dely!=nil%>
+                  <%#=case_dely.delayDate%>
+                <%#else%>
+                  <%=c.finally_limit_dat%>
+                <%#end%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </td>
+            </tr>
+
+
+          <%else%>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=c.nowdate%>
+              </td>
+              <td>
+                <%=c.case_code%>
+              </td>
+              <td>
+                <%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text%>
+              </td>
+              <td>
+                <%=button_to "选择",:controller=>"case_p",:action=>"select",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+              </td>
+              <td>
+                <%=link_to  "发文" ,:action=>"case_doc",:recevice_code=>c.recevice_code%>
+              </td>
+              <td>
+                <%=link_to "修改",:id=>c.id,:controller=>"case_p",:action=>"select",:contr_r=>'casebase',:act_r=>'edit'%>
+              </td>
+              <td>
+                <%s=TbCase.find_by_recevice_code(c.recevice_code).stoped%>
+                <%=@state[c.state]%><%if s==1%>(中止)<%end%>
+              </td>
+              <td nowrap>
+                <%#case_dely=TbCasedelay.find(:first,:conditions=>["used='Y' and recevice_code=?",c.recevice_code],:order=>"id desc")%>
+                <%#if case_dely!=nil%>
+                  <%#=case_dely.delayDate%>
+                <%#else%>
+                  <%=c.finally_limit_dat%>
+                <%#end%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </td>
+            </tr>
+          <%end%>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+      <%if @case_2.length!=0%>
+        <tfoot>
+          <tr>
+            <td colspan="10" align="right">
+              <%= link_to '上一页', { :page => @case_pages_2.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]} if @case_pages_2.current.previous %>
+              <%=pagination_links( @case_pages_2,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  }})%>
+              <%= link_to '下一页', { :page => @case_pages_2.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  } if @case_pages_2.current.next %>
+
+              <%if @case_pages_2.current.previous or @case_pages_2.current.next%>
+                <form action="/case_p/list" method="get" onsubmit="return page_check('page_lines','page');">
+                  每页<input type=text id='page_lines' name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                  <input type=text id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages_2.current.number %> />
+                  <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                  页
+                  <input type=hidden name='order' value="<%=@order%>" />
+                  <input type=hidden name='contr_r' value="<%=params[:contr_r]%>" />
+                  <input type=hidden name='act_r' value="<%=params[:act_r]%>" />
+                  <input type='submit' value='确定' />
+                </form>
+              <%end%>
+            </td>
+          </tr>
+        </tfoot>
+      <%end%>
+    </table>
+
+    <br/>
+    <div align="center">
+      审理阶段案件<%=@case_3.length%>件
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            立案日期
+          </th>
+          <th nowrap>
+            立案号
+          </th>
+          <th nowrap>
+            仲裁程序
+          </th>
+          <th nowrap>
+            选择
+          </th>
+          <th nowrap>
+            发文
+          </th>
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            案件阶段
+          </th>
+          <th nowrap>
+            审限或最终延期日期
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @case_3%>
+          <%da=PubTool.getd(c.recevice_code)%>
+          <%if da!=""%>
+            <tr class="<%if c.aribitprog_num=='0001' or c.aribitprog_num=='0003' or c.aribitprog_num=='0005' or c.aribitprog_num=='0007'%>
+              <%if da>30 and da<=60%>
+                    row5
+                  <%elsif da>15 and da<=30%>
+                    row3
+                  <%elsif da<=15%>
+                    row4
+                  <%#else%>
+                    <%#*row0%>
+                  <%end%>
+                <%else%>
+                  <%if da>15 and da<=30%>
+                    row5
+                  <%elsif da>7 and da<=15%>
+                    row3
+                  <%elsif da<=7%>
+                    row4
+                  <%#else%>
+                    <%#*row0%>
+                  <%end%>
+                <%end%>
+                ">
+                <td nowrap>
+                  <%=c.nowdate%>
+                </td>
+                <td nowrap>
+                  <%=c.case_code%>
+                </td>
+                <td>
+                  <%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text%>
+                </td>
+                <td>
+                  <%=button_to "选择",:controller=>"case_p",:action=>"select",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                </td>
+                <td>
+                  <%=link_to  "发文" ,:action=>"case_doc",:recevice_code=>c.recevice_code%>
+                </td>
+                <td>
+                  <%=link_to "修改",:id=>c.id,:controller=>"case_p",:action=>"select",:contr_r=>'casebase',:act_r=>'edit'%>
+                </td>
+                <td>
+                  <%s=TbCase.find_by_recevice_code(c.recevice_code).stoped%>
+                  <%=@state[c.state]%><%if s==1%>(中止)<%end%>
+                </td>
+                <td nowrap>
+                  <%#case_dely=TbCasedelay.find(:first,:conditions=>["used='Y' and recevice_code=?",c.recevice_code],:order=>"id desc")%>
+                  <%#if case_dely!=nil%>
+                    <%#=case_dely.delayDate%>
+                  <%#else%>
+                    <%=c.finally_limit_dat%>
+                  <%#end%>
+                </td>
+                <td>
+                  <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                  <%ttpp=''%>
+                  <%for tp in @tp%>
+                    <%ttpp=ttpp + tp.partyname + " <br>" %>
+                  <%end%>
+                  <%if ttpp!=''%>
+                    <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                  <%end%>
+                  <%=ttpp%>
+                </td>
+                <td>
+                  <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                  <%ttpp=''%>
+                  <%for tp in @tp%>
+                    <%ttpp=ttpp + tp.partyname + " <br>" %>
+                  <%end%>
+                  <%if ttpp!=''%>
+                    <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                  <%end%>
+                  <%=ttpp%>
+                </td>
+              </tr>
+            <%else%>
+              <tr class="row<%=i % 2%>">
+                <td nowrap>
+                  <%=c.nowdate%>
+                </td>
+                <td nowrap>
+                  <%=c.case_code%>
+                </td>
+                <td>
+                  <%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text%>
+                </td>
+                <td>
+                  <%=button_to "选择",:controller=>"case_p",:action=>"select",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                </td>
+                <td>
+                  <%=link_to  "发文" ,:action=>"case_doc",:recevice_code=>c.recevice_code%>
+                </td>
+                <td>
+                  <%=link_to "修改",:id=>c.id,:controller=>"case_p",:action=>"select",:contr_r=>'casebase',:act_r=>'edit'%>
+                </td>
+                <td>
+                  <%s=TbCase.find_by_recevice_code(c.recevice_code).stoped%>
+                  <%=@state[c.state]%><%if s==1%>(中止)<%end%>
+                </td>
+                <td nowrap>
+                  <%#case_dely=TbCasedelay.find(:first,:conditions=>["used='Y' and recevice_code=?",c.recevice_code],:order=>"id desc")%>
+                  <%#if case_dely!=nil%>
+                    <%#=case_dely.delayDate%>
+                  <%#else%>
+                    <%=c.finally_limit_dat%>
+                  <%#end%>
+                </td>
+                <td>
+                  <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                  <%ttpp=''%>
+                  <%for tp in @tp%>
+                    <%ttpp=ttpp + tp.partyname + " <br>" %>
+                  <%end%>
+                  <%if ttpp!=''%>
+                    <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                  <%end%>
+                  <%=ttpp%>
+                </td>
+                <td>
+                  <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                  <%ttpp=''%>
+                  <%for tp in @tp%>
+                    <%ttpp=ttpp + tp.partyname + " <br>" %>
+                  <%end%>
+                  <%if ttpp!=''%>
+                    <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                  <%end%>
+                  <%=ttpp%>
+                </td>
+              </tr>
+            <%end%>
+            <%i=i+1%>
+          <%end%>
+      </tbody>
+      <%if @case_3.length!=0%>
+        <tfoot>
+          <tr>
+            <td colspan="7" align="right">
+              <%= link_to '上一页', { :page => @case_pages_3.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]} if @case_pages_3.current.previous %>
+              <%=pagination_links( @case_pages_3,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  }})%>
+              <%= link_to '下一页', { :page => @case_pages_3.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  } if @case_pages_3.current.next %>
+
+              <%if @case_pages_3.current.previous or @case_pages_3.current.next%>
+                <form action="/case_p/list" method="get" onsubmit="return page_check('page_lines','page');">
+                  每页<input type=text id='page_lines' name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                  <input type=text id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages_3.current.number %> />
+                  <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                  页
+                  <input type=hidden name='order' value="<%=@order%>" />
+                  <input type=hidden name='contr_r' value="<%=params[:contr_r]%>" />
+                  <input type=hidden name='act_r' value="<%=params[:act_r]%>" />
+                  <input type='submit' value='确定' />
+                </form>
+              <%end%>
+            </td>
+          </tr>
+        </tfoot>
+      <%end%>
+    </table>
+    <br/>
+    <div align="center">
+      待结阶段案件<%=@case_4.length%>件
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            立案日期
+          </th>
+          <th nowrap>
+            立案号
+          </th>
+          <th nowrap>
+            仲裁程序
+          </th>
+          <th nowrap>
+            选择
+          </th>
+          <th nowrap>
+            发文
+          </th>
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            案件阶段
+          </th>
+          <th nowrap>
+            审限或最终延期日期
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @case_4%>
+          <%da=PubTool.getd(c.recevice_code)%>
+          <%if da!=""%>
+            <tr class="<%if c.aribitprog_num=='0001' or c.aribitprog_num=='0003' or c.aribitprog_num=='0005' or c.aribitprog_num=='0007'%>
+              <%if da>30 and da<=60%>
+                    row5
+                  <%elsif da>15 and da<=30%>
+                    row3
+                  <%elsif da<=15%>
+                    row4
+                  <%#else%>
+                    <%#*row0%>
+                  <%end%>
+                <%else%>
+                  <%if da>15 and da<=30%>
+                    row5
+                  <%elsif da>7 and da<=15%>
+                    row3
+                  <%elsif da<=7%>
+                    row4
+                  <%#else%>
+                    <%#*row0%>
+                  <%end%>
+                <%end%>
+                ">
+              <td nowrap>
+                <%=c.nowdate%>
+              </td>
+              <td nowrap>
+                <%=c.case_code%>
+              </td>
+              <td>
+                <%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text%>
+              </td>
+              <td>
+                <%=button_to "选择",:controller=>"case_p",:action=>"select",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+              </td>
+              <td>
+                <%=link_to  "发文" ,:action=>"case_doc",:recevice_code=>c.recevice_code%>
+              </td>
+              <td>
+                <%=link_to "修改",:id=>c.id,:controller=>"case_p",:action=>"select",:contr_r=>'casebase',:act_r=>'edit'%>
+              </td>
+              <td>
+    <%#=@state[c.state]%>
+                校核
+              </td>
+              <td nowrap>
+                <%#case_dely=TbCasedelay.find(:first,:conditions=>["used='Y' and recevice_code=?",c.recevice_code],:order=>"id desc")%>
+                <%#if case_dely!=nil%>
+                  <%#=case_dely.delayDate%>
+                <%#else%>
+                  <%=c.finally_limit_dat%>
+                <%#end%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </td>
+            </tr>
+          <%else%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap>
+                <%=c.nowdate%>
+              </td>
+              <td nowrap>
+                <%=c.case_code%>
+              </td>
+              <td>
+                <%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text%>
+              </td>
+              <td>
+                <%=button_to "选择",:controller=>"case_p",:action=>"select",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+              </td>
+              <td>
+                <%=link_to  "发文" ,:action=>"case_doc",:recevice_code=>c.recevice_code%>
+              </td>
+              <td>
+                <%=link_to "修改",:id=>c.id,:controller=>"case_p",:action=>"select",:contr_r=>'casebase',:act_r=>'edit'%>
+              </td>
+              <td>
+    <%#=@state[c.state]%>
+                校核
+              </td>
+              <td nowrap>
+                <%#case_dely=TbCasedelay.find(:first,:conditions=>["used='Y' and recevice_code=?",c.recevice_code],:order=>"id desc")%>
+                <%#if case_dely!=nil%>
+                  <%#=case_dely.delayDate%>
+                <%#else%>
+                  <%=c.finally_limit_dat%>
+                <%#end%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </td>
+            </tr>
+          <%end%>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+      <%if @case_4.length!=0%>
+        <tfoot>
+          <tr>
+            <td colspan="7" align="right">
+              <%= link_to '上一页', { :page => @case_pages_4.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]} if @case_pages_4.current.previous %>
+              <%=pagination_links( @case_pages_4,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  }})%>
+              <%= link_to '下一页', { :page => @case_pages_4.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  } if @case_pages_4.current.next %>
+
+              <%if @case_pages_4.current.previous or @case_pages_4.current.next%>
+                <form action="/case_p/list" method="get" onsubmit="return page_check('page_lines','page');">
+                  每页<input type=text id='page_lines' name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                  <input type=text id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages_4.current.number %> />
+                  <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                  页
+                  <input type=hidden name='order' value="<%=@order%>" />
+                  <input type=hidden name='contr_r' value="<%=params[:contr_r]%>" />
+                  <input type=hidden name='act_r' value="<%=params[:act_r]%>" />
+                  <input type='submit' value='确定' />
+                </form>
+              <%end%>
+            </td>
+          </tr>
+        </tfoot>
+      <%end%>
+    </table>
+    <div align="left">
+    &nbsp;&nbsp;变色说明：对于普通程序，2个月内到期为绿色，1个月内到期为黄色，半个月到期为红色。对于简易程序，一个月到期为绿色，半个月到期为黄色，一周到期为红色。
+    </div>
+    <br/>
+    <div align="center">已结未终审阶段案件<%=@case_5.length%>件</div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            立案日期
+          </th>
+          <th nowrap>
+            立案号
+          </th>
+          <th nowrap>
+            仲裁程序
+          </th>
+          <th nowrap>
+            选择
+          </th>
+          <th nowrap>
+            发文
+          </th>
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            案件阶段
+          </th>
+          <th nowrap>
+            结案号
+          </th>
+          <th nowrap>
+            结案日期
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @case_5%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap>
+              <%=h c.nowdate%>
+            </td>
+            <td nowrap>
+              <%=c.case_code%>
+            </td>
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text%>
+            </td>
+            <td>
+              <%=button_to "选择",:controller=>"case_p",:action=>"select",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+            </td>
+            <td>
+              <%=link_to  "发文" ,:action=>"case_doc",:recevice_code=>c.recevice_code%>
+            </td>
+            <td>
+              <%=link_to "修改",:id=>c.id,:controller=>"case_p",:action=>"select",:contr_r=>'casebase',:act_r=>'edit'%>
+            </td>
+            <td>
+              <%s=TbCase.find_by_recevice_code(c.recevice_code).stoped%>
+              <%=@state[c.state]%><%if s==1%>(中止)<%end%>
+            </td>
+            <td>
+              <%=c.end_code%>
+            </td>
+            <%@endDate=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",c.recevice_code],:order=>"id desc")%>
+            <td nowrap>
+              <%if @endDate!=nil%><%=@endDate.decideDate%><%end%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

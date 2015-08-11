@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>仲裁员报酬——基本报酬</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  <% if session[:recevice_code_2] == nil %>
+    <script type="text/javascript">
+      window.open("/case_p/list_2?contr_r=remuneration11_set&act_r=list","mainFrame")
+    </script>
+  <% end %>
+</head>
+<body>
+  <div class="title"><span class="cBlue">仲裁员报酬——基本报酬</span></div><br/>
+    <% if !@case_remun_state and !@paid %>
+      <% if @remun.size != 0 %>
+        <div><%=button_to "删除仲裁员基本报酬", :action => "delete_3", :yyy => params[:yyy], :zcf2 => params[:zcf2] %></div>
+      <% else %>
+        <div><%=button_to "录入仲裁员基本报酬", :action => "update_3", :yyy => params[:yyy], :zcf2 => params[:zcf2] %></div>
+      <% end %>
+    <% end %>
+    <br/>
+    <div style="color: red"><%= flash[:notice] %></div>
+    <table cellspacing="1" class="adminlist">
+      <% i = 0 %>
+      <% if @remun.size != 0 %>
+        <thead>
+          <tr>
+            <th nowrap>仲裁员类型</th>
+            <th nowrap>仲裁员</th>
+            <th nowrap>金额（￥）</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% for r in @remun %>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%= TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{r.arbitman_type}'").data_text%>
+            </td>
+            <td>
+              <%= TbArbitman.find_by_code(r.p_code).name %>
+            </td>
+            <td>
+              <%= SysArg.compart2(r.rmb.round) %>
+            </td>
+          </tr>
+          <% i = i + 1 %>
+        <%end%>
+        </tbody>
+      <%end%>
+    </table>
+  </body>
+</html>

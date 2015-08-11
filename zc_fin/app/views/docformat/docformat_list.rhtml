@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>格式函管理</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <table><tr><td>
+          <div class="title"><span class="cBlue">格式函管理</span></div>
+          <!--
+          <%form_tag :url=>{:action=>"docformat_list"} do %>
+            格式函拼音缩写:<%=text_field_tag(:spell,@spell)%>
+            <%=submit_tag "查询" %>
+          <%end%>
+          -->
+          <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+          <div align="left"><%if @hant_search_1_text!=nil%>查询条件：<%=@hant_search_1_text%><%end%></div>
+          <div align="center"><%=link_to  "创建", :action=>"docformat_new"%>
+          <div style="color:red"><%=flash[:notice]%></div> </div>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th nowrap="nowrap">
+                  格式函<br>
+                  编码
+                </th>
+                <th nowrap="nowrap">
+                  格式函名称
+                </th>
+                <th nowrap="nowrap">
+                  拼音缩写
+                </th>
+                <th nowrap="nowrap">
+                  仲裁程序
+                </th>
+                <th nowrap="nowrap">
+                  选项名称
+                </th>
+                <th nowrap="nowrap">
+                  是否需选项<br>
+                  选项管理
+                </th>
+                <th nowrap="nowrap">
+                  格式函路径
+                </th>
+                <th nowrap="nowrap">
+                  函数名称
+                </th>
+                <!--th nowrap="nowrap">
+            检测函数名称
+          </th>
+          <th nowrap="nowrap">
+            是否使用
+          </th-->
+                <th nowrap="nowrap">
+                  是否加内<br>
+                  部函抬头
+                </th>
+                <th nowrap="nowrap">
+                  是否加<br>
+                  发文编号
+                </th>
+                <th nowrap="nowrap">
+                  是否需要审批
+                </th>
+                <th nowrap="nowrap">
+                  审批人管理
+                </th>
+                <th nowrap="nowrap">
+                  是否生成外部函
+                </th>
+                <th nowrap="nowrap">
+                  格式函修改
+                </th>
+                <th nowrap="nowrap">
+                  编辑
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for r in @docformat%>
+                <tr class="row<%=i % 2%>">
+                  <td >
+                    <%=h r.code%>
+                  </td>
+                  <td >
+                    <div align="left"><%=h r.name%></div>
+                  </td>
+                  <td >
+                    <div align="left"><%=h r.spell%></div>
+                  </td>
+                  <td >
+                    <%@a=TbDictionary.find(:first,:conditions=>"typ_code='0041' and data_val='#{r.aribitprog_num}'")%>
+                    <%if @a!=nil%>
+                      <%=@a.data_text%>
+                    <%end%>
+                  </td>
+                  <td >
+                    <%=h r.obj_text%>
+                  </td>
+                  <td>
+                    <%@a=r.obj%>
+                    <%if @a==0%>
+                      <%=@bbjj[r.obj]%>
+                    <%else%>
+                      <%=link_to "选项管理",:action=>"manage_list",:code=>r.code,:search_condit=>@search_condit,:order=>@order,:page=>@docformat_pages.current.number,:page_lines=>@page_lines%>
+                    <%end%>
+                  </td>
+                  <td>
+                    <%=h r.path%>
+                  </td>
+                  <td>
+                    <%=h r.sub_code%>
+                  </td>
+                  <!--td>
+                  <#%=h r.check_sub_code%>
+                </td>
+                <td>
+                  <#%=h @uuu[r.used]%>
+                </td-->
+                  <td>
+                    <%=h @head_1[r.head_1]%>
+                  </td>
+                  <td>
+                    <%=h @send_code[r.send_code]%>
+                  </td>
+                  <td>
+                    <%=h @approval[r.approval]%>
+                  </td>
+                  <td >
+                    <%=link_to "审批人管理",{:action=>'approval_list',:format_code=>r.code,:search_condit=>@search_condit,:order=>@order,:page=>@docformat_pages.current.number,:page_lines=>@page_lines} %>
+                  </td>
+                  <td>
+                    <%=h @f_doc[r.f_doc]%>
+                  </td>
+                  <td>
+                    <%if r.path!=''%>
+                      <%if SysArg.find_by_code('8020').val=='2' %>
+                        <input type="button" value="修改" onclick="window.open('/docformat/vie?id=<%=r.id%>','newwindow','fullscreen=yes')"/>
+                      <%else%>
+                        <input type="button" value="修改" onclick="window.open('/docformat/vie_word?id=<%=r.id%>')"/>
+                      <%end%>
+                    <%end%>
+                  </td>
+                  <td >
+                    <%=link_to "编辑",{:action=>'docformat_edit',:id=>r,:search_condit=>@search_condit,:order=>@order,:page=>@docformat_pages.current.number,:page_lines=>@page_lines} %>
+                  </td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="10">
+                  <%= link_to '上一页', { :page => @docformat_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @docformat_pages.current.previous %>
+                  <%=pagination_links( @docformat_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+                  <%= link_to '下一页', { :page => @docformat_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @docformat_pages.current.next %>
+
+                  <%if @docformat_pages.current.previous or @docformat_pages.current.next%>
+                    <form action="/docformat/docformat_list" method="get" >
+                      每页<input type=text name='page_lines' size=5 class="SingleLineInput"  value=<%=@page_lines%> >条记录,第
+                      <input type=text name='page' size=5 class="SingleLineInput" value=<%= @docformat_pages.current.number %> />
+                      <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                      页
+                      <input type=hidden name='order' value="<%=@order%>" />
+                      <input type='submit' value='跳转' />
+                    </form>
+                  <%end%>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+    </td></tr></table>
+  </body>
+</html>

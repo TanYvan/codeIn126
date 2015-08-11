@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>发文审批历史记录</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">发文审批历史记录</span></div>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            文件查看
+          </th>
+          <th nowrap>
+            函件类型
+          </th>
+          <th nowrap>
+            <%if @order=="recevice_code desc"%>
+              <%=link_to '咨询流水号↑',:action=>"list",:order=>"recevice_code asc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="recevice_code asc"%>
+              <%=link_to '咨询流水号↓',:action=>"list",:order=>"recevice_code desc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '咨询流水号',:action=>"list",:order=>"recevice_code asc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="file_code desc"%>
+              <%=link_to '文件流水号↑',:action=>"list",:order=>"file_code asc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="file_code asc"%>
+              <%=link_to '文件流水号↓',:action=>"list",:order=>"file_code desc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '文件流水号',:action=>"list",:order=>"file_code asc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="send_code desc"%>
+              <%=link_to '发文编号↑',:action=>"list",:order=>"send_code asc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="send_code asc"%>
+              <%=link_to '发文编号↓',:action=>"list",:order=>"send_code desc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '发文编号',:action=>"list",:order=>"send_code asc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            报批人
+          </th>
+          <th nowrap>
+            报批时间
+          </th>
+          <th nowrap>
+            <%if @order=="a_d desc"%>
+              <%=link_to '审批时限↑',:action=>"list",:order=>"a_d asc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="a_d asc"%>
+              <%=link_to '审批时限↓',:action=>"list",:order=>"a_d desc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '审批时限',:action=>"list",:order=>"a_d asc",:page=>@approval_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            审批状态
+          </th>
+          <th nowrap>
+            操作
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @approval%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%if SysArg.find_by_code('8020').val=='2' %>
+                <input type="button" value="查看" onclick="window.open('/doc_approval/vie?id=<%=c.id%>','newwindow','fullscreen=yes')"/>
+              <%else%>
+                <input type="button" value="查看" onclick="window.open('/doc_approval/vie_word?id=<%=c.id%>')"/>
+              <%end%>
+            </td>
+            <td>
+              <%@doc_id=c.doc_id  %>
+              <%if @doc_id!=nil%>
+                <%@typ_code=TbDoc.find(:first,:conditions=>["used='Y' and id=?",@doc_id])%>
+                <%if @typ_code!=nil%>
+                  <%@typ_code=@typ_code.typ_code%>
+                  <%@name=TbDocFormat.find(:first,:conditions=>["used='Y' and code=?",@typ_code])%>
+                  <%if @name!=nil%>
+                    <%=@name.name%>
+                  <%end%>
+                <%end%>
+              <%end%>
+            </td>
+            <td>
+              <%=h c.recevice_code%>
+            </td>
+            <td>
+              <%=h c.file_code%>
+            </td>
+            <td>
+              <%=h c.send_code%>
+            </td>
+            <td>
+              <%@a=TbDoc.find_by_file_code(c.file_code)%>
+              <%if @a!=nil%>
+                <%@a1=@a.call_u%>
+                <%if @a1!=nil%>
+                  <%@a2=User.find_by_code(@a1)%>
+                  <%if @a2!=nil%>
+                    <%=@a2.name%>
+                  <%end%>
+                <%end%>
+              <%end%>
+            </td>
+            <td>
+              <%@a=TbDoc.find_by_file_code(c.file_code)%>
+              <%if @a!=nil%>
+                <%=@a.call_t.to_s(:db)%>
+              <%end%>
+            </td>
+            <td>
+              <%=c.a_d.to_s(:db)%>
+            </td>
+            <td>
+              <div align="left">
+                <%=@state[c.state]%>
+                <%if c.state!=0%>
+                  <br/>
+                  时间:<%=c.t.to_s(:db)%>
+                  <%if c.reasons!=nil%>
+                    <br/>
+                    理由:<%=c.reasons%>
+                  <%end%>
+                <%end%>
+              </div>
+            </td>
+            <td>
+              <%if c.doc_id!=nil and c.id!=nil%>
+                <%@doc=TbDoc.find(:first,:conditions=>["used='Y' and id=?",c.doc_id])%>
+                <%if @doc!=nil%>
+                  <%if @doc.cf_u==nil and @doc.send_u==nil%>
+                    <div align="left">
+                      <%=link_to "批准",:action=>"edit",:id=>c.id,:state=>1,:order=>@order,:page=>@page,:search_condit=>@search_condit,:page_lines=>@page_lines%><br>
+                      <%=link_to "不批准",:action=>"edit",:id=>c.id,:state=>2,:order=>@order,:page=>@page,:search_condit=>@search_condit,:page_lines=>@page_lines%><br>
+                      <%=link_to "需要修改",:action=>"edit",:id=>c.id,:state=>3,:order=>@order,:page=>@page,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+                    </div>
+                  <%end%>
+                <%end%>
+              <%end%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <td colspan="8">
+            <%= link_to '上一页', { :page => @approval_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @approval_pages.current.previous %>
+            <%=pagination_links( @approval_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @approval_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @approval_pages.current.next %>
+
+            <%if @approval_pages.current.previous or @approval_pages.current.next%>
+              <form action="/doc_approval/list" method="get" >
+                每页<input type=text name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%> />条记录,第
+                <input type=text name='page' size=5 class="SingleLineInput" value=<%= @approval_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

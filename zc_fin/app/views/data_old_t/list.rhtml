@@ -1,0 +1,577 @@
+<link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+<script src="/javascripts/check.js"></script>
+<script language="JavaScript">
+  function checkall() {
+    var a='';
+    if (document.getElementById("cheall").value=='t' )
+      {
+        document.getElementById("cheall").value='f';
+      }
+    else
+      {
+        a='true';
+        document.getElementById("cheall").value='t';
+      }
+    var chec = document.getElementsByName("che");
+    for(i=0; i<chec.length; i++)
+      { 
+        chec[i].checked = a;
+      }
+  }
+        
+  function getcondi()
+  {
+  var chec = document.getElementsByName("che");
+  var a='';
+  for(i=0; i<chec.length; i++)
+    {
+      if (chec[i].checked == true)
+        a=a+chec[i].value+',';
+    }
+    aa=a.substr(0, a.length -1 )
+    var c = document.getElementById("condi");
+    c.value=aa;
+  }
+</script>
+<div class="title"><span class="cBlue">历史数据列表</span></div>
+<table align="center">
+  <tr>
+    <td>
+      <%form_tag({:action=>'insert_do',:page => @data_old_t_pages.current.previous ,:page_lines=>@page_lines },{:onsubmit=>'getcondi()'}) do %>
+            <%=hidden_field_tag :condi ,''%>
+            <%=submit_tag '提交'%>
+      <%end%>
+    </td>
+  </tr>      
+</table>
+<tfoot>
+  <tr>
+    <td colspan="8">
+      <%= link_to '上一页', { :page => @data_old_t_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @data_old_t_pages.current.previous %>
+      <%=pagination_links( @data_old_t_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+      <%= link_to '下一页', { :page => @data_old_t_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @data_old_t_pages.current.next %>
+
+      <%if @data_old_t_pages.current.previous or @data_old_t_pages.current.next%>
+        <form action="/data_old_t/list" method="get" onsubmit="return page_check('page_lines','page');">
+          每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                   <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @data_old_t_pages.current.number %> />
+                   <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                   页
+                   <input type=hidden name='order' value="<%=@order%>" />
+                   <input type='submit' value='确定' />
+        </form>
+      <%end%>
+    </td>
+  </tr>
+</tfoot>
+<table  cellspacing="1" class="adminlist">
+<thead>
+  <th nowrap>
+    咨询流水号        
+  </th>
+  <th nowrap>
+    总案号        
+  </th>
+  <th nowrap>
+    咨询日期        
+  </th>
+  <th nowrap>
+    立案日期       
+  </th>
+  <th nowrap>
+    受理日期        
+  </th>
+  <th nowrap>
+    组庭时间       
+  </th>
+  <th nowrap>
+    案由       
+  </th>
+  <th nowrap>
+    办案助理        
+  </th>
+  <th nowrap>
+    立案号        
+  </th>
+  <th nowrap>
+    仲裁程序        
+  </th>
+  <th nowrap>
+    仲裁协议        
+  </th>
+  <th nowrap>
+    总会案件类别        
+  </th>
+  <th nowrap>
+    最终的审限日期        
+  </th>
+  <th nowrap>
+    审理方式       
+  </th>
+  <th nowrap>
+    首席或独任仲裁员       
+  </th>
+  <th nowrap>
+    首席或独任仲裁员选定方式        
+  </th>
+  <th nowrap>
+    申请人仲裁员       
+  </th>
+  <th nowrap>
+    申请人仲裁员选定方式        
+  </th>
+  <th nowrap>
+    被申请人仲裁员       
+  </th>
+  <th nowrap>
+    被申请人仲裁员选定方式        
+  </th>
+  <th nowrap>
+    延迟日期      
+  </th>
+  <th nowrap>
+    结案号      
+  </th>
+  <th nowrap>
+    结案方式        
+  </th>
+  <th nowrap>
+    结案日期        
+  </th>
+  <th nowrap>
+    本请求港币汇率        
+  </th>
+  <th nowrap>
+    本请求美元汇率       
+  </th>
+  <th nowrap>
+    反请求港币汇率       
+  </th>
+  <th nowrap>
+    反请求美元汇率       
+  </th>
+  <th nowrap>
+    反请求应收费     
+  </th>
+  <th nowrap>
+    反请求应收 立案费、受理费        
+  </th>
+  <th nowrap>
+    反请求应收 仲裁费、处理费     
+  </th>
+  <th nowrap>
+    反请求应收 无明确争议金额收费       
+  </th>
+  <th nowrap>
+    反请求其它费用一        
+  </th>
+  <th nowrap>
+    反请求其它费用二       
+  </th>
+  <th nowrap>
+    反请求应收 审计费 代收代支       
+  </th>
+  <th nowrap>
+    反请求实收费       
+  </th>
+  <th nowrap>
+    反请求总争议金额（人民币）        
+  </th>
+  <th nowrap>
+    反请求不明确争议金额收费        
+  </th>
+  <th nowrap>
+    反请求分争议金额（人民币）       
+  </th>
+  <th nowrap>
+    反请求分争议金额（香港）        
+  </th>
+  <th nowrap>
+    反请求分争议金额（美元）      
+  </th>
+  <th nowrap>
+    反请求退费        
+  </th>
+  <th nowrap>
+    反请求减免        
+  </th>
+  <th nowrap>
+    反请求欠缴        
+  </th>
+  <th nowrap>
+    申请方应收费       
+  </th>
+  <th nowrap>
+    申请方应收 立案费、受理费        
+  </th>
+  <th nowrap>
+    申请方应收 仲裁费、处理费       
+  </th>
+  <th nowrap>
+    申请方应收 无明确争议金额收费      
+  </th>
+  <th nowrap>
+    申请方其它费用一        
+  </th>
+  <th nowrap>
+    申请方其它费用二       
+  </th>
+  <th nowrap>
+    申请方应收 审计费 代收代支   
+  </th>
+  <th nowrap>
+    申请方实收费       
+  </th>
+  <th nowrap>
+    申请方总争议金额（人民币）        
+  </th>
+  <th nowrap>
+    申请方不明确争议金额       
+  </th>
+  <th nowrap>
+    申请方争议金额（人民币）  
+  </th>
+  <th nowrap>
+    申请方争议金额（香港）     
+  </th>
+  <th nowrap>
+    申请方争议金额（美元）    
+  </th>
+  <th nowrap>
+    申请方退费    
+  </th>
+  <th nowrap>
+    申请方减免     
+  </th>
+  <th nowrap>
+    申请方欠缴   
+  </th>
+  <th nowrap>
+    申请人       
+  </th>
+  <th nowrap>
+    被申请人       
+  </th>
+  <th nowrap>
+    申请人代理人      
+  </th>
+  <th nowrap>
+    被申请人代理人   
+  </th>
+  <th nowrap>
+    修改   
+  </th>
+  <th nowrap>
+    选择<input type='checkbox' id='cheall' name='cheall' value='f' onclick = "checkall()"  > 
+  </th>
+</thead>
+<tbody>
+<%i=0%>
+<% for d in @data_old_ts %>
+      <%s=""%>
+  <tr class="row<%=i % 2%>">
+      <td>
+    <%=d.recevice_code%>
+    <%t=TbCase.find(:first,:conditions=>["used='Y' and recevice_code=?",d.recevice_code])%>
+    <%if t!=nil%>
+      <div style="color:red">Error</div>
+      <%s= s + "咨询流水号重复 <hr>"%>
+  <%end%>
+    </td>
+    <td>
+    <%=d.general_code%>
+    <%t=TbCase.find(:first,:conditions=>["used='Y' and general_code=?",d.general_code])%>
+    <%if t!=nil%>
+      <div style="color:red">Error</div>
+      <%s= s + "总案号重复 <hr>"%>
+  <%end%>
+    </td>
+    <td>
+      <%=d.receivedate%>
+    </td>
+    <td>
+      <%=d.nowdate%>
+    </td>
+    <td>
+      <%=d.accepttime%>
+    </td>
+    <td>
+      <%=d.orgdate%>
+    </td>
+    <td>
+      <%=d.casereason%>
+    </td>
+    <td>
+      <%t=User.find_by_code(d.clerk)%>
+          <%if t!=nil%>
+                <%=t.name%>
+          <%else%>
+          <div style="color:red">Error</div>
+          <%s= s + "助理信息 Error <hr>"%>
+    <%end%>
+
+      </td>
+      <td>
+        <%=d.case_code%>
+        <%t=TbCase.find(:first,:conditions=>"used='Y' and case_code like '%#{d.case_code.slice(d.case_code.size - 7,7)}'")%>
+        <%if t!=nil%>
+          <div style="color:red">Error</div>
+          <%s= s + "立案号重复 <hr>"%>
+    <%end%>
+      </td>
+      <td>
+        <% t=TbDictionary.find(:first,:conditions=>["typ_code='0001' and data_val=?",d.aribitprog_num])%>
+        <%if t!=nil%>
+              <%=t.data_text%>
+        <%else%>
+          <div style="color:red">Error</div>
+          <%s= s + "仲裁程序 Error <hr>"%>
+    <%end%>
+      </td>
+      <td>
+        <% t=TbDictionary.find(:first,:conditions=>["typ_code='0003' and data_val=?",d.aribitprotprog_num])%>
+        <%if t!=nil%>
+              <%=t.data_text%>
+        <%else%>
+          <div style="color:red">Error</div>
+          <%s= s + "仲裁协议 Error <hr>"%>
+    <%end%>
+      </td>
+      <td>
+        <% t=TbDictionary.find(:first,:conditions=>["typ_code='0043' and data_val=?",d.t_casetype_num])%>
+        <%if t!=nil%>
+              <%=t.data_text%>
+        <%else%>
+          <div style="color:red">Error</div>
+          <%s= s + "总会案件类别 Error <hr>"%>
+    <%end%>
+      </td>
+      <td>
+        <%=d.finally_limit_dat%>
+      </td>
+      <td>
+        <% t=TbDictionary.find(:first,:conditions=>["typ_code='0046' and data_val=?",d.trial_typ])%>
+        <%if t!=nil%>
+              <%=t.data_text%>
+        <%else%>
+          <div style="color:red">Error</div>
+          <%s= s + "审理方式 Error <hr>"%>
+    <%end%>
+      </td>
+      <td>
+        <%if d.arbitman_0001!=nil and d.arbitman_0001!=""%>
+              <%t=TbArbitman.find_by_code(d.arbitman_0001)%>
+                  <%if t!=nil%>
+                        <%=t.name%>
+                  <%else%>
+              <div style="color:red">Error</div>
+              <%s= s + "首席或独任仲裁员 Error <hr>"%>
+        <%end%>
+      <%end%>
+        </td>
+        <td>
+          <%if d.arbitman_0001!=nil and d.arbitman_0001!=""%>
+                <% t=TbDictionary.find(:first,:conditions=>["typ_code='0015' and data_val=?",d.arbitmansign_0001])%>
+                <%if t!=nil%>
+                      <%=t.data_text%>
+                <%else%>
+              <div style="color:red">Error</div>
+              <%s= s + "首席或独任仲裁员选定方式 Error <hr>"%>
+        <%end%>
+      <%end%>
+        </td>
+        <td>
+          <%if d.arbitman_0002!=nil and d.arbitman_0002!=""%>
+                <%t=TbArbitman.find_by_code(d.arbitman_0002)%>
+                    <%if t!=nil%>
+                          <%=t.name%>
+                    <%else%>
+                <div style="color:red">Error</div>
+                <%s= s + "申请方仲裁员 Error <hr>"%>
+          <%end%>
+        <%end%>
+          </td>
+          <td>
+            <%if d.arbitman_0002!=nil and d.arbitman_0002!=""%>
+                  <% t=TbDictionary.find(:first,:conditions=>["typ_code='0015' and data_val=?",d.arbitmansign_0002])%>
+                  <%if t!=nil%>
+                        <%=t.data_text%>
+                  <%else%>
+                <div style="color:red">Error</div>
+                <%s= s + "申请方仲裁员选定方式 Error <hr>"%>
+          <%end%>
+        <%end%>
+          </td>
+          <td>
+            <%if d.arbitman_0003!=nil and d.arbitman_0003!=""%>
+                  <%t=TbArbitman.find_by_code(d.arbitman_0003)%>
+                      <%if t!=nil%>
+                            <%=t.name%>
+                      <%else%>
+                  <div style="color:red">Error</div>
+                  <%s= s + "被申请方仲裁员 Error <hr>"%>
+            <%end%>
+          <%end%>
+            </td>
+            <td>
+              <%if d.arbitman_0003!=nil and d.arbitman_0003!=""%>
+                    <% t=TbDictionary.find(:first,:conditions=>["typ_code='0015' and data_val=?",d.arbitmansign_0003])%>
+                    <%if t!=nil%>
+                          <%=t.data_text%>
+                    <%else%>
+                  <div style="color:red">Error</div>
+                  <%s= s + "被申请方仲裁员选定方式 Error <hr>"%>
+            <%end%>
+          <%end%>
+            </td>
+            <td>
+              <%=d.delayDate%>
+            </td>
+            <td>
+              <%=d.end_code%>
+            </td>
+            <td>
+              <% t=TbDictionary.find(:first,:conditions=>["typ_code='8117' and data_val=?",d.end_style])%>
+              <%if t!=nil%>
+                    <%=t.data_text%>
+              <%else%>
+                <div style="color:red">Error</div>
+                <%s= s + "结案方式 Error <hr>"%>
+          <%end%>
+            </td>
+            <td>
+              <%=d.end_date%>
+            </td>
+            <td>
+              <%=d.a_rate_hk%>
+            </td>
+            <td>
+              <%=d.a_rate_usa%>
+            </td>
+            <td>
+              <%=d.b_rate_hk%>
+            </td>
+            <td>
+              <%=d.b_rate_usa%>
+            </td>
+            <td>
+              <%=d.b_should_charge%>
+            </td>
+            <td>
+              <%=d.b_should_charge_0002%>
+            </td>
+            <td>
+              <%=d.b_should_charge_0003%>
+            </td>
+            <td>
+              <%=d.b_should_charge_0004%>
+            </td> 
+            <td>
+              <%=d.b_should_qt%>
+            </td>
+            <td>
+              <%=d.b_should_qt2%>
+            </td>
+            <td>
+              <%=d.b_should_charge_0007%>
+            </td> 
+            <td>
+              <%=d.b_charge%>
+            </td> 
+            <td>
+              <%=d.b_amount%>
+            </td> 
+            <td>
+              <%=d.b_amount_0002%>
+            </td>
+            <td>
+              <%=d.b_amount_rmb%>
+            </td>
+            <td>
+              <%=d.b_amount_hk%>
+            </td>
+            <td>
+              <%=d.b_amount_usa%>
+            </td>
+            <td>
+              <%=d.b_refunds%>
+            </td>
+            <td>
+              <%=d.b_reduction%>
+            </td> 
+            <td>
+              <%=d.b_re_rmb%>
+            </td>
+            <td>
+              <%=d.a_should_charge%>
+            </td>
+            <td>
+              <%=d.a_should_charge_0002%>
+            </td>
+            <td>
+              <%=d.a_should_charge_0003%>
+            </td>
+            <td>
+              <%=d.a_should_charge_0004%>
+            </td>
+            <td>
+              <%=d.a_should_qt%>
+            </td>
+            <td>
+              <%=d.a_should_qt2%>
+            </td>
+            <td>
+              <%=d.a_should_charge_0007%>
+            </td>
+            <td>
+              <%=d.a_charge%>
+            </td>
+            <td>
+              <%=d.a_amount%>
+            </td>
+            <td>
+              <%=d.a_amount_0002%>
+            </td>
+            <td>
+              <%=d.a_amount_rmb%>
+            </td>
+            <td>
+              <%=d.a_amount_hk%>
+            </td>
+            <td>
+              <%=d.a_amount_usa%>
+            </td>
+            <td>
+              <%=d.a_refunds%>
+            </td>
+            <td>
+              <%=d.a_reduction%>
+            </td>
+            <td>
+              <%=d.a_re_rmb%>
+            </td>
+            <td>
+              <%=d.party%>
+            </td>
+            <td>
+              <%=d.b_party%>
+            </td>
+            <td>
+              <%=d.agent%>
+            </td>
+            <td>
+              <%=d.b_agent%>
+            </td> 
+            <td><%= link_to '修改', :action => 'edit', :id => d,:page=>@data_old_t_pages.current.number,:page_lines=>@page_lines%></td>
+            <td>
+            <%if s!=""%>
+              <div style="color:red"><%=s%></div>
+            <%else%>
+              <input type='checkbox' id='che' name='che' value=<%=d.id%> />
+                   <%end%>
+                   </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+        </tbody>
+        </table>

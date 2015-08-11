@@ -1,0 +1,531 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>报酬信息报表</title>
+    <script src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <%pub_t=PubTool.new()%>
+    <%bz=""%>
+    <!--table border="1" bordercolor="#000000" style="width:100%; border:1px solid #000000; border-collapse: collapse;" cellspacing="0" cellpadding="3"-->
+    <div align="center" style="font-size: 18px;font-family:Verdana;font-weight:200;">    仲裁员办案和相关办案报酬稿酬信息表</div>
+    受案号：<%=@case.case_code%> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    结案号：<%=@case.end_code%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    立案秘书：<%if@case.clerk_2!=''%> <%=User.find_by_code(@case.clerk_2).name%> <%end%>
+    <table  id="to_word_y" align="center" width="680px"><tr><td>
+          <table border="1" bordercolor="#000000" style="width:100%; border:1px solid #000000; border-collapse: collapse;" cellspacing="0" cellpadding="3">
+            <!--table width="100%" border="1" cellpadding="0" cellspacing="0"-->
+            <tr bgcolor="white">
+              <th colspan="2" width="55%">
+                工作事项
+              </th>
+              <th width="13%">
+                类别和档次
+              </th>
+              <th width="11%">
+                承担人
+              </th>
+              <th width="11%">
+                数 额
+              </th>
+              <th width="13%">
+                备 注
+              </th>
+            </tr>
+            <%@remun=TbRemuneration1.find(:all,:order=>'id',:conditions=>"recevice_code='#{session[:recevice_code_2]}' and used='Y'") %>
+            <%i=1%>
+            <%for p in @remun%>
+              <tr>
+                <%if i==1%>
+                  <td  rowspan="<%=@remun.size%>"  width="15%">
+                    庭审和调解
+                  </td>
+                <%end%>
+
+                <td  width="40%">
+                  <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{p.typ}'").data_text%>:<%=p.h%>小时
+                </td>
+                <td>
+                  <%=pub_t.get_grade(p.grade)%>
+                </td>
+                <td >
+                  <%=TbArbitman.find_by_code(p.arbitman).name%>
+                </td>
+                <td >
+                  <%=p.rmb%>
+                </td>
+                <td >
+                  <%=p.remark%>
+                </td>
+              </tr>
+              <%i=i+1%>
+              <%if p.remark!=nil%>
+                <%bz=bz+ p.remark + " "%>
+              <%end%>
+            <%end%>
+
+            <%@remun=TbRemuneration2.find(:all,:order=>'id',:conditions=>"recevice_code='#{session[:recevice_code_2]}' and used='Y'") %>
+            <%i=1%>
+            <%for p in @remun%>
+              <tr>
+                <%if i==1%>
+                  <td  rowspan="<%=@remun.size%>">
+                    阅卷
+                  </td>
+                <%end%>
+                <td >
+                  页数：<%=p.p%>
+                </td>
+                <td >
+                  <%=pub_t.get_grade(p.grade)%>
+                </td>
+                <td >
+                  <%=TbArbitman.find_by_code(p.arbitman).name%>
+                </td>
+                <td >
+                  <%=p.rmb%>
+                </td>
+                <td >
+                  <%=h p.remark%>
+                </td>
+              </tr>
+              <%i=i+1%>
+              <%if p.remark!=nil%>
+                <%bz=bz+ p.remark + " "%>
+              <%end%>
+            <%end%>
+
+            <%@remun=TbRemuneration3.find(:all,:order=>'id',:conditions=>"recevice_code='#{session[:recevice_code_2]}' and used='Y'") %>
+            <%i=1%>
+            <%for p in @remun%>
+              <tr>
+                <%if i==1%>
+                  <td  rowspan="<%=@remun.size%>">
+                    仲裁费
+                  </td>
+                  <td  rowspan="<%=@remun.size%>">
+                    <%s_c=TbShouldCharge.sum("re_rmb_money",:conditions=>"(typ='0001' or typ='0004')  and used='Y' and recevice_code='#{session[:recevice_code_2]}'")%>
+                    <%if s_c==nil %>
+                      <%s_c=0%>
+                    <%end%>
+
+                    <%s_r=TbShouldRefund.sum("re_rmb_money",:conditions=>"(typ='0001' or typ='0004') and used='Y' and recevice_code='#{session[:recevice_code_2]}' and state<>3")%>
+                    <%if s_r==nil %>
+                      <%s_r=0%>
+                    <%end%>
+
+                    仲裁费数额：<%=s_c - s_r%>
+                  </td>
+                <%end%>
+                <td >
+                  <%=pub_t.get_grade(p.grade)%>
+                </td>
+                <td >
+                  <%=TbArbitman.find_by_code(p.arbitman).name%>
+                </td>
+                <td >
+                  <%=p.rmb%>
+                </td>
+                <td >
+                  <%=h p.remark%>
+                </td>
+              </tr>
+              <%i=i+1%>
+              <%if p.remark!=nil%>
+                <%bz=bz+ p.remark + " "%>
+              <%end%>
+            <%end%>
+
+            <%@remun=TbRemuneration9.find(:all,:order=>'assistant,page_typ',:conditions=>"recevice_code='#{session[:recevice_code_2]}' and used='Y'") %>
+            <%i=1%>
+            <%for p in @remun%>
+              <tr>
+                <%if i==1%>
+                  <td rowspan="<%=@remun.size%>">
+                    发文
+                  </td>
+                <%end%>
+                <td>
+                  <%=TbDictionary.find(:first,:conditions=>"typ_code='0048' and data_val='#{p.page_typ}'").data_text%>:<%=p.page_num%>
+                </td>
+                <td>
+                  <%=pub_t.get_grade(p.grade)%>
+                </td>
+                <td >
+                  <%=User.find_by_code(p.assistant).name%>
+                </td>
+                <td >
+                  <%=p.rmb%>
+                </td>
+                <td >
+                  <%=h p.remark%>
+                </td>
+              </tr>
+              <%i=i+1%>
+              <%if p.remark!=nil%>
+                <%bz=bz+ p.remark + " "%>
+              <%end%>
+            <%end%>
+
+            <%@remun=TbRemuneration6.find(:all,:order=>'id',:conditions=>"recevice_code='#{session[:recevice_code_2]}' and used='Y'") %>
+            <%i=1%>
+            <%for p in @remun%>
+              <tr>
+                <%if i==1%>
+                  <td rowspan="<%=@remun.size%>">
+                    程序处理
+                  </td>
+                <%end%>
+                <td >&nbsp;</td>
+                <td >
+                  <%=pub_t.get_grade(p.grade)%>
+                </td>
+                <td >
+                  <%=User.find_by_code(p.assistant).name%>
+                </td>
+                <td >
+                  <%=p.rmb%>
+                </td>
+                <td >
+                  <%=h p.remark%>
+                </td>
+              </tr>
+              <%i=i+1%>
+              <%if p.remark!=nil%>
+                <%bz=bz+ p.remark + " "%>
+              <%end%>
+            <%end%>
+
+            <%@remun=TbRemuneration8.find(:all,:order=>'id',:conditions=>"recevice_code='#{session[:recevice_code_2]}' and used='Y'") %>
+            <%i=1%>
+            <%for p in @remun%>
+              <tr>
+                <%if i==1%>
+                  <td rowspan="<%=@remun.size%>">
+                    调查取证
+                  </td>
+                  <td rowspan="<%=@remun.size%>">
+                    &nbsp;
+                  </td>
+                <%end%>
+                <td >
+                  <%=pub_t.get_grade(p.grade)%>
+                </td>
+                <td >
+                  <%if p.p_typ=='0001'%>
+                    <%=TbArbitman.find_by_code(p.p).name%>
+                  <%else%>
+                    <%=User.find_by_code(p.p).name%>
+                  <%end%>
+                </td>
+                <td >
+                  <%=p.rmb%>
+                </td>
+                <td >
+                  <%=h p.remark%>
+                </td>
+              </tr>
+              <%i=i+1%>
+              <%if p.remark!=nil%>
+                <%bz=bz+ p.remark + " "%>
+              <%end%>
+            <%end%>
+
+            <% # @remun_typ=TbRemuneration4.find(:all,:select=>"distinct typ as typ",:order=>'typ',:conditions=>"recevice_code='#{session[:recevice_code_2]}' and used='Y'") %>
+            <%j=1%>
+            <%ccc=TbRemuneration4.count("recevice_code='#{session[:recevice_code_2]}' and used='Y'")%>
+            <%@remun_typ=TbDictionary.find(:all,:conditions=>"typ_code='0039' and state='Y' and used='Y'",:order=>"data_val")%>
+            <%for p_typ in @remun_typ%>
+              <%@remun=TbRemuneration4.find(:all,:order=>'id',:conditions=>"recevice_code='#{session[:recevice_code_2]}' and typ='#{p_typ.data_val}' and used='Y'") %>
+              <%if not @remun.empty?%>
+                <%i=1%>
+                <%for p in @remun%>
+                  <tr>
+                    <%if j==1%>
+                      <td rowspan="<%=@remun_typ.size%>">
+                        裁决书和管辖决定等的起草和修改
+                      </td>
+                    <%end%>
+                    <%if i==1%>
+                      <td  rowspan="<%=@remun.size%>">
+                        <% # =TbDictionary.find(:first,:conditions=>"typ_code='0039' and data_val='#{p_typ.typ}'").data_text%>
+                        <%=p_typ.data_text%>
+                      </td>
+                    <%end%>
+                    <td >
+                      <%=pub_t.get_grade(p.grade)%>
+                    </td>
+                    <td >
+                      <%if p.p_typ=='0001'%>
+                        <%=TbArbitman.find_by_code(p.p).name%>
+                      <%else%>
+                        <%=User.find_by_code(p.p).name%>
+                      <%end%>
+                    </td>
+                    <td >
+                      <%=p.rmb%>
+                    </td>
+                    <td >
+                      <%=h p.remark%>
+                    </td>
+                  </tr>
+                  <%i=i+1%>
+                  <%if p.remark!=nil%>
+                    <%bz=bz+ p.remark + " "%>
+                  <%end%>
+                <%end%>
+                <%j=j+1%>
+              <%else%>
+                <tr>
+                  <%if j==1%>
+                    <td rowspan="<%=@remun_typ.size%>">
+                      裁决书和管辖决定等的起草和修改
+                    </td>
+                  <%end%>
+                  <td>
+                    <%=p_typ.data_text%>
+                  </td>
+                  <td >
+
+                  </td>
+                  <td >
+
+                  </td>
+                  <td >
+
+                  </td>
+                  <td >
+
+                  </td>
+                  <%j=j+1%>
+                </tr>
+              <%end%>
+            <%end%>
+            <tr>
+              <td colspan="6" align="center">
+                在计算审限时应扣除的时段:<%=h @case.limit_deduct_t%>             原因：<%=h @case.limit_deduct_text%>
+              </td>
+            </tr>
+          </table>
+          <table border="1" bordercolor="#000000" cellpadding="3" cellspacing="0" bordercolor="#000000"  style="width:100%; border:1px solid #000000; border-collapse: collapse;">
+            <!--table  width="100%" border="1" cellpadding="0" cellspacing="0"-->
+            <tr>
+              <td colspan="9" align="center">
+                合计
+              </td>
+            </tr>
+            <tr>
+
+              <td colspan="2">
+                办案人
+              </td>
+              <td>
+                姓   名
+              </td>
+              <td>
+                数额
+              </td>
+              <td>
+                奖励
+              </td>
+              <td>
+                处罚
+              </td>
+              <td>
+                奖罚原因
+              </td>
+              <td>
+                稿酬
+              </td>
+              <td>
+                合计
+              </td>
+            </tr>
+            <%@tbc=TbCasearbitman.find(:all,:conditions=>"used='Y' and recevice_code='#{@case.recevice_code}'",:order=>"arbitmantype")%>
+            <%i=1%>
+            <%for tbc in @tbc%>
+              <tr>
+                <%if i==1%>
+                  <td rowspan="<%=@tbc.size%>">
+                    仲裁庭
+                  </td>
+                <%end%>
+                <td>
+                  <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{tbc.arbitmantype}'").data_text%>
+                </td>
+                <td>
+                  <%=TbArbitman.find_by_code(tbc.arbitman).name%>
+                </td>
+                <%@tbp=TbBonusPenalty.find(:all,:conditions=>"used='Y' and recevice_code='#{@case.recevice_code}' and typ='0001' and p='#{tbc.arbitman}'")%>
+                <%@tbp=pub_t.get_first_record(@tbp)%>
+                <td>
+                  <%if @tbp!=nil%>
+                    <%=@tbp.zc_rmb%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td>
+                  <%if @tbp!=nil%>
+                    <%=@tbp.bonus%>%
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td>
+                  <%if @tbp!=nil%>
+                    <%=@tbp.penalty%>%
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td>
+                  <%if @tbp!=nil%>
+                    <%=h @tbp.reason%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td>
+                  <%if @tbp!=nil%>
+                    <%=@tbp.gc_rmb%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td>
+                  <%if @tbp!=nil%>
+                    <%=(@tbp.zc_rmb + @tbp.zc_rmb * @tbp.bonus / 100 - @tbp.zc_rmb * @tbp.penalty / 100 + @tbp.gc_rmb).round.to_i%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+              </tr>
+              <%i=i+1%>
+            <%end%>
+
+            <%@tbp=TbBonusPenalty.find(:all,:conditions=>"used='Y' and recevice_code='#{@case.recevice_code}' and typ='0002'")%>
+            <%i=1%>
+            <%for tbp in @tbp%>
+              <tr>
+                <%if i==1%>
+                  <td colspan="2" rowspan="<%=@tbp.size%>">
+                    助理
+                  </td>
+                <%end%>
+                <td>
+                  <%=User.find_by_code(tbp.p).name%>
+                </td>
+                <td>
+                  <%=tbp.zc_rmb%>
+                </td>
+                <td>
+                  <%=tbp.bonus%>%
+                </td>
+                <td>
+                  <%=tbp.penalty%>%
+                </td>
+                <td>
+                  <%=h tbp.reason%>
+                </td>
+                <td>
+                  <%=tbp.gc_rmb%>
+                </td>
+                <td>
+                  <%=(tbp.zc_rmb + tbp.zc_rmb * tbp.bonus / 100 - tbp.zc_rmb * tbp.penalty / 100 + tbp.gc_rmb).round.to_i%>
+                </td>
+              </tr>
+              <%i=i+1%>
+            <%end%>
+          </table>
+
+
+          <table border="1" bordercolor="#000000" style="width:100%; border:1px solid #000000; border-collapse: collapse;" cellspacing="0" cellpadding="3">
+            <!--table  width="100%" border="1" cellpadding="0" cellspacing="0"-->
+            <tr>
+              <td>
+                类型
+              </td>
+              <td>
+                姓名
+              </td>
+              <td>
+                金额
+              </td>
+            </tr>
+            <%@remun_typ=TbDictionary.find(:all,:conditions=>"typ_code='0040' and state='Y' and used='Y'",:order=>"data_val")%>
+            <%for p_typ in @remun_typ%>
+              <%i=1%>
+              <%@tb55=TbRemuneration5.find(:all,:conditions=>"used='Y' and  recevice_code='#{@case.recevice_code}'  and typ='#{p_typ.data_val}'")%>
+              <%if @tb55.empty?%>
+                <tr>
+                  <td >
+                    <%=p_typ.data_text%>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                </tr>
+              <%else%>
+                <%for tb55 in @tb55%>
+                  <tr>
+                    <%if i==1%>
+                      <td rowspan="<%=@tb55.size%>">
+                        <%=p_typ.data_text%>
+                      </td>
+                    <%end%>
+                    <td>
+                      <%=h User.find_by_code(tb55.p).name%>
+                    </td>
+                    <td>
+                      <%=h tb55.rmb%>
+                    </td>
+                  </tr>
+                  <%i=i+1%>
+                  <%if p.remark!=nil%>
+                    <%bz=bz+ p.remark + " "%>
+                  <%end%>
+                <%end%> 
+              <%end%>
+            <%end%>
+          </table>
+
+
+          <table border="0" bordercolor="#ffffff" style="width:100%; border:0px solid #FFFFFF; border-collapse: collapse;" cellspacing="0" cellpadding="3">
+            <!--table width="100%" cellpadding="0" cellspacing="0"-->
+            <tr>
+              <td>
+                助理：<%=User.find_by_code(@case.clerk).name%>
+              </td>
+              <td>
+                处长：
+              </td>
+              <td>
+                副秘书长：
+              </td>
+              <td>
+                秘书长/副主任：
+              </td>
+            </tr>
+            <tr>
+              <td>
+                日期：
+              </td>
+              <td>
+                日期：<%=Time.new.to_date.to_s(:db)%>
+              </td>
+              <td>
+                日期：
+              </td>
+              <td>
+                日期：
+              </td>
+            </tr>
+          </table>
+        </td></tr></table>
+    <script langugae="javascript">to_word(document.getElementById("to_word_y"));
+      window.close();
+    </script>
+  </body>
+</html>

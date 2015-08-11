@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改 反请求答辩</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">修改 反请求答辩 </span></div>
+    <div align="center"><br>
+      <%=link_to "返回",:action=>"answer_list"%>
+      <br>
+    </div>
+    <div style="color:red">
+      <div align="center"><%=flash[:notice]%></div>
+    </div>
+    <div align="center">
+      <%form_for :answer ,:url=>{:action=>"answer_update",:id=>params[:id]}  do |f|%>
+      </div>
+      <table class="list">
+        <tr>
+          <th>
+            申请人:
+          </th>
+          <td>
+            <%party=TbParty.find(:all,:conditions=>"recevice_code='#{session[:recevice_code]}' and partytype=1 and used='Y'",:order=>"id",:select=>"id,partyname")%>
+            <%=f.collection_select(:party_id,party,:id,:partyname)%>
+            <div style="color:red"><%=error_message_on(:answer,:partyname)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            收到日期:
+          </th>
+          <td>
+            <%=f.text_field(:receivedate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('answer_receivedate'),'yyyy-MM-dd')" >
+            <div style="color:red"><%=error_message_on(:answer,:receivedate)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            提交方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0010' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sendstyle,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            送交对方当事人日期:
+          </th>
+          <td>
+            <%=f.text_field(:asenddate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('answer_asenddate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            送交对方当事人方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0011' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:asendstyle,op,:data_val,:data_text)%>
+            <div style="color:red"><%=error_message_on(:answer,:asendstyle)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            答辩书:
+          </th>
+          <td>
+            <%=f.text_area(:answerbook,:rows=>4)%>
+            <div style="color:red"><%=error_message_on(:answer,:answerbook)%></div>
+          </td>
+        </tr>
+
+
+      </table>
+      <div align="center"><%=submit_tag "提交" %></div>
+      <%end%>
+  </body>
+</html>

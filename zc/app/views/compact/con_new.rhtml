@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加合同签订</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray">添加合同签订日期(带<i>*</i>为必填项) <%=link_to "返回",:action=>"con_list",:recevice_code=>session[:recevice_code]%></div>
+   <%form_for :con ,:url=>{:action=>"con_create",:recevice_code=>session[:recevice_code]}  do |f|%>
+      <table class="list">
+
+        <tr >
+          <th>
+          签订日期:          </th>
+          <td>
+            <%=f.text_field(:contractdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('con_contractdate'),'yyyy-MM-dd')" >
+            <div style="color:red"><%=error_message_on(:con,:contractdate)%></div>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            <i>*</i>合同编号及名称:
+          </th>
+          <td >
+            <%=f.text_field(:pactname)%>
+            <div style="color:red"><%=error_message_on(:con,:pactname)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            备注:
+          </th>
+          <td >
+            <%=f.text_area(:note,:rows=>4)%> 
+            <div style="color:red"><%=error_message_on(:con,:note)%></div>
+          </td>
+        </tr>
+      </table>
+      <br><div align="center">
+          <%=submit_tag "提交" %>
+        <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+    <%end%>
+  </body>
+</html>

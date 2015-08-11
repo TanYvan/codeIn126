@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>仲裁厅使用统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+
+    <div class="title"><span>仲裁厅使用统计</span></div>
+    <table align="center">
+    <%form_tag :url=>{:action=>"list9"} do%>
+     <tr><td nowrap>
+            仲裁庭<%@room=TbDictionary.find(:all,:conditions=>"typ_code='0023' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_text,data_val")%>
+            <%=select(:j,:room,@room.collect{|p|[p.data_text,p.data_val]}.insert(00,["全部","01"]))%>
+            &nbsp;&nbsp;起始日期 <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" >
+            &nbsp;终止日期 <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" >
+        </td>
+       <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<%=submit_tag "查询" %></td>
+       </tr>
+
+    <%end%>
+    </table>
+
+<br/>
+<br>
+    <i><%=flash[:notice]%></i>
+    <%if params[:j]!=nil %>
+    <div class="cDblue" align="center">
+        <%if params[:j][:room]=='01'%>全部仲裁庭 <%else%>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0023' and state='Y' and data_val='#{params[:j][:room]}'").data_text%>&nbsp;&nbsp;
+        <%end%>
+        <%=@date1%><i style="color:#4F544D"> 至</i>
+        <%=@date2%><i style="color:#4F544D">使用情况统计</i>
+      </div>
+      <%if params[:j][:room]=='01'%>
+        <table class="list" width="99%">
+          <tr bgcolor="#f0f0f0">
+            <th nowrap align="right" style=" background-color: #f0f0f0"><b>仲裁庭</b></th>
+            <%if @sittingroom!=nil%>
+              <%for s1 in @sittingroom%>
+                <th colspan="<%=@style1.size%>" nowrap style=" background-color: #f0f0f0"><b><%=s1.data_text%></b></th>
+              <%end%>
+            <%end%>
+          </tr>
+          <tr bgcolor="#F9F9F9">
+            <th nowrap align="right" style=" background-color: #f0f0f0"><b>使用类型</b></th>
+            <%for s in @sittingroom%>
+              <%for s2 in @style1%>
+                <td nowrap><div align="center"><%=s2.data_text%></div></td>
+              <%end%>
+            <%end%>
+          </tr>
+          <tr bgcolor="#FFFFFF">
+            <th nowrap style=" background-color: #f0f0f0"><b>使用时间</b></th>
+            <%for s in @sittingroom%>
+              <%for s2 in @style1%>
+                <%@arbitroom=TbArbitroom.find_by_sql("select sum(usetime) as t1 from tb_arbitrooms where
+                  tb_arbitrooms.sittingdate>='#{@date1}' and tb_arbitrooms.sittingdate<='#{@date2}' and
+                  tb_arbitrooms.sittingplace='#{s.data_val}' and tb_arbitrooms.usestyle='#{s2.data_val}'
+                  and used='Y'")%>
+            <td nowrap >
+                  <%if SysArg.get_last_record(@arbitroom)!=nil%>
+                    <%=SysArg.get_last_record(@arbitroom).t1%>
+                  <%end%>
+                </td>
+              <%end%>
+            <%end%>
+          </tr>
+          <tr bgcolor="#FFFFFF">
+            <th nowrap style=" background-color: #f0f0f0"><b>使用次数</b></th>
+            <%for s11 in @sittingroom%>
+              <%for s22 in @style1%>
+                <%@arbitroom=TbArbitroom.find_by_sql("select count(id) as c1 from tb_arbitrooms where
+                  tb_arbitrooms.sittingdate>='#{@date1}' and tb_arbitrooms.sittingdate<='#{@date2}' and
+                  tb_arbitrooms.sittingplace='#{s11.data_val}' and tb_arbitrooms.usestyle='#{s22.data_val}'
+                  and used='Y'")%>
+                <td nowrap >
+                  <%if SysArg.get_last_record(@arbitroom)!=nil%>
+                    <%=SysArg.get_last_record(@arbitroom).c1%>
+                  <%end%>
+                </td>
+              <%end%>
+            <%end%>
+          </tr>
+        </table>
+       <br>
+        <div class="cGray">备注：使用时间的单位为小时。</div>
+      <%elsif params[:j][:room]!='01'%>
+        <table class="list">
+          <tr>
+            <th nowrap style=" background-color: #f0f0f0"><b>仲裁庭</b></th>
+            <th colspan="<%=@style1.size%>" nowrap  style=" background-color: #f0f0f0"><b><%=TbDictionary.find(:first,:conditions=>"typ_code='0023' and state='Y' and data_val='#{params[:j][:room]}'").data_text%></b></th>
+          </tr>
+          <tr bgcolor="#F9F9F9">
+            <%@sittingroom1=TbDictionary.find(:all,:conditions=>"typ_code='0023' and state='Y' and data_val='#{params[:j][:room]}'",:select=>"data_text,data_val")%>
+            <th nowrap style=" background-color: #f0f0f0"><b>使用类型</b></th>
+            <%for s in @sittingroom1%>
+              <%for s2 in @style1%>
+                <td nowrap><div align="center"><%=s2.data_text%></div></td>
+              <%end%>
+            <%end%>
+          </tr>
+          <tr bgcolor="#FFFFFF">
+            <th nowrap style=" background-color: #f0f0f0"><b>使用时间</b></th>
+            <%for s in @sittingroom1%>
+              <%for s2 in @style1%>
+                <%@arbitroom=TbArbitroom.find_by_sql("select sum(usetime) as t1 from tb_arbitrooms where
+                  tb_arbitrooms.sittingdate>='#{@date1}' and tb_arbitrooms.sittingdate<='#{@date2}' and
+                  tb_arbitrooms.sittingplace='#{s.data_val}' and tb_arbitrooms.usestyle='#{s2.data_val}'
+                  and used='Y'")%>
+                <td nowrap>
+                  <%if SysArg.get_last_record(@arbitroom)!=nil%>
+                    <%=SysArg.get_last_record(@arbitroom).t1%>
+                  <%end%>
+                </td>
+              <%end%>
+            <%end%>
+          </tr>
+          <tr bgcolor="#FFFFFF">
+            <th nowrap style=" background-color: #f0f0f0"><b>使用次数</b></th>
+            <%for s11 in @sittingroom1%>
+              <%for s22 in @style1%>
+                <%@arbitroom=TbArbitroom.find_by_sql("select count(id) as c1 from tb_arbitrooms where
+                  tb_arbitrooms.sittingdate>='#{@date1}' and tb_arbitrooms.sittingdate<='#{@date2}' and
+                  tb_arbitrooms.sittingplace='#{s11.data_val}' and tb_arbitrooms.usestyle='#{s22.data_val}'
+                  and used='Y'")%>
+                <td nowrap>
+                  <%if SysArg.get_last_record(@arbitroom)!=nil%>
+                    <%=SysArg.get_last_record(@arbitroom).c1%>
+                  <%end%>
+                </td>
+              <%end%>
+            <%end%>
+          </tr>
+        </table>
+      <br>
+        <div class="cGray">备注：使用时间的单位为小时。</div>
+      <%else%>
+      <%end%>
+    <%else%>
+    <%end%>
+
+
+  </body>
+</html>

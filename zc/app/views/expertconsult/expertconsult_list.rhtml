@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>专家咨询委员会</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="title"><span class="cBlue">专家咨询委员会信息</span></div>
+<br>
+<div align="center">
+  <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+</div>
+<div align="center"><%= link_to "创建", :action => "expertconsult_new"%>
+  <div style="color:red"><%=flash[:notice]%></div>
+</div>
+<table class="adminlist" cellspacing="1">
+<thead>
+  <tr>
+    <th nowrap>
+      <%if @order=="code desc"%>
+        <%=link_to '编号↑',:action=>"expertconsult_list",:order=>"code asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%elsif @order=="code asc"%>
+        <%=link_to '编号↓',:action=>"expertconsult_list",:order=>"code desc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%else%>
+        <%=link_to '编号',:action=>"expertconsult_list",:order=>"code asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%end%>
+    </th>
+    <th nowrap>
+      <%if @order=="name desc"%>
+        <%=link_to '名称↑',:action=>"expertconsult_list",:order=>"name asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%elsif @order=="name asc"%>
+        <%=link_to '名称↓',:action=>"expertconsult_list",:order=>"name desc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%else%>
+        <%=link_to '名称',:action=>"expertconsult_list",:order=>"name asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%end%>
+    </th>
+    <th nowrap>
+      <%if @order=="sex desc"%>
+        <%=link_to '性别↑',:action=>"expertconsult_list",:order=>"sex asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%elsif @order=="sex asc"%>
+        <%=link_to '性别↓',:action=>"expertconsult_list",:order=>"sex desc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%else%>
+        <%=link_to '性别',:action=>"expertconsult_list",:order=>"sex asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%end%>
+    </th>
+    <th nowrap>
+      <%if @order=="addr desc"%>
+        <%=link_to '联系地址↑',:action=>"expertconsult_list",:order=>"addr asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%elsif @order=="addr asc"%>
+        <%=link_to '联系地址↓',:action=>"expertconsult_list",:order=>"addr desc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%else%>
+        <%=link_to '联系地址',:action=>"expertconsult_list",:order=>"addr asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%end%>
+    </th>
+    <th nowrap>
+      <%if @order=="tel desc"%>
+        <%=link_to '联系电话↑',:action=>"expertconsult_list",:order=>"tel asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%elsif @order=="tel asc"%>
+        <%=link_to '联系电话↓',:action=>"expertconsult_list",:order=>"tel desc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%else%>
+        <%=link_to '联系电话',:action=>"expertconsult_list",:order=>"tel asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%end%>
+    </th>
+    <th nowrap>
+      <%if @order=="email desc"%>
+        <%=link_to '电子邮件↑',:action=>"expertconsult_list",:order=>"email asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%elsif @order=="email asc"%>
+        <%=link_to '电子邮件↓',:action=>"expertconsult_list",:order=>"email desc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%else%>
+        <%=link_to '电子邮件',:action=>"expertconsult_list",:order=>"email asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%end%>
+    </th>
+    <th nowrap>
+      <%if @order=="postcode desc"%>
+        <%=link_to '邮政编码↑',:action=>"expertconsult_list",:order=>"postcode asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%elsif @order=="postcode asc"%>
+        <%=link_to '邮政编码↓',:action=>"expertconsult_list",:order=>"postcode desc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%else%>
+        <%=link_to '邮政编码',:action=>"expertconsult_list",:order=>"postcode asc",:page=>@expertconsult_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+      <%end%>
+    </th>
+    <th nowrap>修改</th>
+    <th nowrap>删除</th>
+  </tr>
+</thead>
+<tbody>
+<%j=0%>
+<% if @expertconsult!= nil
+    for e in @expertconsult %>
+    <tr class="row<%=j % 2%>">
+        <td><%=e.code%></td>
+      <td><%=e.name%></td>
+      <td>
+        <%=e.sex%>
+      </td>
+      <td><%=e.addr%></td>
+      <td><%=e.tel%></td>
+      <td><%=e.email%></td>
+      <td><%=e.postcode%></td>
+      <td><%=link_to "修改",:action => "expertconsult_edit",:id =>e%></td>
+      <td><%=button_to "删除",{:action => "expertconsult_delete",:id =>e},:confirm => "您确认要删除吗?"%></td>
+    </tr>
+    <%j=j+1%>
+  <%end%>
+<%end%>
+</tbody>
+<tfoot>
+  <tr>
+    <td colspan="9">
+      <%= link_to '上一页', { :page => @expertconsult_pages.current.previous  ,:page_lines=>@page_lines  } if @expertconsult_pages.current.previous %>
+      <%=pagination_links( @expertconsult_pages,{:params=>{:page_lines=>@page_lines  }})%>
+      <%= link_to '下一页', { :page => @expertconsult_pages.current.next ,:page_lines=>@page_lines  } if @expertconsult_pages.current.next %>
+
+      <%if @expertconsult_pages.current.previous or @expertconsult_pages.current.next%>
+        <form action="/expertconsult/expertconsult_list" method="get" >
+          每页<input type=text name='page_lines' size=5 class="SingleLineInput" value=<%=@page_lines%> />条记录,第
+                   <input type=text name='page' size=5 class="SingleLineInput" value=<%= @expertconsult_pages.current.number %> />
+                   <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                   页
+                   <input type=hidden name='order' value="<%=@order%>" />
+                   <input type='submit' value='确定' />
+        </form>
+      <%end%>
+    </td>
+  </tr>
+</tfoot>
+</table>
+</body>
+</html>

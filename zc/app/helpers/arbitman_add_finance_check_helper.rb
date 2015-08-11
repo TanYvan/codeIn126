@@ -1,0 +1,2 @@
+module ArbitmanAddFinanceCheckHelper
+end

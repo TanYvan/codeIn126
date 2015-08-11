@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>待发报酬信息表</title>
+  <%= javascript_include_tag "prototype" %>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+  <script language='JavaScript'>
+      function checkall() {
+        var a='';
+        if (document.getElementsByName("cheall").value=='t')
+        {
+          document.getElementsByName("cheall").value='f';
+        }
+        else
+        {
+          a='true';
+          document.getElementsByName("cheall").value='t';
+        }
+        var chec = document.getElementsByName("che");
+        for(i=0; i<chec.length; i++)
+        {
+          chec[i].checked = a;
+        }
+      }
+      function getcondi(){
+        if(window.confirm('请仔细核查发放金额，发放同时会给仲裁员发送通知短信。\n\n确认发放吗？')) {
+        }
+        else{
+          return false;
+        }
+        var chec = document.getElementsByName("che");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+',';
+
+        }
+        aa=a.substr(0, a.length -1 )
+        if (aa==''){
+          alert("请选择发放信息");
+          return false;
+        }
+        var c = document.getElementById("condi");
+        c.value=aa;
+
+        var commit = document.getElementsByName("commit");
+        for(i=0; i<commit.length; i++)
+        {
+          commit[i].style.display='none';
+        }
+
+      }
+      function gethostory_condi(){
+        if(window.confirm('确认将已选择数据转为[历史待处理报酬]吗？')) {
+        }
+        else{
+          return false;
+        }
+        var chec = document.getElementsByName("che");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+',';
+
+        }
+        aa=a.substr(0, a.length -1 )
+        if (aa==''){
+          alert("请选择发放信息");
+          return false;
+        }
+        var c = document.getElementById("history_condi");
+        c.value=aa;
+
+        var commit = document.getElementsByName("commit");
+        for(i=0; i<commit.length; i++)
+        {
+          commit[i].style.display='none';
+        }
+
+      }
+    </script>
+</head>
+<body>
+   <div class="title"><span class="cBlue">待发报酬信息列表</span></div>
+
+   <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+   </div>
+   <div align="center">
+      <%=link_to "审核表（全部）",{:action=> "list_extend"},:target=>"_blank"%>
+      <%=link_to "生成中行报酬excel文件格式",{:action=> "list_extend_a"},:target=>"_blank"%>
+      <%=link_to "非中行报酬excel文件格式",{:action=> "list_extend_b"},:target=>"_blank"%>
+      <%=link_to "纳税清单",{:action=> "list_extend_tax"},:target=>"_blank"%>
+   </div>
+   <div align="left">
+   <%form_tag({:action=>'history_do'},{:onsubmit=>'return gethostory_condi()'}) do %>
+       <%=hidden_field_tag :history_condi,''%>
+       <br/>
+       <%=submit_tag '转为_历史待处理'%>
+   <%end%>
+   </div>
+   <br/>
+  <div style="color:red"><%=flash[:notice]%></div>
+  <div align="left"><%if @hant_search_1_text!=nil%>查询条件：<%=@hant_search_1_text%><%end%></div>
+  <table class="adminlist" cellspacing="1">
+    <thead>
+    <tr>
+      <th  nowrap>
+        <input type='checkbox'  id='cheall' name='cheall' value='f'  onclick="checkall()"/>
+      </th>
+      <th nowrap>人员类别</th>
+      <th nowrap>姓名</th>
+      <th nowrap>取消待发</th>
+      <th nowrap>银行类别</th>
+      <th nowrap>银行</th>
+      <th nowrap>账号</th>
+      <th nowrap>身份证号</th>
+      <th nowrap>立案号</th>
+      <th nowrap>类型</th>
+      <th nowrap>应发数额</th>
+      <th nowrap>应纳税所得额</th>
+      <%
+        j = 0
+        i = 1
+        sum_yf    = 0
+        sum_ynssd = 0
+        sum_sk    = {}
+        sum_yksk  = 0
+        sum_sfse  = 0
+      %>
+      <th nowrap>应扣税款</th>
+      <th nowrap>实发数额</th>
+      <th nowrap>备注</th>
+    </tr>
+    </thead>
+      <tbody>
+<%
+
+       if @tb_extends != nil
+         for tb_extend in @tb_extends
+%>
+        <tr class="row<%=j % 2%>">
+          <td>
+          <input type='checkbox'  id='che' name='che' value='<%=tb_extend.id%>' />
+         </td>
+          <td nowrap><%=@p_typ2[tb_extend.p_typ]%></td>
+          <td nowrap>
+             <%=tb_extend.p_name%>
+          </td>
+          <td nowrap><%=button_to "取消待发",{:action=>"recall",:id=>tb_extend,:search_condit=>@search_condit,:page=>@extend_pages.current.number},:confirm=>"确信要召回该条待发记录吗？"%></td>
+          <td>
+              <%=@bank_typ[tb_extend.bank_typ] unless tb_extend.bank_typ.blank?%>
+          </td>
+          <td nowrap><%=  tb_extend.bankname%></td>
+          <td nowrap><%=  tb_extend.bank_account%></td>
+          <td nowrap><%=  tb_extend.id_card%></td>
+          <td nowrap><%=  tb_extend.case_code%></td>
+          <td nowrap>
+           <%if tb_extend.typ=='4' or tb_extend.typ=='5'%>
+             <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{TbRemuneration23.find_by_extend_id(tb_extend.id).typ}'").data_text%>
+           <%else%>
+             <%=@typ2[tb_extend.typ]%>
+           <%end%>
+          </td>
+          <td nowrap><%= SysArg.round2f(tb_extend.should_rmb) %></td><% sum_yf = sum_yf + SysArg.round2f(tb_extend.should_rmb).to_f %>
+          <td nowrap><%= SysArg.round2f(tb_extend.tax_base_rmb)%></td><% sum_ynssd = sum_ynssd + SysArg.round2f(tb_extend.tax_base_rmb).to_f%>
+          <td nowrap>
+            <% if tb_extend.remark.blank? %>
+              <%= link_to SysArg.round2f(tb_extend.tax_rmb),{:action=>"edit_taxrmb",:id=>tb_extend.id},{:popup=>['修改应扣税款','width=430,height=600,scrollbars=yes']} %><% sum_yksk = sum_yksk + SysArg.round2f(tb_extend.tax_rmb).to_f%>
+            <%else%>
+            <%= link_to SysArg.round2f(tb_extend.tax_rmb),{:action=>"edit_taxrmb",:id=>tb_extend.id},{:popup=>['修改应扣税款','width=430,height=600,scrollbars=yes'],:style=>"color:red;"} %><% sum_yksk = sum_yksk + SysArg.round2f(tb_extend.tax_rmb).to_f%>
+            <%end%>
+          </td><!--应扣税款-->
+          <td nowrap><%= SysArg.round2f(tb_extend.extend_rmb) %></td><% sum_sfse = sum_sfse +  SysArg.round2f(tb_extend.extend_rmb).to_f %>
+          <td nowrap><%= tb_extend.remark %></td>
+        </tr>
+        <%i+=1%>
+        <%j=j+1%>
+    <%end%>
+    <%end%>
+      <tr>
+        <td colspan="10" style="text-align: right;">合计</td>
+        <td><%= sum_yf %></td>
+        <td><%= sum_ynssd %></td>
+        <td><%= sum_yksk %></td>
+        <td><%= sum_sfse %></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <%form_tag({:action=>'extend_do'},{:onsubmit=>'return getcondi()'}) do %>
+       发放备注：<%=text_field_tag :remark,'',:size=>'100'%>
+       发放日期：<%=text_field_tag :extend_date,Date.today,:size=>'100'%>
+       <%=hidden_field_tag :condi,''%>
+       <br/>
+       <%=submit_tag '发放'%>
+   <%end%>
+</body>
+</html>
+

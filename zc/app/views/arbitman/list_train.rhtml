@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>培训列表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">培训列表</span></div>
+     <!--train，即培训的列表-->
+     <br>
+     <div align="center">
+      <%=link_to "增加", :action => "new_train", :id => @tb_arbitman.id%>
+    <%=link_to "返回", :controller => "arbitman",:action => "edit_arbitman", :id => @tb_arbitman.id%>
+     </div><br>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>会议名称</th>
+        <th nowrap>会议时间</th>
+        <th nowrap>备注</th>
+        <th nowrap>编辑</th>
+        <th nowrap>删除</th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%if @tb_trains != nil
+          for tb_train in @tb_trains%>
+              <tr class="row<%=i % 2%>">
+                <td><%= tb_train.name%> </td>
+                <td><%= tb_train.date%> </td>
+                <td><%= tb_train.remark%> </td>
+                <td><%=link_to "编辑", :controller => "arbitman",:action => "edit_train", :id => tb_train %></td>
+                <td><%=button_to "删除",{:controller => "arbitman", :action => "delete_train", :id => tb_train },:confirm=>"您确认要删除吗？",:method=>"post" %></td>
+              </tr>
+              <%i=i+1%>
+          <%end%>
+      <%end%>
+      </tbody>
+    </table>
+        
+  </body>
+</html>

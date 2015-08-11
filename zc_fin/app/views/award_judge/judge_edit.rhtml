@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>新建校核评价</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag :defaults%>
+    <script language="javascript">
+      function checkForm(){
+        score = document.getElementById("judge_score").value
+        if(score == 0 || score == ""){
+          alert("请填写评分");
+          return false;
+        }
+        if(!(/^\d+$/.test(score))){
+          alert("评分值必须为数字");
+          return false;
+        }
+        if(score > 100){
+          alert("评分值应该在0到100之间");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <br/>
+    <div class="cDGray" align="center">新建校核评价信息
+      <%=link_to "返回",:action=>"judge_list",:recevice_code=>params[:recevice_code]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <table class="list" cellspacing="1">
+        <tr>
+          <td width="21" rowspan="11" valign="middle" style=" text-align: center">
+            基 <br/>
+            本 <br/>
+            情 <br/>
+            况 <br/>
+            &nbsp;</td>
+          <td width="146" valign="top">申请人</td>
+          <td colspan="5" valign="top"><%=SysArg.applicant(params[:recevice_code],1,4)%></td>
+        </tr>
+        <tr>
+          <td valign="top">被申请人</td>
+          <td colspan="5" valign="top"><%=SysArg.respondent(params[:recevice_code],1,4)%></td>
+        </tr>
+        <tr>
+          <td valign="top">受案号</td>
+          <td colspan="2" valign="top"><%=@case_code%></td>
+          <td colspan="2" valign="top">经办人 </td>
+          <td width="89" valign="top"><%=@c3%></td>
+        </tr>
+        <tr>
+          <td width="146" valign="top">立案日期 </td>
+          <td colspan="2" valign="top"><%=@sdate4%></td>
+          <td colspan="2" valign="top">组庭日期 </td>
+          <td width="89" valign="top"><%=@c5%> </td>
+        </tr>
+        <tr>
+          <td width="146" valign="top">审限日期 </td>
+          <td colspan="2" valign="top"><%=@c6%> </td>
+          <td colspan="2" valign="top">是否延期 </td>
+          <td width="89" valign="top"><%=@c7%></td>
+        </tr>
+
+        <tr>
+          <td width="146" valign="top">起草人 </td>
+          <td width="126" valign="top">案情：<%=@c11%></td>
+          <td colspan="2" valign="top">仲裁庭意见：<%=@c12%></td>
+          <td colspan="2" valign="top"><%=@c9%>：<%=@c13%></td>
+        </tr>
+        <tr>
+          <td width="146" rowspan="4" valign="top">&nbsp;
+            仲 <br />
+              裁 <br />
+              费 </td>
+          <td width="126" valign="top">应收费用 </td>
+          <td colspan="2" valign="top">仲裁费：￥<%=@c14%><br />
+              反请求：￥<%=@c15%></td>
+          <td colspan="2" valign="top">实际开支费：￥<%=@c16%> </td>
+        </tr>
+        <tr>
+          <td width="126" valign="top">实收费用 </td>
+          <td colspan="2" valign="top">仲裁费：￥<%=@c17%><br />
+              反请求：￥<%=@c18%></td>
+          <td colspan="2" valign="top">实际开支费：￥<%=@c19%></td>
+        </tr>
+        <tr>
+          <td width="126" valign="top">应退费用 </td>
+          <td colspan="2" valign="top">仲裁费：￥<%=@c20%></td>
+          <td colspan="2" valign="top">实际开支费：￥<%=@c21%></td>
+        </tr>
+        <tr>
+          <td width="126" valign="top">费用核查人 </td>
+          <td colspan="4" valign="top">&nbsp;</td>
+        </tr>
+        <tr>
+          <td width="146" valign="top">类别 </td>
+          <td colspan="5" valign="top"><%=@c22%></td>
+        </tr>
+        <tr>
+          <td width="21" valign="top">助理意见 </td>
+          <td colspan="6" valign="top"><%=@c23%></td>
+        </tr>
+      </table>
+    <%form_for :judge ,:url=>{:action=>"judge_update",:recevice_code=>params[:recevice_code],:id=>params[:id]},:html =>{:onsubmit=>"return checkForm();"}  do |f|%>
+    <table class="list" cellspacing="1">
+        <tr>
+          <th nowrap="true">
+             裁决稿文字错漏:
+          </th>
+          <td>
+            <%=f.select(:decision_a, ["较多","较少","基本没有"])%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap="true">
+             裁决稿表述清晰:
+          </th>
+          <td>
+            <%=f.select(:decision_b, ["较好","一般","较差"])%>
+          </td>
+        </tr>
+      <tr>
+          <th nowrap="true">
+             裁决稿逻辑分析:
+          </th>
+          <td>
+            <%=f.select(:decision_c,["较好","一般","较差"])%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap="true">
+             是否存在程序问题:
+          </th>
+          <td>
+            <%=f.select(:decision_d,["是","否"])%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap="true">
+             是否存在实体问题:
+          </th>
+          <td>
+            <%=f.select(:decision_e,["是","否"])%>
+          </td>
+        </tr>
+
+        <tr>
+          <th >
+            评分（60分以下为较差、60-80分为一般、80-100分为优秀）:
+          </th>
+          <td>
+            <%=f.text_field :score%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area :remark,:rows=>4%>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

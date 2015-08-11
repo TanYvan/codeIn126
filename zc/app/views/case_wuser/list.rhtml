@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件外网当事方用户</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/tab.css" type="text/css" rel="stylesheet" />
+    <%if session[:recevice_code]==nil%>
+    <script type="text/javascript" language="javascript">
+        window.open("/case_p/list?contr_r=case_wuser&act_r=list","mainFrame")
+      </script>
+    <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件外网当事方用户</span></div>
+    <%if @case==nil%>
+      <div class="p">请选择您要办理的案件</div>
+    <%end%>
+    <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"case_wuser",:act_r=>"list"%>
+    <%if @case!=nil%>
+      <div class="cDGray">当前案件</div>
+      <table class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              咨询流水号
+            </th>
+            <th nowrap>
+              咨询日期
+            </th>
+            <th nowrap>
+              立案号
+            </th>
+            <th nowrap>
+              立案日期
+            </th>
+            <th nowrap>
+              申请人
+            </th>
+            <th nowrap>
+              被申请人
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @case.recevice_code%>
+            </td>
+            <td>
+              <%=h @case.receivedate%>
+            </td>
+            <td>
+              <%=h @case.case_code%>
+            </td>
+            <td>
+              <%=h @case.nowdate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp1 in @tp%>
+                <%ttpp=ttpp + tp1.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="clear"></div>
+      <div class="line"></div> 
+
+      <div class="cDGray">案件外网当事方用户<%=link_to  "创建", :action=>"new"%></div>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              用户类型
+            </th>
+            <th nowrap>
+              用户名
+            </th>
+            <th nowrap>
+             删除
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for a in @wuser%>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=@user_typ[a.user_type]%>
+              </td>
+              <td>
+                <%=WUser.find_by_code(a.user_code).name%>
+              </td>
+              <td>
+                <%=button_to "删除",{:action=>"delete",:id=>a},:confirm=>"您确认要删除吗？"%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+      </table>
+    <%end%>
+
+  </body>
+</html>

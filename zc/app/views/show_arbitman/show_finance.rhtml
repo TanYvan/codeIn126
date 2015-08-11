@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员财务信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">仲裁员财务信息</span></div>
+    <br>
+      <div align="center">
+    <%=link_to "返回",:action=> "show_arbitman", :id => @tb_arbitman.id%>
+      </div>
+        <table class="list">
+          <tr>
+            <th nowrap>姓名:</th>
+            <td><%=@tb_arbitman.name%></td>
+            </tr><tr>
+            <th nowrap>电话:</th>
+            <td><%=@tb_arbitman.telo%></td>
+            </tr><tr>
+            <th nowrap>手机:</th>
+            <td><%=@tb_arbitman.mobiletel%></td>
+          </tr>
+          <tr>
+            <th nowrap>通讯地址：</th>
+            <td><%=@tb_arbitman.addr%></td>
+            </tr><tr>
+            <th nowrap>银行账号：</th>
+            <td><%=@tb_arbitman.bankaccount%></td>
+          </tr>
+          <tr>
+            <th nowrap>详细开户行名称：</th>
+            <td><%=@tb_arbitman.bankname%>
+            </td>            
+          </tr>                     
+          <tr>
+            <th nowrap>身份证号码：</th>
+            <td><%=@tb_arbitman.id_card%></td>
+          </tr>
+          <tr>
+            <th nowrap>备注：</th>
+            <td><%=@tb_arbitman.bankremark%></td>
+          </tr>
+          <tr>
+            <th nowrap>财务审核状态：</th>
+            <%if @tb_arbitman.financestatus=='0'%>
+          </tr><tr>
+            <th nowrap>未审核</th>
+            <%elsif @tb_arbitman.financestatus=='1'%>
+          </tr><tr>
+            <th nowrap>已审核</th>
+            <%end%>
+          </tr>
+        </table>
+  </body>
+</html>

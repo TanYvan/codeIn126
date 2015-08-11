@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>查看仲裁员开支费用明细信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/sty.css" rel="stylesheet" type="text/css"/>    
+  </head>
+  <body>
+    <br/>
+    <div align="center"><%=link_to "返回仲裁员实际开支列表",:action=>"list",:recevice_code=>params[:recevice_code]%></div>
+    <table bgcolor="#A7C8CD"><tr><td>
+          <h2 class="s33">仲裁员实际开支收费及支出明细表(表一)&nbsp;&nbsp;&nbsp;&nbsp;助理:<%=@zl%></h2>
+          <br/>
+          <div align="left">受案号:<%=@case_code%>&nbsp;
+            结案号:<%=@end_code%>&nbsp;
+            首笔缴款汇率:<%for m in @money%>
+              <%=m.name%>:<%=m.rate%>&nbsp;
+            <%end%>
+          </div>
+          <br/>
+          <h2 class="s33">预  缴  费  用  明  细</h2>
+          <table  class="list_2" width="100%">
+            <tr><td valign="top">
+                <table  class="list_2"  width="100%">
+                  <tr>
+                    <th colspan="3" class="s33">申请人预缴仲裁员开支费用</th>
+                  </tr>
+                  <tr>
+                    <th nowrap>项目</th>
+                    <th>日期</th>
+                    <th>RMB</th>
+                  </tr>
+                  <%for s in @should%>
+                    <tr>
+                      <td>实收(仲裁员实际开支费)</td>
+                      <td><%=s.u_t.to_date%></td><!--助理对应收费到具体实际开支费用的操作时间，不是出纳收费时间-->
+                      <td><%=s.re_rmb_money %></td>
+                    </tr>
+                  <%end%>
+                  <%for s in @should2%>
+                    <tr>
+                      <td>实退(仲裁员实际开支费)</td>
+                      <td><%=s.u_t.to_date%></td><!--出纳退费操作时间-->
+                      <td><%=s.re_rmb_money %></td>
+                    </tr>
+                  <%end%>
+                  <tr>
+                    <th colspan="2">合计：</th>
+                    <%fe1=@f1.to_i - @f2.to_i%>
+                    <th><%=fe1%></th>
+                  </tr>
+                </table>
+              </td>
+              <td valign="top"><!--被申请人预缴仲裁员开支费用-->
+                <table  class="list_2"  width="100%" >
+                  <tr>
+                    <th colspan=3 class="s33">被申请人预缴仲裁员开支费用</th>
+                  </tr>
+                  <tr>
+                    <th nowrap>项目</th>
+                    <th>日期</th>
+                    <th>RMB</th>
+                  </tr>
+                  <%for s in @should_r%>
+                    <tr>
+                      <td>实收(仲裁员实际开支费)</td>
+                      <td><%=s.u_t.to_date%></td><!--助理对应收费到具体实际开支费用的操作时间，不是出纳收费时间-->
+                      <td><%=s.re_rmb_money %></td>
+                    </tr>
+                  <%end%>
+                  <%for s in @should2_r%>
+                    <tr>
+                      <td>实退(仲裁员实际开支费)</td>
+                      <td><%=s.u_t.to_date%></td><!--出纳退费操作时间-->
+                      <td><%=s.re_rmb_money %></td>
+                    </tr>
+                  <%end%>
+                  <tr>
+                    <th colspan="2">合计：</th>
+                    <%fe2=@f11.to_i - @f12.to_i%>
+                    <th><%=fe2%></th>
+                  </tr>
+                </table>
+              </td></tr>
+            <tr><th colspan=2>总计：人民币：<%=fe1 + fe2%></th></tr>
+          </table>
+          <br/>
+          <h2 class="s33">实  际  开  支  费  用  明  细（币种为人民币）</h2>
+          <%if @aribitprog_num=='0001' or @aribitprog_num=='0003' or @aribitprog_num=='0005' or @aribitprog_num=='0007'%>
+            <table  class="list_2"  width="100%">
+              <tr>
+                <th>实际开支</th>
+                <th colspan="<%=@typ.length+1%>">首席仲裁员：<%=@a%></th>
+                <th colspan="<%=@typ.length+1%>">申方仲裁员：<%=@b%></th>
+                <th colspan="<%=@typ.length+1%>">被方仲裁员：<%=@c%></th>
+                <th colspan="<%=@typ1.length+1%>">仲裁庭</th>
+              </tr>
+              <tr>
+                <th>开庭时间</th>
+                <% 3.times do -%>
+                  <%for t1 in @typ%>
+                    <th nowrap><%=t1.data_text%></th>
+                  <%end%>
+                  <th>备注</th>
+                <%end -%>
+                <%for t2 in @typ1%><!--仲裁庭-->
+                  <th><%=t2.data_text%></th>
+                <%end%>
+                <th>备注</th>
+              </tr>
+              <%for si in @sitting %>
+                <tr>
+                  <td><%=si.sittingdate%></td><!--开庭时间-->
+                  <%for t1 in @typ%><!--首席-->
+                    <td nowrap>
+                      <%@as1=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and sittingdate=? and arbitman_typ='0002' and typ=?",params[:recevice_code],si.sittingdate,t1.data_val])%>
+                      <%=@as1%>
+                    </td>
+                  <%end%>
+                  <td>
+                    <%@as01=TbArbitmanSpend.find(:first,:conditions=>["used='Y' and recevice_code=? and sittingdate=? and arbitman_typ='0002'",params[:recevice_code],si.sittingdate])%>
+                    <%if @as01!=nil%>
+                      <%=@as01.remark%>
+                    <%end%>
+                  </td>
+                  <%for t1 in @typ%><!--申方-->
+                    <td nowrap>
+                      <%@as2=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and sittingdate=? and arbitman_typ='0003' and typ=?",params[:recevice_code],si.sittingdate,t1.data_val])%>
+                      <%=@as2%>
+                    </td>
+                  <%end%>
+                  <td>
+                    <%@as01=TbArbitmanSpend.find(:first,:conditions=>["used='Y' and recevice_code=? and sittingdate=? and arbitman_typ='0003'",params[:recevice_code],si.sittingdate])%>
+                    <%if @as01!=nil%>
+                      <%=@as01.remark%>
+                    <%end%>
+                  </td>
+                  <%for t1 in @typ%><!--被方-->
+                    <td nowrap>
+                      <%@as3=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and sittingdate=? and arbitman_typ='0004' and typ=?",params[:recevice_code],si.sittingdate,t1.data_val])%>
+                      <%=@as3%>
+                    </td>
+                  <%end%>
+                  <td>
+                    <%@as01=TbArbitmanSpend.find(:first,:conditions=>["used='Y' and recevice_code=? and sittingdate=? and arbitman_typ='0004'",params[:recevice_code],si.sittingdate])%>
+                    <%if @as01!=nil%>
+                      <%=@as01.remark%>
+                    <%end%>
+                  </td>
+                  <%for t in @typ1%> <!--仲裁庭支出信息-->
+                    <td nowrap>
+                      <%@as4=TbArbitcourtSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and sittingdate=? and typ=?",params[:recevice_code],si.sittingdate,t.data_val])%>
+                      <%=@as4%>
+                    </td>
+                  <%end%>
+                  <td>
+                    <%@as_02=TbArbitcourtSpend.find(:first,:conditions=>["used='Y' and recevice_code=? and sittingdate=?",params[:recevice_code],si.sittingdate])%>
+                    <%if @as_02!=nil%>
+                      <%=@as_02.remark%>
+                    <%end%>
+                  </td>
+                </tr>
+              <%end%>
+              <tr>
+                <th>合计</th>
+                <th colspan="<%=@typ.length+1%>">
+                  <%as11=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and arbitman_typ='0002'",params[:recevice_code]])%>
+                  <%=as11%>
+                </th>
+                <th colspan="<%=@typ.length+1%>">
+                  <%as22=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and arbitman_typ='0003'",params[:recevice_code]])%>
+                  <%=as22%>
+                </th>
+                <th colspan="<%=@typ.length+1%>">
+                  <%as33=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and arbitman_typ='0004'",params[:recevice_code]])%>
+                  <%=as33%>
+                </th>
+                <th colspan="<%=@typ1.length+1%>">
+                  <%as44=TbArbitcourtSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=?",params[:recevice_code]])%>
+                  <%=as44%>
+                </th>
+              </tr>
+              <tr>
+                <th>总计</th>
+                <th colspan="<%=(@typ.length+1)*3+@typ1.length+1%>"><%=as11.to_i + as22.to_i + as33.to_i + as44.to_i%></th>
+              </tr>
+            </table>
+          <%else%><!--简易案件-->
+            <table  class="list_2"  width="100%">
+              <tr>
+                <th>实际开支</th>
+                <th colspan="<%=@typ.length+1%>">独任仲裁员：<%=@a%></th>
+                <th colspan="<%=@typ1.length+1%>">仲裁庭</th>
+              </tr>
+              <tr>
+                <th>开庭时间</th>
+                <%for t1 in @typ%>
+                  <th><%=t1.data_text%></th>
+                <%end%>
+                <th>备注</th>
+                <%for t2 in @typ1%>
+                  <th><%=t2.data_text%></th>
+                <%end%>
+                <th>备注</th>
+              </tr>
+              <%for si in @sitting %>
+                <tr>
+                  <td><%=si.sittingdate%></td>
+                  <%for t1 in @typ%>
+                    <td nowrap>
+                      <%as=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and sittingdate=? and arbitman_typ='0001' and typ=?",params[:recevice_code],si.sittingdate,t1.data_val])%>
+                      <%=as%>
+                    </td>
+                  <%end%>
+                  <td>
+                    <%@as01=TbArbitmanSpend.find(:first,:conditions=>["used='Y' and recevice_code=? and sittingdate=? and arbitman_typ='0001'",params[:recevice_code],si.sittingdate])%>
+                    <%if @as01!=nil%>
+                      <%=@as01.remark%>
+                    <%end%>
+                  </td>
+                  <!--仲裁庭支出信息-->
+                  <%for t in @typ1%>
+                    <td nowrap>
+                      <%as_2=TbArbitcourtSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and sittingdate=? and typ=?",params[:recevice_code],si.sittingdate,t.data_val])%>
+                      <%=as_2%>
+                    </td>
+                  <%end%>
+                  <td>
+                    <%@as_02=TbArbitcourtSpend.find(:first,:conditions=>["used='Y' and recevice_code=? and sittingdate=?",params[:recevice_code],si.sittingdate])%>
+                    <%if @as_02!=nil%>
+                      <%=@as_02.remark%>
+                    <%end%>
+                  </td>
+                </tr>
+              <%end%>
+              <tr>
+                <th>合计</th>
+                <th colspan="<%=@typ.length+1%>">
+                  <%as_3=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and arbitman_typ='0001'",params[:recevice_code]])%>
+                  <%=as_3.to_i%>
+                </th>
+                <th colspan="<%=@typ1.length+1%>">
+                  <%as_4=TbArbitcourtSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=?",params[:recevice_code]])%>
+                  <%=as_4.to_i%>
+                </th>
+              </tr>
+              <tr>
+                <th>总计</th>
+                <th colspan="<%=@typ.length+@typ1.length+2%>"><%=as_3.to_i+as_4.to_i%></th>
+              </tr>
+            </table>
+          <%end%>
+          <br/>
+          <h2 class="s33">双方当事人实际承担费用</h2>
+          <table  class="list_2" width="100%">
+            <tr><td valign="top">
+                <table  class="list_2"  width="100%">
+                  <tr>
+                    <th colspan="<%=@money.length+1%>">申 请 人 承 担 实 际 费 用</th>
+                  </tr>
+                  <tr>
+                    <th nowrap>项目</th>
+                    <%for m in @money%>
+                    <th nowrap><%=SysArg.get_sign(m.code)%></th>
+                    <%end%>
+                  </tr>
+                  <%for t2 in @typ2%>
+                    <tr>
+                      <td nowrap><%=TbDictionary.find(:first,:conditions=>["typ_code='8142' and state='Y' and data_val=?",t2.data_val]).data_text%></td>
+                      <%for m in @money%>
+                        <td nowrap>
+                          <%=TbDisposal.sum(:f_money,:conditions=>["used='Y' and partytype=1 and currency=? and recevice_code=? and typ=?",m.code,params[:recevice_code],t2.data_val])%>
+
+                        </td>
+                      <%end%>
+                    </tr>
+                  <%end%>
+                  <tr>
+                    <th nowrap>备注</th>
+                    <td colspan="<%=@money.length+1%>"><%=@r1%></td>
+                  </tr>
+                </table>
+              </td><td valign="top">
+                <table  class="list_2"  width="100%">
+                  <tr>
+                    <th colspan="<%=@money.length+1%>">被 申 请 人 承 担 实 际 费 用</th>
+                  </tr>
+                  <tr>
+                    <th nowrap>项目</th>
+                    <%for m in @money%>
+                    <th nowrap> <%=SysArg.get_sign(m.code)%></th>
+                    <%end%>
+                  </tr>
+                  <%for t2 in @typ2%>
+                    <tr>
+                      <td><%=TbDictionary.find(:first,:conditions=>["typ_code='8142' and state='Y' and data_val=?",t2.data_val]).data_text%></td>
+                      <%for m in @money%>
+                        <td nowrap>
+                          <%=TbDisposal.sum(:f_money,:conditions=>["used='Y' and partytype=2 and currency=? and recevice_code=? and typ=?",m.code,params[:recevice_code],t2.data_val])%>
+
+                        </td>
+                      <%end%>
+                    </tr>
+                  <%end%>
+                  <tr>
+                    <th nowrap>备注</th>
+                    <td colspan="<%=@money.length+1%>"><%=@r2%></td>
+                  </tr>
+                </table>
+              </td></tr>
+          </table>
+          <br/>
+          <h2 class="s33">结 果（币种为人民币）（正数为应退费用，负数为欠缴费用）</h2>
+          <table  class="list_2" width="100%">
+            <tr><td valign="top">
+                <table  class="list_2"  width="100%">
+                  <tr>
+                    <th colspan="2">申 请 人</th>
+                  </tr>
+                  <tr>
+                    <th>费用</th>
+                    <th><%=fe1 - @app_disposal.to_i - @a_disposal.to_i %></th>
+                  </tr>
+                </table>
+              </td>
+              <td valign="top">
+                <table  class="list_2"  width="100%">
+                  <tr>
+                    <th colspan="2">被 申 请 人</th>
+                  </tr>
+                  <tr>
+                    <th>费用</th>
+                    <th><%=fe2 - @res_disposal.to_i - @r_disposal.to_i %></th>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+           <br/>
+          <h2 class="s33">仲裁员实际费用平衡表(￥)</h2>
+          <table  class="list_2"  width="100%">
+            <tr>
+              <th >实收(申请人)</th>
+              <th >实收(被申请人)</th>
+              <th >实收(合计)</th>
+              <th >支出(合计)</th>
+              <th >结余</th>
+            </tr>
+            <tr>
+              <th><%=fe1%></th>
+              <th><%=fe2 %></th>
+              <th><%=fe1 + fe2%></th>
+              <%if @aribitprog_num=='0001' or @aribitprog_num=='0003' or @aribitprog_num=='0005' or @aribitprog_num=='0007'%>
+                <%as11=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and arbitman_typ='0002'",params[:recevice_code]])%>
+                <%as22=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and arbitman_typ='0003'",params[:recevice_code]])%>
+                <%as33=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and arbitman_typ='0004'",params[:recevice_code]])%>
+                <%as44=TbArbitcourtSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=?",params[:recevice_code]])%>
+                <th><%=as11.to_i + as22.to_i + as33.to_i + as44.to_i%></th>
+                <th><%=fe1 + fe2 - (as11.to_i + as22.to_i + as33.to_i + as44.to_i)%></th>
+              <%else%>
+                <%as_3=TbArbitmanSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and arbitman_typ='0001'",params[:recevice_code]])%>
+                <%as_4=TbArbitcourtSpend.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=?",params[:recevice_code]])%>
+                <th><%=as_3.to_i+as_4.to_i%></th>
+                <th><%=fe1 + fe2 - (as_3.to_i+as_4.to_i)%></th>
+              <%end%>
+            </tr>
+          </table>
+        </td></tr></table>
+    <div align="center">
+        <%form_tag ({:action=>'p_s_2',:recevice_code=>params[:recevice_code]},:target=>"_black")  do%>
+          <%=submit_tag '生成Word文档'%>
+        <%end%>
+      </div>
+  </body>
+</html>

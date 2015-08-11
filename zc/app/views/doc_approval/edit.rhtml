@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改状态</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <div class="title"><span class="cBlue"><%=@state[params[:state]]%> 理由</span></div>
+  <br>
+<%=link_to "返回",:action=>"list",:order=>params[:order],:page=>params[:page],:search_condit=>params[:search_condit],:page_lines=>params[:page_lines]%>
+  
+ <div style="color:red">
+   <div align="center"><%=flash[:notice]%></div>
+ </div>
+    <div align="center">
+      <%form_for :a ,:url=>{:action=>"update",:id=>params[:id],:state=>params[:state],:order=>params[:order],:page=>params[:page],:search_condit=>params[:search_condit],:page_lines=>params[:page_lines]}  do |f|%>
+    </div>
+    <table class="list">
+        <tr bgcolor="white">
+          <th>
+            理由:
+          </th>
+          <td align="left">
+            <%=f.text_area(:reasons,:rows=>4)%>
+            <div style="color:red"><%=error_message_on(:party,:commissary)%></div>
+          </td>
+        </tr>      
+      </table>
+        <div align="center"><%=submit_tag "提交" %></div>
+          
+        <%end%>
+              
+  </body>
+</html>

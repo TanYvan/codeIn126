@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>专家会议纪要</title>
+    <%= javascript_include_tag "prototype" %>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">专家会议列表</span></div>
+    <br>
+      <%if @case!=nil%>
+        <div class="cDGray">当前案件</div>
+        <table cellspacing="1" class="adminlist">
+          <thead>
+            <tr >
+              <th nowrap>
+                咨询流水号
+              </th>
+              <th nowrap>
+                咨询日期
+              </th>
+              <th nowrap>
+                立案号
+              </th>
+              <th nowrap>
+                立案日期
+              </th>
+              <th nowrap>
+                申请人
+              </th>
+              <th nowrap>
+                被申请人
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <%=h @case.recevice_code%>
+              </td>
+              <td>
+                <%=h @case.receivedate%>
+              </td>
+              <td>
+                <%=h @case.case_code%>
+              </td>
+              <td>
+                <%=h @case.nowdate%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="adminlist" cellspacing="1">
+          <thead>
+            <tr>
+              <th nowrap>题目</th>
+              <th nowrap>日期</th>
+              <th nowrap>会议记录人</th>
+              <th nowrap>内容摘要</th>
+              <th nowrap>备注</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%for expert_meeting in @expert_meetings %>
+              <tr >
+                <td><%=expert_meeting.meeting_title%></td>
+                <td><%=expert_meeting.dat%></td>
+                <td><%=expert_meeting.record_by%></td>
+                <td><%=h(truncate(expert_meeting.content,20))%></td>
+                <td><%=h expert_meeting.remark%></td>
+              </tr>
+
+              <tr >
+                <td colspan=5>
+                  <%@meeting_attendant=MeetingAttendant.find(:all,:conditions=>["used='Y' and meeting_id=?",params[:e_id]],:order=>"expert_code")%>
+                  <%if @meeting_attendant!=nil%>
+                    <table cellspacing="1" class="adminlist">
+                      <thead>
+                        <tr>
+                          <th nowrap>专家编号</th>
+                          <th nowrap>姓名</th>
+                        </tr>
+                      </thead>
+                      <% for meeting_attedant in @meeting_attendant %>
+                        <tr >
+                          <td><%= meeting_attedant.expert_code %></td>
+                          <td><%= TbExpertconsult.find_by_code(meeting_attedant.expert_code).name  %></td>
+                        </tr>
+                      <%end%>
+                      <tr>
+                        <%@casebooks=CaseBook.find(:first,:conditions=>["used='Y' and recevice_code=? and p_id=? and typ='0005' and book_name<>''",expert_meeting.recevice_code,params[:e_id]])%>
+                        <td colspan=4 style=" text-align: center;">
+                          <%if @casebooks!=nil%>
+                            <%=link_to "会议纪要下载",:controller=>"every_casebase",:action=>"book_down3",:recevice_code=>@casebooks.recevice_code,:id=>@casebooks.id%>
+                          <%else%>
+                            <i>未上传会议纪要文件</i>
+                          <%end%>
+                        </td>
+                      </tr>
+                    </table>
+                  <%end%>
+                </td>
+              </tr>
+            <br/>
+            <%end%>
+
+          <%end%>
+        </tbody>
+      </table>
+  </body>
+</html>

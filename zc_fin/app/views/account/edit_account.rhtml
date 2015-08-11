@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员账号信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">修改仲裁员账号信息</span></div>
+    <br/>
+    <div align="center">
+      <%=link_to "返回",:action=> "list_account",:page=>params[:page],:page_lines=>params[:page_lines]%>
+    </div>
+    <%form_for :tb_arbitman, :url => {:action => "update_account", :id => @tb_arbitman,:page=>params[:page],:page_lines=>params[:page_lines]} do |f|%>
+      <table class="list">
+        <tr>
+          <th nowrap>姓名:</th>
+          <td><%=@tb_arbitman.name%></td>
+        </tr>
+        <tr>
+          <th nowrap>通讯地址：</th>
+          <td><%=f.text_field :addr,:style =>"width:30em"%></td>
+        </tr>
+        <tr>
+          <th nowrap>手机:</th>
+          <td><%=f.text_field :mobiletel%></td>
+        </tr>
+        <tr>
+          <th nowrap>email:</th>
+          <td><%=f.text_field :email%></td>
+        </tr>
+        <tr >
+          <th>
+            银行类别:
+          </th>
+          <td >
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8201' and state='Y' and used='Y'",:order=>'ind,data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:bank_typ, op,:data_val,:data_text)%>
+            <div style="color:red"><%=error_message_on(:user,:bank_typ)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>账号：</th>
+          <td><%=f.text_field :bankaccount,:style =>"width:30em"%></td>
+        </tr>
+        <tr>
+          <th nowrap>详细开户行名称：</th>
+          <td><%=f.text_field :bankname ,:style =>"width:45em"%>
+            <br/>
+            <%if @tb_arbitman.area_code=='001001001'%>
+            <div class="cRed">
+              <%="注意：请输入中行活期帐号或信用卡号"%>
+            </div>
+            <%else%>
+            <div class="cRed">
+              <%="注意：请输入开户行名称及帐号或卡号"%>
+            </div>
+            <%end%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>银行编号：</th>
+          <td><%=f.text_field :bank_code,:style =>"width:30em"%></td>
+        </tr>
+        <tr>
+          <th nowrap>身份证号码：</th>
+          <td><%=f.text_field :id_card,:style =>"width:30em"%></td>
+        </tr>
+        <tr>
+          <th nowrap>备注：</th>
+          <td><%=f.text_area :bankremark, :rows =>5%></td>
+        </tr>
+      </table>
+      <br/>
+      <div align="center"><%=submit_tag "确定"%></div>
+    <%end%>
+  </body>
+</html>
+

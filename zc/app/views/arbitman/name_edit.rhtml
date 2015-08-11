@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员名称修改</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <script language='JavaScript'>
+      function aa(){
+        a=window.showModalDialog('/region_select/tree',"","dialogWidth=350px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          document.getElementById("tb_arbitman_area_code").value=a
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <caption>
+      <%= link_to "返回" ,{:action => "list_arbitman",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines] }%>
+    </caption>
+    <%form_for :tb_arbitman ,:url=>{:action=>"name_update",:id => @tb_arbitman.id, :search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]},:html=>{:onsubmit=>"return check();"} do |f| %>
+      <table class="list">
+        <tr>
+          <th nowrap><i>*</i>姓名(系统唯一):</th>
+        <td><%=f.text_field :name%></td></tr>
+        <tr>
+          <th nowrap><i>*</i>姓名(身份证):</th>
+        <td><%=f.text_field :name_idcard%></td></tr>
+      </table>
+      <br/>
+      <div align="center">
+        <%= submit_tag "保存" %>
+
+      </div>
+    <%end%>
+    <table class="adminlist" cellspacing="1">
+      <thead>
+        <tr>
+          <th nowrap>仲裁员编码</th>
+          <th nowrap>
+            姓名(系统唯一)
+          </th>
+          <th nowrap>
+            姓名(身份证)
+          </th>
+          <th nowrap>修改人</th>
+          <th nowrap>修改时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%j=0%>
+        <%i=1%>
+          <%for n in @nc %>
+            <tr class="row<%=j % 2%>">
+              <td><%=n.code%></td>
+              <td><%=n.name%></td>
+              <td><%=n.name_idcard%></td>
+              <td><%=User.find_by_code(n.u).name%></td>
+              <td><%=n.u_t.to_s(:db)%></td>
+             </tr>
+            <%i+=1%>
+            <%j=j+1%>
+          <%end%>
+
+      </tbody>
+    </table>
+  </body>
+</html>

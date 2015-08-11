@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>咨询立案案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <table border="0" width="100%"><tr><td>
+          <div class="title"><span class="cBlue">咨询、立案案件统计</span></div>
+          <div align="center" style=" display:  inline">
+          <%form_tag :url=>{:action=>"case_now_total"} do%>
+            <table align="center">
+              <tr><td nowrap align="right">
+                  咨询时间段:</td>
+                <td align="left" nowrap>
+                  <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" />
+                  -
+                  <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" />
+                </td></tr>
+            </table>
+            <%=submit_tag "查询" %>
+          <%end%>
+          </div>
+          <div style=" display:  inline">
+            <input type="button" id="a" value="导出excel文档" onclick="to_excel(document.getElementById('to_excel_a'))"></input>
+          </div>
+          <br/>
+          <div style="color:red"><%=flash[:notice]%></div>
+          <table cellspacing="1" class="list" width="40%" id="to_excel_a">
+            <thead>
+              <tr>
+                <th nowrap style="text-align: center">
+                  <%if @order=="users.name desc"%>
+                    <%=link_to '助理↑',:action=>"case_now_total",:order=>"users.name asc",:date1=>params[:date1],:date2=>params[:date2]%>
+                  <%elsif @order=="users.name asc"%>
+                    <%=link_to '助理↓',:action=>"case_now_total",:order=>"users.name desc",:date1=>params[:date1],:date2=>params[:date2]%>
+                  <%else%>
+                    <%=link_to '助理',:action=>"case_now_total",:order=>"users.name asc",:date1=>params[:date1],:date2=>params[:date2]%>
+                  <%end%>
+                </th>
+                <th nowrap style="text-align: center">
+                  <%if @order=="count(users.code) desc"%>
+                    <%=link_to '咨询案件数量↑',:action=>"case_now_total",:order=>"count(users.code) asc",:date1=>params[:date1],:date2=>params[:date2]%>
+                  <%elsif @order=="count(users.code) asc"%>
+                    <%=link_to '咨询案件数量↓',:action=>"case_now_total",:order=>"count(users.code) desc",:date1=>params[:date1],:date2=>params[:date2]%>
+                  <%else%>
+                    <%=link_to '咨询案件数量',:action=>"case_now_total",:order=>"count(users.code) asc",:date1=>params[:date1],:date2=>params[:date2]%>
+                  <%end%>
+                </th>
+                <th style="text-align: center">未立案数量</th>
+                <th style="text-align: center">已立案数量</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%c_yes=0%>
+              <%for c in @case%>
+                <tr class="row<%=i % 2%>">
+                  <td style="text-align: center">
+                    <%=c.clerk_name%>
+                  </td>
+                  <td style="text-align: center">
+                    <%=link_to c.num,:action=>"list_everyone",:user_code=>c.users_code,:date1=>@date1,:date2=>@date2%>
+                  </td>
+                  <% cas = TbCase.find_by_sql("select count(id) as c from tb_cases where used = 'Y' and clerk_2 = '#{c.users_code}' and receivedate >= '#{@date1}' and receivedate <= '#{@date2}' and state != -2 AND state < 4 AND case_code = ''") %>
+                  <td style="text-align: center"><%=cas.first.c  %><%  c_yes=cas.first.c.to_i + c_yes %></td>
+                  <td style="text-align: center"><%=  c.num.to_i- cas.first.c.to_i  %></td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+              <tr class="row<%=i % 2%>">
+                <th style="text-align: center">
+                  合计
+                </th>
+                <th style="text-align: center">
+                  <%=@case.sum{|cas| cas.num.to_i}%>
+                </th>
+                <th style="text-align: center"><%= c_yes %></th>
+                <th style="text-align: center"><%= @case.sum{|cas| cas.num.to_i}.to_i - c_yes %></th>
+              </tr>
+            </tbody>
+          </table>
+        </td></tr></table>
+    <%#*<script langugae="javascript">to_excel_2(document.getElementById("to_excel_a"));%>
+      <%#*window.close();%>
+    <%#*</script>%>
+  </body>
+</html>

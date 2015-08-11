@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员报酬汇总</title>
+    
+    <script type="text/javascript" src="/javascripts/pub.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script type="text/javascript" src="/javascripts/prototype.js" ></script>
+    <script type="text/javascript">
+      function to_excel(obj){
+        window.clipboardData.setData("Text",obj.innerHTML);
+        try {
+          var xls    = new ActiveXObject ( "Excel.Application" );
+         }catch(e) {
+             alert( "要打印该表，您必须安装Excel电子表格软件，同时浏览器须使用“ActiveX 控件”，您的浏览器须允许执行控件。");
+             return "";
+         }
+        xls.DisplayAlerts = false
+        xls.visible =true;  //设置excel为可见
+        var xlBook = xls.Workbooks.Add;
+        var xlsheet = xlBook.Worksheets(1);
+
+
+        xlsheet.Rows(1).RowHeight = 20;
+        xlsheet.Rows(1).Font.Size=12;
+        xlsheet.Rows(1).Font.Name="黑体";
+
+        xlsheet.Columns(4).ColumnWidth = 20;
+        xlsheet.Columns(5).ColumnWidth = 18;
+        xlsheet.Columns(6).ColumnWidth = 18;
+        xlsheet.Columns(7).ColumnWidth = 11;
+        xlsheet.Columns(8).ColumnWidth = 15;
+        xlsheet.Columns(9).ColumnWidth = 12;
+        xlsheet.Columns(10).ColumnWidth = 10;
+        xlsheet.Columns(11).ColumnWidth = 11;
+        xlsheet.Columns(13).ColumnWidth = 15;
+        xlsheet.Columns(14).ColumnWidth = 15;
+        xlsheet.Columns(16).ColumnWidth = 10;
+        xlsheet.Columns(17).ColumnWidth = 15;
+        xlsheet.Paste();
+
+        xlsheet.Columns(5).NumberFormatLocal = "@"; //设置第2列“账号”为文本格式
+        xlsheet.Columns(6).NumberFormatLocal = "@"; //设置第2列“身份证号”为文本格式
+        xlsheet.Columns(12).NumberFormatLocal = "0.00";
+        xlsheet.Columns(13).NumberFormatLocal = "0.00";
+        xlsheet.Columns(14).NumberFormatLocal = "0.00";
+        xlsheet.Columns(15).NumberFormatLocal = "0.00";
+        xlsheet.Columns(16).NumberFormatLocal = "0.00";
+        xlsheet.Columns(17).NumberFormatLocal = "0.00";
+        xlsheet.Columns(18).NumberFormatLocal = "0.00";
+
+
+        xlsheet.Hyperlinks.Delete();
+        window.clipboardData.setData("Text","")
+    }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">已发放报酬查询</span></div>
+    <div align="center">
+      <%form_tag :url=>{:action=>"arbitman_sum"} do%>
+      <table align="center"  >
+        <tr>
+          <td nowrap align="right">统计时间段:</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" />-
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" />
+           </td>
+        </tr>
+        <tr>
+          <td nowrap align="right">
+            仲裁员姓名:</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:arbitman_name,@arbitman_name)%>
+          </td>
+        </tr>
+        <tr>
+          <td nowrap align="right">
+            立案号:</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:case_code,@case_code)%>
+          </td>
+        </tr>
+      </table>
+      <%=submit_tag "查询" %>
+      <%end%>
+      <br/>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <div class="cGreen">
+        统计时间段:<%=@date1%>至<%=@date2%>&nbsp;
+
+      </div>
+    </div>
+     <table  id="yyy" border="1" bordercolor="#000000" style="width:98%; border:1px solid #000000; border-collapse: collapse;" align="center" cellspacing="0" cellpadding="3">
+      <tbody>
+      <%i=0%>
+      <% for pp in @tb_extends_p%>
+      <tr class="row<%=i % 2%>">
+        <td colspan="9" align="left"><!-- 姓名 -->
+          姓  名:<%= TbArbitman.find_by_code(pp.p).name %>(<%=pp.p%>)
+          <%=link_to  "生成感谢函", {:action=>"gxh_arbitman_sum", :date1=> @date1, :date2=> @date2, :p=>pp.p, :case_code=>@case_code}, :target=>"_blank" %>
+        </td>
+      </tr>
+      <tr class="row<%=i % 2%>">
+        <td>
+          受案号
+        </td>
+        <td>
+          结案号
+        </td>
+        <td>
+          类型
+        </td>
+        <td>
+          应发
+        </td>
+        <td>
+          扣税
+        </td>
+        <td>
+          实发
+        </td>
+        <td>
+          时间
+        </td>
+        <td>
+          开户行
+        </td>
+        <td>
+          账号
+        </td>
+      </tr>
+      <%tb_extends = TbExtend.find(:all,:conditions => [@c + " and p=?",pp.p],:order=> "extend_date asc")%>
+      <% for p in tb_extends%>
+      <% tb_arbitman = TbArbitman.find_by_code(pp.p) %>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=  p.case_code%>
+        </td>
+        <td>
+          <%=  p.end_code%>
+        </td>
+        <td>
+          <%=@typ2[p.typ]%>
+        </td>
+        <td>
+          <%= SysArg.round2f(p.should_rmb) %>
+        </td>
+        <td>
+          <%= SysArg.round2f(p.tax_rmb) %>
+        </td>
+        <td>
+          <%= SysArg.round2f(p.extend_rmb) %>
+        </td>
+        <td>
+          <%=p.extend_date%>
+        </td>
+        <td>
+          <%=p.bankname%>
+        </td>
+        <td>
+          <%=p.bank_account%>
+        </td>
+      </tr>
+      <%end%>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <div align="center" id ="excel" style="display: none;">
+        <div id="xxx"></div>
+    </div>
+    <%form_for :user ,:url=>{:action=>"gxh_arbitman_sum" } do |f|%>
+      <input type="hidden" id="rmb_hant_search_1_word" name="rmb_hant_search_1_word" value="<%=@c%>" />
+      <%=submit_tag "生成感谢函" %>
+    <%end%>
+
+
+  </body>
+</html>

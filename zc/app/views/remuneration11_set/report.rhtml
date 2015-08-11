@@ -1,0 +1,503 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv=Content-Type content="text/html; charset= utf-8"/>
+<title>仲裁员办案报酬信息表</title>
+<%if session[:recevice_code_2]==nil%>
+  <script type="text/javascript">
+    window.open("/case_p/list_2?contr_r=remuneration11_set&act_r=report","mainFrame")
+  </script>
+<%else%>
+  <%@endDate=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",session[:recevice_code_2]],:order=>"id desc")%>
+  <%if @endDate==nil || @endDate.decideDate.to_s(:db) >= "2013-03-01" %>
+    <script type="text/javascript">
+      window.open("/remuneration12_set/report","mainFrame")
+    </script>
+  <%end%>
+<%end%>
+
+<style type="text/css">
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:宋体;
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
+	{font-family:"\@宋体";
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:10.5pt;
+	font-family:"Times New Roman";}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	layout-grid-mode:char;
+	border:none;
+	padding:0cm;
+	font-size:9.0pt;
+	font-family:"Times New Roman";}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	layout-grid-mode:char;
+	font-size:9.0pt;
+	font-family:"Times New Roman";}
+p
+	{margin-right:0cm;
+	margin-left:0cm;
+	font-size:12.0pt;
+	font-family:宋体;}
+p.p0, li.p0, div.p0
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:10.5pt;
+	font-family:"Times New Roman";}
+ /* Page Definitions */
+ @page Section1
+	{size:595.3pt 841.9pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	layout-grid:15.6pt;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+
+
+<script type="text/javascript">
+  function ww(){
+    var oWD = new ActiveXObject("Word.Application"); //创建Word应用程序对象
+    var oRange =oWD.documents.add().Range(0,0); //向Word应用程序对象中添加一个文档对象,并取出其中的Range(0)
+    var sel = document.body.createTextRange(); //根据HTML页面创建TextRange对象,以便定位到要打印的元素中
+    sel.moveToElementText(report); //定位到TextRage对象中要复制的元素上,report是要复制的元素的ID
+    sel.select();//report元素的所有HTML内容
+    sel.execCommand("Copy");//将选中的内容复制到剪切板上
+    document.selection.empty();
+    oRange.Paste();//粘贴到Word文档对象中去
+    oWD.Application.Visible = true;//显示Word程序和文档内容
+  }
+</script>
+
+
+</head>
+
+<body bgcolor='#F7FDFC' lang=ZH-CN style='text-justify-trim:punctuation'>
+
+  <div align="center" id='div_a'>
+    <%if @case==nil%>
+      请选择您要办理的案件
+    <%end%>
+    <%=button_to "案件选择", :controller=>'case_p',:action=>"list_2",:contr_r=>"remuneration11_set",:act_r=>"report"%>
+    <%if @case!=nil%>
+      报酬状态:<%=@remun_state[@case.remun_state]%>
+      <%if @case.remun_state=="Y" && TaxDetail.find_by_recevice_code(@case.recevice_code)%>
+        <br/><div style="color:red">该案件报酬已生成或发放,此状态下无法进行[状态变更]</ssdiv>
+      <%else%>
+      <%=button_to "状态变更", :action=>"state_change"%>
+      <%end%>
+    <%end%>
+  </div>
+
+  <% if @case != nil %>
+  <div id="report" class=Section1 style='layout-grid:15.6pt' align="center">
+
+<p class=MsoNormal align=center style='text-align:center'>
+  <b><span style='font-size:14.0pt;font-family:宋体'>仲裁员办案报酬信息表</span></b>
+</p>
+
+<p class=MsoNormal align=center style='text-align:center'>
+  <b><span lang=EN-US style='font-family:宋体'>&nbsp;</span></b>
+</p>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+ style='margin-left:-12.6pt;border-collapse:collapse'>
+ <tr style='height:23.25pt'>
+  <td width=588 colspan=17 valign=top style='width:441.0pt;border:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:23.25pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-family:宋体'>案件基本信息</span></p>
+  </td>
+ </tr>
+ <tr style='height:23.25pt'>
+  <td width=120 colspan=3 style='width:69.7pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:23.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>受案号</span></p>
+  </td>
+  <td width=72 colspan=3 style='width:100.8pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:23.25pt'>
+  <p class=MsoNormal align=left style='text-align:left'><%=h @case.case_code%></p>
+  </td>
+  <td width=74 colspan=4 style='border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:23.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>结案号</span></p>
+  </td>
+  <td width=94 colspan=3 style='border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:23.25pt'>
+  <p class=MsoNormal align=left style='text-align:left'><%=h @case.end_code%></p>
+  </td>
+  <td width=97 colspan=2 style='width:72.9pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:23.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>经办秘书</span></p>
+  </td>
+  <td width=96 colspan=2 style='width:71.85pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:23.25pt'>
+  <p class=MsoNormal align=left style='text-align:left'><%=h User.find_by_code(@case.clerk).name%></p>
+  </td>
+ </tr>
+ <tr style='height:21.75pt'>
+  <td width=120 colspan=3 style='width:79.7pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:21.75pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁庭组成人员</span></p>
+  </td>
+  <td width=276 colspan=10 style='width:226.55pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:21.75pt'>
+  <p class=MsoNormal><span style='font-family:宋体'><%= @zct %></span></p>
+  </td>
+   <td width=97 colspan=2 style='width:72.9pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:23.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>开庭次数</span></p>
+  </td>
+  <td width=96 colspan=2 style='width:71.85pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:23.25pt'>
+  <p class=MsoNormal align=left style='text-align:left'><%=@sitting_times %></p>
+  </td>
+ </tr>
+ <tr style='height:24.0pt'>
+  <td width=588 colspan=17 style='width:441.0pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:24.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-family:宋体'>仲裁庭报酬</span></p>
+  </td>
+ </tr>
+ <tr style='height:68.55pt'>
+  <td width=72 style='width:53.8pt;border:solid black 1.0pt;border-top:none;
+  padding:0cm 5.4pt 0cm 5.4pt;height:68.55pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁费（税前）</span></p>
+  </td>
+  <td width=48 colspan=2 style='width:35.9pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:68.55pt'>
+  <p class=MsoNormal align=left style='text-align:left'><%= SysArg.compart2(@zcf1.round)  %></p>
+  </td>
+  <td width=48 colspan=2 style='width:36.3pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:68.55pt'>
+  <p class=MsoNormal align=left style='text-align:left'><span style='font-family:
+  宋体'>仲裁费（税后）</span></p>
+  </td>
+  <td width=72 colspan=2 style='width:54.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:68.55pt'>
+  <p class=MsoNormal align=left style='text-align:left'><%= SysArg.compart2(@zcf2.round)  %></p>
+  </td>
+  <td width=61 colspan=3 style='width:45.75pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:68.55pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>报酬核定数</span></p>
+  </td>
+  <td width=48 colspan=2 style='width:36.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:68.55pt'>
+  <p class=MsoNormal><%= SysArg.compart2(@zcf3.round)  %></p>
+  </td>
+  <td width=46 style='width:34.5pt;border-top:none;border-left:none;border-bottom:
+  solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:68.55pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁庭报酬调整系数</span></p>
+  </td>
+  <td width=49 style='width:37.05pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:68.55pt'>
+  <p class=MsoNormal><%= @tzxs %></p>
+  </td>
+  <td width=84 colspan=2 style='width:62.75pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:68.55pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁庭报酬金额</span></p>
+  </td>
+  <td width=60 style='width:44.95pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:68.55pt'>
+  <p class=MsoNormal><%=SysArg.compart2(@yyy.round) %></p>
+  </td>
+ </tr>
+
+ <tr style='height:21.45pt'>
+  <td width=588 colspan=17 style='width:441.0pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:21.45pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-family:宋体'>仲裁员报酬</span></p>
+  </td>
+ </tr>
+
+<% if @evaluate == "no" %>
+ <tr style='height:30.2pt'>
+  <td width=96 colspan=2 rowspan=3 style='width:75.75pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:30.2pt'>
+  <p class=MsoNormal>仲裁员基本报酬</p>
+  </td>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:30.2pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>首席仲裁员</span></p>
+  </td>
+  <td width=324 colspan=9 style='width:242.8pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:30.2pt'>
+  <p class=MsoNormal><%=SysArg.compart2(@aaa.round)  %></p>
+  </td>
+ </tr>
+ <tr style='height:30.65pt'>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:30.65pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁员（申）</span></p>
+  </td>
+  <td width=324 colspan=9 style='width:242.8pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:30.65pt'>
+  <p class=MsoNormal><%=SysArg.compart2(@bbb.round)  %></p>
+  </td>
+ </tr>
+ <tr style='height:23.25pt'>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:23.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁员（被）</span></p>
+  </td>
+  <td width=324 colspan=9 style='width:242.8pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:23.25pt'>
+  <p class=MsoNormal><%=SysArg.compart2(@ccc.round)  %></p>
+  </td>
+ </tr>
+<% else %>
+   <tr style='height:30.2pt'>
+  <td width=96 colspan=2 rowspan=3 style='width:75.75pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:30.2pt'>
+  <p class=MsoNormal>仲裁员基本报酬(55%，<%=SysArg.compart2(@jjj.round)  %>)</p>
+  </td>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:30.2pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>首席仲裁员</span><span lang=EN-US>(50%)</span></p>
+  </td>
+  <td width=324 colspan=9 style='width:242.8pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:30.2pt'>
+  <p class=MsoNormal><%=SysArg.compart2(@aaa.round)  %></p>
+  </td>
+ </tr>
+ <tr style='height:30.65pt'>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:30.65pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁员（申）</span><span
+  lang=EN-US>(25%)</span></p>
+  </td>
+  <td width=324 colspan=9 style='width:242.8pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:30.65pt'>
+  <p class=MsoNormal><%=SysArg.compart2(@bbb.round)  %></p>
+  </td>
+ </tr>
+ <tr style='height:23.25pt'>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:23.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁员（被）</span><span
+  lang=EN-US>(25%)</span></p>
+  </td>
+  <td width=324 colspan=9 style='width:242.8pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:23.25pt'>
+  <p class=MsoNormal><%=SysArg.compart2(@ccc.round)  %></p>
+  </td>
+ </tr>
+ <tr style='height:29.25pt'>
+  <td width=96 colspan=2 rowspan=3 style='width:75.75pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:29.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>撰写裁决书报酬</span><span
+  lang=EN-US>(15%，<%=SysArg.compart2(@kkk.round)  %>)</span></p>
+  </td>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:29.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>完整裁决书</span></p>
+  </td>
+  <td width=324 colspan=9 style='width:242.8pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:29.25pt'>
+  <p class=MsoNormal>承担人：<%= @zcy1 %>&nbsp;&nbsp;&nbsp;等级：<%= @dj1 %>&nbsp;&nbsp;&nbsp;金额：<%= SysArg.compart2(@je1.round) %></p>
+  </td>
+ </tr>
+ <tr style='height:29.25pt'>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:29.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁庭意见</span></p>
+  </td>
+  <td width=324 colspan=9 style='width:242.8pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:29.25pt'>
+  <p class=MsoNormal>承担人：<%= @zcy2 %>&nbsp;&nbsp;&nbsp;等级：<%= @dj2 %>&nbsp;&nbsp;&nbsp;金额：<%= SysArg.compart2(@je2.round) %></p>
+  </td>
+ </tr>
+ <tr style='height:29.25pt'>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:29.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>中间裁决、部分裁决</span></p>
+  </td>
+  <td width=324 colspan=9 style='width:242.8pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:29.25pt'>
+  <p class=MsoNormal>承担人：<%= @zcy3 %>&nbsp;&nbsp;&nbsp;等级：<%= @dj3 %>&nbsp;&nbsp;&nbsp;金额：<%= SysArg.compart2(@je3.round) %></p>
+  </td>
+ </tr>
+ <tr style='height:33.3pt'>
+  <td width=96 colspan=2 rowspan=3 style='width:75.75pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:33.3pt'>
+  <p class=MsoNormal>仲裁员绩效报酬(30%，<%= SysArg.compart2(@lll.round) %>)</p>
+  </td>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:33.3pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>首席仲裁员</span><span lang=EN-US>(50%)</span></p>
+  </td>
+  <td width=71 colspan=3 style='width:53.2pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:33.3pt'>
+  <p class=MsoNormal><%= SysArg.compart2(@jx1.round) %></p>
+  </td>
+  <td width=253 colspan=6 style='width:189.6pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:33.3pt'>
+  <p class=MsoNormal>等级：<%= @dj4 %> &nbsp;&nbsp;&nbsp;&nbsp;金额：<%= SysArg.compart2(@je4.round) %></p>
+  </td>
+ </tr>
+ <tr style='height:33.25pt'>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:33.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁员（申）</span><span
+  lang=EN-US>(25%)</span></p>
+  </td>
+  <td width=71 colspan=3 style='width:53.2pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:33.25pt'>
+  <p class=MsoNormal><%= SysArg.compart2(@jx2.round) %></p>
+  </td>
+  <td width=253 colspan=6 style='width:189.6pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:33.25pt'>
+  <p class=MsoNormal>等级：<%= @dj5 %> &nbsp;&nbsp;&nbsp;&nbsp;金额：<%= SysArg.compart2(@je5.round) %></p>
+  </td>
+ </tr>
+ <tr style='height:32.4pt'>
+  <td width=169 colspan=6 style='width:126.45pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:32.4pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁员（被）</span><span
+  lang=EN-US>(25%)</span></p>
+  </td>
+  <td width=71 colspan=3 style='width:53.2pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;
+  height:32.4pt'>
+  <p class=MsoNormal><%= SysArg.compart2(@jx3.round) %></p>
+  </td>
+  <td width=253 colspan=6 style='width:189.6pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:32.4pt'>
+  <p class=MsoNormal>等级：<%= @dj6 %> &nbsp;&nbsp;&nbsp;&nbsp;金额：<%= SysArg.compart2(@je6.round) %></p>
+  </td>
+ </tr>
+  <% end %>
+ <tr style='height:23.25pt'>
+  <td width=588 colspan=17 style='width:441.0pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:23.25pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-family:宋体'>合<span lang=EN-US>&nbsp; </span>计</span></p>
+  </td>
+ </tr>
+ <tr style='height:22.5pt'>
+  <td width=144 colspan=4 style='width:107.65pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:22.5pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>首席仲裁员</span></p>
+  </td>
+  <td width=444 colspan=13 style='width:333.35pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:22.5pt'>
+  <p class=MsoNormal align=left style='text-align:left'><%= SysArg.compart2(@zje1.round) %></p>
+  </td>
+ </tr>
+ <tr style='height:30.75pt'>
+  <td width=144 colspan=4 style='width:107.65pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:30.75pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁员（申）</span></p>
+  </td>
+  <td width=444 colspan=13 style='width:333.35pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:30.75pt'>
+  <p class=MsoNormal align=left style='text-align:left'><%= SysArg.compart2(@zje2.round) %></p>
+  </td>
+ </tr>
+ <tr style='height:29.25pt'>
+  <td width=144 colspan=4 style='width:107.65pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:29.25pt'>
+  <p class=MsoNormal><span style='font-family:宋体'>仲裁员（被）</span></p>
+  </td>
+  <td width=444 colspan=13 style='width:333.35pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:29.25pt'>
+  <p class=MsoNormal align=left style='text-align:left'><%= SysArg.compart2(@zje3.round) %></p>
+  </td>
+ </tr>
+  <tr height=0">
+  <td width=72 style='border:none'></td>
+  <td width=24 style='border:none'></td>
+  <td width=24 style='border:none'></td>
+  <td width=24 style='border:none'></td>
+  <td width=24 style='border:none'></td>
+  <td width=59 style='border:none'></td>
+  <td width=13 style='border:none'></td>
+  <td width=24 style='border:none'></td>
+  <td width=23 style='border:none'></td>
+  <td width=14 style='border:none'></td>
+  <td width=34 style='border:none'></td>
+  <td width=14 style='border:none'></td>
+  <td width=46 style='border:none'></td>
+  <td width=49 style='border:none'></td>
+  <td width=48 style='border:none'></td>
+  <td width=36 style='border:none'></td>
+  <td width=60 style='border:none'></td>
+ </tr>
+</table>
+<div align="center"><div align="left" style='width:580pt;font-family:宋体;'><%=@xs.remark unless @xs.remark.blank? %></div></div>
+<span style='font-family:宋体;'>处长：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+日期：<%=@t %>
+</span>
+</div>
+<div align="center">
+  <button onclick="ww();">生成 Word 文档</button>
+</div>
+<% end %>
+</body>
+
+</html>

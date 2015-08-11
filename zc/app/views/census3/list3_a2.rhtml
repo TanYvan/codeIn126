@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员已结案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员<%=@name%>的已结案件：<%=@arbitman_case.length%>件</span></div>
+    <br/>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案日期</th>
+          <th  nowrap>立案号</th>
+          <th  nowrap>申请人</th>
+          <th  nowrap>被申请人</th>
+          <th>争议金额(￥)</th>
+          <th  nowrap>仲裁员</th>
+          <th>延期情况</th>
+          <th>结案天数</th>
+          <th>助理评价</th>
+          <th>裁决起草人</th>
+          <th>裁决书校核评价</th>
+          <th  nowrap>经办人</th>
+          <th  nowrap>结案时间</th>
+          <th  nowrap>结案号</th>
+          <th  nowrap>结案方式</th>
+          <th>是否被申请回避</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%@arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"}%>
+        <%for a in @arbitman_case%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=a.nowdate%></td>
+            <td nowrap><%=link_to "#{a.case_code}",{:controller=>"every_casebase",:action=>'every_list_2',:recevice_code=>a.recevice_code},:target=>"_black" %></td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=1")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=2")%>
+              <%ttpp=''%>
+              <%for tp in @party2%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <%@case=TbCase.find_by_recevice_code(a.recevice_code)%>
+            <td nowrap><%=SysArg.compart2(@case.amount)%></td>
+            <td nowrap>
+              <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",a.recevice_code])%>
+              <%if @arbit.empty?%>
+                未组成
+              <%else%>
+                <%for arb in @arbit%>
+                  <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+                  <br/>
+                <%end%>
+              <%end%>
+            </td>
+            <td>
+              <%@n1=TbCasedelay.count(:id,:conditions=>["used='Y' and recevice_code=?",a.recevice_code],:order=>"id")%>
+              <%if @n1>0 %>
+                <%=@n1 %>次
+              <%else%>
+                无
+              <%end%>
+            </td>
+            <td>
+              <%cend=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",a.recevice_code])%>
+
+              <%=PubTool.get_end_day(a.recevice_code,a.nowdate)%>
+            </td>
+            <td>
+              <%a_judge=TbEvaluate.sum(:score,:conditions=>["used='Y' and recevice_code=? and arbitman=?",a.recevice_code,params[:code]],:order=>"id desc")%>
+              <%if a_judge!=nil%>
+                <%=a_judge.to_i + 100%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%@award=TbAwardDetail.find_by_sql("select a.draftsman_typ as draftsman_typ,a.draftsman as draftsman from tb_award_details as a,tb_awards as aw where a.used='Y' and a.recevice_code='#{a.recevice_code}' and (a.typ='0003' or a.typ='0004') and a.recevice_code=aw.recevice_code and aw.used='Y' and a.p_id=aw.id")%>
+              <%for award in @award%>
+                <%if award!=nil%>
+                  <%if award.draftsman_typ=='0001'%>
+                    <%=TbArbitman.find(:first,:conditions=>["used='Y' and code=?",award.draftsman]).name%>
+                  <%else%>
+                    <%u=User.find(:first,:conditions=>["used='Y' and code=?",award.draftsman])%><%if u!=nil%><%=u.name%><%end%>
+                  <%end%><br/>
+                <%end%>
+              <%end%>
+            </td>
+            <td>
+              <%award_judge=TbAwardJudge.find(:first,:select=>"sum(score) as sc,count(id) as sd",:conditions=>["used='Y' and recevice_code=?",a.recevice_code],:order=>"id desc")%>
+              <%if award_judge!=nil%>
+		<%if award_judge.sd.to_f!=0%>
+                  <%=format('%.2f',(award_judge.sc.to_f/award_judge.sd.to_i)) %>
+		<%end%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%if @case!=nil%>
+                <%=User.find(:first,:conditions=>["code=?",@case.clerk]).name %>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%if cend!=nil%><%=cend.decideDate%><%end%>
+            </td>
+            <td nowrap><%=a.end_code%></td>
+            <td nowrap><%if cend!=nil%><%=TbDictionary.find(:first,:conditions=>["typ_code='8117' and state='Y' and data_val=?",cend.endStyle]).data_text%><%end%></td>
+            <td>
+              <%@tb_evalite=TbEvite.find(:first,:conditions=>["used='Y' and recevice_code=?",a.recevice_code])%>
+              <%if @tb_evalite!=nil%>
+                是
+              <%else%>
+                否
+              <%end%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

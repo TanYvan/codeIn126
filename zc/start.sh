@@ -1,0 +1,12 @@
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3000 -P /usr/local/zc/log/mongrel_pid/mongrel_3000.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3001 -P /usr/local/zc/log/mongrel_pid/mongrel_3001.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3002 -P /usr/local/zc/log/mongrel_pid/mongrel_3002.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3003 -P /usr/local/zc/log/mongrel_pid/mongrel_3003.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3004 -P /usr/local/zc/log/mongrel_pid/mongrel_3004.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3005 -P /usr/local/zc/log/mongrel_pid/mongrel_3005.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3006 -P /usr/local/zc/log/mongrel_pid/mongrel_3006.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3007 -P /usr/local/zc/log/mongrel_pid/mongrel_3007.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3008 -P /usr/local/zc/log/mongrel_pid/mongrel_3008.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3009 -P /usr/local/zc/log/mongrel_pid/mongrel_3009.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3010 -P /usr/local/zc/log/mongrel_pid/mongrel_3010.pid &
+nohup mongrel_rails start -d -e development  -c /usr/local/zc  -p 3011 -P /usr/local/zc/log/mongrel_pid/mongrel_3011.pid &

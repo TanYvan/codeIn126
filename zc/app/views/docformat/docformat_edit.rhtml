@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改格式函信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <script language="JavaScript">
+        function get_aribitprog()
+        {
+            var chec = document.getElementsByName("aribitprog");
+            var a='';
+            for(i=0; i<chec.length; i++)
+            {
+                if (chec[i].checked == true)
+                    a=a+chec[i].value+',';
+            }
+            document.getElementById("aribitprog_code").value=a;
+
+            chec = document.getElementsByName("role");
+            a='';
+            for(i=0; i<chec.length; i++)
+            {
+                if (chec[i].checked == true)
+                    a=a+chec[i].value+',';
+            }
+            document.getElementById("role_code").value=a;
+
+            chec = document.getElementsByName("pub_to");
+            a='';
+            for(i=0; i<chec.length; i++)
+            {
+                if (chec[i].checked == true)
+                    a=a+chec[i].value+',';
+            }
+            document.getElementById("public_to").value=a;
+       }
+    </script>
+  </head>
+  <body>
+    <br/>
+    <div class="cDGray" align="center">修改格式函信息   <%=link_to "返回",:action=>"docformat_list",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :docformat ,:url=>{:action=>"docformat_update",:id=>@docformat.id,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]}, :html =>{:onsubmit=>"get_aribitprog();"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            序号:
+          </th>
+          <td>
+            <%=f.text_field(:ind)%>
+          </td>
+        </tr>
+        <tr>
+          <th width="100">
+            格式函编码:
+          </th>
+          <td>
+            <%=f.text_field(:code)%>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            格式函名称（简体中文）:
+          </td>
+          <td>
+            <%=f.text_field(:name,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            格式函名称（繁体中文）:
+          </td>
+          <td>
+            <%=f.text_field(:name_tw,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            格式函名称（英文）:
+          </td>
+          <td>
+            <%=f.text_field(:name_en,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            拼音缩写:
+          </td>
+          <td>
+            <%=f.text_field(:spell,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr>
+          <td>仲裁规则:</td>
+          <td>
+            <input name="role" type="checkbox" value="0000" <%if @docformat.role_code.index("0000,")%> checked='checked' <%end%> >全部案件</input>
+            <% TbDictionary.find(:all,:conditions=>"typ_code='8143' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text").each{|r| %>
+            <input name="role" type="checkbox" value="<%=r.data_val %>" <%if @docformat.role_code.index(r.data_val + ",")%> checked='checked' <%end%> ><%=r.data_text %></input>
+            <% }%>
+            <input id="role_code" name="role_code" type="hidden" value="" />
+          </td>
+        </tr>
+        <tr>
+          <td>对外发布:</td>
+          <td>
+            <% TbDictionary.find(:all,:conditions=>"typ_code='8175' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text").each{|r| %>
+            <input name="pub_to" type="checkbox" value="<%=r.data_val %>" <%if @docformat.public_to.index(r.data_val + ",")%> checked='checked' <%end%> ><%=r.data_text %></input>
+            <% }%>
+            <input id="public_to" name="public_to" type="hidden" value="" />
+          </td>
+        </tr>
+        <tr>
+          <td>仲裁程序:</td>
+          <td>
+            <input name="aribitprog" type="checkbox" value="0000" <%if @docformat.aribitprog_code.index("0000,")%> checked='checked' <%end%> >全部案件</input>
+            <% TbDictionary.find(:all,:conditions=>"typ_code='0001' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text").each{|ari| %>
+            <input name="aribitprog" type="checkbox" value="<%=ari.data_val %>" <%if @docformat.aribitprog_code.index(ari.data_val + ",")%> checked='checked' <%end%> ><%=ari.data_text %></input>
+            <% }%>
+            <input id="aribitprog_code" name="aribitprog_code" type="hidden" value="" />
+          </td>
+        </tr>
+        <tr >
+          <td>
+            选项名称:
+          </td>
+          <td>
+            <%=f.text_field(:obj_text,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            是否需要接收人选项:
+          </td>
+          <td>
+            <%=f.select("obj",[["否",0],["是",1]]) %>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            格式函路径:
+          </td>
+          <td>
+            <%=f.text_field(:path,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            函数名称:
+          </td>
+          <td>
+            <%=f.text_field(:sub_code,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            检测函数名称:
+          </td>
+          <td>
+            <%=f.text_field(:check_sub_code,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            是否使用:
+          </td>
+          <td>
+            <%=f.select("used",[["使用","Y"],["停用","N"]]) %>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            是否加内部函抬头:
+          </td>
+          <td>
+            <%=f.select("head_1",[["是",1],["否",0]]) %>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            是否加发文编号:
+          </td>
+          <td>
+            <%=f.select("send_code",[["是",1],["否",0]]) %>
+          </td>
+        </tr>
+        <tr>
+          <td>发文编号规则:</td>
+          <td><%=f.select("send_code_typ",[["办案发文号","0009"],["秘字号发文号","0009_2"]]) %></td>
+        </tr>
+        <tr >
+          <td>
+            是否需要审批:
+          </td>
+          <td>
+            <%=f.select("approval",[["审批",1],["不审批",0]]) %>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            是否生成外部函:
+          </td>
+          <td>
+            <%=f.select("f_doc",[["不生成外部函",0],["生成外部函",1]]) %>
+          </td>
+        </tr>
+        <tr >
+          <td>
+            说明:
+          </td>
+          <td>
+            <%=f.text_area("description",:rows=>8) %>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>咨询工作日志管理</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">咨询工作日志管理</span></div>
+    <br/>
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    <div align="center"><%=link_to  "创建", :action=>"casepro_new"%>
+    <div style="color:red"><%=flash[:notice]%></div> </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap="nowrap">
+          咨询日期
+        </th>
+        <th nowrap="nowrap">
+          咨询类型
+        </th>
+        <th nowrap="nowrap">
+         系争合同争议性质
+        </th>
+        <th nowrap="nowrap">
+          申请人信息及联系方式
+        </th>
+        <th nowrap="nowrap">
+          经办人
+        </th>
+        <th nowrap="nowrap">
+          信息录入人
+        </th>
+        <th nowrap="nowrap">
+          修改
+        </th>
+        <th nowrap="nowrap">
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%if @casepro!=nil%>
+      <%for r in @casepro%>
+        <tr class="row<%=i % 2%>">
+        <td >
+          <%=h r.happdate%>
+        </td>
+        <td >
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='8129'  and  data_val='#{r.typ}'").data_text%>
+        </td>
+        <td>
+          <%=r.keyword%>
+        </td>
+        <td>
+          <%=h r.app1%>
+        </td>
+        <td>
+          <%=h User.find_by_code(r.clerk_id).name%>
+        </td>
+        <td>
+          <%=h User.find_by_code(r.u).name%>
+        </td>
+        <td >
+          <%=link_to "修改",{:action=>'casepro_edit',:id=>r} %>
+        </td>
+        <td >
+          <%=button_to "删除" ,{:action=>'casepro_delete',:id=>r},:confirm=>"您确认要删除吗？"%>
+        </td>
+        </tr>
+        <%i=i+1%>
+        <%end%>
+      <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="6">
+          <%= link_to '上一页', { :page => @casepro_pages.current.previous  ,:page_lines=>@page_lines  } if @casepro_pages.current.previous %>
+          <%=pagination_links( @casepro_pages,{:params=>{:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @casepro_pages.current.next ,:page_lines=>@page_lines  } if @casepro_pages.current.next %>
+
+          <%if @casepro_pages.current.previous or @casepro_pages.current.next%>
+            <form action="/casepro/casepro_list" method="get" >
+              每页<input type=text name='page_lines' size=5 class="SingleLineInput" value=<%=@page_lines%> />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @casepro_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

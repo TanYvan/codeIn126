@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件机构评价信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%if session[:recevice_code]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list?contr_r=org_appraisal&act_r=list","mainFrame")
+       </script>
+    <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+          案件机构评价信息
+    </span></div>
+    <%if @case==nil%>
+    <div align="center">
+      请选择您要办理的案件
+    <%end%>
+     <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"ampliation",:act_r=>"ampliation_list"%> 
+    <%if @case!=nil%> 
+     当前案件
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+          审限日期
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <%=h @case.recevice_code%>
+        </td>
+        <td>
+          <%=h @case.receivedate%>
+        </td>
+        <td>
+          <%=h @case.case_code%>
+        </td>
+        <td>
+          <%=h @case.nowdate%>
+        </td>
+        <td>
+          <%=h @case.finally_limit_dat%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br/>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br/>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+      </tr>         
+      </tbody>
+    </table>
+    <br/>
+    <br/>
+      <hr size="1" color="#99CCFF" noshade/>
+       <div align="center" class="cDGray">
+         案件机构评价 
+      <%=link_to  "创建", :action=>"new"%>
+      <div align='right'><%=link_to  "创建机构",{:controller=>"org",:action=>"new"},:target=>'_blank'%></div>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            委托日期
+          </th>
+          <th nowrap>
+            机构类别
+          </th>
+          <th nowrap>
+            机构名称
+          </th>
+           <th nowrap>
+            仲裁员
+          </th>
+           <th nowrap>
+            鉴定费用
+          </th>
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            删除
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%@org_typ={"0001"=>"机构","0002"=>"专家"}%>
+        <%@arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"}%>
+        <%a_c=@org_appraisal.length%>
+        <%a_i=0%>
+        <%i=0%>
+        <%if @org_appraisal!=nil%>
+        <%for p in @org_appraisal%>
+          <%a_i=a_i + 1%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%=p.consign_t.to_s(:db)%>
+            </td>
+            <td>
+              <%=@org_typ[p.org_typ]%>
+            </td>
+            <td>
+              <%if p.org_typ=='0001'%>
+                <%=TbOrg.find_by_code(p.org_code).name%>
+              <%else%>
+                <%=TbExpertconsult.find_by_code(p.org_code).name%>
+              <%end%>
+            </td>
+            <td>
+              <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",p.recevice_code])%>
+              <%if @arbit.empty?%>
+                未组成
+              <%else%>
+                <%for arb in @arbit%>
+                  <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+                  <br/>
+                <%end%>
+              <%end%>                 
+            </td>
+            <td>
+              <%=p.price%>
+            </td>
+            <td>
+              <%=link_to  "修改" ,:action=>"edit",:id=>p.id%>
+            </td>
+            <td>
+              <%=link_to  "删除" ,:action=>"delete",:id=>p.id%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+       <%end%>
+    <%end%>
+  </body>
+</html>

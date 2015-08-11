@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>确定延迟</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function su(){
+        obj=document.getElementById("remind1_day1");
+        if ( /^[0-9]*[1-9][0-9]*$/.test(obj.value) || /^[1-9]d*.d*|0.d*[1-9]d*|0?.0+|0$/.test(obj.value) ) 
+          {     
+          }     
+          else     
+            {    
+              alert("请输入数字！");   
+              return false;    
+            }
+       return true;  
+      }
+    </script>
+  </head>
+  <body>
+    <br>
+    <div class="cDGray" align="center">
+      确定延迟(带<i>*</i>为必填项) <%=link_to "返回",:action=>"list",:user_code=>params[:user_code]%>
+
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <br>
+    <%form_for :remind1 ,:url=>{:action=>"delay_create",:user_code=>params[:user_code], :condi_s=>params[:condi_s],:page=>params[:page],:page_lines=>params[:page_lines]},:html=>{:onsubmit=>"return su();"}   do |f|%>
+      <table class="list">
+        <tr>
+          <th nowrap>
+            延迟天数:
+          </th>
+          <td>
+            <%=f.text_field(:day1)%>
+            <div style="color:red"><%=error_message_on(:remind1,:day1)%></div>
+          </td>
+        </tr>
+      </table>
+      <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+  </body>
+</html>

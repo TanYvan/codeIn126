@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>裁决书制作报酬维护</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  <% if session[:recevice_code_2] == nil %>
+    <script type="text/javascript">
+      window.open("/case_p/list_2?contr_r=remuneration11_set&act_r=list","mainFrame")
+    </script>
+  <% end %>
+</head>
+<body>
+<div class="title"><span class="cBlue">裁决书制作报酬维护</span></div><br/>
+<div style="color:red"><%=flash[:notice]%></div>
+  <table cellspacing="1" class="adminlist">
+    <thead>
+      <tr>
+        <th nowrap>裁决书类型</th>
+        <th nowrap>承担人</th>
+        <th nowrap>备注</th>
+        <th nowrap>校核人评价</th>
+        <th nowrap>等级百分比</th>
+        <th nowrap>金额（￥）</th>
+        <th nowrap>修改</th>
+        <th nowrap>删除</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% i = 0 %>
+      <% if @remun != nil %>
+        <% for p in @remun %>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%= TbDictionary.find(:first, :conditions => "typ_code='9022' and data_val='#{p.typ}'").data_text %>
+            </td>
+            <td>
+              <% man = TbArbitman.find_by_code(p.p_code) %>
+              <%= man.name if !man.blank?%>
+            </td>
+            <td>
+              <%= p.remark %>
+            </td>
+            <td>
+              <% staff = TbCheckStaff.find(:all,:conditions=>"used='Y' and recevice_code='#{session[:recevice_code_2]}'") %>
+              <table  class="adminlist">
+                <% staff.each do |s| %>
+                  <% if p.typ == "0001" %>
+                    <% judge = TbAwardJudge.find(:first,:conditions=>"used='Y' and recevice_code='#{session[:recevice_code_2]}' and u='#{s.staff}'") %>
+                    <tr>
+                      <td width="50%"><%= @c3 = User.find(:first,:conditions=>["code=?",s.staff]).name   %></td>
+                      <td width="50%"><%= judge.wanzheng if !judge.blank? %></td>
+                    </tr>
+                 <% end %>
+
+                 <% if p.typ == "0002" %>
+                   <% judge = TbAwardJudge.find(:first,:conditions=>"used='Y' and recevice_code='#{session[:recevice_code_2]}' and u='#{s.staff}'") %>
+                   <tr>
+                     <td width="50%"><%= @c3 = User.find(:first,:conditions=>["code=?",s.staff]).name   %></td>
+                     <td width="50%"><%= judge.zctyijian if !judge.blank? %></td>
+                   </tr>
+                 <% end %>
+
+                 <% if p.typ == "0003" %>
+                   <% judge = TbAwardJudge.find(:first,:conditions=>"used='Y' and recevice_code='#{session[:recevice_code_2]}' and u='#{s.staff}'") %>
+                   <tr>
+                     <td width="50%"><%= @c3 = User.find(:first,:conditions=>["code=?",s.staff]).name   %></td>
+                     <td width="50%"><%= judge.zjbfcj if !judge.blank? %></td>
+                   </tr>
+                <% end %>
+                <% end %>
+              </table>
+            </td>
+            <td>
+              <%=p.grade_xs%>%
+            </td>
+            <td>
+              <%= SysArg.compart2(p.rmb.round) %>
+            </td>
+            <td>
+              <%= link_to "修改",:action => "edit_1", :id => p, :yyy => params[:yyy], :evaluate => params[:evaluate] %>
+            </td>
+            <td>
+              <% unless false %>
+                <%= button_to "删除", {:action => "delete_1", :id => p,:old_rmb => p.rmb, :yyy => params[:yyy], :evaluate => params[:evaluate] }, :confirm => "您确认要删除吗？" %>
+              <% end %>
+            </td>
+          </tr>
+          <% i = i + 1 %>
+        <%end%>
+    <%end%>
+    </tbody>
+  </table>
+</body>
+</html>

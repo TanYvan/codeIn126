@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>添加用户职责</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+      <div align="center" class="cBlack">
+    <%=User.find_by_code(params[:uid]).code%>:<%=User.find_by_code(params[:uid]).name%><br><br>
+    职责：<%=User.find_by_code(params[:uid]).duty_text%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <br>
+    <table class="adminlist" cellspacing="1">
+      <thead>
+      <tr>
+          <th>
+          职务名称
+        </th>
+        <th>
+          添加
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%for r in @dutys%>
+        <tr class="row<%=i % 2%>">
+          <td >
+            <%=h r.name%>
+          </td>
+          <td >
+            <%=button_to "添加" ,:controller=>"duty",:action=>"add",:uid=>params[:uid],:did=>r.code%>
+          </td>
+        </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br>
+    <%=link_to  "返回", :controller=>"duty",:action=>"list",:uid=>params[:uid]%>
+  </body>
+</html>

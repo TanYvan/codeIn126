@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>立案案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <br/>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案日期</th>
+          <th  nowrap>立案号</th>
+          <%if params[:k]=="2" or params[:k]=="3" or params[:k]=="4"%>
+            <th  nowrap>结案日期</th>
+            <th  nowrap>结案号</th>
+          <%end%>
+          <th  nowrap>申请人</th>
+          <th  nowrap>被申请人</th>
+          <th  nowrap>争议金额(￥)</th>
+          <th >实收(申)</th>
+          <th >实收(被)</th>
+          <th >实收合计</th>
+          <th  nowrap>经办人</th>
+          <th  nowrap>仲裁庭</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%@arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"}%>
+        <%i=0%>
+        <%for a in @case%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=a.nowdate%></td>
+            <td nowrap><%=link_to "#{a.case_code}",{:controller=>"every_casebase",:action=>'every_list_2',:recevice_code=>a.recevice_code},:target=>"_black" %></td>
+            <%if params[:k]=="2" or params[:k]=="3" or params[:k]=="4"%>
+              <td nowrap><%=a.decideDate%></td>
+              <td nowrap><%=a.arbitBookNum%></td>
+            <%end%>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=1")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=2")%>
+              <%ttpp=''%>
+              <%for tp in @party2%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <%#@case=TbCase.find_by_recevice_code(a.recevice_code)%>
+            <td nowrap><%=SysArg.compart2(a.amount)%></td>
+            <td>
+              <%a_f1=TbShouldCharge.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0001' and (typ='0001' or typ='0004')",a.recevice_code])  %>
+              <%if a_f1==nil%><%a_f1=0%><%end%>
+              <%a_f11=TbShouldRefund.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0001' and (typ='0001' or typ='0004')",a.recevice_code])  %>
+              <%if a_f11==nil%><%a_f11=0%><%end%>
+              <%=SysArg.compart2(a_f1.to_i - a_f11.to_i) %>
+            </td>
+            <td>
+              <%a_f2=TbShouldCharge.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0002' and (typ='0001' or typ='0004')",a.recevice_code])  %>
+              <%if a_f2==nil%><%a_f2=0%><%end%>
+              <%a_f22=TbShouldRefund.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0002' and (typ='0001' or typ='0004')",a.recevice_code])  %>
+              <%if a_f22==nil%><%a_f22=0%><%end%>
+              <%=SysArg.compart2(a_f2.to_i - a_f22.to_i) %>
+            </td>
+            <td>
+              <%=SysArg.compart2(a_f1.to_i + a_f2.to_i - a_f11.to_i - a_f22.to_i) %>
+            </td>
+            <td nowrap><%=User.find(:first,:conditions=>["used='Y' and code=?",a.clerk]).name %></td>
+            <td nowrap>
+              <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",a.recevice_code])%>
+              <%if @arbit.empty?%>
+                未组成
+              <%else%>
+                <%for arb in @arbit%>
+                  <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+                  <br/>
+                <%end%>
+              <%end%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

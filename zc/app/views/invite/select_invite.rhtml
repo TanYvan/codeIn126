@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>
+    增聘仲裁员
+  </title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <br>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+      <%= link_to "返回", :action => "list_invite"%>
+    </div>
+  <table cellspacing="1" class="adminlist">
+  <thead>
+    <tr>
+     <th nowrap>
+        序号
+      </th>
+     <th nowrap>
+        编码
+      </th>
+     <th nowrap>
+        姓名
+      </th>
+     <th nowrap>
+        性别
+      </th>
+     <th nowrap>
+        选择
+      </th>
+    </tr>
+    </thead>
+     <tbody>
+        <%i=0%>
+    <%for p in @tb_arbitmen%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=p.id%>
+        </td>
+        <td>
+          <%=p.code %>
+        </td>
+        <td>
+          <%=p.name %>
+        </td>
+        <td>
+          <%if p.sex =='1' %>男<%else%>女<%end%>
+        </td>
+        <td>
+          <%=link_to "选择",:action=>"new_invite",:code=>p.code %>
+        </td>
+      </tr>
+    <%i=i+1%>
+      <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="5">
+          <%= link_to '上一页', { :page => @tb_arbitman_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_arbitman_pages.current.previous %>
+          <%=pagination_links( @tb_arbitman_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @tb_arbitman_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_arbitman_pages.current.next %>
+
+          <%if @tb_arbitman_pages.current.previous or @tb_arbitman_pages.current.next%>
+            <form action="/invite/select_invite" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @tb_arbitman_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+      </tfoot>
+  </table>
+</body>
+</html>

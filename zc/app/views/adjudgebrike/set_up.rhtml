@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 仲裁中止与恢复</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br/>
+    <div class="cDGray" align="center">添加仲裁中止与恢复
+  <%=link_to "返回",:action=>"adjudgebrike_list"%>
+  </div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :adjudgebrike,:url=>{:action=>"adjudgebrike_set",:id=>params[:id],:recevice_code=>params[:recevice_code]}  do |f|%>
+      <table class="list">
+        <tr >
+          <th>
+            恢复日期:
+          </th>
+          <td>
+            <%=f.text_field(:start_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('adjudgebrike_start_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr >
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remarks,:rows=>4)%>
+          </td>
+        </tr>
+       </table>
+     <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+
+  </body>
+</html>

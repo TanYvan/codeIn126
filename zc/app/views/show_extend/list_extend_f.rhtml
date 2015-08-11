@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>个人报酬清单（本地）</title>
+    <%= javascript_include_tag "prototype" %>
+    <script src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <%pt=PubTool.new()%>
+    <input  id='to_word' type='button' value='导出word' onclick="document.getElementById('to_word').style.display='none';to_word();document.getElementById('to_word').style.display='block';"/>
+    <table border="0" cellpadding="0" cellspacing="0" bordercolor="#FFFFFF" width="100%" id="to_extend">
+      <% if @tb_extends != nil%>
+          <%for tb_extend in @tb_extends %>
+          <tr>
+            <td nowrap>
+              <br/>
+              <table border="1" bordercolor="#000000" style="width:98%; border:1px solid #000000; border-collapse: collapse;" align="center" cellspacing="0" cellpadding="3">
+                <tr>
+                  <td colspan="7" >
+                    姓名：<%=h tb_extend.p_name%>
+                  </td>
+                </tr>
+                <tr>
+                  <td >
+                    帐号：<%=h tb_extend.bank_account%>
+                  </td>
+                  <td colspan="6">
+                    开户行：<%=h tb_extend.bankname%>
+                  </td>
+                </tr>
+                <%@extends =TbExtend.find(:all,:select=>"distinct recevice_code as recevice_code,t_extend_code as t_extend_code",:conditions=>["used='Y' and t_extend_code=? and p=? and p_name=? and bankname=? and bank_account=?",params[:t_extend_code],tb_extend.p,tb_extend.p_name,tb_extend.bankname,tb_extend.bank_account],:order=>"p_typ,typ")%>
+                <%for extend in @extends %>
+                    <%@ext =TbExtend.find(:all,:conditions=>["used='Y' and typ<>'5' and t_extend_code=? and p=? and p_name=? and bankname=? and bank_account=? and recevice_code=?",params[:t_extend_code],tb_extend.p,tb_extend.p_name,tb_extend.bankname,tb_extend.bank_account,extend.recevice_code],:order=>"p_typ,typ")%>
+                    <%if @ext.empty?%>
+                    <%else%>
+                    <tr>
+                      <td >
+                        受案号
+                      </td>
+                      <td >
+                        结案号
+                      </td>
+                      <td >
+                        类型
+                      </td>
+                      <td>
+                        应发
+                      </td>
+                      <td>
+                        扣税
+                      </td>
+                      <td>
+                        实发
+                      </td>
+                      <td>
+                        时间
+                      </td>
+                    </tr>
+            
+                    <%for ext in @ext%>
+                      <tr>
+                        <td >
+                          <%=h ext.case_code%>
+                        </td>
+                        <td >
+                          <%=h ext.end_code%>
+                        </td>
+                        <td >
+                          <%if ext.typ=='1' and ext.p_typ=='0003' %>
+                            校核
+                          <%end%>
+
+                          <%if ext.typ=='1' and ext.p_typ!='0003' %>
+                            办案报酬
+                          <%end%>
+
+                          <%if ext.typ=='2'%>
+                            奖励
+                          <%end%>
+
+                          <%if ext.typ=='3'%>
+                            扣减
+                          <%end%>
+
+                          <%if ext.typ=='4'%>
+                              <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{TbRemuneration23.find_by_extend_id(ext.id).typ}'").data_text%>
+                          <%end%>
+
+                        </td>
+                        <td>
+                          <%=h ext.should_rmb%>
+                        </td>
+                        <td>
+                          <%=h ext.tax_rmb%>
+                        </td>
+                        <td>
+                          <%=h ext.extend_rmb%>
+                        </td>
+                        <td>
+                          <%=h @extend_code.extend_date%>
+                        </td>
+                      </tr>
+                    <%end%>
+                  <%end%>
+            
+                  <%@ext =TbExtend.find(:all,:conditions=>["used='Y' and typ='5' and t_extend_code=? and p=? and p_name=? and bankname=? and bank_account=? and recevice_code=?",params[:t_extend_code],tb_extend.p,tb_extend.p_name,tb_extend.bankname,tb_extend.bank_account,extend.recevice_code],:order=>"p_typ,typ")%>
+                  <%if @ext.empty?%>
+                  <%else%>
+            
+                    <%for ext in @ext%>
+                      <tr>
+                        <td >
+                          受案号
+                        </td>
+                        <td >
+                          类型
+                        </td>
+                        <%@ext_detail=TbRemuneration23.find(:all,:conditions=>"parent_id=#{TbRemuneration23.find_by_extend_id(ext.id).id}",:order=>"typ")%>
+                        <%for ext_detail in @ext_detail%>
+                          <td >
+                            <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{ext_detail.typ}'").data_text%>
+                          </td>
+                        <%end%>
+                        <td>
+                          实发数
+                        </td>
+                        <td>
+                          经办人
+                        </td>
+                        <td>
+                          时间
+                        </td>
+                      </tr>
+                      <tr>
+                        <td >
+                          <%=h ext.case_code%>
+                        </td>
+                        <td >
+                          差旅补助
+                        </td>
+                        <%for ext_detail in @ext_detail%>
+                          <td >
+                            <%=ext_detail.extend_rmb%>
+                          </td>
+                        <%end%>
+                        <td>
+                          <%=h ext.extend_rmb%>
+                        </td>
+                        <td>
+                          <%if ext_detail.ope_typ=='0001'%>
+                              <%=h User.find_by_code(TbCase.find_by_recevice_code(extend.recevice_code).clerk).name%>
+                          <%else%>
+                            办案助理
+                          <%end%>
+                        </td>
+                        <td>
+                
+                                                  <%=h ext.t_extend_t.to_s(:db).slice(0,10)%>
+                        </td>
+                      </tr>
+                    <%end%>
+                  <%end%>
+
+              <%end%>
+              </table>
+            </td>       
+          </tr>
+        <%end%>
+    <%end%>
+    </table>
+  </body>
+</html>

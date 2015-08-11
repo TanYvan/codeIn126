@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员解聘续聘</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">在聘仲裁员列表</span></div>
+    <br>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>仲裁员编码</th>
+          <th nowrap>姓名</th>
+          <th nowrap>年龄</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @tb_arbitmannows == nil
+          flash[:notice] = "没有仲裁员对象！"
+        else
+          for tb_arbitmannow in @tb_arbitmannows %>
+            <tr class="row<%=i % 2%>">
+              <% arbitman=TbArbitman.find_by_code(tb_arbitmannow.arbitman_num)%>
+              <td><%=tb_arbitmannow.arbitman_num%></td>
+              <td><%if arbitman != nil%><%=arbitman.name %><%else%><%end%></td>
+              <% if(arbitman.birthday !=nil and arbitman.birthday != "")
+                age= Time.now.year-arbitman.birthday.year
+              else
+                age = "不详"
+              end %>
+              <td><%=age %></td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">
+            <%= link_to '上一页', { :page => @tb_arbitmannow_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_arbitmannow_pages.current.previous %>
+            <%=pagination_links( @tb_arbitmannow_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @tb_arbitmannow_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_arbitmannow_pages.current.next %>
+
+            <%if @tb_arbitmannow_pages.current.previous or @tb_arbitmannow_pages.current.next%>
+              <form action="/expire/list_expires" method="get" >
+                每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                <input type=text name='page' size=5 class="SingleLineInput" value=<%= @tb_arbitmannow_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='跳转' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    <div align="center">
+      <%form_tag({:action=>'new_expire_many',:page=>@tb_arbitmannow_pages.current.number,:page_lines=>@page_lines},{:onsubmit=>'getcondi()'}) do %>
+        <%=hidden_field_tag :condi_c ,''%>
+        <%=submit_tag '届添加'%>
+      <%end%>
+    </div>
+  </body>
+  <br>
+  <hr size="1" color="#99CCFF" noshade><!--届信息-->
+  <iframe FRAMEBORDER=0 src="/expire/list_expire1" noresize style="width:600px;height:400px" align=center> </iframe>
+
+</html>

@@ -1,0 +1,24 @@
+<table id="table_1" class="adminlist" cellspacing="1">
+  <thead>
+    <tr>
+      <th nowrap>选择</th>
+      <th nowrap>格式函编码</th>
+      <th nowrap>格式函名称</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%j=0%>
+    <%i=1%>
+    <%for tb_arbitman in @typ %>
+      <tr class="row<%=j % 2%>">
+        <td><input type='button' value="选择" onclick="window.returnValue='<%=tb_arbitman.code %>';window.close();"></td>
+        <td><%= tb_arbitman.code%></td>
+        <td><%= tb_arbitman.name%></td>
+      </tr>
+      <%i+=1%>
+      <%j=j+1%>
+    <%end%>
+  </tbody>
+</table>
+
+

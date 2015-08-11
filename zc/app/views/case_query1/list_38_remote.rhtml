@@ -1,0 +1,46 @@
+<table>
+  <tr >
+    <th>案件状态</th>
+    <th>咨询流水号</th>
+    <th>总案号</th>
+    <th>立案号</th>
+    <th>结案号</th>
+    <th>申(被)请人类型</th>
+    <th>法定代表人</th>
+    <th>申(被)请人名称</th>
+    <th>申(被)请人地址</th>
+    <th>申(被)请人邮编</th>
+    <th>申(被)请人电话</th>
+    <th>申(被)请人Email</th>
+    <th>代理人名称</th>
+    <th>代理人单位</th>
+    <th>代理人地址</th>
+    <th>代理人邮编</th>
+    <th>代理人电话</th>
+    <th>代理人Email</th>
+    <th>代理人手机</th>
+  </tr>
+  <%for c in @c_l%>
+    <tr>
+      <td><%=@state[c.tb_cases_state]%></td>
+      <td><%=c.tb_cases_recevice_code%></td>
+      <td><%=h c.tb_cases_general_code%></td>
+      <td><%=h c.tb_cases_case_code%></td>
+      <td><%=h c.tb_cases_end_code%></td>
+      <td><%=h @sss[c.tb_parties_partytype]%></td>
+      <td><%=h c.tb_parties_commissary%></td>
+      <td><%=h c.tb_parties_partyname%></td>
+      <td><%=h c.tb_parties_addr%></td>
+      <td><%=h c.tb_parties_postcode%></td>
+      <td><%=h c.tb_parties_tel%></td>
+      <td><%=h c.tb_parties_email%></td>
+      <td><%=h c.tb_agents_name%></td>
+      <td><%=h c.tb_agents_company%></td>
+      <td><%=h c.tb_agents_addr%></td>
+      <td><%=h c.tb_agents_postcode%></td>
+      <td><%=h c.tb_agents_tel%></td>
+      <td><%=h c.tb_agents_email%></td>
+      <td><%=h c.tb_agents_mobiletel%></td>
+    </tr>
+  <% end %>
+</table>

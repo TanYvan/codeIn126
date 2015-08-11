@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>>仲裁员评级表（外网数据）</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员评级表（外网数据）。评论数据更新时间为：<%=@evaluate_t.t.to_s(:db) if @evaluate_t%>,培训数据更新时间为：<%=@train_t.t.to_s(:db)  if @train_t%></span></div>
+    <%form_tag :url=>{:action=>"list_1"} do%>
+      <table align="center">
+        <tr><td nowrap align="right">年份：</td>
+          <td align="left">
+            <%=text_field_tag(:year,@year)%>（例如：2015）
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <%=submit_tag "查询" %>
+          </td>
+        </tr>
+      </table>
+    <%end%>
+    <%if @evaluate!=nil%>
+      <div align="center">
+        <div align="left">年份：<%=@year%></div>
+        <table cellspacing="1" class="adminlist">
+          <thead>
+            <tr>
+              <th nowrap>仲裁员编码</th>
+              <th nowrap>仲裁员姓名</th>
+              <th nowrap>申请人对仲裁员的评价A</th>
+              <th nowrap>被申请人对仲裁员的评价B</th>
+              <th nowrap>其他仲裁员的评价C</th>
+              <th nowrap>助理的评价D</th>
+              <th nowrap>参加培训的分数E</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%i=0%>
+            <%for a in @evaluate%>
+              <tr class="row<%=i % 2%>">
+                <td nowrap><%=a.code%></td>
+                <td nowrap><%=a.name%></td>
+                <td nowrap><%=a.party_to_arbitman_1_sum %> </td>
+                <td nowrap><%=a.party_to_arbitman_2_sum%> </td>
+                <td nowrap><%=a.arbitman_to_arbitman_sum%> </td>
+                <td nowrap><%=a.assistant_to_arbitman_sum%> </td>
+                <td nowrap><%=a.train%> </td>
+              </tr>
+              <%i=i+1%>
+            <%end%>
+          </tbody>
+        </table>
+      </div>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+
+</title>
+<link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src=personAdded.rjs”></script> 
+</head>
+<body>
+<input type='button' value="关闭" onclick="window.close();">
+window.returnValue=""
+<table align="center">
+<%TbArbitman.find(:all,:order=>"id",:conditions=>"id<>'00'").each do |i|%>  
+  <tr>
+    <td align="right">
+      <%=i.code%>
+    </td>
+    <td align="right">
+      <%=i.name%>
+    </td>    
+    <td align="left">
+      <input type='button' value="添加" onclick="window.returnValue=window.returnValue + '+' + (i.name)">
+    </td>
+  </tr>
+<%end%>
+</table>
+</body>
+<html>
+

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员报酬调整</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员报酬调整</span></div>
+    <div align="center" class="cDGray">
+      仲裁员报酬调整<div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>仲裁员类型</th>
+          <th nowrap>姓名</th>
+          <th nowrap>基本+绩效</th>
+          <th nowrap>增加比例<br/>(基本+绩效)</th>
+          <th nowrap>减少比例<br/>(基本+绩效)</th>
+          <th nowrap>稿酬</th>
+          <th nowrap>调整原因</th>
+          <th nowrap>合计</th>
+          <th nowrap>最低金额参照值</th>
+          <th nowrap>修改</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for p in @arbitman%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%a=TbCasearbitman.find(:first,:conditions=>"used='Y' and recevice_code='#{p.recevice_code}' and arbitman='#{p.p}'",:order=>"arbitmantype")%>
+              <%if a!=nil%>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{a.arbitmantype}'").data_text%>
+              <%end%>
+            </td>
+            <td><%=TbArbitman.find_by_code(p.p).name%></td>
+            <td><%= SysArg.compart2(p.zc_rmb.round) %></td>
+            <td><%=p.bonus %></td>
+            <td><%=p.penalty%></td>
+            <td><%= SysArg.compart2(p.gc_rmb.round) %></td>
+            <td><%=h p.reason%></td>
+            <td>
+              <%reward_safe=SysArg.get_reward_safe(session[:recevice_code_2],p.p)%>
+              <%reward=(p.zc_rmb * (1 + p.bonus/100 - p.penalty/100) + p.gc_rmb).round%>
+              <%="<div style='color:red'>"  if reward < reward_safe.to_f %>
+              <%=reward%>
+              <%="</div>"  if reward < reward_safe.to_f  %>
+            </td>
+            <td>
+              <%if reward_safe%>
+              <%=reward_safe%>
+              <%else%>
+              <%end%>
+            </td>
+            <td>
+              <%if p.extend_code==''%>
+                <%=link_to "修改",:action=>"edit_4",:id=>p%>
+              <%end%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

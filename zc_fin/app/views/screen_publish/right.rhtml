@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body style="overflow-x:hidden" background="#ffffff"  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+    <%title=""%>
+    <%create_date=""%>
+    <%content=""%>
+    <%new=TbNew.find(params[:new_id])%>
+    <%if new.used=="Y" and new.forbidden=="0001"%>
+      <%title=new.title%>
+      <%create_date=new.create_date%>
+      <%content=new.content%>
+    <%end%>
+    <%title=title.gsub(" ","&nbsp;")%>
+    <%title=title.gsub("\n","<BR>")%>
+
+    <div id="ny">
+      <h1><%=title%></h1>
+      <div align="right" ><%=SysArg.get_ymd(create_date)%>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+      <%=content%>
+    </div>
+    <form action="/screen_publish/left" method="post" name="form1" target="leftFrame">
+      <input type="hidden" id="new_id" name="new_id" value=""/>
+    </form>
+    <SCRIPT language=JavaScript>
+      document.form1.submit();
+    </SCRIPT>
+  </body>
+</html>

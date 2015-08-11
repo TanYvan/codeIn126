@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>规则收费办法管理</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title">规则收费办法管理</div>
+    <div align="center">
+    <table id='tt' cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          编码
+        </th>
+        <th nowrap>
+          名称
+        </th>
+        <th nowrap>
+          配置
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%for r in @app_roles%>
+        <tr class="row<%=i % 2%>">
+          <td>
+            <%=h r.send("data_val")%>
+          </td>
+          <td>
+            <%=h r.send("data_text")%>
+          </td>
+          <td>
+            <%=link_to "配置",{:action=>'charge_fun_detail_list',:app_role=>r.data_val} %>
+          </td>
+        </tr>
+        <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    </div>
+  </body>
+</html>

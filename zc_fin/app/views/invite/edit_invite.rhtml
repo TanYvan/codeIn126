@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>修改仲裁员拒绝</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function add_arbitman(){
+        a=window.showModalDialog('/invite/arbitman_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          a1=a.indexOf('+',0)
+          arbitman_num =a.substr(0,a1)
+          arbitman_name=a.substr(a1+1,a.length - a1 )
+
+          document.getElementById("tb_invite_arbitman").value = arbitman_num
+          document.getElementById("tb_invite_arbitman").value= arbitman_name
+        }
+        if (a==null ||a==""){
+          document.getElementById("aa").value= "a"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">修改仲裁员拒绝</span></div>
+    <br>
+    <hr size="1" color="#99CCFF" noshade>
+    <div class="cRed">(带*为必填项)  <%=link_to "返回", {:controller=>"invite", :action=>"list_invite", :page=>params[:page],:page_lines=>params[:page_lines]} %>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :tb_invite,:url => {:action => "update_invite",:code=>params[:code],:id =>params[:id],:page=>params[:page],:page_lines=>params[:page_lines] } do |f|%>
+      <table class="list">
+        <tr>
+          <th nowrap>仲裁员编号:</th>
+          <td>
+            <%=@tb_invite.arbitman%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>仲裁员姓名：</th>
+          <td><%=TbArbitman.find_by_code(@tb_invite.arbitman).name%></td>
+        </tr>
+        <tr>
+          <th nowrap><i>*</i>案件编号：</th>
+          <td>
+            <%=f.text_field :case_code%>
+            <i><%=error_message_on(:tb_invite,:case_code)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>通知日期: </th>
+          <td><%=f.text_field :confirmdate,:readonly=>"true"%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('tb_invite_confirmdate'),'yyyy-MM-dd')" >
+          <div style="color:red"><%=error_message_on(:tb_invite,:confirmdate)%></div></td>
+        </tr>
+        <tr>
+          <th nowrap>拒绝时间: </th>
+          <td><%=f.text_field :informdate,:readonly=>"true"%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('tb_invite_informdate'),'yyyy-MM-dd')" >
+          <div style="color:red"><%=error_message_on(:tb_invite,:informdate)%></div></td>
+        </tr>
+        <tr>
+          <th nowrap>仲裁员类别: </th>
+          <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9011 and state ='Y'"], :order => :id, :select => "data_val,data_text") %>
+          <td><%=f.collection_select(:clas, @types, :data_val, :data_text)%></td>
+        </tr>
+        <tr>
+          <th nowrap><i>*</i>拒绝理由：</th>
+          <td><%=f.text_area :reason,:rows => 4%>
+            <i><%=error_message_on(:tb_invite,:reason)%></i>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>
+

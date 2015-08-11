@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>专家</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">在聘专家列表</span></div>
+    <br>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>专家编码</th>
+          <th nowrap>姓名</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @period == nil
+          flash[:notice] = "没有专家对象！"
+        else
+          for period in @period %>
+            <tr class="row<%=i % 2%>">
+              <%p=TbExpertconsult.find_by_used_and_code('Y',period.code)%>
+              <td><%=period.code%></td>
+              <td><%if p != nil%><%=p.name %><%else%><%end%></td>
+              
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">
+            <%= link_to '上一页', { :page => @period_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @period_pages.current.previous %>
+            <%=pagination_links( @period_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @period_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @period_pages.current.next %>
+
+            <%if @period_pages.current.previous or @period_pages.current.next%>
+              <form action="/period/list_expires" method="get" >
+                每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                <input type=text name='page' size=5 class="SingleLineInput" value=<%= @period_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='跳转' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+  <br>
+  <hr size="1" color="#99CCFF" noshade><!--届信息-->
+    <%=button_to '届添加',:action=>"new_expert_many"%>
+    
+  <iframe FRAMEBORDER=0 src="/period_expire/list_expire1" noresize style="width:600px;height:400px" align=center> </iframe>
+   
+</html>

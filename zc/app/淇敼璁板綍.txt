@@ -1,0 +1,5 @@
+2015.5.14 华南国仲 修改格式函 fmt162.doc
+2015.6.3  华南国仲 修改格式函 For03.doc 及 Dfor03.doc 
+2015.6.26 华南囯仲 修改 /usr/local/zc/app/models/doc_format.rb
+2015.7.10 华南囯仲 修改 /usr/local/zc_sch/app/models/task_a.rb
+2015.7.23 华南囯仲 修改 /usr/local/zc/app/models/doc_format.rb

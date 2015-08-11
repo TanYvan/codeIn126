@@ -1,0 +1,113 @@
+  <table cellspacing="1" class="adminlist" id="to_excel_g" name="to_excel_g">
+    <thead>
+    <tr>
+      <th nowrap>人员类别</th>
+      <th nowrap>&nbsp;姓  名&nbsp;</th>
+      <th nowrap>银行类别</th>
+      <th nowrap>银行</th>
+      <th nowrap>帐号</th>
+      <th nowrap>身份证号</th>
+      <th nowrap>咨询流水号</th>
+      <th nowrap>立案号</th>
+      <th nowrap>结案号</th>
+      <th nowrap>发放编号</th>
+      <th nowrap>类型</th>
+      <th nowrap>应发数额</th>
+      <th nowrap>应纳税所得额</th>
+      <%
+        taxtype1 = TbDictionary.find(:all,:conditions=>"typ_code='9027' and used='Y' and state='Y' ")
+        for t in taxtype1
+      %>
+      <th nowrap><%= t.data_text %></th>
+      <% end %>
+      <th nowrap>应扣税款</th>
+      <th nowrap>实发数额</th>
+  </tr>
+  </thead>
+    <tbody>
+      <%i=0%>
+  <% for pp in @tb_extends %>
+      <% tb_arbitman = TbArbitman.find_by_code(pp.p) %>
+      <% user = User.find_by_code(pp.p) %>
+  <tr class="row<%=i % 2%>">
+    <td><!-- 人员类别 -->
+      <%=@typ1[pp.p_typ]%>
+    </td>
+    <td><!-- 姓名 -->
+      <%if pp.p_typ=="0001"%>
+      <% name = tb_arbitman.name%>
+      <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+        <% name = user.name%>
+      <%else%>
+      <%end%>
+      <%= name %>
+    </td>
+    <td><!-- 银行类别 -->
+      <%if pp.p_typ=="0001"%>
+      <%bank_typ=tb_arbitman.bank_typ%>
+      <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+        <%bank_typ=user.bank_typ%>
+      <%else%>
+      <%end%>
+      <%if bank_typ!=nil and bank_typ!=''%>
+        <%=@bank_typ[bank_typ]%>
+      <%end%>
+    </td>
+    <td><!-- 银行 -->
+      <%if pp.p_typ=="0001"%>
+        <%=tb_arbitman.bankname%>
+      <%else%>
+        <%=user.bankname%>
+      <%end%>
+    </td>
+    <td style="mso-number-format:'\@';"><!-- 账号 -->
+      <%if pp.p_typ=="0001"%>
+        <%=tb_arbitman.bankaccount%>
+      <%else%>
+        <%=user.bankaccount%>
+      <%end%>
+    </td>
+    <td style="mso-number-format:'\@';"><!-- 身份证号 -->
+      <%if pp.p_typ=="0001"%>
+        <%=tb_arbitman.id_card%>
+      <%else%>
+        <%=user.id_card%>
+      <%end%>
+    </td>
+    <td><%=pp.recevice_code%></td><!-- 咨询流水号 -->
+    <td><%=pp.case_code%></td><!-- 立案号 -->
+    <td><%=pp.end_code%></td><!-- 结案号 -->
+
+    <td><!-- 发放编号 -->
+      <%=pp.t_extend_code%>
+    </td>
+    <td><!-- 类型 -->
+      <%=@typ2[pp.typ]%>
+    </td>
+    <td><!-- 应发 -->
+      <%= SysArg.round2f(pp.should_rmb) %>
+    </td>
+    <td><!-- 应纳税所得额 -->
+      <%= ynssde=SysArg.round2f(pp.tax_base_rmb) %>
+    </td>
+    <%
+      for t in taxtype1
+    %>
+    <td><%= SysArg.round2f(ynssde.to_i*t.data_val.to_f) %></td>
+    <% end %>
+    <!--
+    <td><%= SysArg.round2f(ynssde.to_i*0.033) %></td>
+    <td><%= yys = SysArg.round2f(ynssde.to_i*0.05) %></td>
+    <td><%= SysArg.round2f(yys.to_f*0.1) %></td>
+    -->
+    <td><!-- 应扣税款 -->
+      <%= sprintf("%.2f",pp.tax_rmb) %>
+    </td>
+    <td><!-- 实发数额 -->
+      <%= SysArg.round2f(pp.extend_rmb) %>
+    </td>
+  </tr>
+  <%i=i+1%>
+  <%end%>
+  </tbody>
+</table>

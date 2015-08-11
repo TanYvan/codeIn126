@@ -1,0 +1,2 @@
+module OtherSpendHelper
+end

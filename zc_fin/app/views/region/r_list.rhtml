@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cGray">当前节点：<%=@rrr%>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      增加子节点
+    </div>
+    <%form_for :r_new ,:url=>{:action=>"r_create"} do |f|%>
+      <table class="list">
+        <tr >
+          <th>
+            编码:
+          </th>
+          <td align="left">
+            <%=f.text_field :code%>
+            <div style="color:red"><%=error_message_on(:r_new,:code)%></div>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            名称:
+          </th>
+          <td align="left">
+            <%=f.text_field :name,:size=>80%>
+
+            <div style="color:red"><%=error_message_on(:r_new,:name)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            此地区仲裁员实际开支:
+          </th>
+          <td align="left">
+            <%=f.text_field :arbitman_cost,:style=>"width:15em"%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            汇率:
+          </th>
+          <td align="left">
+            <%@money1=Money.find(:all,:order=>"code")%>
+            <%=f.collection_select(:rate_code,@money1,:code,:name)%>
+          </td>
+        </tr>
+      </table>
+      <%=f.hidden_field :parent%>
+      <div style="color:red"><%=error_message_on(:r_new,:parent)%></div>
+      <br>
+      <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+    <hr size="2" color="#99CCFF" noshade>
+    <% if @r!=nil%>
+      <div class="cGray">修改当前节点</div>
+      <%form_for :r ,:url=>{:action=>"r_update",:id=>@r.id} do |f|%>
+        <table class="list" class="cDGray">
+
+          <tr >
+            <th>
+              编码:
+            </th>
+            <td align="left">
+              <%if @r_code_read_only=="yes"%>
+                <%=@r.code%>
+              <%else%>
+                <%=f.text_field :code%>
+              <%end%>
+              <div style="color:red"><%=error_message_on(:r,:code)%></div>
+            </td>
+          </tr>
+
+          <tr >
+            <th>
+              名称:
+            </th>
+            <td >
+              <%=f.text_field :name,:size=>80%>
+
+              <div style="color:red"><%=error_message_on(:r,:name)%></div>
+            </td>
+          </tr>
+          <tr >
+          <th>
+            此地区仲裁员实际开支:
+          </th>
+          <td align="left">
+            <%=f.text_field :arbitman_cost,:style=>"width:15em"%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            汇率:
+          </th>
+          <td align="left">
+            <%@money1=Money.find(:all,:order=>"code")%>
+            <%=f.collection_select(:rate_code,@money1,:code,:name)%>
+          </td>
+        </tr>
+        </table>
+        <br>
+        
+        <%=f.hidden_field :parent%>
+        <div style="color:red"><%=error_message_on(:r,:parent)%></div>
+     
+        <table align="center"><tr><td nowrap>  <%=submit_tag "修改" %></td>
+      <%end%>
+        <td nowrap> 
+        <%if @r_code_read_only!="yes"%> 
+          <%=button_to "删除" ,{:action=>:r_del,:id=>@r.id }%>
+        <%end%>
+        </td>
+        </tr>
+        </table>
+      
+    <%end%>
+  </body>
+</html>

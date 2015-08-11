@@ -1,0 +1,59 @@
+<%@state={-2=>"删除",-1=>"重审",1=>"咨询",2=>"历史",3=>"不受理",4=>"立案",5=>"组庭",6=>"开庭",100=>"结案",150=>"归档申请",200=>"存档"}%>
+相关案件
+<table cellspacing="1" class="adminlist">
+<thead>
+  <tr>
+    <th nowrap>案件编号</th>
+    <th nowrap>当事人</th>
+    <th nowrap>电话</th>
+    <th nowrap>地址</th>
+    <th nowrap>立案日期</th>
+    <th nowrap>结案日期</th>
+    <th nowrap>助理</th>
+    <th nowrap>争议金额</th>
+  </tr>
+</thead>
+<tbody>
+<%if p_l!=nil%>
+  <%i=0%>
+  <%for c in p_l%>
+    <tr class="row<%=i % 2%>">
+      <td>
+        咨询流水号：<%=link_to "#{c.recevice_code}",{:controller=>'every_casebase',:action=>"every_list",:recevice_code=>"#{c.recevice_code}"},:target=>"_blank"%>
+        <br/>立案号：<%=c.case_code%><br/>结案号：<%=c.end_code%>
+      </td>
+        <%tp=TbParty.find(:first,:conditions=>"used='Y' and partyname='#{c.partyname}' and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+      <td>
+        <%=h c.partyname%>
+        <% if !tp.blank? %>
+          <input type="button" value="复制" onclick="cop('<%=tp.commissary%>','<%=tp.partyname%>','<%=tp.mobiletel%>','<%=tp.email%>','<%=tp.idnum%>','<%=tp.addr%>','<%=tp.tel%>','<%=tp.postcode%>','<%=tp.post_tel_code%>','<%=tp.profession%>','<%=tp.area%>','<%=tp.dutyname%>')" />
+        <% end %>
+      </td>
+      <td><% if !tp.blank? %><%=h tp.tel%><% end %></td>
+      <td><% if !tp.blank? %><%=h tp.addr%><% end %></td>
+      <td>
+        <%=h TbCase.find_by_recevice_code(c.recevice_code).nowdate%>
+      </td>
+      <td>
+        <%=h TbCase.find_by_recevice_code(c.recevice_code).end_date%>
+      </td>
+      <td>
+        <%if c.clerk!=nil and c.clerk!=""%>
+             <%=h User.find_by_code(c.clerk).name%>
+        <%end%>
+      </td>
+
+      <td>
+        <%=h TbCase.find_by_recevice_code(c.recevice_code).amount%>
+      </td>
+
+    </tr>
+    <%i=i+1%>
+
+    <%end%>
+
+  <%end%>
+
+</tbody>
+</table>
+

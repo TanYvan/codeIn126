@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改裁决书更正</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <div class="cDGray" align="center">修改裁决书更正(带<i>*</i>为必填项)  <%=link_to "返回",:action=>"repairarbit_list",:caseend_book_id=>params[:caseend_book_id]%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :repairarbit ,:url=>{:action=>"repairarbit_update",:id=>params[:id],:caseend_book_id=>params[:caseend_book_id]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th nowrap>
+            <i>*</i>提出人:
+           </th>
+          <td>
+            <%=f.text_field(:requestMan)%>
+            <i><%=error_message_on(:repairarbit,:requestMan)%></i>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            提出日期:
+          </th>
+          <td>
+            <%=f.text_field(:requestDate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('repairarbit_requestDate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            是否在30日内提出:
+          </th>
+          <td>
+          <%=f.select(:objection,[['是','是'],['否','否']])%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            仲裁庭是否在合理时间内提出:
+          </th>
+          <td>
+          <%=f.select(:objection_2,[['是','是'],['否','否']])%>
+          </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            补正请求:
+          </th>
+          <td>
+            <%=f.text_area(:request,:rows=>4)%>
+          </td>
+        </tr>
+
+        <tr>
+          <th nowrap>
+            理由:
+          </th>
+          <td>
+            <%=f.text_area(:reason,:rows=>4)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            仲裁庭决定:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8121' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:decide,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            补正类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8122' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:correctionStyle,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            <i>*</i>补正裁决内容:
+          </th>
+          <td>
+            <%=f.text_area(:content,:rows=>4)%><i><%=error_message_on(:repairarbit,:content)%></i>
+          </td>
+        </tr>
+       </table>
+       <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

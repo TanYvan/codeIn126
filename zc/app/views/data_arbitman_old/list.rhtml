@@ -1,0 +1,223 @@
+<link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+<script src="/javascripts/check.js"></script>
+<script language="JavaScript">
+  function checkall() {
+    var a='';
+    if (document.getElementById("cheall").value=='t' )
+      {
+        document.getElementById("cheall").value='f';
+      }
+    else
+      {
+        a='true';
+        document.getElementById("cheall").value='t';
+      }
+    var chec = document.getElementsByName("che");
+    for(i=0; i<chec.length; i++)
+      { 
+        chec[i].checked = a;
+      }
+  }
+
+  function checkall_2() {
+    var a='';
+    if (document.getElementById("cheall_2").value=='t' )
+      {
+        document.getElementById("cheall_2").value='f';
+      }
+    else
+      {
+        a='true';
+        document.getElementById("cheall_2").value='t';
+      }
+    var chec_2 = document.getElementsByName("che_2");
+    for(i=0; i<chec_2.length; i++)
+      {
+        chec_2[i].checked = a;
+      }
+  }
+
+  function getcondi()
+  {
+  var chec = document.getElementsByName("che");
+  var a='';
+  for(i=0; i<chec.length; i++)
+    {
+      if (chec[i].checked == true)
+        a=a+chec[i].value+',';
+    }
+    aa=a.substr(0, a.length -1 )
+    var c = document.getElementById("condi");
+    c.value=aa;
+  }
+
+  function getcondi_2()
+  {
+  var chec_2 = document.getElementsByName("che_2");
+  var a='';
+  for(i=0; i<chec_2.length; i++)
+    {
+      if (chec_2[i].checked == true)
+        a=a+chec_2[i].value+',';
+    }
+    aa=a.substr(0, a.length -1 )
+    var c = document.getElementById("condi_2");
+    c.value=aa;
+  }
+
+</script>
+<div class="title"><span class="cBlue">仲裁员数据列表</span></div>
+<div style="color:red"><%=flash[:notice]%></div>
+<table align="center">
+  <tr>
+    <td>
+      <%form_tag({:action=>'insert_do',:page => @data_old_t_pages.current.previous ,:page_lines=>@page_lines },{:onsubmit=>'getcondi()'}) do %>
+            <%=hidden_field_tag :condi ,''%>
+            <%=submit_tag '插入新记录'%>
+      <%end%>
+      <%form_tag({:action=>'update_do',:page => @data_old_t_pages.current.previous ,:page_lines=>@page_lines },{:onsubmit=>'getcondi_2()'}) do %>
+            <%=hidden_field_tag :condi_2 ,''%>
+            <%=submit_tag '更新原记录'%>
+      <%end%>
+    </td>
+  </tr>      
+</table>
+<tfoot>
+  <tr>
+    <td colspan="8">
+      <%= link_to '上一页', { :page => @data_old_t_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @data_old_t_pages.current.previous %>
+      <%=pagination_links( @data_old_t_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+      <%= link_to '下一页', { :page => @data_old_t_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @data_old_t_pages.current.next %>
+
+      <%if @data_old_t_pages.current.previous or @data_old_t_pages.current.next%>
+        <form action="/data_arbitman_old/list" method="get" onsubmit="return page_check('page_lines','page');">
+          每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                   <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @data_old_t_pages.current.number %> />
+                   <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                   页
+                   <input type=hidden name='order' value="<%=@order%>" />
+                   <input type='submit' value='确定' />
+        </form>
+      <%end%>
+    </td>
+  </tr>
+</tfoot>
+<table  cellspacing="1" class="adminlist">
+<thead>
+  <th nowrap>
+    插入数据记录<input type='checkbox' id='cheall' name='cheall' value='f' onclick = "checkall()" />
+  </th>
+  <th nowrap>
+    编码
+  </th>
+  <th nowrap>
+    姓名
+  </th>
+  <th nowrap>
+    姓名缩写
+  </th>
+  <th nowrap>
+    性别
+  </th>
+  <th nowrap>
+    籍贯
+  </th>
+  <th nowrap>
+    居住地
+  </th>
+  <th nowrap>
+    工作机构
+  </th>
+  <th nowrap>
+    职务
+  </th>
+  <th nowrap>
+    手机
+  </th>
+  <th nowrap>
+    邮箱
+  </th>
+  <th nowrap>
+    联系电话
+  </th>
+  <th nowrap>
+    传真
+  </th>
+  <th nowrap>
+    联络地址
+  </th>
+  <th nowrap>
+    仲裁规则
+  </th>
+  <th nowrap>
+    年度
+  </th>
+  <th nowrap>
+    更新原记录<input type='checkbox' id='cheall_2' name='cheall_2' value='f' onclick = "checkall_2()" />
+  </th>
+</thead>
+<tbody>
+<%i=0%>
+<% for d in @data_old_ts %>
+      <%s=""%>
+  <tr class="row<%=i % 2%>">
+    <td>
+      <%if d.code==""%>
+      <input type='checkbox' id='che' name='che' value=<%=d.id%> />
+      <%end%>
+    </td>
+    <td>
+      <%=d.code%>
+    </td>
+    <td>
+      <%=d.name%>
+    </td>
+    <td>
+      <%=d.spell%>
+    </td>
+    <td>
+      <%=d.sex%>
+    </td>
+    <td>
+      <%=d.jg%>
+    </td>
+    <td>
+      <%=d.addr_1%>
+    </td>
+    <td>
+      <%=d.workp%>
+    </td>
+    <td>
+      <%=d.zw%>
+    </td>
+    <td>
+      <%=d.tel%>
+    </td>
+    <td>
+      <%=d.email%>
+    </td>
+    <td>
+      <%=d.phone%>
+    </td>
+    <td>
+      <%=d.send_code%>
+    </td>
+    <td>
+      <%=d.addr_2%>
+    </td>
+    <td>
+      <%=d.roles%>
+    </td>
+    <td>
+      <%=d.yearbe%>
+    </td>
+    <td>
+      <%if d.code!=""%>
+        <input type='checkbox' id='che_2' name='che_2' value=<%=d.id%> />
+      <%end%>
+    </td>
+    </tr>
+    <%i=i+1%>
+  <%end%>
+  </tbody>
+  </table>

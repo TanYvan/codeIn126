@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>案件数统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script language="javascript">
+      function checkForm(){
+        if(document.getElementById("date1").value==null && document.getElementById("date2").value==null){
+          alert("请选择统计时间！");
+          return false;
+        }
+        if(document.getElementById("date1").value>document.getElementById("date2").value){
+          alert("统计时间错误，请重新选择！");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件数统计</span></div>
+    <%form_tag :url=>{:action=>"list"},:html =>{:onsubmit=>"return checkForm();"} do%>
+      <table align="center"><tr><td nowrap align="right">
+            时间段类型：</td>
+          <td align="left" nowrap>
+            <%=select(:j,:datestyle,[["结案时间段","0001"],["立案时间段","0002"]])%>
+          </td></tr>
+        <tr><td nowrap align="right">
+            统计时间段：</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" >
+              --
+              <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" >
+                </td></tr>
+                </table>
+                <%=submit_tag "查询" %>
+              <%end%>
+              <br/>
+              <br/>
+              <div class="cGreen">
+                <%if @clerks_1!=nil%>
+                  时间段类型:<%=@datestyle_state[@datestyle]%> 统计时间段:<%=@date1%>至<%=@date2%>
+                <%end%>
+              </div>
+              <hr size="1" color="#99CCFF" noshade width="98%">
+                在职人员办案统计
+                <%if @clerks_1==nil%>
+                <%else%>
+                  <table  width="98%"  class="list">
+                    <tr>
+                      <th nowrap></th>
+                      <th nowrap colspan="<%=@aribitprog.size%>">已结案件</th>
+                      <th nowrap></th>
+                      <th nowrap colspan="<%=@aribitprog.size%>">未结案件</th>
+                      <th nowrap></th>
+                      <th nowrap></th>
+                    </tr>
+                    <tr>
+                      <th nowrap>助理</th>
+                      <%for ari in @aribitprog%>
+                        <td><div align="center"><%=ari.data_text%></div</td>
+                      <%end%>
+                      <th nowrap>小计</th>
+                      <%for ari in @aribitprog%>
+                        <td><div align="center"><%=ari.data_text%></div</td>
+                      <%end%>
+                      <th nowrap>小计</th>
+                      <th nowrap>合计</th>
+                    </tr>
+                    <%a1 = 0%>
+                    <%a2 = 0%>
+                    <%a3 = 0%>
+                    <%for clerk in @clerks_1%>
+                      <tr>
+                        <td nowrap><%=clerk.name%></td>
+                        <%for ari in @aribitprog%>
+                          <td align="center" >
+                            <div align="center">
+                              <%if @datestyle=='0001'%>
+                                <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}'  and tb_cases.clerk='#{clerk.code}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}'  and tb_cases.caseendbook_id_first is not null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                              <%else%>
+                                <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}'  and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.caseendbook_id_first is not null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                              <%end%>
+                              <%=ccc.id_count%>
+                            </div>
+                          </td>
+                        <%end%>
+                        <td>
+                          <div align="center">
+                            <%if @datestyle=='0001'%>
+                              <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id  and tb_cases.caseendbook_id_first is not null",:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%else%>
+                              <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}'  and tb_cases.caseendbook_id_first is not null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%end%>
+                            <%=ccc.id_count%>
+                          </div>
+                        </td>
+
+                        <%for ari in @aribitprog%>
+                          <td align="center" >
+                            <div align="center">
+                              <%if @datestyle=='0001'%>
+                                <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}'  and tb_cases.clerk='#{clerk.code}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}' and tb_cases.caseendbook_id_first is null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                              <%else%>
+                                <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}'  and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.caseendbook_id_first is null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                              <%end%>
+                              <%=ccc.id_count%>
+                            </div>
+                          </td>
+                        <%end%>
+                        <td>
+                          <div align="center">
+                            <%if @datestyle=='0001'%>
+                              <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}' and tb_cases.caseendbook_id_first is null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%else%>
+                              <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.caseendbook_id_first is null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%end%>
+                            <%=ccc.id_count%>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div align="center">
+                            <%if @datestyle=='0001'%>
+                              <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%else%>
+                              <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%end%>
+                            <%=ccc.id_count%>
+                            <%a3=a3 + ccc.id_count.to_i%>
+                          </div>
+                        </td>
+
+                      </tr>
+                    <%end%>
+                    <tr>
+                      <th nowrap>合计</th>
+                      <%for ari in @aribitprog%>
+                        <th>
+                          <div align="center">
+                            <%if @datestyle=='0001'%>
+                              <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}'  and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}'  and tb_cases.caseendbook_id_first is not null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%else%>
+                              <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.caseendbook_id_first is not null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%end%>
+                            <%=ccc.id_count%>
+                            <%a1 = a1 + ccc.id_count.to_i%>
+                          </div>
+                        </th>
+                      <%end%>
+                      <th><%=a1%></th>
+                      <%for ari in @aribitprog%>
+                        <th>
+                          <div align="center">
+                            <%if @datestyle=='0001'%>
+                              <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}' and tb_cases.caseendbook_id_first is null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%else%>
+                              <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.caseendbook_id_first is null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%end%>
+                            <%=ccc.id_count%>
+                            <%a2 = a2 + ccc.id_count.to_i%>
+                          </div>
+                        </th>
+                      <%end%>
+                      <th nowrap><%=a2%></th>
+                      <th nowrap><%=a3 %></th>
+                    </tr>
+                  </table>
+                <%end%>
+                <br/>
+                <br/>
+                <br/>
+                <hr size="1" color="#99CCFF" noshade width="98%"/>
+                离职人员办案统计
+                <%if @clerks_2==nil%>
+                <%else%>
+                  <table  width="98%"  class="list">
+                    <tr>
+                      <th nowrap></th>
+                      <th nowrap colspan="<%=@aribitprog.size%>">已结案件</th>
+                      <th nowrap></th>
+                      <th nowrap colspan="<%=@aribitprog.size%>">未结案件</th>
+                      <th nowrap></th>
+                      <th nowrap></th>
+                    </tr>
+                    <tr>
+                      <th nowrap>助理</th>
+                      <%for ari in @aribitprog%>
+                        <td><div align="center"><%=ari.data_text%></div</td>
+                      <%end%>
+                      <th nowrap>小计</th>
+                      <%for ari in @aribitprog%>
+                        <td><div align="center"><%=ari.data_text%></div</td>
+                      <%end%>
+                      <th nowrap>小计</th>
+                      <th nowrap>合计</th>
+                    </tr>
+                    <%for clerk in @clerks_2%>
+                      <tr>
+                        <td><div align="center"><%=clerk.name%></div></td>
+                        <%for ari in @aribitprog%>
+                          <td align="center" >
+                            <div align="center">
+                              <%if @datestyle=='0002'%>
+                                <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.state>=100 and tb_cases.aribitprog_num='#{ari.data_val}'  and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.caseendbook_id_first is not null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                              <%else%>
+                                <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}'  and tb_cases.clerk='#{clerk.code}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}' and tb_cases.caseendbook_id_first is not null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                              <%end%>
+                              <%=ccc.id_count%>
+                            </div>
+                          </td>
+                        <%end%>
+                        <td>
+                          <div align="center">
+                            <%if @datestyle=='0002'%>
+                              <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.caseendbook_id_first is not null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%else%>
+                              <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}' and tb_cases.caseendbook_id_first is not null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%end%>
+                            <%=ccc.id_count%>
+                          </div>
+                        </td>
+
+                        <%for ari in @aribitprog%>
+                          <td align="center" >
+                            <div align="center">
+                              <%if @datestyle=='0002'%>
+                                <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}'  and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.caseendbook_id_first is null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                              <%else%>
+                                <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.aribitprog_num='#{ari.data_val}'  and tb_cases.clerk='#{clerk.code}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}' and tb_cases.caseendbook_id_first is null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                              <%end%>
+                              <%=ccc.id_count%>
+                            </div>
+                          </td>
+                        <%end%>
+                        <td>
+                          <div align="center">
+                            <%if @datestyle=='0002'%>
+                              <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.caseendbook_id_first is null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%else%>
+                              <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}' and tb_cases.caseendbook_id_first is null" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%end%>
+                            <%=ccc.id_count%>
+                          </div>
+                        </td>
+                        <td>
+                          <div align="center">
+                            <%if @datestyle=='0002'%>
+                              <% ccc=TbCase.find(:first,:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%else%>
+                              <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.used='Y' and tb_caseendbooks.used='Y' and tb_cases.caseendbook_id_first=tb_caseendbooks.id",:conditions=> "tb_cases.used='Y' and tb_cases.clerk='#{clerk.code}' and  tb_caseendbooks.decideDate>='#{@date1}' and tb_caseendbooks.decideDate<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                            <%end%>
+                            <%=ccc.id_count%>
+                          </div>
+                        </td>
+                      </tr>
+                    <%end%>
+                  </table>
+                <%end%>
+
+                </body>
+                </html>

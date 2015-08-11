@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 裁决书信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  裁决书信息  <%=link_to "返回",:action=>"book_list",:p_id=>params[:p_id],:recevice_code=>params[:recevice_code]%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :book ,:url=>{:action=>"book_create",:p_id=>params[:p_id],:recevice_code=>params[:recevice_code]}  do |f|%>
+      <table class="list">  
+        <!--
+        <tr>
+          <th>
+            文书标题:
+          </th>
+          <td>
+            <%=f.text_field(:title)%>   
+            <div style="color:red"><%=error_message_on(:book,:title)%></div>
+          </td>
+        </tr>
+        -->
+        <tr>
+          <th>
+            裁决书类型:
+          </th>
+          <td>
+            <%
+            @endstyle=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=? and id=?",params[:recevice_code],params[:p_id]]).endStyle
+            if @endstyle=='0001' #一般裁决
+              @op=TbDictionary.find(:all,:conditions=>"typ_code='8120' and state='Y' and (data_val='0001' or data_val='0004'  or data_val='0005')",:order=>'data_val',:select=>"data_val,data_text")
+            elsif @endstyle=='0002' #和解裁决
+              @op=TbDictionary.find(:all,:conditions=>"typ_code='8120' and state='Y' and (data_val='0002' or data_val='0004'  or data_val='0005')",:order=>'data_val',:select=>"data_val,data_text")
+            else  #撤案
+              @op=TbDictionary.find(:all,:conditions=>"typ_code='8120' and state='Y' and (data_val='0003' or data_val='0004'  or data_val='0005')",:order=>'data_val',:select=>"data_val,data_text")
+            end 
+            %>
+            <%=f.collection_select(:book_typ,@op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remarks,:rows=>4)%>                                      
+            <div style="color:red"><%=error_message_on(:book,:remarks)%></div>
+          </td>
+        </tr>
+      </table>
+      <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

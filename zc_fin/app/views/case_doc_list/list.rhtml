@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件发文列表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+      <script src="/javascripts/check.js"></script>
+  </head>
+  <body>    
+        <div class="title"><span class="cBlue">案件发文列表</span></div>
+        <br/>
+        <table cellspacing="1" class="adminlist">
+          <thead>
+            <tr >
+              <th nowrap>
+                咨询流水号
+              </th>
+              <th nowrap>
+                咨询日期
+              </th>
+              <th nowrap>
+                立案号
+              </th>
+              <th nowrap>
+                立案日期
+              </th>
+              <th nowrap>
+                仲裁程序类型
+              </th>
+              <th nowrap>
+                申请人
+              </th>
+              <th nowrap>
+                被申请人
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td nowrap>
+                <%=h @case.recevice_code%>
+              </td>
+              <td nowrap>
+                <%=h @case.receivedate%>
+              </td>
+              <td nowrap>
+                <%=h @case.case_code%>
+              </td>
+              <td nowrap>
+                <%=h @case.nowdate%>
+              </td>
+              <td nowrap>
+                <%=TbDictionary.find(:first,:conditions=>"used='Y' and state='Y' and typ_code='0001' and data_val='#{@case.aribitprog_num}'").data_text%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+                <%if @tp!=nil%>
+                  <%for a in @tp%>
+                    <%=h a.partyname%><br/>
+                  <%end%>
+                <%end%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+                <%if @tp!=nil%>
+                  <%for a1 in @tp%>
+                    <%=h a1.partyname%><br/>
+                  <%end%>
+                <%end%>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br/>
+        <div class="cDGray"> 案件发文
+        <div align="right">发文数量：<%=@doc.length  %>个&nbsp;&nbsp;&nbsp;</div>
+        <div style="color:red"><%=flash[:notice]%></div>
+        <table cellspacing="1" class="adminlist">
+          <thead>
+            <tr >
+              <th nowrap>
+                发文函号
+              </th>
+              <th nowrap>
+                函件类型
+              </th>
+              <th nowrap>
+                发文日期
+              </th>
+              <!--th nowrap>
+                内部函<br/>
+                创建人
+              </th>
+              <th nowrap>
+                &nbsp;内 部 函&nbsp;<br/> 创建时间
+              </th>
+              <th nowrap>
+                报批人
+              </th-->
+              <th nowrap>
+                报批时间
+              </th>
+              <th nowrap>
+                审批信息
+              </th>
+              <!--th nowrap>
+                删除
+              </th>
+              <th nowrap>
+                外部函创建人
+              </th>
+              <th nowrap>
+                &nbsp;外 部 函&nbsp;<br/> 创建时间
+              </th>
+              <th nowrap>
+                发文操作人
+              </th>
+              <th nowrap>
+                发文操作时间
+              </th-->
+              <th nowrap>
+                内部函下载
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <%i=0%>
+            <%for p in @doc%>
+              <tr class="row<%=i % 2%>">
+                <td nowrap>
+                  <div align="left">
+                    <%if p.send_code!=nil and p.send_code!=""%>
+                      <%=p.send_code%>
+                    <%else%>
+                      <%="无发文函号"%>
+                    <%end%>
+                  </div>
+                </td>
+                <td>
+                  <div align="left">
+                    <%@tc=TbDocFormat.find_by_code(p.typ_code)%>
+                    <%if @tc!=nil%>
+                      <%=@tc.name%>
+                    <%end%>
+                  </div>
+                </td>
+                <!--td nowrap>
+                      <#%if p.obj!=nil and p.obj!=''%>
+                        <#%=TbDictionary.find(:first,:conditions=>"typ_code='0042'  and  data_val='#{p.obj}'").data_text%>
+                      <#%end%>
+                    </td-->
+                <td nowrap>
+                  <%if p.ss_t!=nil%>
+                    <%=p.ss_t.to_s(:db)%>
+                  <%end%>
+                </td>
+                <!--td>
+                      <#%if p.c_u!=nil and p.c_u!='' %>
+                        <#%=User.find_by_code(p.c_u).name%>
+                      <#%end%>
+                    </td>
+                    <td>
+                      <#%if p.c_t!=nil%>
+                        <#%=p.c_t.to_s(:db)%>
+                      <#%end%>
+                    </td>
+                    <td nowrap>
+                      <#%if TbDocFormat.find_by_code(p.typ_code).approval==0%>
+                        无需审批
+                      <#%else%>
+                        <#%if p.call_u!=nil and p.call_u!=''%>
+                          <#%=User.find_by_code(p.call_u).name%>
+                        <#%end%>
+                      <#%end%>
+                    </td-->
+                  <%@doc1 = TbDocFormat.find_by_code(p.typ_code)%>
+                <td nowrap>
+                  <%if @doc1!=nil%>
+                    <%if @doc1.approval==0%>
+                      无需审批
+                    <%else%>
+                      <%if p.call_t!=nil%>
+                        <%=p.call_t.to_s(:db)%>
+                      <%end%>
+                    <%end%>
+                  <%end%>
+                </td>
+                <td valign="top">
+                  <div align="left">
+                  <%if @doc1!=nil%>
+                    <%if TbDocFormat.find_by_code(p.typ_code).approval==0%>
+                      无需审批
+                    <%else%>
+                      <%doc_app=TbDocApproval.find(:all,:conditions=>"doc_id='#{p.id}'")%>
+                      <%doc_app_s=""%>
+                      <%for doc_a in doc_app%>
+                        <%doc_app_s=doc_app_s + User.find_by_code(doc_a.a_u).name + "[" + @state[doc_a.state] + "]"%><br/>
+                        <%if  doc_a.state!=0%>
+                          <%doc_app_s=doc_app_s + "<br/>[时间：" + doc_a.t.to_s(:db) + "]<br/>"%>
+                          <%if doc_a.reasons!=nil%>
+                            <%doc_app_s=doc_app_s + "[理由：" + doc_a.reasons + "]"%><br/>
+                          <%end%>
+                        <%end%>
+                        <%doc_app_s=doc_app_s + "<hr size='1' color='#99CCFF' noshade width='120'>"%>
+                      <%end%>
+                      <%=doc_app_s%>
+                    <%end%>
+                    <%end%>
+                  </div>
+                </td>
+                <!--td>
+                      <div align="left">
+                        <#%if TbDocFormat.find_by_code(p.typ_code).f_doc==0%>
+                          不需要生成外部函
+                        <#%else%>
+                          <#%if p.cf_u!=nil and p.cf_u!=''%>
+                            <#%=User.find_by_code(p.cf_u).name%>
+                          <#%end%>
+                        <#%end%>
+                      </div>
+                    </td>
+                    <td>
+                      <div align="left">
+                        <#%if TbDocFormat.find_by_code(p.typ_code).f_doc==0%>
+                          不需要生成外部函
+                        <#%else%>
+                          <#%if p.cf_t!=nil%>
+                            <#%=p.cf_t.to_s(:db)%>
+                          <#%end%>
+                        <#%end%>
+                      </div>
+                    </td>
+                    <td>
+                      <#%if p.send_u!=nil and p.send_u!='' %>
+                        <#%=User.find_by_code(p.send_u).name%>
+                      <#%end%>
+                    </td>
+                    <td>
+                      <#%if p.send_t!=nil%>
+                        <#%=p.send_t.to_s(:db)%>
+                      <#%end%>
+                    </td>
+                <td nowrap>
+                  <#%=link_to "删除",{:action=>"doc_delete",:recevice_code=>@case.recevice_code,:id=>p},:confirm=>"您确认要删除吗？"%>
+                </td-->
+                <td nowrap>
+                  <%if p.file_name!=nil and p.file_name!=''%>
+                    <%=link_to  "下载" ,:action=>"doc_down",:id=>p%>
+                  <%end%>
+                </td>
+              </tr>
+              <%i=i+1%>
+            <%end%>
+              </tbody>
+        </table>
+  </body>
+</html>

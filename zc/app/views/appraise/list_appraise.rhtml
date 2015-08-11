@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员案内评价</title>
+     <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body> 
+    <div class="title"><span class="cBlue">仲裁员案内评价</span></div>
+    <table align="center">
+      <tr>
+        <th>仲裁员案内评价-- <%= @arbitman_name %></th>
+      </tr>
+    </table>
+    <table class="adminlist" cellspacing="1">
+      <thead>
+      <tr>
+        <th nowrap>案件编号</th>
+        <th nowrap>接受披露及寄回声明书</th>
+        <th nowrap>隐瞒情形</th>
+        <th nowrap>个人原因延期</th>
+        <th nowrap>庭审时间</th>
+        <th nowrap>了解案情</th>
+        <th nowrap>庭审节奏</th>
+        <th nowrap>首席/独任能力</th>
+        <th nowrap>不当行为</th>
+        <th nowrap>偏袒行为</th>
+        <th nowrap>仲裁庭意见泄露</th>
+        <th nowrap>裁决书水平</th>
+        <th nowrap>起草裁决书</th>
+        <th nowrap>不同意见</th>
+        <th nowrap>其他评价意见</th>
+      </tr>        
+      </thead>
+      <tbody> 
+      <%if @tb_appraises !=nil
+          for appraise in @tb_appraises%>
+          <tr>
+            <td><%= appraise.case_id %></td>
+            <td><%= appraise.casehard %></td>
+          </tr>
+      <%end%>
+      <%end%>      
+      </tbody>      
+      <tr>
+        <td>
+          <div><%= link_to "返回", :action => "list_arbitman_appraise" %></div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>秘书处例会参与人员</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    
+    <div class="title"><span class="cBlue"><div align="center">秘书处例会参与人员</div></span></div>
+    
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>序号</th>
+          <th nowrap>姓名</th>
+          <th nowrap>删除</th>
+        </tr>        
+      </thead>
+      <tbody>
+        <%i = 1%>
+        <%j=0%>
+        <% if @meeting_attedants != nil%>
+            <% for meeting_attedant in @meeting_attedants %>
+                <tr class="row<%=j%2%>">
+                  <td><%= i %></td>
+                  <td><%= meeting_attedant.name  %></td>
+                  <td><%=button_to "删除", {:action => "delete_meeting_attendant", :id => meeting_attedant, 
+                          :regular_meeting_id => params[:id]}, :confirm => "确认删除?", :method => "post" %></td>
+                </tr>
+                <%i+=1%>
+                <%j=j+1%>
+            <%end%>        
+        <%end%>        
+      </tbody>
+    </table>
+    <br>
+      <div style="color:red"><%=flash[:notice]%></div>
+    <div align="center"><%= link_to "创建", :action => "new_meeting_attendant",:regular_meeting_id => params[:id] %></div>
+  </body>
+</html>

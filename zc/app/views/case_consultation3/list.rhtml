@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>当前咨询案件</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="title"><span class="cBlue">当前咨询案件  助理:<%=session[:user_name_2]%></span></div>
+<table align="center"><tr><td nowrap>
+      <%#=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+      <%=link_to  "创建", :action=>"new",:typ=>1%>&nbsp;&nbsp;&nbsp;</td><td>
+      <%=button_to "显示最新记录",:action=>"list",:typ=>'1' %>    </td><td>
+      <%=button_to "空白",:action=>"list",:typ=>'2'%>
+      <%=link_to  "案件申请信息", :controller=> "case_apply",:action=>"list",:new_url => "case_consultation3"%>
+</td></tr></table>
+<div style="color:red"><%=flash[:notice]%></div>
+<%if @case!=nil%>
+  <table cellspacing="1" class="adminlist">
+  <thead>
+    <tr >
+      <th nowrap>
+        咨询流水号
+      </th>
+      <th nowrap>
+        申请人
+      </th>
+      <th nowrap>
+        被申请人
+      </th>
+      <th nowrap>
+        咨询日期
+      </th>
+      <th nowrap>
+        咨询有效期
+      </th>
+      <th nowrap>
+        咨询助理
+      </th>
+      <th nowrap>
+        办案助理
+      </th>
+      <th nowrap>
+        修改
+      </th>
+      <th nowrap>
+        删除
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  <%i=0%>
+  <%for c in @case%>
+    <tr class="row<%=i % 2%>">
+        <td>
+      <%=h c.recevice_code%>
+      </td>
+      <td>
+        <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+        <%ttpp=''%>
+        <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+        <%end%>
+        <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+        <%end%>
+        <%=ttpp%>
+      </td>
+      <td>
+        <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+        <%ttpp=''%>
+        <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+        <%end%>
+        <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+        <%end%>
+        <%=ttpp%>
+      </td>
+      <td>
+        <%=h c.receivedate%>
+      </td>
+      <td>
+        <%=h c.recevice_code_limit_dat%>
+      </td>
+      <td nowrap>
+        <%if c.clerk_2!=nil and c.clerk_2!=""%>
+          <%=User.find_by_code(c.clerk_2).name%>
+        <%end%>
+      </td>
+      <td>
+        <%if c.clerk==nil or c.clerk==""%>
+            <%=link_to "指定",:action=>"clerk_select_list",:id=>c,:search_condit=>@search_condit,:order=>@order,:page=>@case_pages,:page_lines=>@page_lines%>
+        <%else%>
+            <%=link_to User.find_by_code(c.clerk).name,:action=>"clerk_select_list",:id=>c,:search_condit=>@search_condit,:order=>@order,:page=>@case_pages,:page_lines=>@page_lines%>
+        <%end%>
+      </td>
+      <td>
+        <%=link_to  "修改" ,:action=>"edit",:recevice_code=>c.recevice_code,:search_condit=>@search_condit,:order=>@order,:page=>@case_pages,:page_lines=>@page_lines%>
+      </td>
+      <td>
+        <%if c.clerk==nil or  c.clerk=="" or c.clerk==session[:user_code_2]%>
+            <%=button_to "删除" ,{:action=>'delete',:id=>c ,:search_condit=>@search_condit,:order=>@order,:page=>@case_pages,:page_lines=>@page_lines} ,:confirm=>"您确认要删除吗？",:method=>"post"%>
+        <%end%>
+      </td>
+    </tr>
+    <%i=i+1%>
+  <%end%>
+  </tbody>
+  </table>
+<%else%>
+<%end%>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 仲裁员仲裁报酬</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <script language="javascript">
+      function checkForm(){
+        if(document.getElementById("remun_arbitman").value==""){
+          alert("没有仲裁员！");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  添加 仲裁员仲裁报酬   <%=link_to "返回",:action=>"list_2"%>
+
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :remun ,:url=>{:action=>"create_2"},:html =>{:onsubmit=>"return checkForm();"}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            仲裁员:
+          </th>
+          <td>
+            <%@casearbitman=TbArbitman.find_by_sql("select tb_arbitmen.code as code ,tb_arbitmen.name as name from tb_casearbitmen ,tb_arbitmen where tb_casearbitmen.recevice_code='#{session[:recevice_code_1]}' and tb_casearbitmen.used='Y' and tb_casearbitmen.arbitman=tb_arbitmen.code order by tb_arbitmen.name" )%>
+            <%=f.collection_select(:arbitman,@casearbitman,:code,:name)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_field(:remark,:size=>50)%>                                      
+            <div style="color:red"><%=error_message_on(:remun,:remark)%></div>
+          </td>
+        </tr>                        
+      </table>
+      <br>
+        <div align="center"><%=submit_tag "提交" %></div>
+
+    <%end%>
+  </body>
+</html>

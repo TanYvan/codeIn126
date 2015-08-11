@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>受理案件仲裁条款分析</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+     <script type="text/javascript" src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">受理案件仲裁条款分析</span></div>
+    <div align="center">
+      <%form_tag ({:action=>"list4"})  do %>
+        立案时间：<%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+      <%end -%>
+        <input type="button" value="导出excel文档" onclick=to_excel(document.getElementById("to_excel_l")); />
+    </div>
+    <br/>
+    <div align="center">
+      立案时间<%=@d1%>至<%=@d2%>受理案件仲裁条款及争议金额分析
+    </div>
+    <br/>
+    <%if @case!=nil %>
+    <table id="to_excel_l" border="1" bordercolor="#000000" style="width:50%; border:1px solid #000000; border-collapse: collapse;" cellspacing="0" cellpadding="3">
+        <%m=0%>
+        <%for c in @case%>
+          <tr>
+            <td >
+              <%=c.typ_name%>
+            </td>
+            <td nowrap>
+              <%=link_to "#{c.h}",{:action=>"bom_2",:agent=>c.typ,:d1=>@d1,:d2=>@d2},:target=>"_blank"%>
+              <%m=m+c.h %>
+            </td>
+          </tr>
+        <%end%>
+        <tr>
+          <td >
+            合计
+          </td>
+          <td nowrap>
+            <%=m %>
+          </td>
+        </tr>
+      </table>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员回避件数</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员回避件数</span></div>
+    <div align="center">
+      <%form_tag :url=>{:action=>"list3_13"} do%>
+      <table>
+         <tr>
+            <td>立案时间：</td>
+            <td><%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+            </td>
+            <td>至</td>
+            <td>
+              <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>提出时间：</td>
+            <td><%=text_field_tag(:d3,@d3,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d3'),'yyyy-MM-dd')" />
+            </td>
+            <td>至</td>
+            <td>
+              <%=text_field_tag(:d4,@d4,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d4'),'yyyy-MM-dd')" />
+            </td>
+            <td><%=submit_tag "查询" %></td>
+          </tr>
+      </table>
+    <%end%>
+    </div>
+    
+    <table width="100%"><tr><td>
+          <i><%=flash[:notice]%></i>
+          <div align="left">仲裁员回避件数：<%=@vevite.length%>  </div>
+          <br/>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th nowrap>立案号</th>
+                <th nowrap>立案日期</th>
+                <th nowrap>助理</th>
+                <th nowrap>仲裁员类型及名称</th>
+                <th nowrap>选定方式</th>
+                <th>提出人类型</th>
+                <th >提出人名称</th>
+                <th>提出回避日期</th>
+                <th>决定作出日期</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for a in @vevite%>
+                <tr class="row<%=i % 2%>">
+                  <%aa=TbCase.find_by_recevice_code(a.recevice_code)%>
+                  <td nowrap>
+                    <%=link_to "#{aa.case_code}",{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>a.recevice_code},:target=>"_black" %>
+                  </td>
+                  <td nowrap><%=aa.nowdate%></td>
+                  <%@evite=TbEvite.find(:all,:conditions=>["recevice_code=? and used='Y'",a.recevice_code],:order=>"id")%>
+                  <% user = User.find_by_code(aa.clerk) %>
+                  <td nowrap><%=user.name if !user.blank? %></td>
+                  <td nowrap>
+                    <%for e in @evite%>
+                      <%@casearbitman=TbCasearbitman.find(:first,:conditions=>["arbitman=? and used='Y'",e.arbitman]) %>
+                      <%=TbDictionary.find(:first,:conditions=>["state='Y' and typ_code='0014' and data_val=?",@casearbitman.arbitmantype]).data_text%>:
+                      <%=TbArbitman.find(:first,:conditions=>["used='Y' and code=?",e.arbitman]).name%>
+                      <br/>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%for e in @evite%>
+                      <%@casearbitman=TbCasearbitman.find(:first,:conditions=>["arbitman=? and used='Y'",e.arbitman]) %>
+                      <%arbitmansign=@casearbitman.arbitmansign%>
+                      <%@a=TbDictionary.find(:first,:conditions=>["state='Y' and typ_code='0015' and data_val=?",arbitmansign])%>
+                      <%if @a!=nil%><%=@a.data_text%><%end%><br/>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%for e in @evite%>
+                      <%if e.submitman=='0001'%>申请人<%else%>被申请人<%end%><br/>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%for e in @evite%>
+                      <%=e.requestman%><br/>
+                    <%end%>
+                  </td>
+
+                  <td nowrap>
+                    <%for e in @evite%>
+                      <%=e.requestdate%><br/>
+                    <%end%>
+                  </td>
+                  <td>
+                    <%for e in @evite%>
+                      <%=e.dat3%><br/>
+                    <%end%>
+                  </td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+          </table>
+        </td></tr></table>
+  </body>
+</html>

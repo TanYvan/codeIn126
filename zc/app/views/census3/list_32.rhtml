@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+
+  <html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+      <title>结案费用查询</title>
+      <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+        <script src="/javascripts/check.js"></script>
+    </head>
+    <body>
+      <div class="title"><span class="cBlue">结案费用查询</span></div>
+      <div align="center">
+        <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+      </div>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <div align="left"><%if @hant_search_1_text!=nil%>查询条件：<%=@hant_search_1_text%><%end%></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap rowspan="2">
+              受案号
+            </th>
+            <th rowspan="2">
+              受案时间
+            </th>
+           <th nowrap rowspan="2">
+              结案号
+            </th>
+            <th nowrap rowspan="2">
+              结案时间
+            </th>
+            <th nowrap colspan="2">
+              实际收费
+            </th>
+            <th nowrap colspan="2">
+              应退费情况
+            </th>
+            <th nowrap colspan="2">
+              已退费情况
+            </th>
+            <th nowrap rowspan="2">
+              代收款实际收费
+            </th>
+            <th nowrap rowspan="2">
+              代收款应退费用
+            </th>
+            <th nowrap rowspan="2">
+              代收款已退费用
+            </th>
+            <th nowrap rowspan="2">
+              申请人
+            </th>
+            <th rowspan="2">
+              被申请人
+            </th>
+          </tr>
+          <tr >
+
+            
+            <th nowrap>
+              仲裁费
+            </th>
+            <th nowrap>
+              实际开支
+            </th>
+            <th nowrap>
+              仲裁费
+            </th>
+            <th nowrap>
+              实际开支
+            </th>
+            <th nowrap>
+              仲裁费
+            </th>
+            <th nowrap>
+              实际开支
+            </th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <%i=1%>
+          <%for c in @case%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap>
+                <%=c.tb_cases_case_code%>
+              </td>
+              <td>
+                <%=c.tb_cases_nowdate %>
+              </td>
+              <td>
+                <%=c.tb_cases_end_code %>
+              </td>
+              <td>
+                <%=c.tb_caseendbooks_decideDate %>
+              </td>
+              <td>
+                <%=c.n1 %>
+              </td>
+              <td>
+                <%=c.n2 %>
+              </td>
+              <td>
+                <%=c.n3 %>
+              </td>
+              <td>
+                <%=c.n4 %>
+              </td>
+              <td>
+                <%=c.n5 %>
+              </td>
+              <td>
+                <%=c.n6 %>
+              </td>
+              <td>
+                <%=c.n9 %>
+              </td>
+              <td>
+                <%=c.n10 %>
+              </td>
+              <td>
+                <%=c.n11 %>
+              </td>
+              <td>
+                <%=c.n12 %>
+              </td>
+              <td>
+                <%=c.n13 %>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="11">
+              <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.previous %>
+              <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+              <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.next %>
+
+              <%if @case_pages.current.previous or @case_pages.current.next%>
+                <form action="/census3/list_32" method="get" >
+                  每页<input type=text name='page_lines' id='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                  <input type=text name='page' id='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+                  <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                  页
+                  <input type=hidden name='order' value="<%=@order%>" />
+                  <input type='submit' value='确定' />
+                </form>
+              <%end%>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </body>
+  </html>

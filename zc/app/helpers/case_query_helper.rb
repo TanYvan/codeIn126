@@ -1,0 +1,2 @@
+module CaseQueryHelper
+end

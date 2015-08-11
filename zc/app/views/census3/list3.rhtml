@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>按仲裁程序统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <script type="text/javascript" src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">按仲裁程序类型统计结案天数</span></div>
+    <%form_tag :url=>{:action=>"list3"} do%>
+      <table align="center">
+        <tr><td nowrap align="right">
+            时间段类型:</td>
+          <td align="left" nowrap>
+            <%=select_tag :datestyle,options_for_select([["结案时间段","02"],["立案时间段","01"]],@datestyle)%>
+          </td></tr>
+        <tr><td nowrap align="right">
+            统计时间段:</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" >
+              -
+              <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" >
+                </td></tr>
+                <tr><td nowrap align="right">
+                    结案方式:</td>
+                  <td align="left" nowrap><%@endstyle_2=TbDictionary.find(:all,:order=>"data_val",:conditions=>"typ_code='8117' and state='Y'")%>
+                    <%=select_tag :endstyle,options_for_select(@endstyle_2.collect{|p|[p.data_text,p.data_val]}.insert(0,["全部",""]),@endstyle)%>
+                  </td></tr>
+                </table>
+                <%=submit_tag "查询" %>
+              <%end%>
+              <br/><br/>
+              <i><%=flash[:notice]%></i>
+              <div class="cGreen">
+                时间段类型:<%=@dispute[@datestyle]%>&nbsp;
+                统计时间段:<%=@date1%>至<%=@date2%>&nbsp;
+                结案方式:<%if @endstyle=="" or @endstyle==nil%>全部<%else%><%=TbDictionary.find(:first,:conditions=>["typ_code='8117' and state='Y' and data_val=?",@endstyle]).data_text%><%end%>
+
+              </div>
+              <div align="right">单位：天&nbsp;&nbsp;&nbsp;&nbsp;</div>
+              <div align="center">
+                <input type="button" value="导出excel文档" onclick=to_excel(document.getElementById("to_excel_i")); />
+              </div>
+              <table id="to_excel_i" class="list" width="100%">
+                <tr>
+                  <th nowrap style="text-align: center">案件类型</th>
+                  <th nowrap>0-15</th>
+                  <th nowrap>16-30</th>
+                  <th nowrap>31-60</th>
+                  <th nowrap>61-75</th>
+                  <th nowrap>76-90</th>
+                  <th nowrap>91-120</th>
+                  <th nowrap>121-150</th>
+                  <th nowrap>151-180</th>
+                  <th nowrap>181-240</th>
+                  <th nowrap>241-365</th>
+                  <th nowrap>大于365</th>
+                  <th nowrap>总计</th>
+                </tr>
+                <%
+                sum1=0
+                sum2=0
+                sum3=0
+                sum4=0
+                sum5=0
+                sum6=0
+                sum7=0
+                sum8=0
+                sum9=0
+                sum10=0
+                sum11=0
+                sum12=0
+              %>
+                <%for d in @case_type%>
+                  <%w=0%>
+                  <tr >
+                    <td nowrap style="text-align: center"><%=d.data_text%></td>
+                    <%if @datestyle=='01'%><!-- #立案时间段-->
+                      <%@case1=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=0 and datediff(b.decideDate,ca.nowdate)<=15 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case2=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=16 and datediff(b.decideDate,ca.nowdate)<=30 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case3=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=31 and datediff(b.decideDate,ca.nowdate)<=60 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case4=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=61 and datediff(b.decideDate,ca.nowdate)<=75 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case5=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=76 and datediff(b.decideDate,ca.nowdate)<=90 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case6=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=91 and datediff(b.decideDate,ca.nowdate)<=120 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <% @case7=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=121 and datediff(b.decideDate,ca.nowdate)<=150 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case8=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=151 and datediff(b.decideDate,ca.nowdate)<=180 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case9=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=181 and datediff(b.decideDate,ca.nowdate)<=240 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case10=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=241 and datediff(b.decideDate,ca.nowdate)<=365 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case11=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>365 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                    <%else%> <!--#结案时间段-->
+                      <%@case1=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=0 and datediff(b.decideDate,ca.nowdate)<=15 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case2=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=16 and datediff(b.decideDate,ca.nowdate)<=30 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case3=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=31 and datediff(b.decideDate,ca.nowdate)<=60 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case4=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=61 and datediff(b.decideDate,ca.nowdate)<=75 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case5=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=76 and datediff(b.decideDate,ca.nowdate)<=90 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case6=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=91 and datediff(b.decideDate,ca.nowdate)<=120 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case7=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=121 and datediff(b.decideDate,ca.nowdate)<=150 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case8=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=151 and datediff(b.decideDate,ca.nowdate)<=180 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case9=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=181 and datediff(b.decideDate,ca.nowdate)<=240 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case10=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>=241 and datediff(b.decideDate,ca.nowdate)<=365 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                      <%@case11=TbCase.find(:all,:conditions=>"datediff(b.decideDate,ca.nowdate)>365 and b.decideDate>='#{@date1}' and b.decideDate<='#{@date2}' and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and ca.caseendbook_id_first=b.id and #{@endstyle_sql} and ca.used='Y' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                    <%end%>
+                    <td nowrap style="text-align: center">
+                      <%if @case1!=nil%>
+                        <%for q1 in @case1%>
+                          <%s1=q1.aa%>
+                          <%if s1.to_i!=0%>
+                            <%=link_to "#{s1}",{:action=>"list3a",:datestyle=>@datestyle,:endstyle=>@endstyle,:date1=>@date1,:date2=>@date2,:aribitprog_num=>d.data_val,:k=>"1"},:target=>"_blank" %>
+                            <%w=w+s1.to_i%>
+                            <%sum1=sum1+s1.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if @case2!=nil%>
+                        <%for q2 in @case2%>
+                          <%s2=q2.aa%>
+                          <%if s2.to_i!=0%>
+                            <%=link_to "#{s2}",{:action=>"list3a",:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endstyle=>@endstyle,:aribitprog_num=>d.data_val,:k=>"2"},:target=>"_blank" %>
+                            <%w=w+s2.to_i%>
+                            <%sum2=sum2+s2.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if @case3!=nil%>
+                        <%for q3 in @case3%>
+                          <%s3=q3.aa%>
+                          <%if s3.to_i!=0%>
+                            <%=link_to "#{s3}",{:action=>"list3a",:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endstyle=>@endstyle,:aribitprog_num=>d.data_val,:k=>"3"},:target=>"_blank" %>
+                            <%w=w+s3.to_i%>
+                            <%sum3=sum3+s3.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if @case4!=nil%>
+                        <%for q4 in @case4%>
+                          <%s4=q4.aa%>
+                          <%if s4.to_i!=0%>
+                            <%=link_to "#{s4}",{:action=>"list3a",:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endstyle=>@endstyle,:aribitprog_num=>d.data_val,:k=>"4"},:target=>"_blank" %>
+                            <%w=w+s4.to_i%>
+                            <%sum4=sum4+s4.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if @case5!=nil%>
+                        <%for q5 in @case5%>
+                          <%s5=q5.aa%>
+                          <%if s5.to_i!=0%>
+                            <%=link_to "#{s5}",{:action=>"list3a",:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endstyle=>@endstyle,:aribitprog_num=>d.data_val,:k=>"5"},:target=>"_blank" %>
+                            <%w=w+s5.to_i%>
+                            <%sum5=sum5+s5.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if @case6!=nil%>
+                        <%for q6 in @case6%>
+                          <%s6=q6.aa%>
+                          <%if s6.to_i!=0%>
+                            <%=link_to "#{s6}",{:action=>"list3a",:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endstyle=>@endstyle,:aribitprog_num=>d.data_val,:k=>"6"},:target=>"_blank" %>
+                            <%w=w+s6.to_i%>
+                            <%sum6=sum6+s6.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if @case7!=nil%>
+                        <%for q7 in @case7%>
+                          <%s7=q7.aa%>
+                          <%if s7.to_i!=0%>
+                            <%=link_to "#{s7}",{:action=>"list3a",:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endstyle=>@endstyle,:aribitprog_num=>d.data_val,:k=>"7"},:target=>"_blank" %>
+                            <%w=w+s7.to_i%>
+                            <%sum7=sum7+s7.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if @case8!=nil%>
+                        <%for q8 in @case8%>
+                          <%s8=q8.aa%>
+                          <%if s8.to_i!=0%>
+                            <%=link_to "#{s8}",{:action=>"list3a",:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endstyle=>@endstyle,:aribitprog_num=>d.data_val,:k=>"8"},:target=>"_blank" %>
+                            <%w=w+s8.to_i%>
+                            <%sum8=sum8+s8.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if @case9!=nil%>
+                        <%for q9 in @case9%>
+                          <%s9=q9.aa%>
+                          <%if s9.to_i!=0%>
+                            <%=link_to "#{s9}",{:action=>"list3a",:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endstyle=>@endstyle,:aribitprog_num=>d.data_val,:k=>"9"},:target=>"_blank" %>
+                            <%w=w+s9.to_i%>
+                            <%sum9=sum9+s9.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if @case10!=nil%>
+                        <%for q10 in @case10%>
+                          <%s10=q10.aa%>
+                          <%if s10.to_i!=0%>
+                            <%=link_to "#{s10}",{:action=>"list3a",:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endstyle=>@endstyle,:aribitprog_num=>d.data_val,:k=>"10"},:target=>"_blank" %>
+                            <%w=w+s10.to_i%>
+                            <%sum10=sum10+s10.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if @case11!=nil%>
+                        <%for q11 in @case11%>
+                          <%s11=q11.aa%>
+                          <%if s11.to_i!=0%>
+                            <%=link_to "#{s11}",{:action=>"list3a",:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endstyle=>@endstyle,:aribitprog_num=>d.data_val,:k=>"11"},:target=>"_blank" %>
+                            <%w=w+s11.to_i%>
+                            <%sum11=sum11+s11.to_i%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap style="text-align: center">
+                      <%if w!=0%>
+                        <%=w%>
+                        <%sum12=sum12+w%>
+                      <%end%>
+                    </td>
+                  </tr>
+                <%end%>
+                <tr>
+                  <td nowrap style="text-align: center">总计</td>
+                  <td nowrap style="text-align: center"><%if sum1!=0%><%=sum1%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum2!=0%><%=sum2%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum3!=0%><%=sum3%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum4!=0%><%=sum4%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum5!=0%><%=sum5%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum6!=0%><%=sum6%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum7!=0%><%=sum7%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum8!=0%><%=sum8%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum9!=0%><%=sum9%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum10!=0%><%=sum10%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum11!=0%><%=sum11%><%end%></td>
+                  <td nowrap style="text-align: center"><%if sum12!=0%><%=sum12%><%end%></td>
+                </tr>
+              </table>
+              </body>
+              </html>

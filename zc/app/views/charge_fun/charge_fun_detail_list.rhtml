@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>收费办法配置表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">收费办法配置表</div> <%=link_to "返回",:action=>"list"%></span>  </div><br/>
+    
+    <br/>
+    仲裁规则:<%=@charge_fun.data_text%>
+    <br/>
+    <div align="center">
+      <%=link_to  "创建", :action=>"charge_fun_detail_new",:app_role=>@charge_fun.data_val%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>仲裁程序类型</th>
+        <th nowrap>收费算法</th>
+        <th nowrap>修改</th>
+        <th nowrap>删除</th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @charge_fun_details%>
+      <tr class="row<%=i % 2%>">
+        <td><%=@case_app[p.app_code]%></td>
+        <td><%=@fun[p.fun_code]%></td>
+        <td>
+          <%=link_to "修改",:action=>"charge_fun_detail_edit", :id=>p, :app_role=>@charge_fun.data_val%>
+        </td>
+        <td>
+          <%=button_to "删除",{:action=>"charge_fun_detail_delete", :id=>p, :app_role=>@charge_fun.data_val}, :confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <br/>
+  </body>
+</html>

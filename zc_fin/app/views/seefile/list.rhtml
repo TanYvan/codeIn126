@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>档案案件提交记录</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%if session[:recevice_code_5]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list_5?contr_r=seefile&act_r=list","mainFrame")
+      </script>
+    <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+        档案案件提交记录
+    </span></div>
+      <div align="center">
+        <%if @case==nil%>
+          请选择您要办理的案件
+        <%end%>
+      <%=button_to "案件选择", :controller=>'case_p',:action=>"list_5",:contr_r=>"seefile",:act_r=>"list"%>
+      <%if @case!=nil%>
+        当前案件
+      </div>
+      <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          结案日期
+        </th>
+        <th nowrap>
+          结案号
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+        <th>
+          归档提交人
+        </th>
+        <th nowrap>
+          归档提交时间
+        </th>
+        <th>
+          正卷数
+        </th>
+        <th>
+          副卷数
+        </th>
+        <th>
+          归档类别
+        </th>
+        <th nowrap>
+          归档时间
+        </th>
+        <th nowrap>
+          归档备注
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td nowrap>
+          <%=h @case.case_code%>
+        </td>
+        <%@caseend=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",@case.recevice_code],:order=>"id desc")%>
+        <td nowrap>
+          <%=@caseend.decideDate%>
+        </td>
+        <td nowrap>
+          <%=@caseend.arbitBookNum%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp="[" + ttpp + tp.partyname  +  "]" %>
+          <%end%>
+          <%#if ttpp!=''%>
+            <%#ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%#end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp="[" + ttpp + tp.partyname  +  "]" %>
+          <%end%>
+          <%#if ttpp!=''%>
+            <%#ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%#end%>
+          <%=ttpp%>
+        </td>
+        <td>
+         <%if @case.file_submit_u!=nil and @case.file_submit_u!=''%>
+           <%=User.find_by_code(@case.file_submit_u).name%>
+         <%end%>
+        </td>
+        <td>
+         <%if @case.file_submit_t!=nil%>
+           <%=@case.file_submit_t.to_s(:db)%>
+         <%end%>
+        </td>
+        <td>
+           <%=@case.file_num_1%>
+        </td>
+        <td>
+           <%=@case.file_num_2%>
+        </td>
+        <td nowrap>
+           <%if @case.file_typ!=nil%>
+             <%=TbDictionary.find(:first,:conditions=>"typ_code='0047'  and  data_val='#{@case.file_typ}'").data_text%>
+           <%end%>
+        </td>
+        <td>
+         <%if @case.file_up_t!=nil%>
+           <%=@case.file_up_t.to_s(:db)%>
+         <%end%>
+        </td>
+        <td>
+           <%=@case.file_submit_remark%>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+      <hr size="1" color="#99CCFF" noshade/>
+      <div align="center" class="cDGray">
+        提交记录  <%=link_to  "创建", :action=>"new"%>
+        <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              提交人
+            </th>
+            <th nowrap>
+              提交时间
+            </th>
+            <th nowrap>
+              备注
+            </th>
+            <th nowrap>
+              修改
+            </th>
+            <th nowrap>
+              删除
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for p in @seefile%>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=p.man%>
+              </td>
+              <td>
+                <%=p.see_date%>
+              </td>
+              <td>
+                <%=p.remark%>
+              </td>
+              <td>
+                <%=link_to "修改",:action=>"edit",:id=>p%>
+              </td>
+              <td>
+                <%=button_to "删除",{:action=>"delete",:id=>p},:confirm=>"您确认要删除吗？"%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+        <tfoot>
+      <tr>
+        <td colspan="5" align="right">
+          <%= link_to '上一页', { :page => @pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @pages.current.previous %>
+          <%=pagination_links( @pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @pages.current.next %>
+
+          <%if @pages.current.previous or @pages.current.next%>
+            <form action="/seefile/list" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+     </tfoot>
+      </table>
+    <%end%>
+  </body>
+</html>

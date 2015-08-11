@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 组庭信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function aabb1(){
+        //var b =document.getElementById("institute");
+        a=window.showModalDialog('/arbitmannow_select/arbitman_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          b = a.split(",,");
+          document.getElementById("arbitman_arbitman").value=b[0];
+          document.getElementById("arbitman_currency").value=b[1];
+         /* document.getElementById("currency_name").value=b[2];*/
+          document.getElementById("arbitman_f_money").value=b[2];
+          document.getElementById("arbitman1").value=b[3];
+        }
+      }
+      function checkForm(){
+          var regu=/(^[0-9]*$)|(^[0-9]*\.[0-9]*$)/;
+          if(!regu.test(document.getElementById("arbitman_f_money").value)){
+            alert("请输入正确的开支费用！");
+            return false;
+          }
+        return true;
+        }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray">
+  添加 仲裁员信息  <%=link_to "返回",:action=>"arbitman_list",:org_id=>params[:org_id],:recevice_code=>params[:recevice_code]%>
+    </div>
+ <div style="color:red" align="center"><%=flash[:notice]%></div>
+    <%form_for :arbitman ,:url=>{:action=>"arbitman_create",:org_id=>params[:org_id],:recevice_code=>params[:recevice_code]},:html =>{:onsubmit=>"return checkForm();"}  do |f|%>
+      <table class="list">  
+        <tr >
+          <th>
+            仲裁员类型:
+          </th>
+          <td>
+            <!--华南仲裁委个性化部分-->
+            <%#aribitprog_num=TbCase.find_by_recevice_code(params[:recevice_code]).aribitprog_num%>
+            <%#if aribitprog_num=='0002' or aribitprog_num=='0004' or aribitprog_num=='0006' or aribitprog_num=='0008'%>
+                <%#op=TbDictionary.find(:all,:conditions=>"typ_code='0014' and data_val='0001' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%#else%>
+                <%op=TbDictionary.find(:all,:conditions=>"typ_code='0014' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%#end%>
+            <%=f.collection_select(:arbitmantype,op,:data_val,:data_text)%>   
+            <div style="color:red"><%=error_message_on(:arbitman,:arbitmantype)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            仲裁员:
+          </th>
+          <td>
+            <%=f.hidden_field(:arbitman,:readonly=>"true")%>
+            <input type="text" name="arbitman1" id="arbitman1" readonly="true"/>
+            <input type="button" value="选择" onclick="aabb1()" />
+            <i><%=error_message_on(:arbitman,:arbitman)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            选定方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0015' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:arbitmansign,op,:data_val,:data_text)%>                                                
+            <div style="color:red"><%=error_message_on(:arbitman,:arbitmansign)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>币种:</th>
+          <td>
+            <%=f.text_field(:currency)%>
+            <!--input type="text" name="currency_name" id="currency_name" readonly="true" /-->
+          </td>
+        </tr>
+        <tr>
+          <th>开支费用:</th>
+          <td>
+            <%=f.text_field :f_money,:style=>"width:15em" %>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+       </div>
+    <%end%>
+  </body>
+</html>

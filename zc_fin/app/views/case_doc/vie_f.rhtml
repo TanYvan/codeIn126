@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>外部函</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript" type="text/javascript">   
+      function Submit_upload_onclick() {     
+            document.all.MyOffice.HttpInit();
+            document.all.MyOffice.HttpAddPostString("fu","<%=@fu%>");
+            document.all.MyOffice.HttpAddPostString("FileID","<%=@doc.id%>");
+            document.all.MyOffice.HttpAddPostCurrFile("FileData", "a.doc");
+            var su ="http://<%=SysArg.find_by_code('9000').val%>:<%=SysArg.find_by_code('9001').val%>/case_doc/doc_f_update" ;   
+            document.all.MyOffice.HttpPost(su); 
+            window.parent.frames['mainFrame'].location.href="/case_doc/change_list?id=<%=@doc.id%>"
+            alert("信息提交完成，请查看保存记录!")
+        }
+      function show_word() {
+        document.all.MyOffice.Open("<%=@doc_path%>",true);               
+        } 
+    </script> 
+  </head>
+  <body onload="show_word();">
+    案件咨询号:<%=@doc.recevice_code%> 文件编号:<%=@doc.file_code%> 函件类型:<%=TbDocFormat.find_by_code(@doc.typ_code).name%>
+    <!--<div class="title"><span class="cBlue">外部函</span></div>-->
+    <input id="Button1" type="Button" value="页面刷新" onclick="document.all.MyOffice.ReplaceText('abcdefg','abcdefg',0);document.all.MyOffice.ReplaceText('abcdefg','abcdefg',1)" />
+    <%if @doc.cf_u!=nil and @doc.send_u==nil%>
+    <input id="Button2" type="Button" value="保存" onclick="Submit_upload_onclick()"/>
+    <%end%>
+    <object id="MyOffice" name = "MyOffice" style="LEFT: 0px; WIDTH: 100%; TOP: 0px; HEIGHT: 96%" classid="clsid:00460182-9E5E-11D5-B7C8-B8269041DD57" codebase="dsoframer.ocx#version=2,2,0,0" >
+    </object>  
+    
+  </body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员新增信息提醒</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+      <script src="/javascripts/check.js"></script>
+      <link href="/stylesheets/tab.css" type="text/css" rel="stylesheet" />
+      <%if session[:recevice_code]==nil%>
+        <script type="text/javascript" language="javascript">
+          window.open("/case_p/list?contr_r=case_party_message_check&act_r=list","mainFrame")
+        </script>
+      <%end%>
+      <script language="JavaScript">
+        function checkall() {
+          var a='';
+          if (document.getElementById("cheall").value=='t' )
+          {
+            document.getElementById("cheall").value='f';
+          }
+          else
+          {
+            a='true';
+            document.getElementById("cheall").value='t';
+          }
+          var chec = document.getElementsByName("che");
+          for(i=0; i<chec.length; i++)
+          {
+            chec[i].checked = a;
+          }
+        }
+            
+        function getcondi()
+        {
+          var chec = document.getElementsByName("che");
+          var a='';
+          for(i=0; i<chec.length; i++)
+          {
+            if (chec[i].checked == true)
+              a=a+chec[i].value+',';
+          }
+          aa=a.substr(0, a.length -1 )
+          var c = document.getElementById("condi_k");
+          c.value=aa;
+          alert(aa);
+          if (aa=='')
+          { 
+           alert("请选择！")
+           return false;
+          }
+          else
+          {
+           return true;
+          }
+          
+        }
+      </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员新增信息提醒</span></div>
+    <%if @case==nil%>
+      <div class="p">请选择您要办理的案件</div>
+    <%end%>
+    <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"case_party_message_check",:act_r=>"list"%>
+    <%if @case!=nil%>
+      <div class="cDGray">当前案件</div>
+      <table class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              咨询流水号
+            </th>
+            <th nowrap>
+              咨询日期
+            </th>
+            <th nowrap>
+              立案号
+            </th>
+            <th nowrap>
+              立案日期
+            </th>
+            <th nowrap>
+              申请人
+            </th>
+            <th nowrap>
+              被申请人
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @case.recevice_code%>
+            </td>
+            <td>
+              <%=h @case.receivedate%>
+            </td>
+            <td>
+              <%=h @case.case_code%>
+            </td>
+            <td>
+              <%=h @case.nowdate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp1 in @tp%>
+                <%ttpp=ttpp + tp1.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <%end%>
+
+      <div class="tabs" align="center">
+        <ul>
+          <li><a href="/case_party_message_check/list" class="selected"><span>未确认</span></a></li>
+          <li><a href="/case_party_message_check/list_2" ><span>已确认</span></a></li>
+        </ul>
+      </div>
+      <div align="left">
+        <%form_tag({:action=>'check'},{:onsubmit=>'return getcondi()'}) do %>
+          <%=hidden_field_tag :condi_k ,''%>
+          <%=submit_tag '确认'%>
+        <%end%>
+      </div>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>
+              <input type='checkbox' id="cheall" name="cheall" value='f' onclick = 'checkall()'/>
+            </th>
+            <th nowrap>
+              留言时间
+            </th>
+            <th nowrap>
+              留言人
+            </th>
+            <th nowrap>
+              留言内容
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%if @mes!=nil%>
+            <%for p in @mes%>
+              <tr class="row<%=i % 2%>">
+                <td>
+                  <input type='checkbox' id='che_k' name='che' value='<%=p.id%>'/>
+                </td>
+                <td>
+                  <%=p.party_t.to_s(:db)%>
+                </td>
+                <td>
+                  <%=WUser.find_by_code(p.party).name%>
+                </td>
+                <td>
+                  <%=p.message%>
+                </td>
+              </tr>
+              <%i=i+1%>
+            <%end%>
+          <%end%>
+        </tbody>
+      </table>
+      <br/>
+      </body>
+      </html>

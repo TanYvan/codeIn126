@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>机构评价信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+  <div class="cDGray" align="center">机构评价信息
+ </div>
+    <%@org_typ={"0001"=>"机构","0002"=>"专家"}%>
+    <%yn={"Y"=>"是","N"=>"否"}%>
+      <table class="list">
+        <tr >
+          <th nowrap colspan="2">
+            机构类别:
+          </th>
+          <td>
+            <%=@org_typ[@org_appraisal.org_typ]%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap colspan="2">
+            机构名称:
+          </th>
+          <td>
+            <%if @org_appraisal.org_typ=='0001'%>
+              <%=TbOrg.find_by_code(@org_appraisal.org_code).name%>
+            <%else%>
+              <%=TbExpertconsult.find_by_code(@org_appraisal.org_code).name%>
+            <%end%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap colspan="2">
+            委托日期:
+          </th>
+          <td>
+            <%=@org_appraisal.consign_t%> 
+          </td>
+        </tr>
+        <tr >
+          <th nowrap colspan="2">
+            选定方式:
+          </th>
+          <td>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0057' and state='Y' and used='Y' and data_val='#{@org_appraisal.sign}'").data_text%>
+          </td>
+        </tr>
+        <tr>
+          <th rowspan="5">收费情况</th>
+          <th >最初报价：</th>
+          <td ><%=@org_appraisal.quote_price%></td>
+        </tr>
+        <tr>
+          <th>实际收取：</th>
+          <td ><%=@org_appraisal.price%></td>
+        </tr>
+        <tr>
+          <th>收费比例：</th>
+          <td ><%=@org_appraisal.charge_ratio%>%</td>
+        </tr>
+        <tr>
+          <th>特殊情况：</th>
+          <td ><%=@org_appraisal.special%></td>
+        </tr>
+        <tr>
+          <th>是否合理：</th>
+          <td><%=yn[@org_appraisal.wise]%></td>
+        </tr>
+        <tr>
+          <th rowspan="3">效率情况</th>
+          <th >鉴定期限:</th>
+          <td ><%=@org_appraisal.time_limit%></td>
+        </tr>
+        <tr>
+          <th >特殊情况:</th>
+          <td ><%=@org_appraisal.special_2%></td>
+        </tr>
+        <tr>
+          <th >工作效率：</th>
+          <td ><%=@org_appraisal.efficiency%></td>
+        </tr>
+        <tr>
+          <th  colspan="2">咨询报告质量:</th>
+          <td>
+            <%=@org_appraisal.report_quality%>
+            <br/>
+            <%=@org_appraisal.report_remark%>
+            <br/>
+            （描述有无漏项、超项、条理不清、计算错误等需反复更正的情况）
+          </td>
+        </tr>
+        <tr>
+          <th  colspan="2">是否公正:</th>
+          <td>
+            <%=yn[@org_appraisal.sign]%>
+            <br/>
+            <%=@org_appraisal.fair_remark%>
+          </td>
+        </tr>
+        <tr>
+          <th  colspan="2">是否有异议:</th>
+          <td>
+            <%=yn[@org_appraisal.obj]%>
+          </td>
+        </tr>
+      </table>
+  </body>
+</html>

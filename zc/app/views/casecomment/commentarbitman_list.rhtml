@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>合议人员信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">合议人员信息</div></span></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            合议人姓名
+          </th>
+          <th nowrap>
+            职务
+          </th>
+          <th nowrap>
+            合议身份
+          </th>
+          <th nowrap>
+            所在单位
+          </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @commentarbitman%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=p.name%>
+        </td>
+        <td>
+          <%=p.business%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0027' and data_val='#{p.figure}'").data_text%>
+        </td>
+        <td>
+          <%=p.company%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"commentarbitman_edit",:id=>p,:comment_id=>params[:comment_id]%>
+        </td>
+        <td>
+            <%=button_to "删除",{:action=>"commentarbitman_delete",:id=>p,:comment_id=>params[:comment_id]},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br>
+      <div align="center">
+      <%=link_to  "创建", :action=>"commentarbitman_new",:comment_id=>params[:comment_id]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+  </body>
+</html>

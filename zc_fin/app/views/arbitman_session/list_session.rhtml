@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员参与活动</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员参与活动</span></div>
+    <!--显示数据-->
+    <br>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>序号</th>
+          <th nowrap>活动名称</th>
+          <th nowrap>活动类型</th>
+          <th nowrap>开始时间</th>
+          <th nowrap>结束时间</th>
+          <th nowrap>参与情况</th>
+          <th nowrap>总共时长(小时)</th>
+        </tr>
+      </thead>
+      <%j=0%>
+      <%i=1%>
+      <%if @tb_arbitman_sessions != nil
+        for tb_arbitman_session in @tb_arbitman_sessions%>
+          <% session_detail = SessionDetail.find_by_session_num(tb_arbitman_session.session_code) %>
+          <tr class="row<%=  j%2 %>">
+            <td><%= i %></td>
+            <td><%= session_detail.session_name %></td>
+            <%  if session_detail.session_type == 0001 %>
+              <td>综合</td>
+            <%elsif session_detail.session_type == 0002 %>
+              <td>培训</td>
+            <%elsif session_detail.session_type == 0003 %>
+              <td>研讨</td>
+            <%elsif session_detail.session_type == 0004 %>
+              <td>沙龙</td>
+            <%elsif session_detail.session_type == 0005 %>
+              <td>问卷调查</td>
+            <%else%>
+              <td>其他</td>
+            <%end%>
+            <td><%= session_detail.begintime %></td>
+            <td><%= session_detail.endtime %></td>
+            <% if tb_arbitman_session.state == '0001' %>
+              <td>参与</td>
+            <% elsif tb_arbitman_session.state == '0002' %>
+              <td>请假</td>
+            <%else%>
+              <td>无故不参与</td>
+            <%end%>
+            <td>
+              <%=tb_arbitman_session.course_hour%>
+            </td>
+          </tr>
+          <%i+=1%>
+          <%j+=1%>
+        <%end%>
+      <%end%>
+    </table>
+    <div align="center">
+      <%= link_to "返回", {:action=> "list_arbitman_session" ,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]} %>
+    </div>
+
+  </body>
+</html>

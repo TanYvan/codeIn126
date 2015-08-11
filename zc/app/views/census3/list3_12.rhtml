@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>管辖权决定统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+        <div class="title"><span class="cBlue">管辖权决定统计</span></div>
+    <div align="center">
+      <%form_tag :url=>{:action=>"list3_12"} do%>
+      <table>
+         <tr>
+            <td>立案时间：</td>
+            <td><%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+            </td>
+            <td>至</td>
+            <td>
+              <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>提出时间：</td>
+            <td><%=text_field_tag(:d3,@d3,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d3'),'yyyy-MM-dd')" />
+            </td>
+            <td>至</td>
+            <td>
+              <%=text_field_tag(:d4,@d4,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d4'),'yyyy-MM-dd')" />
+            </td>
+            <td><%=submit_tag "查询" %></td>
+          </tr>
+      </table>
+    <%end%>
+    </div>
+
+    <table width="100%"><tr><td>
+          <i><%=flash[:notice]%></i>
+          <div align="left">管辖权决定数量：<%=@juri.length%>  </div>
+          <br/>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th nowrap>立案号</th>
+                <th nowrap>立案日期</th>
+                <th nowrap>助理</th>
+                <th nowrap>决定数</th>
+                <th>异议提出日期</th>
+                <th>决定作出日期</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for a in @juri%>
+                <tr class="row<%=i % 2%>">
+                  <td nowrap><%= link_to a.case_code || "",{:controller => "every_casebase", :action => "every_list" ,:recevice_code=>a.recevice_code},:target=>"_black" %></td>
+                  <td nowrap><%=a.nowdate%></td>
+                  <% user = User.find_by_code("#{a.clerk}") %>
+                  <td nowrap><%=user.name if !user.blank? %></td>
+                  <td nowrap>
+                    <%
+                      if (@d1.blank? and @d2.blank?) or (@d1.blank? and !@d2.blank? ) or (!@d1.blank? and @d2.blank?)
+                        j_id = VJurion.count(:id, :conditions => ["request_date>=? and request_date <=? and recevice_code=?", @d3, @d4, a.recevice_code])
+                      elsif (@d3.blank? and @d4.blank?) or (@d3.blank? and !@d4.blank? ) or (!@d3.blank? and @d4.blank?)
+                        j_id = VJurion.count(:id, :conditions => ["nowdate>=? and nowdate<=? and recevice_code=?", @d1, @d2, a.recevice_code])
+                      elsif
+                        j_id = VJurion.count(:id, :conditions => ["nowdate>=? and nowdate<=? and request_date>=? and request_date <=? and recevice_code=?", @d1, @d2, @d3, @d4, a.recevice_code])
+                      end
+                    %>
+                    <%=link_to j_id,{:action=>"list_j",:d1=>@d1,:d2=>@d2,:d3=>@d3,:d4=>@d4,:recevice_code=>a.recevice_code},:target=>"_blank"%>
+                  </td>
+                  <%@juris=TbJurisdiction.find(:all,:conditions=>["used='Y' and recevice_code=?",a.recevice_code])%>
+                  <td>
+                    <%for ju in @juris%>
+                      <%=ju.request_date %><br/>
+                    <%end%>
+                  </td>
+                  <td>
+                    <%for ju in @juris%>
+                      <%=ju.decide_date %><br/>
+                    <%end%>
+                  </td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+          </table>
+        </td></tr></table>
+  </body>
+</html>

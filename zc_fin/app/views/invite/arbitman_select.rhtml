@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>
+    增聘仲裁员
+  </title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <br>
+    <div align="center">
+  <input type='button' value="退出" onclick="window.returnValue='+';window.close();">
+    </div>
+  <table cellspacing="1" class="adminlist">
+  <thead>
+    <tr>
+     <th nowrap>
+        id
+      </th>
+     <th nowrap>
+        编号
+      </th>
+     <th nowrap>
+        姓名
+      </th>
+     <th nowrap>
+        性别
+      </th>
+     <th nowrap>
+        选择
+      </th>
+    </tr>
+    </thead>
+     <tbody>
+        <%i=0%>
+    <%TbArbitman.find(:all,:order=>"id").each do |p|%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=p.id %>
+        </td>
+        <td>
+          <%=p.code %>
+        </td>
+        <td>
+          <%=p.name %>
+        </td>
+        <td>
+          <%=p.sex%>
+        </td>
+        <td>
+          <input type='button' value="选择" onclick="window.returnValue='<%=p.code.to_s + "+" + p.name %>';window.close();">
+        </td>
+      </tr>
+    <%i=i+1%>
+      <%end%>
+      </tbody>
+  </table>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>审计（鉴定、评估）统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">审计（鉴定、评估）统计</span></div>
+    <%form_tag :url=>{:action=>"list3_31"} do%>
+      <table align="center">
+        <tr><td nowrap align="right">
+            立案时间:</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" />
+            -
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" />
+          </td></tr>
+        <tr><td nowrap align="right">
+            方式:</td>
+          <td align="left" nowrap><%@endstyle=TbDictionary.find(:all,:order=>"data_val",:conditions=>"typ_code='8109' and state='Y' and used='Y'")%>
+            <%=select(:k,:endstyle,@endstyle.collect{|p|[p.data_text,p.data_val]})%>
+          </td></tr>
+      </table>
+      <%=submit_tag "查询" %>
+    <%end%>
+    <br/><br/>
+    <i><%=flash[:notice]%></i>
+    <div class="cGreen">
+      <%if params[:k]==nil %>
+      <%else%>
+        立案时间:<%=@date1%>至<%=@date2%>&nbsp;
+        鉴定方式:<%=TbDictionary.find(:first,:conditions=>"typ_code='8109' and state='Y' and data_val='#{params[:k][:endstyle]}'").data_text%>
+      <%end%>
+    </div>
+    <div align="left">案件数量：<%=@case.length%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>立案日期</th>
+          <th nowrap>立案号</th>
+          <th nowrap>提出方</th>
+          <th nowrap>提出日期</th>
+          <th nowrap>机构单位</th>
+          <th nowrap>结论做出时间</th>
+          <th nowrap>费用(￥)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%for s in @case%>
+          <tr>
+            <td nowrap><%=s.nowdate%></td>
+            <td nowrap><%=link_to "#{s.case_code}",{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>s.recevice_code},:target=>"_black"  %></td>
+            <% @tb_detection=TbDetection.find(:all,:conditions=>["used='Y' and recevice_code=?",s.recevice_code])   %>
+            <td nowrap>
+              <%for ss in @tb_detection%>
+                <%a=TbDictionary.find(:first,:conditions=>"typ_code='8113' and state='Y' and data_val='#{ss.advance}'")%>
+                <%if a!=nil%><%=a.data_text%><br/><%end%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%for ss in @tb_detection%>
+                <%=ss.make_date%><br/>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%for ss in @tb_detection%>
+                <%= TbOrg.find_by_code_and_used(ss.etectiond,'Y').name%><br/>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%for ss in @tb_detection%>
+                <%=ss.conclusion_date%><br/>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%for ss in @tb_detection%>
+                <%=SysArg.compart2(ss.cost)%><br/>
+              <%end%>
+            </td>
+          </tr>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

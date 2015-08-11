@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>修改纳税金额</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <script  type="text/javascript">
+      function checkForm(){
+        el1 = document.getElementById("tb_extend_tax_rmb");
+        el2 = document.getElementById("tb_extend_remark");
+        if(el1.value == null ||  el1.value == ""){
+          alert("请填写纳税金额！");
+          return false;
+        }
+        if(!ismatch(el1.value)){
+          alert("金额输入错误，格式：“500.00”！");
+          return false;
+        }
+        if(el2.value == null ||  el2.value  == ""){
+          alert("请填写备注！");
+          return false;
+        }
+      }
+      function ismatch(str){
+        var regu = "^[0-9]+[\.][0-9]{0,2}$";
+        var re = new RegExp(regu);
+          if (re.test(str)) {
+              return true;
+          } else {
+             return false;
+          }
+      }
+    </script>
+  </head>
+</html>
+<body>
+   <div class="title"><span class="cBlue">修改纳税金额</span></div>
+   <%
+          @bank_typ={"0001"=>"本地","0002"=>"外地"}
+          @typ2={"1"=>"报酬","2"=>"奖励","3"=>"扣减","4"=>"办案其它报酬","5"=>"出差补助合计"}
+          @p_typ2={"0001"=>"仲裁员","0002"=>"助理","0003"=>"校核人员","0004"=>"员工"}
+    %>
+   <table class="adminlist" cellspacing="1">
+     <tr>
+       <td>姓名</td>
+       <td><%= @tb_extend.p_name %></td>
+     </tr>
+     <tr>
+       <td>人员类别</td>
+       <td><%= @p_typ2[@tb_extend.bank_typ] %></td>
+     </tr>
+     <tr>
+       <td>银行类别</td>
+       <td><%= @bank_typ[@tb_extend.bank_typ] %></td>
+     </tr>
+     <tr>
+       <td>银行</td>
+       <td><%= @tb_extend.bankname %></td>
+     </tr>
+     <tr>
+       <td>账号</td>
+       <td><%= @tb_extend.bank_account %></td>
+     </tr>
+     <tr>
+       <td>立案号</td>
+       <td><%= @tb_extend.case_code %></td>
+     </tr>
+     <tr>
+       <td>类型</td>
+       <td>
+         <%if @tb_extend.typ=='4' or @tb_extend.typ=='5'%>
+           <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{TbRemuneration23.find_by_extend_id(@tb_extend.id).typ}'").data_text%>
+         <%else%>
+           <%=@typ2[@tb_extend.typ]%>
+         <%end%>
+       </td>
+     </tr>
+     <tr>
+       <td>应发数额</td>
+       <td><%= SysArg.round2f(@tb_extend.should_rmb) %></td>
+     </tr>
+     <tr>
+       <td>应纳税所得额</td>
+       <td><%= SysArg.round2f(@tb_extend.tax_base_rmb)%></td>
+     </tr>
+     <tr>
+       <td>实发数额</td>
+       <td><%= SysArg.round2f(@tb_extend.extend_rmb) %></td>
+     </tr>
+     <tr>
+       <td>纳税额</td>
+       <td><%= SysArg.round2f(@tb_extend.tax_rmb) %></td>
+     </tr>
+   </table>
+   <br/>
+   <div style="color:red"><%=flash[:notice]%></div>
+   <% form_for :tb_extend,:url=>{:action=>"update_taxrmb",:id=>params[:id]},:html=>{:onSubmit=>"return checkForm();"} do |f| %>
+      <table>
+       <tr>
+         <td width="30%">备注：</td>
+         <td width="70%" align="left"><%= f.text_area :remark,:rows=>5,:cols=>"30"%></td>
+       </tr>
+       <tr>
+         <td width="100%" colspan="2" ><div align="center"><%=submit_tag "提交" %></div></td>
+       </tr>
+     </table>
+   <% end %>
+</body>
+

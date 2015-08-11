@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改 裁决书信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div align="center" class="cDGray">
+  修改裁决书信息  <%=link_to "返回",:action=>"book_list",:p_id=>params[:p_id],:recevice_code=>params[:recevice_code]%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :book ,:url=>{:action=>"book_update",:id=>params[:id],:p_id=>params[:p_id],:recevice_code=>params[:recevice_code]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            文书编号:
+          </th>
+          <td>
+            <%=f.text_field(:book_code)%>   
+            <div style="color:red"><%=error_message_on(:book,:book_code)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            文书标题:
+          </th>
+          <td>
+            <%=f.text_field(:title)%>   
+            <div style="color:red"><%=error_message_on(:book,:title)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            裁决书类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8120' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:book_typ,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remarks,:rows=>4)%>                                      
+            <div style="color:red"><%=error_message_on(:book,:remarks)%></div>
+          </td>
+        </tr>
+      </table>
+      <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+    
+          
+  </body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改示例日志</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <br/>
+  <div class="cDGray" align="center">修改咨询日志(带<i>*</i>为必填项)   <%=link_to "返回",:action=>"casepro_list"%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :casepro ,:url=>{:action=>"casepro_update",:id=>params[:id]}  do |f|%>
+      <table class="list">
+        <tr >
+          <th>
+            咨询日期:
+          </th>
+          <td>
+            <%=f.text_field(:happdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('casepro_happdate'),'yyyy-MM-dd')"/>
+
+          </td>
+        </tr>
+        <tr >
+          <th>
+            咨询类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8129' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:typ,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>系争合同争议性质:
+          </th>
+          <td>
+            <%=f.text_area(:keyword,:rows=>2)%>
+            <i><%=error_message_on(:casepro,:keyword)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            涉案标的:
+           </th>
+          <td>
+            <%=f.text_area(:purpuse,:rows=>1)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>申请人信息及联系方式:
+          </th>
+          <td>
+            <%=f.text_area(:app1,:rows=>2)%>
+            <i><%=error_message_on(:casepro,:app1)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            被申请人信息及联系方式:
+          </th>
+          <td>
+            <%=f.text_area(:res1,:rows=>2)%>
+            <i><%=error_message_on(:casepro,:res1)%></i>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            仲裁条款或仲裁协议选定的机构名称:
+          </th>
+          <td >
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0004' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:agent, op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            仲裁条款或协议订立的时间:
+          </th>
+          <td>
+            <%=f.text_field(:dat1)%>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            仲裁条款或协议订立来源(比如因某律所制作合同，等等):
+          </th>
+          <td>
+            <%=f.text_field(:term_source)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            备注(出现例如当事人就仲裁地点、仲裁员、审理方式、申请条件等作出特殊安排或者其他值得注意的地方):
+          </th>
+          <td>
+            <%=f.text_area(:note,:rows=>7)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            处理结果小结(是否立案/发受理通知/建议/其他):
+          </th>
+          <td>
+            <%=f.text_area(:content,:rows=>2)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            后续跟进情况补充/其他:
+          </th>
+          <td>
+            <%=f.text_area(:content2,:rows=>2)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            经办人:
+          </th>
+          <td>
+            <%@user=User.find(:all,:conditions=>["u.used='Y'"],:joins=>"as u inner join user_duties as d on u.states='Y' and u.used='Y' and  u.code=d.user_code and d.duty_code='0003'",:select=>"u.code as code,u.name as name")%>
+            <%=f.collection_select(:clerk_id,@user,:code,:name)%>
+          </td>
+        </tr>
+       </table>
+        <br/><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

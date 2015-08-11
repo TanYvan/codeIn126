@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>核校工作统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">核校工作统计</span></div>
+    <%form_tag :url=>{:action=>"list4"} do%>
+      <table align="center">
+        <tr><td nowrap align="riht">
+            校核日期:</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:da1,@da1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('da1'),'yyyy-MM-dd')" />
+            -
+            <%=text_field_tag(:da2,@da2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('da2'),'yyyy-MM-dd')" />
+          </td>
+        </tr>
+      </table>
+      <%=submit_tag "查询" %>
+    <%end%>
+    <br/><br/><br/>
+    <i><%=flash[:notice]%></i>
+    <table class="list">
+      <thead>
+        <th>校核人员</th>
+        <th>校核案件数量</th>
+      </thead>
+      <% count = 0 %>
+      <% for u in @users %>
+      <tr>
+        <td><%=link_to u.name ,:action => "c_list",:da1 => @da1, :da2 => @da2, :user_code => u.code %></td>
+        <%
+          sql = " select distinct c.recevice_code, c.state, c.general_code, c.case_code, c.end_code, c.clerk, e.decidedate, e.endstyle
+                  from tb_check_staffs s
+                  left join tb_cases c on c.recevice_code = s.recevice_code and c.used = 'Y'
+                  left join tb_caseendbooks e on s.recevice_code = e.recevice_code and  e.used = 'Y'
+                  where s.used = 'Y' and s.check_time <= '#{@da2}' and s.check_time >= '#{@da1}' and s.staff = '#{u.code}'
+                "
+          check = TbCheckStaff.find_by_sql(sql)
+        -%>
+        <td style="text-align: center"><%= check.length %><% count = count + check.length %></td>
+      </tr>
+      <% end %>
+    </table>
+  </body>
+</html>

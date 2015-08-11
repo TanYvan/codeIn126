@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <br/>
+    <div align="center">
+      <%region=Region.find_by_code(params[:code])%>
+      <%if region!=nil%><%=region.name%><%end%>
+      立案时间:<%=params[:d1]%>至<%=params[:d2]%>当事人数量统计
+    </div>
+    <div align="left">案件数量：<%=@re1.length %>  ；当事人数量：<%=params[:nn]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>立案日期</th>
+          <th nowrap>立案号</th>
+          <th nowrap>案件状态</th>
+          <th nowrap>申请人</th>
+          <th nowrap>被申请人</th>
+          <th nowrap>结案日期</th>
+          <th nowrap>结案方式</th>
+          <th nowrap>结案号</th>
+          <th nowrap>助理</th>
+          <th  nowrap>争议金额(￥)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @re%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=c.nowdate%></td>
+            <td nowrap><%=link_to "#{c.case_code}",{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>c.recevice_code},:target=>"_blank" %></td>
+            <td nowrap><%=@state[c.state]%></td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype=1")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%if tp!=nil%>
+                  <%ar1=Region.find(:first,:conditions=>["code=?",tp.area])%>
+                  <%if ar1!=nil%>
+                    <%ttpp=ttpp +"["+ tp.partyname + "(" + ar1.name + ")] " %>
+                  <%else%>
+                    <%ttpp=ttpp +"["+ tp.partyname + "] " %>
+                  <%end%>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype=2")%>
+              <%ttpp=''%>
+              <%for tp in @party2%>
+                <%if tp!=nil%>
+                  <%ar1=Region.find(:first,:conditions=>["code=?",tp.area])%>
+                  <%if ar1!=nil%>
+                    <%ttpp=ttpp +"["+ tp.partyname + "(" + ar1.name + ")] " %>
+                  <%else%>
+                    <%ttpp=ttpp +"["+ tp.partyname + "] " %>
+                  <%end%>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <%cend=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",c.recevice_code])%>
+            <%if cend!=nil%>
+              <td nowrap><%=cend.decideDate%></td>
+              <td nowrap><%=TbDictionary.find(:first,:conditions=>["typ_code='8117' and state='Y' and data_val=?",cend.endStyle]).data_text%></td>
+              <td nowrap><%=cend.arbitBookNum%></td>
+            <%else%>
+              <td></td>
+              <td></td>
+              <td></td>
+            <%end%>
+            <td><%=User.find(:first,:conditions=>[ code=?",c.clerk]).name%></td>
+            <td nowrap><%=SysArg.compart2(c.amount)%></td>
+
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="10">
+            <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:code=>params[:code],:d1=>params[:d1],:d2=>params[:d2],:nn=>params[:nn],:k=>params[:k]  } if @case_pages.current.previous %>
+            <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:code=>params[:code],:d1=>params[:d1],:d2=>params[:d2],:nn=>params[:nn],:k=>params[:k]}})%>
+            <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:code=>params[:code],:d1=>params[:d1],:d2=>params[:d2],:nn=>params[:nn],:k=>params[:k]  } if @case_pages.current.next %>
+
+            <%if @case_pages.current.previous or @case_pages.current.next%>
+              <form action="/region_total/list_2a" method="get" onsubmit="return page_check('page_lines','page');">
+                每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type=hidden name='code' value="<%=params[:code]%>" />
+                <input type=hidden name='d1' value="<%=params[:d1]%>" />
+                <input type=hidden name='d2' value="<%=params[:d2]%>" />
+                <input type=hidden name='nn' value="<%=params[:nn]%>" />
+                <input type=hidden name='k' value="<%=params[:k]%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

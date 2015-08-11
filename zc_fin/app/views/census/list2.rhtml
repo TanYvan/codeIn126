@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>咨询工作日志统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">咨询工作日志统计</span></div>
+    <%form_tag :url=>{:action=>"list2",:order=>@order,:page=>@casepro_pages.current.number,:page_lines=>@page_lines,:date1=>params[:date1],:date2=>params[:date2]} do%>
+      <table align="center"><tr><td nowrap>
+            统计时间自<%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" />
+            至
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" />
+            &nbsp;&nbsp;&nbsp;<%=submit_tag "查询" %>
+          </td></tr>
+      </table>
+    <%end%>
+    <i><%=flash[:notice]%></i>
+    <br/>
+    <table  class="list">
+      <thead>
+        <tr >
+          <th nowrap>
+            咨询助理
+          </th>
+          <th nowrap="nowrap">
+            咨询日志数量
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @casepro!=nil%>
+          <%for c in @casepro%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap>
+                <%=User.find(:first,:conditions=>["used='Y' and code=?",c.clerk_id]).name%>
+              </td>
+              <td nowrap>
+                <%=TbCasepro.count(:id,:conditions=>["used='Y' and clerk_id=? and happdate>=? and happdate<=?",c.clerk_id,@date1,@date2])%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+            <tr>
+              <td>合计</td>
+              <td><%=@casepro1%></td>
+            </tr>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

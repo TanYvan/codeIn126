@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+<script src="/javascripts/check.js"></script>
+</head>
+<body>
+  <div class="title"><span class="cBlue">案件列表</span></div>
+  <div align="left">案件数量：<%=@case.length%>件</div>
+  <%= link_to "返回", :action => "list4", :da1 => @da1, :da2 => @da2%>
+  <table cellspacing="1" class="adminlist">
+    <thead>
+      <tr>
+        <th>编号</th>
+        <th nowrap>
+          <%if @order=="right(tb_cases_case_code,7) desc"%>
+            <%=link_to '立案号↑',:action=>"c_list",:order=>"right(tb_cases_case_code,7) asc", :da1 => @da1, :da2 => @da2, :user_code => params[:user_code]%>
+          <%elsif @order=="right(tb_cases_case_code,7) asc"%>
+            <%=link_to '立案号↓',:action=>"c_list",:order=>"right(tb_cases_case_code,7) desc", :da1 => @da1, :da2 => @da2, :user_code => params[:user_code]%>
+          <%else%>
+            <%=link_to '立案号',:action=>"c_list",:order=>"right(tb_cases_case_code,7) asc", :da1 => @da1, :da2 => @da2, :user_code => params[:user_code]%>
+          <%end%>
+        </th>
+        <th nowrap>申请人</th>
+        <th nowrap>被申请人</th>
+        <th nowrap>立案日期</th>
+        <th nowrap>助理</th>
+        <th nowrap>争议金额</th>
+        <th nowrap>仲裁庭</th>
+        <th nowrap>结案时间</th>
+        <th nowrap>结案方式</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%i=0%>
+      <%for c in @case%>
+      <tr class="row<%=i % 2%>">
+        <td><%=i+1%></td>
+        <td nowrap>
+          <%=link_to "#{c.case_code}",{:controller=>'every_casebase',:action=>"every_list",:recevice_code=>"#{c.recevice_code}"},:target=>"_black"%>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+        <td nowrap>
+          <%=h TbCase.find_by_recevice_code(c.recevice_code).nowdate%>
+        </td>
+        <td nowrap>
+          <%@a= User.find_by_code(c.clerk)%>
+          <%if @a!=nil%>
+            <%=@a.name%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%a= TbCase.find_by_recevice_code(c.recevice_code).amount%>
+          <%=SysArg.compart2(a)%>
+        </td>
+        <td nowrap>
+          <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",c.recevice_code])%>
+          <%if @arbit.empty?%>
+            未组成
+          <%else%>
+            <%for arb in @arbit%>
+              <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+              <br/>
+            <%end%>
+          <%end%>
+        </td>
+        <td nowrap><%= c.decidedate %></td>
+        <td>
+          <% if !c.endstyle.blank? %>
+            <%=TbDictionary.find(:first,:conditions=>["typ_code='8117' and state='Y' and data_val=?",c.endstyle]).data_text%>
+          <% end %>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+    </tbody>
+  </table>
+  </body>
+</html>
+
+
+

@@ -1,0 +1,235 @@
+<script language="javascript">
+  function aabb(d){
+    //var b =document.getElementById("institute");
+    a=window.showModalDialog('/arbitman_select/arbitman_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+    if (a!=null){
+      document.getElementById(d).value=a
+    }
+  }
+  </script>
+<div class="title"><span class="cBlue">历史数据编辑</span></div>
+<%= link_to '返回', :action => 'list',:page=>params[:page],:page_lines=>params[:page_lines] %>
+<%form_for :data_old_t,:url=>{:action=>'update',:id => @data_old_t} do |f|%>
+  <%= submit_tag '保存' %>
+  
+  <p><label for="data_old_t_recevice_code">咨询号</label><br/>
+  <%=f.text_field :recevice_code  %></p>
+  <p><label for="data_old_t_general_code">总案号</label><br/>
+  <%=f.text_field :general_code  %></p>
+  <p><label for="data_old_t_receivedate">咨询日期</label><br/>
+  <%=f.text_field :receivedate  %></p>
+  <p><label for="data_old_t_nowdate">立案日期</label><br/>
+  <%=f.text_field :nowdate  %></p>
+
+  <p><label for="data_old_t_accepttime">受理日期</label><br/>
+  <%=f.text_field :accepttime  %></p>
+
+  <p><label for="data_old_t_orgdate">组庭时间</label><br/>
+  <%=f.text_field :orgdate  %></p>
+
+  <p><label for="data_old_t_casereason">案由</label><br/>
+  <%=f.text_field :casereason  %></p>
+
+  <p><label for="data_old_t_clerk">办案助理编码</label><br/>
+  <%op=User.find(:all,:order=>'ord',:select=>"code,name")%>
+  <%=f.collection_select(:clerk, op,:code,:name)%>
+
+    <p><label for="data_old_t_case_code">立案号</label><br/>
+    <%=f.text_field :case_code  %></p>
+
+
+
+    <p><label for="data_old_t_aribitprog_num">仲裁程序</label><br/>
+      <%op=TbDictionary.find(:all,:conditions=>"typ_code='0001' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+      <%=f.collection_select(:aribitprog_num, op,:data_val,:data_text)%>
+      </p>
+
+      <p><label for="data_old_t_aribitprotprog_num">仲裁协议</label><br/>
+        <%op=TbDictionary.find(:all,:conditions=>"typ_code='0003' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+        <%=f.collection_select(:aribitprotprog_num, op,:data_val,:data_text)%>
+        </p>
+
+        <p><label for="data_old_t_t_casetype_num">总会案件类别</label><br/>
+          <%op=TbDictionary.find(:all,:conditions=>"typ_code='0043' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+          <%=f.collection_select(:t_casetype_num, op,:data_val,:data_text)%>
+          </p>
+
+
+
+          <p><label for="data_old_t_finally_limit_dat">最终的审限日期（经过延期的），立案和案件、组庭、延期时修改。</label><br/>
+          <%=f.text_field :finally_limit_dat  %></p>
+
+          <p><label for="data_old_t_trial_typ">审理方式</label><br/>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0046' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:trial_typ, op,:data_val,:data_text)%>
+            </p>
+            <%arbitman=TbArbitman.find(:all,:order=>"name",:select=>"code,name")%>
+            <p><label for="data_old_t_arbitman_0001">首席仲裁员</label><br/>
+              <%=f.select(:arbitman_0001,arbitman.collect{|p|[p.name,p.code]}.insert(0,["",""]))%>
+              <input type="button" value="选择" onclick="aabb('data_old_t_arbitman_0001')">
+            </p>
+
+            <p><label for="data_old_t_arbitmansign_0001">首席仲裁员选定方式</label><br/>
+              <%op=TbDictionary.find(:all,:conditions=>"typ_code='0015' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+              <%=f.select(:arbitmansign_0001,op.collect{|p|[p.data_text,p.data_val]}.insert(0,["",""]))%>
+            </p>
+           
+            
+            <p><label for="data_old_t_arbitman_0002">申请人仲裁员</label><br/>
+              <%=f.select(:arbitman_0002,arbitman.collect{|p|[p.name,p.code]}.insert(0,["",""]))%>
+              <input type="button" value="选择" onclick="aabb('data_old_t_arbitman_0002')">
+            </p>
+
+            <p><label for="data_old_t_arbitmansign_0002">申请人仲裁员选定方式</label><br/>
+              <%op=TbDictionary.find(:all,:conditions=>"typ_code='0015' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+              <%=f.select(:arbitmansign_0002,op.collect{|p|[p.data_text,p.data_val]}.insert(0,["",""]))%>
+            </p>
+
+            <p><label for="data_old_t_arbitman_0003">被申请人仲裁员</label><br/>
+              <%=f.select(:arbitman_0003,arbitman.collect{|p|[p.name,p.code]}.insert(0,["",""]))%>
+              <input type="button" value="选择" onclick="aabb('data_old_t_arbitman_0003')">
+            </p>
+
+            <p><label for="data_old_t_arbitmansign_0003">被申请人仲裁员选定方式</label><br/>
+              <%op=TbDictionary.find(:all,:conditions=>"typ_code='0015' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+              <%=f.select(:arbitmansign_0003,op.collect{|p|[p.data_text,p.data_val]}.insert(0,["",""]))%>
+            </p>
+
+            <p><label for="data_old_t_delayDate">延迟日期</label><br/>
+            <%=f.text_field :delayDate  %></p>
+
+            <p><label for="data_old_t_end_code">结案号<br/>
+            <%=f.text_field :end_code  %></p>
+
+            <p><label for="data_old_t_end_style">结案方式</label><br/>
+              <%op=TbDictionary.find(:all,:conditions=>"typ_code='8117' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+              <%=f.collection_select(:end_style, op,:data_val,:data_text)%>
+              </p>
+
+              <p><label for="data_old_t_end_date">结案日期</label><br/>
+              <%=f.text_field :end_date  %></p>
+
+              <p><label for="data_old_t_a_rate_hk">本请求港币汇率</label><br/>
+              <%=f.text_field :a_rate_hk  %></p>
+
+              <p><label for="data_old_t_a_rate_usa">本请求美元汇率</label><br/>
+              <%=f.text_field :a_rate_usa  %></p>
+
+              <p><label for="data_old_t_b_rate_hk">反请求港币汇率</label><br/>
+              <%=f.text_field :b_rate_hk  %></p>
+
+              <p><label for="data_old_t_b_rate_usa">反请求美元汇率</label><br/>
+              <%=f.text_field :b_rate_usa  %></p>
+
+              <p><label for="data_old_t_b_should_charge">反请求应收费</label><br/>
+              <%=f.text_field :b_should_charge  %></p>
+
+              <p><label for="data_old_t_b_should_charge_0002">反请求应收 立案费、受理费</label><br/>
+              <%=f.text_field :b_should_charge_0002  %></p>
+
+              <p><label for="data_old_t_b_should_charge_0003">反请求应收 立案费、受理费</label><br/>
+              <%=f.text_field :b_should_charge_0003  %></p>
+
+              <p><label for="data_old_t_b_should_charge_0004">反请求应收 无明确争议金额收费</label><br/>
+              <%=f.text_field :b_should_charge_0004  %></p>
+              
+              <p><label for="b_should_qt">反请求应收 其它一</label><br/>
+              <%=f.text_field :b_should_qt  %></p>
+              
+              <p><label for="b_should_qt2">反请求应收 其它二</label><br/>
+              <%=f.text_field :b_should_qt2 %></p>
+
+              <p><label for="data_old_t_b_should_charge_0007">反请求应收 审计费 代收代支</label><br/>
+              <%=f.text_field :b_should_charge_0007  %></p>
+
+              <p><label for="data_old_t_b_charge">反请求实收费</label><br/>
+              <%=f.text_field :b_charge  %></p>
+
+              <p><label for="data_old_t_b_amount">反请求总争议金额（人民币）</label><br/>
+              <%=f.text_field :b_amount  %></p>
+
+              <p><label for="data_old_t_b_amount_0002">反请求不明确争议金额</label><br/>
+              <%=f.text_field :b_amount_0002  %></p>
+
+              <p><label for="data_old_t_b_amount_rmb">反请求分争议金额（人民币）</label><br/>
+              <%=f.text_field :b_amount_rmb  %></p>
+
+              <p><label for="data_old_t_b_amount_hk">反请求分争议金额（香港）</label><br/>
+              <%=f.text_field :b_amount_hk  %></p>
+
+              <p><label for="data_old_t_b_amount_usa">反请求分争议金额（美元）</label><br/>
+              <%=f.text_field :b_amount_usa  %></p>
+
+              <p><label for="data_old_t_b_refunds">反请求退费</label><br/>
+              <%=f.text_field :b_refunds  %></p>
+
+              <p><label for="data_old_t_b_reduction">反请求减免</label><br/>
+              <%=f.text_field :b_reduction  %></p>
+
+              <p><label for="data_old_t_b_re_rmb">反请求欠缴</label><br/>
+              <%=f.text_field :b_re_rmb  %></p>
+
+              <p><label for="data_old_t_a_should_charge">申请方应收费</label><br/>
+              <%=f.text_field :a_should_charge  %></p>
+
+              <p><label for="data_old_t_a_should_charge_0002">申请方应收 立案费、受理费</label><br/>
+              <%=f.text_field :a_should_charge_0002  %></p>
+
+              <p><label for="data_old_t_a_should_charge_0003">申请方应收 仲裁费、处理费</label><br/>
+              <%=f.text_field :a_should_charge_0003  %></p>
+
+              <p><label for="data_old_t_a_should_charge_0004">申请方应收 无明确争议金额收费</label><br/>
+              <%=f.text_field :a_should_charge_0004  %></p>
+              
+              
+              <p><label for="a_should_qt">申请方应收 其它一</label><br/>
+              <%=f.text_field :a_should_qt  %></p>
+              
+              <p><label for="a_should_qt2">申请方应收 其它二</label><br/>
+              <%=f.text_field :a_should_qt2 %></p>
+
+              <p><label for="data_old_t_a_should_charge_0007">申请方应收 审计费 代收代支</label><br/>
+              <%=f.text_field :a_should_charge_0007  %></p>
+
+              <p><label for="data_old_t_a_charge">申请方实收费</label><br/>
+              <%=f.text_field :a_charge  %></p>
+
+              <p><label for="data_old_t_a_amount">申请方总争议金额（人民币）</label><br/>
+              <%=f.text_field :a_amount  %></p>
+
+              <p><label for="data_old_t_a_amount_0002">申请方不明确争议金额</label><br/>
+              <%=f.text_field :a_amount_0002  %></p>
+
+              <p><label for="data_old_t_a_amount_rmb">申请方争议金额（人民币）</label><br/>
+              <%=f.text_field :a_amount_rmb  %></p>
+
+              <p><label for="data_old_t_a_amount_hk"> 申请方争议金额（香港）</label><br/>
+              <%=f.text_field :a_amount_hk  %></p>
+
+              <p><label for="data_old_t_a_amount_usa">申请方争议金额（美元）</label><br/>
+              <%=f.text_field :a_amount_usa  %></p>
+
+              <p><label for="data_old_t_a_refunds">申请方退费</label><br/>
+              <%=f.text_field :a_refunds  %></p>
+
+              <p><label for="data_old_t_a_reduction">申请方减免</label><br/>
+              <%=f.text_field :a_reduction  %></p>
+
+              <p><label for="data_old_t_a_re_rmb">申请方欠缴</label><br/>
+              <%=f.text_field :a_re_rmb  %></p>
+
+              <p><label for="data_old_t_party">申请人</label><br/>
+              <%=f.text_field :party  %></p>
+
+              <p><label for="data_old_t_b_party">被申请人</label><br/>
+              <%=f.text_field :b_party  %></p>
+
+              <p><label for="data_old_t_agent">申请人代理人</label><br/>
+              <%=f.text_field :agent  %></p>
+
+              <p><label for="data_old_t_b_agent">被申请人代理人</label><br/>
+              <%=f.text_field :b_agent  %></p>
+              
+            <% end %>
+
+

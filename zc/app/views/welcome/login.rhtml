@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>仲裁办案管理系统 登录</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body class="high" onload="document.getElementById('code').focus();">
+    <% if @messege_flag  %>
+    <img src="/images/picture/T.jpg"/>
+    <% end  %>
+    <div id="login_top"><br /></div>
+    <div id="login_content">
+      <div id="conten"><img src="/images/picture/login_bj_02.jpg" width="771" height="185" /> </div>
+      <div id="login">
+        <form method="post" action="/welcome/login_do">
+        <div id="comments_form">
+          
+          <fieldset>
+            <p>
+              <label for="author">用户名: </label>
+              <input type="text" name="code" id="code" style="width:6em"/>
+            </p>
+            <p>
+              <label for="email">密     码: </label>
+              <input type="password" name="password" id="password" style="width:6em" />
+            </p>
+          </fieldset>
+          <table align="right"><tr><td align="right">
+          <div align="left" style="color:red"><%=flash[:login]%></div>
+          </td></tr>
+          </table>
+        </div>
+        <div id="commen_form">
+          <fieldset>
+            <p>
+              <input name="" type="submit" class="button_01" value="登录" />
+              <input name="" type="reset" class="button_01" value="重置" />
+            </p>
+          </fieldset>
+        </div>
+        </form>
+      </div>
+      <div><img src="/images/picture/login_bj_04.jpg" width="771" height="203" /></div>
+    </div>
+  </body>
+</html>

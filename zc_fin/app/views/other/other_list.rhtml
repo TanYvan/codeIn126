@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>其他方面信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%if session[:recevice_code]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list?contr_r=other&act_r=other_list","mainFrame")
+       </script>
+    <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+    其他方面信息
+    </span></div>
+    <%if @case==nil%>
+    <div align="center">
+      请选择您要办理的案件
+    <%end%>
+    <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"other",:act_r=>"other_list"%>
+    <%if @case!=nil%>
+     当前案件
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <%=h @case.recevice_code%>
+        </td>
+        <td>
+          <%=h @case.receivedate%>
+        </td>
+        <td>
+          <%=h @case.case_code%>
+        </td>
+        <td>
+          <%=h @case.nowdate%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+      </tr>         
+      </tbody>
+    </table>
+    <br>
+    <br>
+      <hr size="1" color="#99CCFF" noshade>
+      <div align="center" class="cDGray">
+    其他方面信息    <%=link_to  "创建", :action=>"other_new"%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            时间
+          </th>
+          <th nowrap>
+            内容
+          </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%if @other!=nil %>
+      <%for p in @other%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=p.o_date%>
+        </td>
+        <td>
+          <div align="left"><%=p.content%></div>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"other_edit",:id=>p%>
+        </td>
+        <td>
+            <%=button_to "删除",{:action=>"other_delete",:id=>p},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <%end%>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员个人情况</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">编辑简历</span></div>
+    <br>
+      <div align="center">
+        <%=link_to "返回",:controller => "arbitman", :action => "list_resume", :id => @tb_arbitman.id %>
+        </div><br>
+      <%form_for :tb_resume ,:url=>{:action=>"update_resume", :id => @tb_resume.id} do |f|%>
+        <caption class="strong">仲裁员简历</caption>
+    <table class="list">
+      <tr>
+        <th>起始时间：</th>
+        <td><%=f.text_field :startdate%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('tb_resume_startdate'),'yyyy-MM-dd')" >                                      
+            <div style="color:red"><%=error_message_on(:tb_resume,:startdate)%></div></td>
+      </tr>
+      <tr>
+        <th>终止时间：</th>
+        <td><%=f.text_field :enddate%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('tb_resume_enddate'),'yyyy-MM-dd')" >                                      
+            <div style="color:red"><%=error_message_on(:tb_resume,:enddate)%></div></td>
+      </tr>
+      <tr>
+        <th>工作单位：</th>
+        <td><%=f.text_field :company,:style=>"width:30em"%></td>
+      </tr>
+      <tr>
+        <th>职务：</th>
+        <td><%=f.text_field :business%></td>
+        </tr>
+        <tr>
+        <th>证明人：</th>
+        <td><%=f.text_field :proveman%></td>
+      </tr>
+      <tr>
+        <th>是否与法律相关：</th>
+        <td><%=f.select :lawyerabout,[['是','1'],['否','0']]%></td>
+      </tr>
+      <tr>
+        <th>备注：</th>
+        <td><%=f.text_field :remark,:rows=>4%></td>
+      </tr>      
+    </table>
+    <br>
+      <div align="center">
+    <%=submit_tag "确定" %>
+      </div>
+    <%end%>
+  </body>
+</html>
+
+
+

@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title> 裁决书管理</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">起草信息</span></div>
+    <%if @award.empty?%> <%=link_to  "批量创建", :action=>"award_detail_new_all",:p_id=>params[:p_id]%> <%end%>
+    <%=link_to  "创建", :action=>"award_detail_new",:p_id=>params[:p_id]%>
+    <div style="color:red"><%=flash[:notice]%></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th>类型</th>
+            <th>起草人员类型</th>
+            <th>起草人员</th>
+            <th>备注</th>
+            <th>删除</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for p in @award%>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='0059'  and  data_val='#{p.typ}'").data_text%>
+              </td>
+              <td>
+                <%if p.draftsman_typ=="0001"%>
+                  仲裁员
+                <%else%>
+                  助理
+                <%end%>
+              </td>
+              <td>
+                <%if p.draftsman_typ=="0001"%>
+                  <%=TbArbitman.find_by_code(p.draftsman).name%>
+                <%else%>
+                  <%=User.find_by_code(p.draftsman).name%>
+                <%end%>
+              </td>
+              <td>
+                <%=p.remark%>
+              </td>
+              <td>
+                <%=button_to "删除",{:action=>"award_detail_delete",:id=>p,:p_id=>params[:p_id]},:confirm=>"您确认要删除吗？"%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+      </table>
+  </body>
+</html>

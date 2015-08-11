@@ -1,0 +1,2 @@
+module ArchivTotalHelper
+end

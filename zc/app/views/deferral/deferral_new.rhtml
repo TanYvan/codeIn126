@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加案件费用缓交</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <%= javascript_include_tag :defaults%>
+    <script language="javascript">
+      function r_s(){
+       new Ajax.Request('/deferral/p_set?p_typ='+document.getElementById("deferral_consultant").value, {asynchronous:true, evalScripts:true});
+       return false;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray" align="center">添加案件费用缓交
+      <%=link_to "返回",:action=>"deferral_list"%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :deferral,:url=>{:action=>"deferral_create"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+           助理:
+          </th>
+          <td>
+            <%u=User.find_by_sql("select code ,name from users where used='Y' and states='Y' and code in (select user_code from user_duties where duty_code='0003') order by name")%>
+            <%=f.collection_select(:receptionist,u,:code,:name)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+             缓交方:
+          </th>
+          <td>
+            <%=f.select(:consultant,[["申请人","0001"],["被申请人","0002"],["申请方代理人","0003"],["被申请方代理人","0004"]],options={},html_options={:onchange=>"r_s();"})%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            缓交人:
+          </th>
+          <td>
+            <div id='pv_set'>
+            <%party=TbParty.find(:all,:conditions=>"recevice_code='#{session[:recevice_code_4]}' and partytype=1 and used='Y'",:order=>'id',:select=>"id,partyname")%>
+            <%=f.collection_select(:counselor,party,:id,:partyname)%>
+            <i><%=error_message_on(:deferral,:counselor)%></i>
+            </div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            申请日期:
+          </th>
+          <td>
+            <%=f.text_field(:apply_date,:size=>8,:readonly => "true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('deferral_apply_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            缓交金额(￥):
+          </th>
+          <td>
+            <%=f.text_field(:deferral_money)%>元
+            <div style="color:red"><%=error_message_on(:deferral,:deferral_money)%></div>
+           </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>
+

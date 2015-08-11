@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>给专家添加专业</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+    <div class="cDGray" align="center">
+  专家精通专业   <%=link_to "返回",:action=>"expert_list",:expertconsult_id=>params[:expertconsult_id]%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :expert ,:url=>{:action=>"expert_create",:expertconsult_id=>params[:expertconsult_id]}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            精通专业:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='9012' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:speciality,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        </table>
+      <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

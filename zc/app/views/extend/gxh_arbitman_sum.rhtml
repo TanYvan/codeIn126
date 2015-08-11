@@ -1,0 +1,409 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=gb2312"/>
+<meta name=Generator content="Microsoft Word 11 (filtered)"/>
+<title>感 谢 函</title>
+<script type="text/javascript">
+  function ww(){
+    var oWD = new ActiveXObject("Word.Application"); //创建Word应用程序对象
+    var oRange =oWD.documents.add().Range(0,0); //向Word应用程序对象中添加一个文档对象,并取出其中的Range(0)
+    var sel = document.body.createTextRange(); //根据HTML页面创建TextRange对象,以便定位到要打印的元素中
+    sel.moveToElementText(report); //定位到TextRage对象中要复制的元素上,report是要复制的元素的ID
+    sel.select();//report元素的所有HTML内容
+    sel.execCommand("Copy");//将选中的内容复制到剪切板上
+    document.selection.empty();
+    oRange.Paste();//粘贴到Word文档对象中去
+    oWD.Application.Visible = true;//显示Word程序和文档内容
+  }
+</script>
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:宋体;
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
+	{font-family:仿宋_GB2312;
+	panose-1:0 0 0 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:"\@宋体";
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
+	{font-family:"\@仿宋_GB2312";
+	panose-1:0 0 0 0 0 0 0 0 0 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:10.5pt;
+	font-family:"Times New Roman";}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:9.0pt;
+	font-family:"Times New Roman";}
+ /* Page Definitions */
+ @page Section1
+	{size:595.3pt 841.9pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	layout-grid:15.6pt;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+
+</head>
+
+<body lang=ZH-CN style='text-justify-trim:punctuation'>
+<div align="center">
+  <button onclick="ww();">生成 Word 文档</button>
+</div>
+
+<div id="report" class=Section1 style='layout-grid:15.6pt;LINE-HEIGHT: 150%;'>
+<%
+ flag1 = @person.length
+ flag2 = 0
+%>
+<% for p in @person %>
+<%
+  extend1 = TbExtend.find(:all,:conditions => [@c + " and p=? and typ<>'5'",p.p],:order=> "extend_date asc")
+  extend2 = TbExtend.find(:all,:conditions => [@c + " and 1=2 and p=?",p.p],:order=> "extend_date asc")
+  #extend1 = TbExtend.find(:all, :conditions => ["used='Y' and t_extend_code=? and p_typ=? and p=? and p_name=? and typ<>'5' ", p.t_extend_code,p.p_typ,p.p,p.p_name]) # 案件报酬
+  #extend2 = TbExtend.find(:all, :conditions => ["used='Y' and t_extend_code=? and p_typ=? and p=? and p_name=? and typ ='5' ", p.t_extend_code,p.p_typ,p.p,p.p_name]) # 差旅补助
+
+  now = Time.now
+  extend_t = now.year.to_s + "年" + now.month.to_s + "月" + now.day.to_s + "日"
+ %>
+  <p class=MsoNormal  align=center style='text-align:center;'><span>&nbsp;</span></p>
+  <p class=MsoNormal  align=center style='text-align:center;'><span>&nbsp;</span></p>
+<p class=MsoNormal align=center style='margin-top:31.2pt;margin-right:0cm;
+margin-bottom:23.4pt;margin-left:0cm;text-align:center'><b><span
+style='font-size:22.0pt;font-family:宋体'>感 谢 函</span></b></p>
+
+<p class=MsoNormal><span style='font-size:15.0pt;font-family:仿宋_GB2312;'>尊敬的<b><u><%= TbArbitman.find_by_code(p.p).name %></u></b>仲裁员：</span></p>
+
+<p class=MsoNormal style='text-indent:30.05pt'>
+  <span style='font-size:15.0pt;font-family:仿宋_GB2312'>
+    您在<%=@date1%>至<%=@date2%>期间，在本会办理的如下仲裁案件，已经支付给您的相关款项（办案报酬、代扣税金额和实发金额等）请见下表：
+  </span>
+</p>
+
+<div align=center>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 
+ style='border-collapse:collapse'>
+ <tr style='height:18.0pt'>
+  <td colspan=7 style='width:399.0pt;border:solid windowtext 1.0pt;
+  padding:0cm 2pt 0cm 2pt;height:18.0pt'>
+  <p class=MsoNormal align=left style='text-align:left;'><span style='font-size:
+  12.0pt;font-family:仿宋_GB2312'>姓名：</span><span lang=EN-US style='font-size:
+  12.0pt;color:black'><%= TbArbitman.find_by_code(p.p).name %></span></p>
+  </td>
+ </tr>
+  <%  head_head =1
+  should_rmb_sum = 0
+  tax_rmb_sum = 0
+  extend_rmb_sum = 0
+  %>
+  <%
+  for e1 in extend1
+  case_code = e1.case_code
+  end_code = e1.end_code
+  should_rmb = sprintf("%.2f",e1.should_rmb)
+  tax_rmb = sprintf("%.2f",e1.tax_rmb)
+  extend_rmb = sprintf("%.2f",e1.extend_rmb)
+  t_extend_t = e1.extend_date
+  bank_account = e1.bank_account
+  bankname =  e1.bankname
+
+  should_rmb_sum = should_rmb_sum + e1.should_rmb
+  tax_rmb_sum = tax_rmb_sum + e1.tax_rmb
+  extend_rmb_sum = extend_rmb_sum +e1.extend_rmb
+%>
+
+  <tr style='height:18.0pt'>
+    <td  colspan="7" align="left" style='border:solid windowtext 1.0pt;border-top:
+  none;padding:0cm 2pt 0cm 2pt;height:18.0pt'>
+  <p class=MsoNormal align=left style='text-align:left'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>开户行：<%= bankname %> &nbsp &nbsp &nbsp &nbsp 账号：<%= bank_account %></span></p>
+  </td>
+  </tr>
+  <% if head_head==1 %>
+  <tr style='height:18.0pt'>
+  <td width=60 style='width:60.0pt;border:solid windowtext 1.0pt;border-top:
+  none;padding:0cm 2pt 0cm 2pt;height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>受案号</span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>结案号</span></p>
+  </td>
+  <td width=30 style='width:30.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>类型</span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'>
+    <span  style='font-size:12.0pt;font-family:仿宋_GB2312'>应发</span>
+  </p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'>
+    <span style='font-size:12.0pt;font-family:仿宋_GB2312'>扣税</span>
+  </p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>实发</span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>时间</span></p>
+  </td>
+ </tr>
+ <%end%>
+ <%  head_head=head_head+1 %>
+ <tr style='height:18.0pt'>
+  <td width=60 style='width:60.0pt;border:solid windowtext 1.0pt;border-top:
+  none;padding:0cm 2pt 0cm 2pt;height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= case_code %></span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;height:18.0pt'>
+    <p class=MsoNormal align=center style='text-align:center'>
+      <span lang=EN-US style='font-size:12.0pt;color:black'><%= end_code %></span>
+    </p>
+  </td>
+  <td width=39 style='width:30.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>办案<br/>报酬</span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= should_rmb %></span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= tax_rmb %></span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= extend_rmb %></span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= t_extend_t %></span></p>
+  </td>
+ </tr>
+<% end %>
+
+ <tr style='height:18.0pt'>
+  <td colspan="3" style='width:180.0pt;border:solid windowtext 1.0pt;border-top:
+  none;padding:0cm 2pt 0cm 2pt;height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>合计</span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= sprintf("%.2f",should_rmb_sum) %></span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= sprintf("%.2f",tax_rmb_sum) %></span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= sprintf("%.2f",extend_rmb_sum) %></span></p>
+  </td>
+  <td width=60 style='width:60.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  </td>
+ </tr>
+
+
+ <% if extend2.length > 0 %>
+ <tr style='height:18.0pt'>
+  <td width=89 style='width:67.0pt;border:solid windowtext 1.0pt;border-top:
+  none;padding:0cm 2pt 0cm 2pt;height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>受案号</span></p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>结案号</span></p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>类型</span></p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'>
+    <span  style='font-size:12.0pt;font-family:仿宋_GB2312'>差旅</span>
+  </p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'>
+    <span style='font-size:12.0pt;font-family:仿宋_GB2312'>补助</span>
+  </p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>实发</span></p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>时间</span></p>
+  </td>
+ </tr>
+ <% end %>
+
+
+
+ <%
+  for e2 in extend2
+  case_code = e2.case_code
+  end_code = e2.end_code
+  should_rmb = sprintf("%.2f",e2.should_rmb)
+  tax_rmb = sprintf("%.2f",e2.tax_rmb)
+  extend_rmb = sprintf("%.2f",e2.extend_rmb)
+  t_extend_t = e2.t_extend_t.to_s(:db).slice(0,10)
+ %>
+ <tr style='height:18.0pt'>
+  <td width=89 style='width:67.0pt;border:solid windowtext 1.0pt;border-top:
+  none;padding:0cm 2pt 0cm 2pt;height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= case_code %></span></p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= end_code %></span></p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:12.0pt;font-family:仿宋_GB2312'>差旅费</span></p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+    <%
+    chailv = ''
+    buzhu  = ''
+    tr = TbRemuneration23.find(:first,:conditions=>"used='Y' and parent_id='0' and p='#{e2.p}' and p_typ='#{e2.p_typ}' and recevice_code='#{e2.recevice_code}' ")
+    if !tr.blank?
+      tr1 =TbRemuneration23.find(:first,:conditions=>"used='Y' and typ='0092' and parent_id='#{tr.id}' and p='#{e2.p}' and p_typ='#{e2.p_typ}' and recevice_code='#{e2.recevice_code}' ")
+      tr2 =TbRemuneration23.find(:first,:conditions=>"used='Y' and typ='0093' and parent_id='#{tr.id}' and p='#{e2.p}' and p_typ='#{e2.p_typ}' and recevice_code='#{e2.recevice_code}' ")
+    end
+
+    chailv = sprintf("%.2f",tr1.should_rmb) if !tr1.blank?
+    buzhu  = sprintf("%.2f",tr2.should_rmb) if !tr1.blank?
+
+    %>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%=chailv  %></span></p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%=buzhu  %></span></p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= extend_rmb %></span></p>
+  </td>
+  <td width=89 style='width:67.0pt;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2pt 0cm 2pt;
+  height:18.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;color:black'><%= t_extend_t %></span></p>
+  </td>
+ </tr>
+ <% end %>
+
+</table>
+
+</div>
+
+<p class=MsoNormal style='margin-top:7.8pt;text-indent:30.05pt'>
+  <span style='font-size:15.0pt;font-family:仿宋_GB2312'>
+    上述款项已转入您提供的银行账号，请查收。如果您未能按时收到上述款项，或者银行账号有变动，或者邮寄地址有变动，请您及时告知本会。联系人：万里涛，电话： 0755-83501190，传真：0755-83509372。 
+  </span></p>
+
+<p class=MsoNormal style='text-indent:30.0pt'><span style='font-size:15.0pt;
+font-family:仿宋_GB2312'>衷心感谢您对解决本案纠纷的贡献，一并感谢您一直以来对本会的关心，期待您对本会给予更大的支持。</span></p>
+
+<p class=MsoNormal style='text-indent:30.0pt'><span lang=EN-US
+style='font-size:15.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-indent:180.0pt'><span style='font-size:15.0pt;
+font-family:仿宋_GB2312'>华南国际经济贸易仲裁委员会</span></p>
+
+<p class=MsoNormal style='text-indent:240.0pt'>
+  <span style='font-size:15.0pt;font-family:仿宋_GB2312'>（深圳国际仲裁院）</span>
+</p>
+
+<p class=MsoNormal style='text-indent:220.0pt'>
+  <span style='font-size:15.0pt;font-family:仿宋_GB2312'><%= extend_t %></span>
+</p>
+  <% flag2 = flag2 + 1 %>
+  <% if flag2 < flag1 %>
+    <span lang=EN-US style='font-size:15.0pt;font-family:"Times New Roman"'><br clear=all style='page-break-before:always'/></span>
+  <% end %>
+<% end %>
+</div>
+</body>
+</html>
+

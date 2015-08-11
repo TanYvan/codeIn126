@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件附件信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/tab.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">案件附件信息</div></span></div>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              附件类型
+            </th>
+            <th nowrap>
+              文件名称
+            </th>
+            <th nowrap>
+             上传人类别
+            </th>   
+            <th nowrap>
+              上传人
+            </th>
+            <th nowrap>
+              上传时间
+            </th>
+            <th nowrap>
+             下载
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for a in @att%>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=@att_typ[a.category]%>
+              </td>
+              <td>
+                <%=a.file_name%>
+              </td>
+              <td>
+                <%=@user_typ[a.u_typ]%>
+              </td>
+              <td>
+                <%if a.u_typ=="arbitman"%>
+                  <%arbitman=TbArbitman.find_by_code(a.u)%>
+                  <%=arbitman.name if arbitman %>
+                <%elsif a.u_typ=="party"%>
+                  <%w_user= WUser.find_by_code(a.u)%>
+                  <%if w_user%>
+                    <%unless w_user.name.blank?%>
+                      <%=w_user.name%>
+                    <%else%>
+                      <%=w_user.name_idcard%>
+                    <%end%>
+                  <%end%>
+                <%elsif a.u_typ=="assintant"%>
+                  <%user= User.find_by_code(a.u)%>
+                  <%=user.name if user%>
+                <%else%>
+                  <%=a.u%>
+                <%end%>
+              </td>
+              <td>
+                <%=a.u_t.to_s(:db) if a.u_t%>
+              </td>
+              <td>
+                <%=link_to "下载" ,:action=>"down",:id=>a.att_id%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+      </table>
+  </body>
+</html>

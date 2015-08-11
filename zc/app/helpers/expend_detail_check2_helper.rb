@@ -1,0 +1,2 @@
+module ExpendDetailCheck2Helper
+end

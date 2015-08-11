@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加中间(部分)裁决</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <div class="cDGray" align="center">添加中间(部分)裁决(带<i>*</i>为必填项) <%=link_to "返回",:action=>"interim_list"%></div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :interim ,:url=>{:action=>"interim_create"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th nowrap>
+            作出日期:
+           </th>
+          <td>
+            <%=f.text_field(:rule_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('interim_rule_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            <i>*</i>裁决书号:
+          </th>
+          <td>
+            <%=f.text_field(:rule_num)%> <i><%=error_message_on(:interim,:rule_num)%></i>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            裁决类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8114' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:rule_type,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            <i>*</i>裁决理由:
+          </th>
+          <td>
+           <%=f.text_area(:rule_reason,:rows=>4)%><i><%=error_message_on(:interim,:rule_reason)%></i>
+          </td>
+        </tr>
+
+        <tr>
+          <th nowrap>
+            <i>*</i>裁决内容:
+          </th>
+          <td>
+            <%=f.text_area(:rule_content,:rows=>4)%><i><%=error_message_on(:interim,:rule_content)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            审批时间:
+          </th>
+          <td>
+            <%=f.text_field(:approval_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('interim_approval_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            <i>*</i>审批人:
+          </th>
+          <td>
+            <%=f.text_field(:approval_man)%><i><%=error_message_on(:interim,:approval_man)%></i>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            审批决定:
+          </th>
+          <td>
+            <%=f.text_area(:approval_decision,:rows=>4)%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            审批意见:
+          </th>
+          <td>
+            <%=f.text_area(:approval_advance,:rows=>4)%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            交送申请人日期:
+           </th>
+          <td>
+            <%=f.text_field(:deliver_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('interim_deliver_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            送交被申请人日期:
+           </th>
+          <td>
+            <%=f.text_field(:delivered_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('interim_delivered_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            送交申请人方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8115' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:deliver_type,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            送交被申请人方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8116' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:delivered_type,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+       </table>
+     <div align="center"><%=submit_tag "提交" %></div>
+     <%end%>
+  </body>
+</html>

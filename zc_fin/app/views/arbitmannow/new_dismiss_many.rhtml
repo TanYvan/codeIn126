@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员解聘理由</title>
+     <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+        <%= javascript_include_tag  'WebCalendar'%> 
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">解聘多位仲裁员</span></div>      
+    <br>    
+    <div align="center"><%=link_to "返回", :action => "list_arbitmannow",:page=>params[:page],:page_lines=>params[:page_lines]%>  </div>
+    <br>    
+    <%form_for :tb_arbitman_expire_logs,:url=>
+        {:action => "create_dismiss_many", :condi_s=>params[:condi_s],:page=>params[:page],:page_lines=>params[:page_lines]} do |f|%>
+    <table class="list">
+        <tr>
+          <th>解聘时间:</th>
+          <td><%=f.text_field :dt,:readonly=>"true"%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('tb_arbitman_expire_logs_dt'),'yyyy-MM-dd')" >  
+          <div style="color:red"><%=error_message_on(:tb_arbitman_expire_logs,:dt)%></div></td>
+        </tr>
+        <tr>
+          <th>届:</th>
+          <td><%=f.text_field :expire %>
+          <div style="color:red"><%=error_message_on(:tb_arbitman_expire_logs,:expire)%></div></td>
+        </tr>
+        <tr>
+          <th>解聘理由:</th>
+          <td><%=f.text_area :reason ,:rows =>3 %>
+          <div style="color:red"><%=error_message_on(:tb_arbitman_expire_logs,:reason)%></div></td>
+        </tr>  
+    </table>
+    <div align="center">
+    <%=submit_tag "确定" %>    
+    </div>
+    <%end%>
+  </body>
+</html>
+

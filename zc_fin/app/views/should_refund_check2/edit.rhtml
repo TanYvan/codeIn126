@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>待退费确认--处长确认</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <br>
+  <div align="center" class="cDGray">确认 待退费信息
+  <%=link_to "返回",:action=>"list"%>
+  </div>
+    <table class="list">
+        <tr>
+          <th>
+            案件流水号:          </th>
+          <td align="left" width="68%">
+           <%=@should.recevice_code%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            助理:
+          </th>
+          <td>
+            <%=User.find_by_code(@should.u).name%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            费用类型:          </th>
+          <td align="left" width="68%">
+           <%=TbDictionary.find(:first,:conditions=>"typ_code='0031' and data_val='#{@should.typ}'").data_text%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            退款方:
+          </th>
+          <td>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0032' and data_val='#{@should.payment}'").data_text%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            退款人:
+          </th>
+          <td>
+            <%@should.partyname%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            币种:
+          </th>
+          <td>
+            <%=Money.find_by_code(@should.currency).name%>
+          </td>
+        </tr>   
+        <tr>
+          <th>
+            外币金额:
+          </th>
+          <td>
+            <%=@should.f_money%>         
+          </td>
+        </tr>  
+        <tr>
+          <th>
+            汇率:
+          </th>
+          <td>
+            <%=@should.rate%>           
+          </td>
+        </tr>        
+        <tr>
+          <th>
+            应退费用(￥):
+          </th>
+          <td>
+            <%=@should.rmb_money%>         
+          </td>
+        </tr>
+        <tr>
+          <th>
+            减退费用(￥):
+          </th>
+          <td>
+            <%=@should.redu_rmb_money%>         
+          </td>
+        </tr>  
+        <tr>
+          <th>
+            应实退费用(￥)
+          </th>
+          <td>
+            <%= @should.rmb_money - @should.redu_rmb_money%>         
+          </td>
+        </tr> 
+         <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=h @should.remark %>       
+          </td>
+        </tr>                
+                        
+       </table>
+       <br><br>
+       <div style="color:red">
+           <div align="center"><%=flash[:notice]%></div>
+       </div>
+         <%form_for :should ,:url=>{:action=>"check",:id=>params[:id]}  do |f|%>
+       <table class="list">
+         <tr>
+          <th>
+            退费备注:
+          </th>
+          <td>
+            <%=f.text_area(:check2_remark,:rows=>4)%>       
+          </td>
+        </tr>                
+                        
+       </table>
+       <div align="center"><%=submit_tag "确认" %></div>          
+        <%end%>
+              
+  </body>
+</html>

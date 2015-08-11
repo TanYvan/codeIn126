@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>撤销及不予执行情况</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%if session[:recevice_code_3]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list_3?contr_r=wind_up_case&act_r=backout_and_unrun","mainFrame")
+      </script>
+    <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">撤销及不予执行情况</span></div>
+    <br>
+    <%=link_to "返回", :controller=>'wind_up_case',:action=>"backout_and_unrun"%>
+    
+    <%if @tb_case!=nil%>
+      <br>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <div class="cDGray">当前案件</div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              咨询流水号
+            </th>
+            <th nowrap>
+              咨询日期
+            </th>
+            <th nowrap>
+              立案号
+            </th>
+            <th nowrap>
+              立案日期
+            </th>
+            <th nowrap>
+              结案号
+            </th>
+            <th nowrap>
+              结案方式
+            </th>
+            <th nowrap>
+              申请人
+            </th>
+            <th nowrap>
+              被申请人
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @tb_case.recevice_code%>
+            </td>
+            <td>
+              <%=h @tb_case.receivedate%>
+            </td>
+            <td>
+              <%=h @tb_case.case_code%>
+            </td>
+            <td>
+              <%=h @tb_case.nowdate%>
+            </td>
+            <td>
+               <%if @tb_case.caseendbook_id_first!=nil%>
+                 <%=TbCaseendbook.find(@tb_case.caseendbook_id_first).arbitBookNum%>
+               <%end%>
+            </td>
+            <td>
+              <%if @tb_case.caseendbook_id_first!=nil%>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='8117' and data_val='#{TbCaseendbook.find(@tb_case.caseendbook_id_first).endStyle}'").data_text%>
+              <%end%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code=#{@tb_case.recevice_code}",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code=#{@tb_case.recevice_code}",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <br>
+      <%form_for :tb_case, :url =>{:action => "save_backout_and_unrun_do"} do |f| %>
+        <table class="list">
+          <tr>
+            <th>是否申请撤销:</th>
+            <td><%= f.select :isback,[['是','1'],['否','0']] %></td>
+          </tr>
+          <tr>
+            <th>是否申请不予执行:</th>
+            <td><%= f.select :isunrun,[['是','1'],['否','0']] %></td>
+          </tr>
+          <tr>
+            <th>法院意见:</th>
+            <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9013 and state ='Y'"], :order => :id, :select => "data_val,data_text") %>
+            <td><%=f.collection_select(:yarddecide, @types, :data_val, :data_text)%></td>
+          </tr>
+          <tr>
+            <th>当事人申请理由:</th>
+            <td><%= f.text_area :casecommenttime, :rows => 4 %></td>
+          </tr>
+        </table>
+        <div align="center">
+          <%=submit_tag "确定"%>
+        </div>
+      <%end%>
+    <%end%>
+  </body>
+
+</html>

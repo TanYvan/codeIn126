@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁资料</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title">
+          仲裁资料信息
+    </div>
+    <br/>
+    <div align="center">
+      <%=link_to  "创建", :action=>"new"%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>
+            是否触屏发布
+          </th>
+          <th nowrap>
+            标题
+          </th>
+          <th nowrap>
+            日期
+          </th>
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            删除
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for p in @tbnews%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>["typ_code='8127' and state='Y' and data_val=?",p.forbidden]).data_text%>
+            </td>
+            <td>
+              <%=p.title%>
+            </td>
+            <td>
+              <%=p.create_date%>
+            </td>
+            <td>
+              <%=link_to "修改",:action=>"edit",:id=>p%>
+            </td>
+            <td>
+              <%=button_to "删除",{:action=>"delete",:id=>p},:confirm=>"您确认要删除吗？"%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="5">
+          <%= link_to '上一页', { :page => @new_pages.current.previous  ,:page_lines=>@page_lines  } if @new_pages.current.previous %>
+          <%=pagination_links( @new_pages,{:params=>{:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @new_pages.current.next ,:page_lines=>@page_lines  } if @new_pages.current.next %>
+
+          <%if @new_pages.current.previous or @new_pages.current.next%>
+            <form action="/screen/list" method="get" >
+              每页<input type=text name='page_lines' size=5 class="SingleLineInput" value=<%=@page_lines%> />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @new_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

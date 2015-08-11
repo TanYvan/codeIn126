@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员基础信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/tab.css" type="text/css" rel="stylesheet" />
+    <%= javascript_include_tag "jQuery.js"%>
+    <script language="javascript">
+        function check(m){
+            if(document.getElementById("name").value==""){
+	      alert("请输入[姓名（系统内唯一)]");
+	      return false;
+	    }
+	    if(document.getElementById("mobiletel").value==""){
+	      alert("请输入[手机号码]");
+	      return false;
+	    }
+            if(document.getElementById("email").value==""){
+	      alert("请输入[email]");
+	      return false;
+	    }
+		$.ajax( {
+			async: false,
+			type : "POST",
+			url : "/arbitman_add_check/check_do",
+			data : "name=" + document.getElementById("name").value +"&mobiletel=" + document.getElementById("mobiletel").value + "&email=" + document.getElementById("email").value,
+			success : function(data) {
+				if (data=="ok") {
+					document.getElementById("test").value="1"
+                                        if (m=="1"){
+                                          alert("通过校验，可以保存。");
+                                        }
+				}else{
+					document.getElementById("test").value="0"
+                                        alert(data);
+				}
+			}
+		});
+		if (document.getElementById("test").value=="1"){
+			return true;
+		}else{
+			return false;
+		}
+        }
+    </script>
+  </head>
+  <body>
+    <div class="tabs" align="center">
+      <ul>
+        <li><a href="/arbitman_add_check/show_base?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" class="selected"><span>仲裁员基本信息</span></a></li>
+        <li><a href="/arbitman_add_check/show_educate?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>教育情况</span></a></li>
+        <li><a href="/arbitman_add_check/show_industry?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>行业</span></a></li>
+        <li><a href="/arbitman_add_check/show_resume?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>简历</span></a></li>
+        <li><a href="/arbitman_add_check/show_language?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>语种</span></a></li>
+        <li><a href="/arbitman_add_check/show_att?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>个人附件</span></a></li>
+      </ul>
+    </div>
+    <%if @res.status == "1" && @res.dataset.size != "0" && @res.dataset.get_data(0,"status_a")=="0"%>
+      <caption>
+        <%= link_to "返回" ,:action => "list"%>
+      </caption>
+      <br/>
+      <br/>
+      <%=button_to "仲裁员信息同步", {:action => "create", :arbitman_code => params[:arbitman_code]},:confirm=>"您确认要创建该仲裁员吗？",:method=>"post" %>
+      <div style="color:red"><%=flash[:notice]%></div>
+    <%end%>
+    <br/>
+      
+      <%if @res.status == "1" && @res.dataset.size != "0"%>
+      
+        <%if @res.status == "1" && @res.dataset.size != "0" && @res.dataset.get_data(0,"status_a")=="0"%>
+          <form action="/arbitman_add_check/update_arb"  onsubmit="return check('');" >
+          <div align="center">
+            <input type="hidden" name="id" value="<%=@res.dataset.get_data(0,"id")%>"/>
+            <input type="hidden" name="arbitman_code" value="<%=params[:arbitman_code]%>"/>
+            <input type="hidden" id="test" value="0"/>
+            <input type="button" value="检测" onclick="check('1');"/>
+            <%=submit_tag "保存" %>
+          </div>
+        <%end%>
+        <table class="list">
+          <tr>
+            <th nowrap>仲裁员编号:</th>
+            <td colspan="3"><%=h @res.dataset.get_data(0,"code")%></td>
+          </tr>
+          <tr>
+            <th nowrap><i>*</i>姓名（系统内唯一):</th>
+            <td colspan="3"><input type="text" id="name" name="name" value="<%=h @res.dataset.get_data(0,"name")%>"/></td>
+          </tr>
+          <tr>
+            <th nowrap><i>*</i>手机:</th>
+            <td colspan="3"><input type="text" id="mobiletel" name="mobiletel" value="<%=h @res.dataset.get_data(0,"mobiletel")%>"/></td>
+          </tr>
+          <tr>
+            <th nowrap><i>*</i>email:</th>
+            <td colspan="3"><input type="text" id="email" name="email" value="<%=h @res.dataset.get_data(0,"email")%>"/></td>
+          </tr>
+          <tr>
+            <th nowrap>姓名(身份证):</th>
+            <td colspan="3"><%=h @res.dataset.get_data(0,"name_idcard")%></td>
+          </tr>
+          <tr>
+            <th nowrap>性别:</th>
+            <td><%=h @res.dataset.get_data(0,"sex")%></td>
+            <th nowrap>民族:</th>
+            <%@a = TbDictionary.find_by_typ_code_and_data_val('9003',@res.dataset.get_data(0,"nation"))%>
+            <td><%=@a.data_text  if @a%></td>
+            
+          </tr>
+          <tr>
+            <th nowrap>申请身份:</th>
+            <td><%=h @identity[@res.dataset.get_data(0,"identity")]%></td>
+            <th nowrap>英文姓名(身份证):</th>
+            <td><%=h @res.dataset.get_data(0,"name_idcard_en")%></td>
+            
+          </tr>
+          <tr>
+            <th nowrap>英文名字(身份证):</th>
+            <td><%=h @res.dataset.get_data(0,"first_name_en")%></td>
+            <th nowrap>英文姓氏(身份证):</th>
+            <td><%=h @res.dataset.get_data(0,"surname_en")%></td>
+          </tr>
+          <tr>
+            <th nowrap>出生日期:</th>
+            <td><%=h @res.dataset.get_data(0,"birthday")%></td>
+            <th nowrap>政治面貌:</th>
+            <td><%=h @res.dataset.get_data(0,"polityvisage")%></td>
+          </tr>
+          <tr>
+            <th nowrap>称呼:</th>
+            <td><%=h @res.dataset.get_data(0,"salutation")%></td>
+            <th nowrap>单位:</th>
+            <td><%=h @res.dataset.get_data(0,"company")%></td>
+          </tr>
+          <tr>
+            <th nowrap>国籍(中文):</th>
+            <td><%=h @res.dataset.get_data(0,"country")%></td>
+            <th>所在地(中文):</th>
+            <td>
+              <%=h @res.dataset.get_data(0,"city")%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>国籍(英文):</th>
+            <td><%=h @res.dataset.get_data(0,"country_en")%></td>
+            <th>所在地(英文):</th>
+            <td>
+              <%=h @res.dataset.get_data(0,"city_en")%>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>工作状况:</th>
+            <td><%={"1" => "在职", "0" => "非在职"}[@res.dataset.get_data(0,"work1")]%></td>
+            <th></th>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <th nowrap>职业分类:</th>
+            <%@a = TbDictionary.find_by_typ_code_and_data_val('9002',@res.dataset.get_data(0,"zy"))%>
+            <td><%=@a.data_text  if @a%></td>
+            <th nowrap>身份证号:</th>
+            <td><%=h @res.dataset.get_data(0,"id_card")%></td>
+          </tr>
+          <tr>
+            <th nowrap>单位电话:</th>
+            <td><%=h @res.dataset.get_data(0,"telo")%></td>
+            <th nowrap></th>
+            <td></td>
+          </tr>
+          <tr>
+            <th nowrap>家庭电话:</th>
+            <td><%=h @res.dataset.get_data(0,"telh")%></td>
+            <th nowrap>传真:</th>
+            <td><%=h @res.dataset.get_data(0,"fax")%></td>
+          </tr>
+          <tr>
+            <th nowrap>身份类型:</th>
+            <%@a = TbDictionary.find_by_typ_code_and_data_val('9004',@res.dataset.get_data(0,"standing"))%>
+            <td><%=@a.data_text  if @a%></td>
+            <th nowrap></th>
+            <td></td>
+          </tr>
+          <tr>
+            <th nowrap>单位类型:</th>
+            <%@a = TbDictionary.find_by_typ_code_and_data_val('9005',@res.dataset.get_data(0,"comtype"))%>
+            <td><%=@a.data_text  if @a%></td>
+            <th nowrap>有无高职:</th>
+            <td><%={"1" => "有","0" => "无" }[@res.dataset.get_data(0,"hightitle")]%></td>
+          </tr>
+          <tr>
+            <th nowrap>通讯地址:</th>
+            <td><%=h @res.dataset.get_data(0,"addr")%></td>
+            <th nowrap>兼职情况:</th>
+            <td><%={"h" => "在本会兼职","w" => "在其他会兼职" }[@res.dataset.get_data(0,"secjob")]%></td>
+          </tr>
+          <tr>
+            <th nowrap>邮政编码:</th>
+            <td><%=h @res.dataset.get_data(0,"postcode")%></td>
+            <th nowrap>职称:</th>
+            <td><%=h @res.dataset.get_data(0,"lawyerdate")%></td>
+          </tr>
+          <tr>
+            <th nowrap>推荐人:</th>
+            <td><%=h @res.dataset.get_data(0,"lawyernum")%></td>
+            <th nowrap>职务:</th>
+            <td><%=h @res.dataset.get_data(0,"title")%></td>
+          </tr>
+          <tr>
+            <th nowrap></th>
+            <td></td>
+            <th nowrap>参加工作时间:</th>
+            <td><%=h @res.dataset.get_data(0,"jobstart")%></td>
+          </tr>
+          <tr>
+           <th nowrap>工作意愿:</th>
+            <td><%=h @res.dataset.get_data(0,"jobwant") %></td>
+            <th nowrap>能否处理涉外案件 :</th>
+            <td><%= {"1"=>"能","0"=>"不能"}[@res.dataset.get_data(0,"doforeign")] %></td>
+          </tr>
+          <tr>
+            <th colspan="2"><div align="right">两年内担任法律顾问的企业名称:</div></th>
+            <td colspan="2"><%=h @res.dataset.get_data(0,"advisorycompany")%></td>
+          </tr>
+          <tr>
+            <th colspan="2"><div align="right">主要业务成果:</div></th>
+            <td colspan="2"><%=h @res.dataset.get_data(0,"outstanding")%></td>
+          </tr>
+          <tr>
+            <th colspan="2"><div align="right">发表的学术成果:</div></th>
+            <td colspan="2"><%=h @res.dataset.get_data(0,"fruit")%></td>
+          </tr>
+          <tr>
+            <th colspan="2"><div align="right">工作经历:</div></th>
+            <td colspan="2"><%=h @res.dataset.get_data(0,"workhistory")%></td>
+          </tr>
+          <tr>
+            <th colspan="2"><div align="right">社会团体兼职情况:</div></th>
+            <td colspan="2"><%=h @res.dataset.get_data(0,"parttime")%></td>
+          </tr>
+          <tr>
+            <th colspan="2"><div align="right">在其它机构办案情况:</div></th>
+            <td colspan="2"><%=h @res.dataset.get_data(0,"other_org_handling")%></td>
+          </tr>
+          <tr>
+            <th colspan="2"><div align="right">专长(中文):</div></th>
+            <td colspan="2"><%=h @res.dataset.get_data(0,"special")%></td>
+          </tr>
+          <tr>
+            <th colspan="2"><div align="right">专长(英文):</div></th>
+            <td colspan="2"><%=h @res.dataset.get_data(0,"special_en")%></td>
+          </tr>
+          <tr>
+            <th colspan="2"><div align="right">备注:</div></th>
+            <td colspan="2"><%=h @res.dataset.get_data(0,"remark")%></td>
+          </tr>
+        </table>
+        <%if @res.status == "1" && @res.dataset.size != "0" && @res.dataset.get_data(0,"status_a")=="0"%>
+            </from>
+        <%end%>
+      <%end%>
+  </body>
+</html>

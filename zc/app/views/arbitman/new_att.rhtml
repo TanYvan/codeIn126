@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>添加附件信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">添加附件信息</span></div>
+     <br/>
+     <div align="center">
+     <%=link_to "返回", :controller => "arbitman", :action=>"list_att", :id => params[:id]%>
+     </div>
+      <%form_tag "/arbitman/create_att" ,:multipart => true do %>
+        <input type="hidden" name="id" value=<%=params[:id] %> />
+        <table class="list">
+        <tr>
+        <th>附件类型：</th>
+        <%op=TbDictionary.find(:all,:conditions=>"typ_code='9101' and state='Y'",:order=>'ind,data_val',:select=>"data_val,data_text").collect{|p|[p.data_text,p.data_val]}%>
+        <td><%=select_tag :category,options_for_select(op)%></td>
+        </tr>
+        <tr>
+        <th>附件文件：</th>
+        <td><%=file_field_tag('file',:size=>35)%></td>
+        </tr>
+        <tr>
+        <th>备注：</th>
+        <td><%=text_field_tag('remark')%></td>
+        </tr>
+        </table>
+        <div align="center">
+        <%=submit_tag "上传" %>
+        </div>
+      <%end%>
+  </body>
+</html>

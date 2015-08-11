@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>上传文件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">上传文件</span></div>
+    <br>   
+    <div align="center"> 
+        <%=link_to "返回", :action => "backout_and_unrun"%>
+    </div>    
+    <table class="list">
+          <tr>
+            <th>法院裁定文件上传:</th>
+            <td><%=form_tag({:action => "upload_file"}, :multipart => true)%>
+                <%=file_field("file","file")%>
+                <%=submit_tag '上传'%>
+            </td>
+          </tr>      
+    </table>
+  </body>
+</html>

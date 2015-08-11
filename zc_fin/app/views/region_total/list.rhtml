@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>当事人国别统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script type="text/javascript" src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">当事人国别统计</span></div>
+    <div align="center">
+      <%form_tag ({:action=>"list"})  do %>
+          <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+        <input type="button" value="导出excel文档" onclick=to_excel(document.getElementById("to_excel_h")); />
+    <%end %>
+    </div>
+    <%if @re!=nil%>
+    <br/>
+      <table  cellspacing="1" class="list">
+        <tr>
+          <th style=" text-align:  left">
+            地区名称
+          </th>
+          <th style=" text-align:  right">
+            当事人数量
+          </th>
+        </tr>
+        <%for re in @re%>
+          <tr >
+            <td>
+              <%=re.name%>
+            </td>
+            <td>
+              <%=link_to "#{re.c}",{:action=>"list_a",:code=>re.code,:d1=>@d1,:d2=>@d2,:nn=>re.c,:style=>"text-decoration: none;"},:target=>"_black"%>
+            </td>
+          </tr>
+        <%end%>
+      </table>
+    <table id="to_excel_h"  cellspacing="1" class="list" style=" display:  none">
+        <tr>
+          <th style=" text-align:  left">
+            地区名称
+          </th>
+          <th style=" text-align:  right">
+            当事人数量
+          </th>
+        </tr>
+        <%for re in @re%>
+          <tr >
+            <td>
+              <%=re.name%>
+            </td>
+            <td>
+              <%=re.c%>
+            </td>
+          </tr>
+        <%end%>
+      </table>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,185 @@
+<br/>
+争议金额标的总额（￥）：<%=SysArg.compart2(@amount_count) %><br/><hr size="5" color="#99CCFF" noshade/><br/>
+争议类型统计：<br/><br/>
+<table  width="80%"  class="list">
+  <tr bgcolor="#E6F5FF">
+    <th style="width:50%"><div align="center">案件类型大分类</div></th>
+    <th style="width:20%"><div align="center">数量</div></th>
+    <th style="width:30%"><div align="center">百分数(%)</div></th>
+  </tr>
+  <%if @basecensus1!=nil%>
+    <%for p in @basecensus1%>
+      <tr>
+        <td>
+          <div align="center">
+            <%dat=TbDictionary.find(:first,:conditions=>"typ_code='0002' and data_val='#{p.casetype_num}' and data_parent='' and state='Y'")%>
+            <%if dat!=nil%>
+              <%=dat.data_text%>
+            <%end%>
+          </div>
+        </td>
+        <td><div align="center"><%=p.num%></div></td>
+        <td><div align="center">
+            <%if @total1!=nil%>
+              <%=(p.num.to_f*10000/@total1.t1.to_f).round/100.0%>%
+            <%end%>
+          </div></td>
+      </tr>
+    <%end%>
+  <%end%>
+</table>
+<br/>
+<table width="80%"  class="list">
+  <tr bgcolor="#E6F5FF">
+    <th style="width:50%"><div align="center">案件类型小分类</div></th>
+    <th style="width:20%"><div align="center">数量</div></th>
+    <th style="width:30%"><div align="center">百分数(%)</div></th>
+  </tr>
+  <%if @basecensus2!=nil%>
+    <%for p2 in @basecensus2%>
+      <tr>
+        <td>
+          <div align="center">
+            <% ty = TbDictionary.find(:first,:conditions=>"typ_code='0002' and data_val='#{p2.casetype_num2}' and data_parent!='' and state='Y'") %>
+            <%=ty.data_text if !ty.blank?%>
+          </div>
+        </td>
+        <td><div align="center"><%=p2.num2%></div></td>
+        <td>
+          <div align="center">
+            <%if @total2!=nil%>
+              <%=(p2.num2.to_f*10000/@total2.t2.to_f).round/100.00 %>%
+            <%end%>
+          </div>
+        </td>
+      </tr>
+    <%end%>
+  <%end%>
+</table>
+<br/><hr size="5" color="#99CCFF" noshade/><br/>
+当事人地区统计：<br/>
+<%if @re1 != nil%>
+<br/>
+  <table width="80%" class="list">
+    <tr>
+      <th style="width:50%"><div align="center">地区名称</div></th>
+      <th style="width:50%"><div align="center">当事人数量</div></th>
+    </tr>
+    <%for re in @re1 %>
+      <tr>
+        <%  na = Region.find_by_code(re.area)%>
+        <td><div align="center"><%=na.name if !na.blank?%></div></td>
+        <td><div align="center"><%=re.c %></div></td>
+      </tr>
+    <%end%>
+    <tr align="center">
+      <td><div align="center">合计</div></td>
+      <td><div align="center"><%=@re1.sum{|r| r.c.to_i}%></div></td>
+    </tr>
+  </table>
+<%end%><br/><hr size="5" color="#99CCFF" noshade/><br/>
+当事人行业统计：<br/><br/>
+<% @profession  = TbDictionary.find(:all,:conditions=>"typ_code='9019' and state='Y' and used='Y' and data_parent=''",:order=>'data_val',:select=>"data_val,data_text") %>
+<table width="80%" class="list">
+  <tr>
+    <th style="width:50%"><div align="center">行业名称</div></th>
+    <th style="width:50%"><div align="center">当事人数量</div></th>
+  </tr>
+  <% for p in @profession %>
+  <tr>
+    <td><div align="center"><%= p.data_text %></div></td>
+    <% party = TbParty.count(:all,:conditions => "used='Y' and recevice_code in (#{@rc.chop}) and profession = '#{p.data_val}' " ) %>
+    <td><div align="center"><%= party   %></div></td>
+  </tr>
+    <% subprofession = TbDictionary.find(:all,:conditions=>"typ_code='9019' and state='Y' and used='Y' and data_parent='#{p.data_val}'",:order=>'data_val',:select=>"data_val,data_text") %>
+    <% for sp in subprofession %>
+    <tr>
+      <td><%= sp.data_text %></td>
+      <% party = TbParty.count(:all,:conditions => "used='Y' and recevice_code in (#{@rc.chop}) and subprofession = '#{sp.data_val}' " ) %>
+      <td><%=party  %></td>
+    </tr>
+    <% end %>
+  <% end %>
+</table>
+<br/><hr size="5" color="#99CCFF" noshade/><br/>
+仲裁条款情况：<br/><br/>
+  <%if @type!=nil %>
+  <table width="80%" class="list">
+    <tr>
+      <th style="width:50%"><div align="center">名称</div></th>
+      <th style="width:50%"><div align="center">案件数量</div></th>
+    </tr>
+      <%m=0%>
+      <%for t in @type%>
+        <tr>
+          <td >
+            <div align="center"><%=t.data_text%></div>
+          </td>
+          <td nowrap>
+            <% k = TbCase.count(:conditions=>" recevice_code in (#{@rc.chop}) and agent='#{t.data_val}'")
+                m = m+k
+          %>
+            <div align="center"><%=k  %></div>
+          </td>
+        </tr>
+      <%end%>
+      <tr>
+        <td><div align="center">合计</div></td>
+        <td nowrap><div align="center"><%=m %></div></td>
+      </tr>
+    </table>
+  <%end%>
+
+
+<br/><hr size="5" color="#99CCFF" noshade/><br/>
+涉外案件、国内案件数量：<br/><br/>
+ <table width="80%" class="list">
+  <tr>
+    <th style="width:50%"><div align="center">案件类型</div></th>
+    <th style="width:50%"><div align="center">案件数量</div></th>
+  </tr>
+  <tr>
+    <td><div align="center">涉外案件</div></td>
+    <td nowrap><div align="center"><%=@case_count1  %></div></td>
+  </tr>
+  <tr>
+    <td><div align="center">国内案件</div></td>
+    <td nowrap><div align="center"><%=@case_count2  %></div></td>
+  </tr>
+  <tr>
+    <td><div align="center">合计</div></td>
+    <td nowrap><div align="center"><%=@case_count1+@case_count2 %></div></td>
+  </tr>
+</table>
+
+<br/><hr size="5" color="#99CCFF" noshade/><br/>
+代（申）、代（被）情况：<br/><br/>
+<table width="80%" class="list">
+  <tr>
+    <th style="width:50%"><div align="center">代理人名称（申）</div></th>
+    <th style="width:50%"><div align="center">在本次查询案件中出现次数</div></th>
+  </tr>
+  <% for a in @agent1 %>
+  <tr>
+    <td><div align="center"><%= a.name %></div></td>
+    <td nowrap>
+      <div align="center"><%= TbAgent.count(:conditions => "recevice_code in (#{@rc.chop})  and used = 'Y' and partytype='1' and name='#{a.name}' ") %></div>
+    </td>
+  </tr>
+  <% end %>
+</table>
+<br/>
+<table width="80%" class="list">
+  <tr>
+    <th style="width:50%"><div align="center">代理人名称（被）</div></th>
+    <th style="width:50%"><div align="center">在本次查询案件中出现次数</div></th>
+  </tr>
+  <% for a in @agent2 %>
+  <tr>
+    <td><div align="center"><%= a.name %></div></td>
+    <td nowrap>
+      <div align="center"><%= TbAgent.count(:conditions => "recevice_code in (#{@rc.chop})  and used = 'Y' and partytype='2' and name='#{a.name}' ") %></div>
+    </td>
+  </tr>
+  <% end %>
+</table>

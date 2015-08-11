@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>欠费案件信息列表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">欠费案件信息列表</span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            <%if @order=="case_code desc"%>
+              <%=link_to '立案号↑',:action=>"list",:order=>"case_code asc",:search_condit=>@search_condit%>
+            <%elsif @order=="case_code asc"%>
+              <%=link_to '立案号↓',:action=>"list",:order=>"case_code desc",:search_condit=>@search_condit%>
+            <%else%>
+              <%=link_to '立案号',:action=>"list",:order=>"case_code asc",:search_condit=>@search_condit%>
+            <%end%>
+          <th nowrap>
+            <%if @order=="recevice_code desc"%>
+              <%=link_to '咨询流水号↑',:action=>"list",:order=>"recevice_code asc",:search_condit=>@search_condit%>
+            <%elsif @order=="recevice_code asc"%>
+              <%=link_to '咨询流水号↓',:action=>"list",:order=>"recevice_code desc",:search_condit=>@search_condit%>
+            <%else%>
+              <%=link_to '咨询流水号',:action=>"list",:order=>"recevice_code asc",:search_condit=>@search_condit%>
+            <%end%>
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+          <th nowrap>
+            <%if @order=="clerk desc"%>
+              <%=link_to '办案助理↑',:action=>"list",:order=>"clerk asc",:search_condit=>@search_condit%>
+            <%elsif @order=="clerk asc"%>
+              <%=link_to '办案助理↓',:action=>"list",:order=>"clerk desc",:search_condit=>@search_condit%>
+            <%else%>
+              <%=link_to '办案助理',:action=>"list",:order=>"clerk asc",:search_condit=>@search_condit%>
+            <%end%>
+          </th>
+          <th nowrap>
+            应收
+          </th>
+          <th nowrap>
+            减收
+          </th>
+          <th nowrap>
+            已收
+          </th>
+          <th nowrap>
+            欠交
+          </th>
+          <th nowrap>
+            应退
+          </th>
+          <th nowrap>
+            减退
+          </th>
+          <th nowrap>
+            已退
+          </th>
+          <th nowrap>
+            欠交
+          </th>
+          <th nowrap>
+            明细查看
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @case%>
+          <%sc=TbShouldCharge.sum("rmb_money - redu_rmb_money - re_rmb_money",:conditions=>"used='Y' and typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and recevice_code='#{c.recevice_code}'")%>
+          <%sr=TbShouldRefund.sum("rmb_money - redu_rmb_money - re_rmb_money",:conditions=>"used='Y' and typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and state<>3 and recevice_code='#{c.recevice_code}'")%>
+          <%if sc==nil%>
+            <%sc=0%>
+          <%end%>
+          <%if sr==nil%>
+            <%sr=0%>
+          <%end%>
+          <%if sc!=0 or sr!=0%> 
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%=c.case_code%><br/>
+              sc=<%=sc%>
+              sr=<%=sr%>
+            </td>
+            <td>
+              <%=c.recevice_code%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%if c.clerk==nil or c.clerk==""%>
+               
+              <%else%>
+                <%=User.find_by_code(c.clerk).name%>
+              <%end%>
+            </td>
+            <td>
+              <%sc_1=TbShouldCharge.sum("rmb_money",:conditions=>"used='Y' and typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and recevice_code='#{c.recevice_code}'")%>
+              <%if sc_1==nil%>
+                <%sc_1=0%>
+              <%end%>
+              <%=sc_1%>
+            </td>
+            <td>
+              <%sc_2=TbShouldCharge.sum("redu_rmb_money",:conditions=>"used='Y' and typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and recevice_code='#{c.recevice_code}'")%>
+              <%if sc_2==nil%>
+                <%sc_2=0%>
+              <%end%>
+              <%=sc_2%>
+            </td>
+            <td>
+              <%sc_3=TbShouldCharge.sum("re_rmb_money",:conditions=>"used='Y' and typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and recevice_code='#{c.recevice_code}'")%>
+              <%if sc_3==nil%>
+                <%sc_3=0%>
+              <%end%>
+              <%=sc_3%>
+            </td>
+            <td>
+              <%=sc%>
+            </td>
+            <td>
+              <%sr_1=TbShouldRefund.sum("rmb_money",:conditions=>"used='Y' and typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and state<>3 and recevice_code='#{c.recevice_code}'")%>
+              <%if sr_1==nil%>
+                <%sr_1=0%>
+              <%end%>
+              <%=sr_1%>
+            </td>
+            <td>
+              <%sr_2=TbShouldRefund.sum("redu_rmb_money",:conditions=>"used='Y' and typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and state<>3 and recevice_code='#{c.recevice_code}'")%>
+              <%if sr_2==nil%>
+                <%sr_2=0%>
+              <%end%>
+              <%=sr_2%>
+            </td>
+            <td>
+              <%sr_3=TbShouldRefund.sum("re_rmb_money",:conditions=>"used='Y' and typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and state<>3 and recevice_code='#{c.recevice_code}'")%>
+              <%if sr_3==nil%>
+                <%sr_3=0%>
+              <%end%>
+              <%=sr_3%>
+            </td>
+            <td>
+              <%=sr%>
+            </td>
+            <td>
+              <%=link_to "查看",:action=>"detail",:recevice_code=>c.recevice_code%>
+            </td>
+          </tr>
+          <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

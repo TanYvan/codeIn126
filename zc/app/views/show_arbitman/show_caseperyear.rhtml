@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员一年内可办理案件数</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">仲裁员一年内可办理案件数</span></div>
+    <br>
+      <div align="center">
+    <%=link_to "返回",:action=> "show_arbitman", :id => @tb_arbitman.id%></div>
+        <table class="list">
+          <tr>
+            <th>仲裁员一年内可办理案件数：</th>
+            <td><%=@tb_arbitman.caseperyearmin%>至<%=@tb_arbitman.caseperyearmax%></td>
+          </tr>        
+        </table>
+  </body>
+</html>

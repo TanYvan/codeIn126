@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>已接收档案</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <table><tr><td>
+          <div class="title"><span class="cBlue">已接收档案</span></div>
+          <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+          <div style="color:red"><%=flash[:notice]%></div>
+          <div align="left">记录数:<%=@count%></div>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr >
+                <th nowrap>回退</th>
+                <th nowrap>
+                  <%if @order=="right(tb_cases_case_code,7) desc"%>
+                    <%=link_to '立案号↑',:action=>"list",:order=>"right(tb_cases_case_code,7) asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                  <%elsif @order=="right(tb_cases_case_code,7) asc"%>
+                    <%=link_to '立案号↓',:action=>"list",:order=>"right(tb_cases_case_code,7) desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                  <%else%>
+                    <%=link_to '立案号',:action=>"list",:order=>"right(tb_cases_case_code,7) asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                  <%end%>
+                </th>
+                <th nowrap>
+                  <%if @order=="tb_cases_general_code desc"%>
+                    <%=link_to '总案号↑',:action=>"list",:order=>"tb_cases_general_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                  <%elsif @order=="tb_cases_general_code asc"%>
+                    <%=link_to '总案号↓',:action=>"list",:order=>"tb_cases_general_code desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                  <%else%>
+                    <%=link_to '总案号',:action=>"list",:order=>"tb_cases_general_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                  <%end%>
+                </th>
+                <th nowrap>
+                  结案日期
+                </th>
+                <th nowrap>
+                  <%if @order=="tb_cases_end_code desc"%>
+                    <%=link_to '结案号↑',:action=>"list",:order=>"tb_cases_end_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                  <%elsif @order=="tb_cases_end_code asc"%>
+                    <%=link_to '结案号↓',:action=>"list",:order=>"tb_cases_end_code desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                  <%else%>
+                    <%=link_to '结案号',:action=>"list",:order=>"tb_cases_end_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+                  <%end%>
+                </th>
+                <th nowrap>
+                  归档
+                </th>
+                <th nowrap>
+                  申请人
+                </th>
+                <th nowrap>
+                  被申请人
+                </th>
+                <th nowrap>
+                  提交人
+                </th>
+                <th>
+                  提交日期
+                </th>
+                <th nowrap>
+                  接收人
+                </th>
+                <th nowrap>
+                  接收时间
+                </th>
+                <th nowrap>
+                  备注
+                </th>
+                <th>
+                  正卷数
+                </th>
+                <th>
+                  副卷数
+                </th>
+                <th>
+                  光盘数
+                </th>
+                <th>
+                  结案方式
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for c in @case%>
+                <tr class="row<%=i % 2%>">
+                  <td nowrap="nowrap"><%=button_to "退回",{:action=>"back_up",:recevice_code=>c.tb_cases_recevice_code},:confirm=>"您确认要退回吗？"%></td>
+                  <td nowrap>
+                    <%=h c.tb_cases_case_code%>
+                  </td>
+                  <td>
+                    <%=h c.tb_cases_general_code%>
+                  </td>
+                  <td nowrap>
+                    <%endbook=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",c.tb_cases_recevice_code],:order=>"id desc")%>
+                    <%if endbook!=nil%>
+                      <%=endbook.decideDate%>
+                    <%end%>
+                  </td>
+                  <td>
+                    <%=h c.tb_cases_end_code%>
+                  </td>
+                  <td>
+                    <%=button_to "归档",{:action=>"submit_do",:id=>c.tb_cases_id},:confirm=>"您确认要归档吗？"%>
+                  </td>
+                  <td>
+                    <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.tb_cases_recevice_code}'",:order=>"id")%>
+                    <%ttpp=''%>
+                    <%for tp in @tp%>
+                      <%ttpp=ttpp + tp.partyname + " <br>" %>
+                    <%end%>
+                    <%if ttpp!=''%>
+                      <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                    <%end%>
+                    <%=ttpp%>
+                  </td>
+                  <td>
+                    <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.tb_cases_recevice_code}'",:order=>"id")%>
+                    <%ttpp=''%>
+                    <%for tp in @tp%>
+                      <%ttpp=ttpp + tp.partyname + " <br>" %>
+                    <%end%>
+                    <%if ttpp!=''%>
+                      <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                    <%end%>
+                    <%=ttpp%>
+                  </td>
+                  <%c_case=TbCase.find_by_recevice_code(c.tb_cases_recevice_code)%>
+                  <td>
+                    <%if c_case.file_submit_u!=nil and c_case.file_submit_u!=''%>
+                      <%=User.find_by_code(c_case.file_submit_u).name%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%if c_case.file_submit_t!=nil%>
+                      <%=c_case.file_submit_t.to_date%>
+                    <%end%>
+                  </td>
+                  <td>
+                    <%if c_case.file_receive_u!=nil and c_case.file_receive_u!=''%>
+                      <%=User.find_by_code(c_case.file_receive_u).name%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%if c_case.file_receive_t!=nil%>
+                      <%=c_case.file_receive_t.to_date%>
+                    <%end%>
+                  </td>
+                  <td>
+                    <%=c_case.file_submit_remark%>
+                  </td>
+                  <td>
+                    <%=c.tb_cases_file_num_1%>
+                  </td>
+                  <td>
+                    <%=c.tb_cases_file_num_2%>
+                  </td>
+                  <td>
+                    <%=c.tb_cases_file_num_3%>
+                  </td>
+                  <td nowrap>
+                    <%if c.tb_cases_file_typ!=nil%>
+                      <%=TbDictionary.find(:first,:conditions=>"typ_code='0047'  and  data_val='#{c.tb_cases_file_typ}'").data_text%>
+                    <%end%>
+                  </td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+
+            <tfoot>
+              <tr>
+                <td colspan="16" align="right">
+                  <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  } if @case_pages.current.previous %>
+                  <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  }})%>
+                  <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  } if @case_pages.current.next %>
+
+                  <%if @case_pages.current.previous or @case_pages.current.next%>
+                    <form action="/filing_receive/list" method="get" onsubmit="return page_check('page_lines','page');">
+                      每页<input type=text id='page_lines' name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                      <input type=text id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+                      <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                      页
+                      <input type=hidden name='order' value="<%=@order%>" />
+                      <input type=hidden name='contr_r' value="<%=params[:contr_r]%>" />
+                      <input type=hidden name='act_r' value="<%=params[:act_r]%>" />
+                      <input type='submit' value='确定' />
+                    </form>
+                  <%end%>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </td></tr></table>
+
+  </body>
+</html>

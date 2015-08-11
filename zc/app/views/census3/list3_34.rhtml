@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>立结审案件数统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">立结审案件数统计</span></div>
+    <%form_tag :url=>{:action=>"list3_34"} do%>
+      <table align="center">
+        <tr><td nowrap align="riht">
+            统计时间段:</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:da1,@da1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('da1'),'yyyy-MM-dd')" />
+            -
+            <%=text_field_tag(:da2,@da2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('da2'),'yyyy-MM-dd')" />
+          </td>
+        </tr>
+      </table>
+      <%=submit_tag "查询" %>
+    <%end%>
+    <br/>
+    <i><%=flash[:notice]%></i>
+    <table class="list">
+      <tr>
+        <td >&nbsp;</td>
+        <td >&nbsp;</td>
+        <th>数量</th>
+        <th>总争议金额(￥)</th>
+        <th>收费合计(￥)</th>
+      </tr>
+      <tr>
+        <th  colspan="2">立案</th>
+        <td ><%if @c1.to_i!=0%><%=link_to "#{@c1}",{:action=>"list34_a",:da1=>@da1,:da2=>@da2,:k=>1},:target=>"_blank" %><%end%></td>
+        <td ><%=SysArg.compart2(@c2) %></td>
+        <td ><%=SysArg.compart2(@c3) %></td>
+      </tr>
+      <tr>
+        <th  rowspan="4">结案</th>
+        <th>裁决</th>
+        <td><%if @d1.to_i!=0%><%=link_to "#{@d1}",{:action=>"list34_a",:da1=>@da1,:da2=>@da2,:k=>2},:target=>"_black" %><%end%></td>
+        <td><%=SysArg.compart2(@d2) %></td>
+        <td><%=SysArg.compart2(@d3) %></td>
+      </tr>
+      <tr>
+        <th>和裁</th>
+        <td><%if @e1.to_i!=0%><%=link_to "#{@e1}",{:action=>"list34_a",:da1=>@da1,:da2=>@da2,:k=>3},:target=>"_black" %><%end%></td>
+        <td><%=SysArg.compart2(@e2) %></td>
+        <td><%=SysArg.compart2(@e3) %></td>
+      </tr>
+      <tr>
+        <th>撤案</th>
+        <td><%if @f1.to_i!=0%><%=link_to "#{@f1}",{:action=>"list34_a",:da1=>@da1,:da2=>@da2,:k=>4},:target=>"_black" %><%end%></td>
+        <td><%=SysArg.compart2(@f2) %></td>
+        <td><%=SysArg.compart2(@f3) %></td>
+      </tr>
+      <tr>
+        <th>小计</th>
+        <td><%=@d1 + @e1 + @f1 %></td>
+        <td><%=SysArg.compart2(@e2.to_i + @f2.to_i + @d2.to_i) %></td>
+        <td><%=SysArg.compart2(@e3.to_i + @f3.to_i + @d3.to_i) %></td>
+      </tr>
+      <tr>
+        <th rowspan="4">在办案件</th>
+        <th>未组庭</th>
+        <td><%if @m1.to_i!=0%><%=link_to "#{@m1}",{:action=>"list34_a",:da1=>@da1,:da2=>@da2,:k=>5},:target=>"_black" %><%end%></td>
+        <td><%=SysArg.compart2(@m2)%></td>
+        <td><%=SysArg.compart2(@m3)%></td>
+      </tr>
+      <tr>
+        <th>已组庭未开庭</th>
+        <td><%if @n1.to_i!=0%><%=link_to "#{@n1}",{:action=>"list34_a",:da1=>@da1,:da2=>@da2,:k=>6},:target=>"_black" %><%end%></td>
+        <td><%=SysArg.compart2(@n2)%></td>
+        <td><%=SysArg.compart2(@n3)%></td>
+      </tr>
+      <tr>
+        <th>已开庭</th>
+        <td><%if @q1.to_i!=0%><%=link_to "#{@q1}",{:action=>"list34_a",:da1=>@da1,:da2=>@da2,:k=>7},:target=>"_black" %><%end%></td>
+        <td><%=SysArg.compart2(@q2)%></td>
+        <td><%=SysArg.compart2(@q3)%></td>
+      </tr>
+      <tr>
+        <th>小计</th>
+        <td><%=@m1 + @n1 + @q1 %></td>
+        <td><%=SysArg.compart2(@n2.to_i + @q2.to_i + @m2.to_i) %></td>
+        <td><%=SysArg.compart2(@n3.to_i + @q3.to_i + @m3.to_i) %></td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员个人信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script language='JavaScript'>
+      function check() {
+        if (document.getElementById("che").value=='t')
+        {
+          document.getElementById("che").value='f';
+          document.getElementById("tb_arbitman_code").style.display="";
+          document.getElementById("tb_arbitman_code").value="";
+        }
+        else
+        {
+          document.getElementById("che").value='t';
+          document.getElementById("tb_arbitman_code").value="";
+          document.getElementById("tb_arbitman_code").style.display="none";
+        }
+      }
+      function aa(){
+        a=window.showModalDialog('/region_select/tree',"","dialogWidth=350px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          document.getElementById("tb_arbitman_area_code").value=a
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">添加仲裁员</span></div>
+    <br>
+    <div align="center">
+      <%= link_to "返回" ,:action => "list_arbitman" %>&nbsp;&nbsp;&nbsp;
+      (请注意：带<i>*</i>为必填项)
+      <%= error_messages_for 'tb_arbitman' %>
+    </div>
+    <%form_for :tb_arbitman ,:url=>{:action=>"create_arbitman"},:html=>{:onsubmit=>"return check_2();"} do |f| %>
+      <table class="list">
+        <tr>
+          <th><i>*</i>仲裁员编号:</th>
+          <td><%=f.text_field(:code,:size=>20,:style=>"display:none")%>
+            <input type='checkbox'   id='che' name='che' value='t'  onclick="check()" checked/>系统自动生成
+            <div style="color:red"><%=error_message_on(:tb_arbitman,:code)%></div>
+          </td>
+          <th>姓名拼音缩写:</th>
+          <td><%=f.text_field :spell%></td>
+        </tr>
+        <tr> <th>曾用名:</th>
+          <td><%=f.text_field :evername%></td>
+
+          <th><i>*</i>姓名:</th>
+          <td><%=f.text_field :name%>
+            <div style="color:red"><%=error_message_on(:tb_arbitman,:name)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>性别:</th>
+          <td><%=f.select :sex,[['男','男'],['女','女']]%></td>
+          <th>出生日期:</th>
+          <td><%=f.text_field :birthday,:readonly=>"true"%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('tb_arbitman_birthday'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th>所属年度:</th>
+          <td><%=f.text_field :yearbelong%></td>
+          <th>民族:</th>
+          <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9003 and state ='Y'"], :order => "data_val", :select => "data_val,data_text") %>
+          <td><%=f.collection_select(:nation, @types, :data_val, :data_text)%></td>
+        </tr>
+        <tr>
+          <th>政治面貌:</th>
+          <td><%=f.text_field :polityvisage%></td>
+          <th>称呼:</th>
+          <td><%=f.text_field :salutation%></td>
+        </tr>
+        <tr>
+          <th>单位:</th>
+          <td><%=f.text_field :company%></td>
+          <th>国籍:</th>
+          <td><%=f.text_field :country%></td>
+        </tr>
+        <tr>
+          <th>地区:</th>
+          <td>
+          <%@area=Region.find(:all,:order=>"code")%>
+          <%=f.collection_select(:area_code,@area,:code,:name)%>
+          <input type="button" value="选择" onclick="aa()">
+          </td>
+          <th>居住地:</th>
+          <td><%=f.text_field :city%></td>
+        </tr>
+        <tr>
+          <th>工作状况:</th>
+          <td><%=f.select :work1,[['在职','1'],['非在职','0']]%></td>
+          <th>职业分类:</th>
+          <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9002 and state ='Y'"], :order => :id, :select => "data_val,data_text") %>
+          <td><%=f.collection_select(:zy, @types, :data_val, :data_text)%></td>
+        </tr>
+        <tr>
+          <th>身份证号:</th>
+          <td><%=f.text_field :id_card%></td>
+          <th>单位电话:</th>
+          <td><%=f.text_field :telo%></td>
+        </tr>
+        <tr>
+          <th>手机:</th>
+          <td><%=f.text_field :mobiletel%></td>
+          <th>家庭电话:</th>
+          <td><%=f.text_field :telh%></td>
+        </tr>
+        <tr>
+          <th>传真:</th>
+          <td><%=f.text_field :fax%></td>
+          <th>E-mail:</th>
+          <td><%=f.text_field :email%></td>
+        </tr>
+        <tr>
+          <th>身份类型:</th>
+          <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9004 and state ='Y'"], :order => :id, :select => "data_val,data_text") %>
+          <td><%=f.collection_select(:standing, @types, :data_val, :data_text)%></td>
+          <th>单位类型:</th>
+          <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9005 and state ='Y'"], :order => :id, :select => "data_val,data_text") %>
+          <td><%=f.collection_select(:comtype, @types, :data_val, :data_text)%></td>
+        </tr>
+        <tr>
+          <th>有无高职:</th>
+          <td><%=f.select :hightitle,[['有',1],['无',0]]%></td>
+          <th>通讯地址:</th>
+          <td><%=f.text_field :addr%></td>
+        </tr>
+        <tr>
+          <th>兼职情况:</th>
+          <td><%=f.select :secjob,[['在本会兼职','h'],['在其他会兼职','w']]%></td>
+          <th>邮政编码:</th>
+          <td><%=f.text_field :postcode%></td>
+        </tr>
+        <tr>
+          <th>职称:</th>
+          <td><%=f.text_field :lawyerdate%></td>
+          <th>推荐人:</th>
+          <td><%=f.text_field :lawyernum%></td>
+        </tr>
+        <tr>
+          <th>职务:</th>
+          <td><%=f.text_field :title%></td>
+          <th>能否处理涉外案件:</th>
+          <td><%=f.select :doforeign,[['能','1'],['不能','0']]%></td>
+        </tr>
+        <tr>
+          <th>参加工作时间:</th>
+          <td><%=f.text_field :jobstart%></td>
+          <th>工作意愿:</th>
+          <td><%=f.text_field :jobwant%></td>
+        </tr>
+        <tr>
+          <th colspan="4"><div align="right">两年内担任法律顾问的企业名称:
+          <%=f.text_field :advisorycompany,:style=>"width:43em" %></div></th>
+        </tr>
+        <tr>
+          <th colspan="4"><div align="right">主要业务成果:
+          <%=f.text_field :outstanding,:style=>"width:43em" %></div></th>
+        </tr>
+        <tr>
+          <th colspan="4"><div align="right">发表的学术成果:
+          <%=f.text_field :fruit,:style=>"width:43em"%></div></th>
+        </tr>
+        <tr>
+          <th colspan="4"><div align="right">自我评价:
+          <%=f.text_field :selfvalue,:style=>"width:43em"%></div></th>
+        </tr>
+        <tr>
+          <th colspan="4"><div align="right">工作经历:
+          <%=f.text_field :workhistory,:style=>"width:43em"%></div></th>
+        </tr>
+        <tr>
+          <th colspan="4"><div align="right">社会团体兼职情况:
+          <%=f.text_field :parttime,:style=>"width:43em"%></div></th>
+        </tr>
+        <tr>
+          <th colspan="4">
+            <div align="right">备注:
+            <%=f.text_area :remark,:style=>"width:43em", :rows => 3%></div>
+          </th>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "全部保存" %>
+      </div>
+    <%end%>
+  </body>
+</html>

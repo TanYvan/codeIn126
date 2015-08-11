@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件机构评价信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+        <%@org_typ={"0001"=>"机构","0002"=>"专家"}%>
+        案件机构评价信息(<%=@org_typ[params[:org_typ]]%>:
+        <%if params[:org_typ]=='0001'%>
+          <%=TbOrg.find_by_code(params[:org_code]).name%>
+        <%else%>
+          <%=TbExpertconsult.find_by_code(params[:org_code]).name%>
+        <%end%>)
+      </span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            立案号
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+          <th nowrap>
+            仲裁员
+          </th>
+          <th nowrap>
+            委托时间
+          </th>
+          <th nowrap>委托事项</th>
+          <th nowrap><!--鉴定费用-->
+            金额
+          </th>
+          <th nowrap>助理</th>
+          <th nowrap>完成时间</th>
+          <th nowrap>评价</th>
+          <th nowrap>查看</th>
+        </tr>
+      </thead>
+      <tbody>        
+        <%@arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"}%>
+        <%a_i=0%>
+        <%i=0%>
+        <%for p in @org_appraisal%>
+          <%a_i=a_i + 1%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%=p.case_code%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{p.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{p.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",p.recevice_code])%>
+              <%if @arbit.empty?%>
+                未组成
+              <%else%>
+                <%for arb in @arbit%>
+                  <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+                  <br/>
+                <%end%>
+              <%end%>
+            </td>
+            <td>
+              <%=p.consign_t.to_s(:db)%>
+            </td>
+            <%@detection = TbDetection.find(:first,:select=>"d.arbitration_decision as arbitration_decision,d.report_made_t as report_made_t,d.cost as cost,o.charge_ratio as charge_ratio,o.efficiency as efficiency,o.report_quality as report_quality,o.obj as obj,datediff(d.report_made_t,o.consign_t) as tim",:conditions=>["d.used='Y' and d.etectiond=?",params[:org_code]],:joins=>"as d inner join tb_org_appraisals as o on d.recevice_code='#{p.recevice_code}' and d.etectiond='#{params[:org_code]}' and d.recevice_code=o.recevice_code and o.used='Y' and o.org_typ='#{params[:org_typ]}'")%>
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>["typ_code='8109' and data_val=? and used='Y' and state='Y'",@detection.arbitration_decision]).data_text if @detection!=nil%>
+            </td>
+            <td>
+              <%=SysArg.compart2(@detection.cost) if @detection!=nil%>
+            </td>
+            <td>
+              <%clerk= TbCase.find_by_recevice_code(p.recevice_code).clerk%>
+              <%=User.find_by_code_and_used(clerk,'Y').name%>
+            </td>
+            <td>
+              <%=@detection.report_made_t if @detection!=nil%>
+            </td>
+            <td>
+              <%if @detection!=nil%>
+                工作期限:
+                <%=@detection.tim%> 天
+                <br/>
+                收费比例:<%=@detection.charge_ratio%>%
+                <br/>
+                工作效率:<%=@detection.efficiency%>
+                <br/>
+                报告质量:<%=@detection.report_quality%>
+                <br/>
+                异议次数:<%if @detection.obj=="Y"%>1<%else%>0<%end%>
+              <%end%>
+            </td>
+            <td>
+              <%=link_to  "查看" ,{:action=>"detail_view",:id=>p.id},:target=>"_blank"%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

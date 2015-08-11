@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>工时汇总信息维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag :defaults%>
+    <script language="javascript" type="text/javascript">
+      // ifram 高度自适应
+      function dyniframesize(down) {
+        var pTar = null;
+        if (document.getElementById){
+          pTar = document.getElementById(down);
+        }else{
+          eval('pTar = ' + down + ';');
+        }
+        if (pTar && !window.opera){
+          //begin resizing iframe
+          pTar.style.display="block"
+          if (pTar.contentDocument && pTar.contentDocument.body.offsetHeight){
+            //ns6 syntax
+            pTar.height = pTar.contentDocument.body.offsetHeight +20;
+            pTar.width = pTar.contentDocument.body.scrollWidth+20;
+          }else if (pTar.Document && pTar.Document.body.scrollHeight){
+            //ie5+ syntax
+            pTar.height = pTar.Document.body.scrollHeight;
+            pTar.width = pTar.Document.body.scrollWidth;
+          }
+        }
+      }
+    </script>
+
+    <%if session[:recevice_code_2]==nil%>
+      <script type="text/javascript">
+        window.open("/case_p/list_2?contr_r=remuneration11_set&act_r=list","mainFrame")
+      </script>
+    <%else%>
+      <%@endDate=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",session[:recevice_code_2]],:order=>"id desc")%>
+      <%if @endDate==nil || @endDate.decideDate.to_s(:db) >= "2013-03-01" %>
+        <script type="text/javascript">
+          window.open("/remuneration12_set/list","mainFrame")
+        </script>
+      <%end%>
+    <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">工时汇总信息维护_2013年3月1日之前</span></div>
+    <div align="center">
+      <%if @case==nil%>
+        请选择您要办理的案件
+      <%end%>
+      <%=button_to "案件选择", :controller=>'case_p',:action=>"list_2",:contr_r=>"remuneration11_set",:act_r=>"list"%>
+      <br/>
+      <%if @case!=nil%>
+        当前案件
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>咨询流水号</th>
+          <th nowrap>咨询日期</th>
+          <th nowrap>立案号</th>
+          <th nowrap>立案日期</th>
+          <th nowrap>申请人</th>
+          <th nowrap>被申请人</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td><%=h @case.recevice_code%></td>
+        <td><%=h @case.receivedate%></td>
+        <td><%=h @case.case_code%></td>
+        <td><%=h @case.nowdate%></td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+      </tr>         
+      </tbody>
+    </table><br/>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>实收仲裁费（税前）</th>
+          <th nowrap>实收仲裁费（税后）</th>
+          <th nowrap>报酬核定数</th>
+          <th nowrap>仲裁庭报酬调整系数</th>
+          <th nowrap>仲裁庭报酬金额</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td><%= SysArg.compart2(@zcf1) %></td>
+        <td><%= SysArg.compart2(@zcf2) %></td>
+        <td><%= SysArg.compart2(@zcf3) %></td>
+        <td>
+          <% form_for :xs,:url => {:action => "changexs", :id => @xs.id}  do |f| %>
+          <%= f.select(:xishu, @xishu) %>
+          <%=submit_tag "修改", :disabled => @disable %>
+          <% end %>
+        </td>
+        <td><%= SysArg.compart2(@yyy) %></td>
+      </tr>
+      </tbody>
+    </table>
+    <div style="color: red"><%= flash[:notice] %></div>
+    
+    <br/><br/><hr size="5" color="#99CCFF" noshade/><br/>
+    <iframe frameborder=0 src="list_3?yyy=<%=@yyy%>&zcf2=<%=@zcf2%>"  noresize  style="width:100%;min-height:250px" id="ifm1" align=center onload="javascript:dyniframesize('ifm1');"></iframe>
+    <br/><br/><hr size="5" color="#99CCFF" noshade/><br/>
+    <iframe frameborder=0 src="list_1?yyy=<%=@yyy%>&evaluate=<%=@evaluate%>"  noresize  style="width:100%;min-height:250px" id="ifm2" align=center onload="javascript:dyniframesize('ifm2');"> </iframe>
+    <br/><br/><hr size="5" color="#99CCFF" noshade/><br/>
+    <iframe frameborder=0 src="list_2?yyy=<%=@yyy%>&evaluate=<%=@evaluate%>"  noresize  style="width:100%;min-height:250px" id="ifm3" align=cente onload="javascript:dyniframesize('ifm3');"> </iframe>
+    <br/><br/><hr size="5" color="#99CCFF" noshade/><br/>
+    <iframe frameborder=0 src="list_4"  style="width:100%" align=center id="ifm4" align=cente onload="javascript:dyniframesize('ifm4');">> </iframe>
+    <!--
+    <hr size="5" color="#99CCFF" noshade/>
+    <iframe frameborder=0 src="/remuneration3_set/list_2"  noresize  style="width:100%;height:240px" align=center> </iframe>
+    <hr size="1" color="#99CCFF" noshade/>
+    <iframe frameborder=0 src="/remuneration9_set/list_2"  noresize  style="width:100%;height:240px" align=center> </iframe>
+    <hr size="1" color="#99CCFF" noshade/>
+    <iframe frameborder=0 src="/remuneration6_set/list_2"  noresize  style="width:100%;height:240px" align=center> </iframe>
+    <hr size="1" color="#99CCFF" noshade/>
+    <iframe frameborder=0 src="/remuneration8_set/list_2"  noresize  style="width:100%;height:240px" align=center> </iframe>
+    <hr size="1" color="#99CCFF" noshade/>
+    <iframe frameborder=0 src="/remuneration4_set/list_2"  noresize  style="width:100%;height:590px" align=center> </iframe>
+    <hr size="1" color="#99CCFF" noshade/>
+    <iframe id="bonus_penalty" frameborder=0 src="/bonus_penalty/list_2"  noresize  style="width:700px;height:300px" align=center> </iframe>
+    <hr size="1" color="#99CCFF" noshade/>
+    <iframe frameborder=0 src="/remuneration5_set/list_2"  noresize  style="width:700px;height:240px" align=center> </iframe>
+    -->
+    <%end%>
+    <br/><br/><br/>
+  </body>
+</html>

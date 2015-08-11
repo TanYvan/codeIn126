@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>工时汇总信息维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script language="javascript" type="text/javascript">
+      // ifram 高度自适应
+      function dyniframesize(down) {
+        var pTar = null;
+        if (document.getElementById){
+          pTar = document.getElementById(down);
+        }else{
+          eval('pTar = ' + down + ';');
+        }
+        if (pTar && !window.opera){
+          //begin resizing iframe
+          pTar.style.display="block"
+          if (pTar.contentDocument && pTar.contentDocument.body.offsetHeight){
+            //ns6 syntax
+            pTar.height = pTar.contentDocument.body.offsetHeight +20;
+            pTar.width = pTar.contentDocument.body.scrollWidth+20;
+          }else if (pTar.Document && pTar.Document.body.scrollHeight){
+            //ie5+ syntax
+            pTar.height = pTar.Document.body.scrollHeight;
+            pTar.width = pTar.Document.body.scrollWidth;
+          }
+        }
+      }
+    </script>
+    <% if session[:recevice_code_1] == nil %>
+      <script type="text/javascript">
+        window.open("/case_p/list_1?contr_r=remuneration11&act_r=list","mainFrame")
+      </script>
+    <%else%>
+        <%@endDate=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",session[:recevice_code_1]],:order=>"id desc")%>
+        <%if @endDate==nil || @endDate.decideDate.to_s(:db) >= "2013-03-01"%>
+          <script type="text/javascript">
+            window.open("/remuneration12/list","mainFrame")
+          </script>
+        <%end%>
+    <% end %>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">工时汇总信息维护_2013年3月1日之前</span></div>
+    <div align="center">
+      <% if @case == nil %>
+        请选择您要办理的案件 
+      <% end %>
+      <%=button_to "案件选择", :controller=>'case_p',:action=>"list_1",:contr_r=>"remuneration11",:act_r=>"list"%>
+      <br/>
+      <% if @case != nil %>
+          当前案件
+        </div>
+        <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>咨询流水号</th>
+            <th nowrap>咨询日期</th>
+            <th nowrap>立案号</th>
+            <th nowrap>立案日期</th>
+            <th nowrap>申请人</th>
+            <th nowrap>被申请人</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td><%=h @case.recevice_code%></td>
+          <td><%=h @case.receivedate%></td>
+          <td><%=h @case.case_code%></td>
+          <td><%=h @case.nowdate%></td>
+          <td>
+            <%
+              @tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")
+              ttpp = ''
+              for tp in @tp
+                ttpp = ttpp + tp.partyname + " <br/>"
+              end
+              if ttpp != ''
+                ttpp = ttpp.slice(0, ttpp.length - 5)
+              end
+            -%>
+            <%=ttpp%>
+          </td>
+          <td>
+            <%
+              @tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")
+              ttpp = ''
+              for tp in @tp
+                ttpp = ttpp + tp.partyname + " <br/>"
+              end
+              if ttpp != ''
+                ttpp = ttpp.slice(0, ttpp.length - 5)
+              end
+            -%>
+            <%=ttpp%>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+<%end%>
+      <br/>
+      <hr size="5" color="#99CCFF" noshade/><br/>
+      <iframe frameborder=0 src="list_1"  noresize  style="width:100%;min-height:250px" align=center  id="ifm1" align=center onload="javascript:dyniframesize('ifm1');"> </iframe>
+      <hr size="5" color="#99CCFF" noshade/><br/>
+      <iframe frameborder=0 src="list_2"  noresize  style="width:100%;min-height:500px" align=center  id="ifm2" align=center onload="javascript:dyniframesize('ifm2');"> </iframe>
+    
+      <br/><br/>
+  </body>
+</html>

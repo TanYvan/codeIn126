@@ -1,0 +1,2 @@
+module DocApprovalHelper
+end

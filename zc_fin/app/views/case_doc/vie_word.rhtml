@@ -1,0 +1,14 @@
+<html>
+  <head><title>word内部函</title>
+    <script language="javascript">   
+      var myDocApp =new ActiveXObject("word.Application"); 
+      myDocApp.visible = true; 
+      myDocApp.activate(); 
+      myDocApp.NormalTemplate.Saved=true;
+      var myDoc = myDocApp.documents.open("<%= @file_path%>");   
+      window.close()
+    </script> 
+  </head>
+  <body>
+  </body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁报酬奖惩信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function round_2(a){
+        a=a * 100;
+        a=Math.round(a);
+        a=a / 100;    
+        return a;
+      }
+
+      function su(){
+        <%for p in @remun%>
+        obj=document.getElementById("bonus_id_<%=p.id%>");
+        if ( /^[0-9]*[1-9][0-9]*$/.test(obj.value) || /^[1-9]d*.d*|0.d*[1-9]d*|0?.0+|0$/.test(obj.value) ) 
+          {     
+          }     
+          else     
+            {    
+              alert("请输入数字！");   
+              return false;    
+            }
+
+        obj=document.getElementById("penalty_id_<%=p.id%>");
+        if ( /^[0-9]*[1-9][0-9]*$/.test(obj.value) || /^[1-9]d*.d*|0.d*[1-9]d*|0?.0+|0$/.test(obj.value) ) 
+          {     
+          }     
+          else     
+            {    
+              alert("请输入数字！");   
+              return false;    
+            }
+         document.getElementById("hj_id_<%=p.id%>").value = round_2( Number(document.getElementById("zc_rmb_id_<%=p.id%>").value) * (  1 + Number(document.getElementById("bonus_id_<%=p.id%>").value) / 100 - Number(document.getElementById("penalty_id_<%=p.id%>").value) / 100 ) +  Number(document.getElementById("gc_rmb_id_<%=p.id%>").value) )
+        <%end%> 
+      }
+
+      function su_2(){
+        <%for p in @remun%>
+        obj=document.getElementById("bonus_id_<%=p.id%>");
+        if ( /^[0-9]*[1-9][0-9]*$/.test(obj.value) || /^[1-9]d*.d*|0.d*[1-9]d*|0?.0+|0$/.test(obj.value) ) 
+          {     
+          }     
+          else     
+            {    
+              alert("请输入数字！");   
+              return false;    
+            }
+
+        obj=document.getElementById("penalty_id_<%=p.id%>");
+        if ( /^[0-9]*[1-9][0-9]*$/.test(obj.value) || /^[1-9]d*.d*|0.d*[1-9]d*|0?.0+|0$/.test(obj.value) ) 
+          {     
+          }     
+          else     
+            {    
+              alert("请输入数字！");   
+              return false;    
+            }
+         document.getElementById("hj_id_<%=p.id%>").value = round_2( Number(document.getElementById("zc_rmb_id_<%=p.id%>").value) * (  1 + Number(document.getElementById("bonus_id_<%=p.id%>").value) / 100 - Number(document.getElementById("penalty_id_<%=p.id%>").value) / 100 ) +  Number(document.getElementById("gc_rmb_id_<%=p.id%>").value) )
+        <%end%> 
+        
+        var commit = document.getElementsByName("commit");
+        for(i=0; i<commit.length; i++)
+        {
+          commit[i].style.display='none';
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div align="center">
+      <%=link_to "返回",:action=>"list"%>
+    </div>
+    <div align="center" class="cDGray">
+      仲裁报酬奖惩信息
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :remun ,:url=>{:action=>"update_all"},:html=>{:onsubmit=>"return su_2();"}  do |f|%>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              办案人
+            </th>
+            <th nowrap>
+              姓名
+            </th>
+            <th nowrap>
+              基本报酬数额
+            </th>
+            <th nowrap>
+              基本报酬奖励比例
+            </th>
+            <th nowrap>
+              基本报酬惩罚比例
+            </th>
+            <th nowrap>
+              稿酬
+            </th>
+            <th nowrap>
+              奖惩原因
+            </th>
+            <th nowrap>
+              合计
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for p in @remun%>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=@p_typ[p.typ]%>
+              </td>
+              <td>
+                <%if p.typ=='0001'%>
+                    <%=TbArbitman.find_by_code(p.p).name%>
+                <%else%>
+                    <%=User.find_by_code(p.p).name%>
+                <%end%>
+              </td>
+              <td>
+                <%=p.zc_rmb%>
+                <input type="hidden" id="zc_rmb_id_<%=p.id%>" name="zc_rmb_name_<%=p.id%>" value='<%=p.zc_rmb%>'/>
+              </td>
+              <td>
+                <input type="text" id="bonus_id_<%=p.id%>" name="bonus_name_<%=p.id%>" value='<%=p.bonus%>' onkeyup="su();" onchange="su();" size=4/>
+                %
+              </td>
+              <td>
+                <input type="text" id="penalty_id_<%=p.id%>" name="penalty_name_<%=p.id%>" value='<%=p.penalty%>' onkeyup="su();" onchange="su();" size=4/>
+                %
+              </td>
+              <td>
+                <%=p.gc_rmb%>
+                <input type="hidden" id="gc_rmb_id_<%=p.id%>" name="gc_rmb_name_<%=p.id%>" value='<%=p.gc_rmb%>'/>
+              </td>
+              <td>
+                <input type="text" id="reason_id_<%=p.id%>" name="reason_name_<%=p.id%>" value='<%=p.reason%>'/>
+              </td>
+              <td>
+                <input type="text" id="hj_id_<%=p.id%>" name="hj_name_<%=p.id%>" value='<%=(p.zc_rmb * (1 + p.bonus/100 - p.penalty/100) + p.gc_rmb).round.to_i%>'  readonly="yes"  size=4/>
+              </td>
+            </tr>
+            <%i=i+1%>
+        <%end%>
+     
+        </tbody>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

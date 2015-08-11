@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+     <%
+    if params[:datestyle] == "01"
+      name = params[:company]
+      title = "律师事务所"
+    elsif params[:datestyle] == "02"
+      name = params[:name]
+      title = "律师"
+    else
+      name = params[:name]
+      title = "仲裁员"
+    end %>
+    <title>与<%=title%>有关的案件</title>
+    <%= javascript_include_tag  "prototype" %>
+    <%= javascript_include_tag  "effects" %>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+   
+    <div class="title"><span class="cBlue">与<%=title%> <%=name %> 有关的案件：<%=@case_rc.length%>件</span></div>
+    <%=link_to "返回",:action=>"list3_15",:d1=>params[:d1],:d2=>params[:d2],:datestyle=>params[:datestyle]%>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案日期</th>
+          <th  nowrap>立案号</th>
+          <th  nowrap>结案日期</th>
+          <th  nowrap>结案号</th>
+          <th  nowrap>代理人</th>
+          <th  nowrap>助理</th>
+          <th  nowrap>仲裁员组成</th>
+          <th  nowrap>双方当事人信息</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%@arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"}%>
+        <%i=0%>
+        <%for rc in @case_rc%>
+        <% current_case = TbCase.find(:first,:conditions=>" recevice_code = #{rc.recevice_code} and used='Y' ") %>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=current_case.nowdate%></td>
+            <td nowrap>
+              <%=link_to "#{current_case.case_code}",{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>current_case.recevice_code},:target=>"_black" %>
+            </td>
+            <%@caseendbook = TbCaseendbook.find_by_id(current_case.caseendbook_id_last)%>
+            <td nowrap><%if @caseendbook!=nil%><%=@caseendbook.decideDate %><%end%></td>
+            <td nowrap><%=current_case.end_code %></td>
+            <% agent1 = TbAgent.find(:all,:conditions => "used='Y' and partytype=1 and recevice_code = '#{current_case.recevice_code}' " )
+                name1 = ""
+                for a in agent1
+                  name1 += "[" + a.name + "]"
+                end
+                agent2 = TbAgent.find(:all,:conditions => "used='Y' and partytype=2 and recevice_code = '#{current_case.recevice_code}' " )
+                name2 = ""
+                for b in agent2
+                  name2 += "[" + b.name + "]" 
+                end
+            %>
+            <td nowrap><%= "申：" + name1 + "<br/>" + "被：" + name2 %></td>
+            <td nowrap><%=User.find(:first,:conditions=>["code=?",current_case.clerk]).name %></td>
+            <td nowrap>
+              <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",current_case.recevice_code])%>
+              <%if @arbit.empty?%>
+                未组成
+              <%else%>
+                <%for arb in @arbit%>
+                  <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+                  <br/>
+                <%end%>
+              <%end%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{current_case.recevice_code}' and used='Y' and partytype=1")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              申：<%=ttpp%><br/>
+
+              <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{current_case.recevice_code}' and used='Y' and partytype=2")%>
+              <%ttpp=''%>
+              <%for tp in @party2%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              被：<%=ttpp%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <%=  link_to_remote "再统计", {:update => "genxin", :url => { :action => "again",:d1=>params[:d1],:d2=>params[:d2],:code=>params[:code],:name=>params[:name],:company=>params[:company],:datestyle=>params[:datestyle] } ,:complete => "new Effect.BlindDown('genxin')"},{:href=>"return 0;"} %>
+    <div id="genxin"></div>
+  </body>
+</html>

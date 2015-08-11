@@ -1,0 +1,2 @@
+module TbEducateHelper
+end

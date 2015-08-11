@@ -1,0 +1,690 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>日历表查看</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">日历表看</span></div>
+    <br>
+    <%=link_to "返回", :action => "workday_index", :year => params[:year]%>
+    <table align="center" height="450" border="1" cellpadding="0" cellspacing="0">
+      <tr bgcolor="#E6F5FF">
+        <td width="100" height="30" align="center">星期一</td>
+        <td width="100" height="30" align="center">星期二</td>
+        <td width="100" height="30" align="center">星期三</td>
+        <td width="100" height="30" align="center">星期四</td>
+        <td width="100" height="30" align="center">星期五</td>
+        <td width="100" height="30" align="center">星期六</td>
+        <td width="100" height="30" align="center">星期日</td>
+      </tr>
+
+      <tr bgcolor="#E6F5FF">
+        <td height="10">
+          <%if @arr1[1]!=nil%>
+            <%=@arr1[1]%>
+          <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[2]!=nil%>
+            <%=@arr1[2]%>
+          <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[3]!=nil%>
+            <%=@arr1[3]%>
+          <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[4]!=nil%>
+            <%=@arr1[4]%>
+          <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[5]!=nil%>
+            <%=@arr1[5]%>
+          <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[6]!=nil%>
+            <%=@arr1[6]%>
+          <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[7]!=nil%>
+            <%=@arr1[7]%>
+          <%else%> &nbsp;
+          <%end%>
+        </td>
+      </tr>
+      <tr>
+        <td height="40" align="center">
+          <%if @arr2[1]!=nil%>
+            <%if @arr2[1]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[1] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[1] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[2]!=nil%>
+            <%if @arr2[2]=='1'%>
+              是工作日 <br> <%=button_to "设置为节假日", :action => "unset_date",:date =>  @arr1[2] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>  @arr1[2] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[3]!=nil%>
+            <%if @arr2[3]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[3] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[3] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[4]!=nil%>
+            <%if @arr2[4]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[4] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[4] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[5]!=nil%>
+            <%if @arr2[5]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[5] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[5] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[6]!=nil%>
+            <%if @arr2[6]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[6] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[6] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[7]!=nil%>
+            <%if @arr2[7]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[7] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[7] %></div>
+            <%end%>
+          <%end%>
+        </td>
+      </tr>
+
+      <tr bgcolor="#E6F5FF">
+        <td height="10">
+          <%if @arr1[8]!=nil%>
+            <%=@arr1[8]%>
+          <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[9]!=nil%>
+            <%=@arr1[9]%>
+          <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[10]!=nil%>
+            <%=@arr1[10]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[11]!=nil%>
+            <%=@arr1[11]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[12]!=nil%>
+            <%=@arr1[12]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[13]!=nil%>
+            <%=@arr1[13]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[14]!=nil%>
+            <%=@arr1[14]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+      </tr>
+      <tr>
+        <td height="40" align="center">
+          <%if @arr2[8]!=nil%>
+            <%if @arr2[8]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[8] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[8] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[9]!=nil%>
+            <%if @arr2[9]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[9] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[9] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[10]!=nil%>
+            <%if @arr2[10]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[10] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[10] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[11]!=nil%>
+            <%if @arr2[11]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[11] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[11] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[12]!=nil%>
+            <%if @arr2[12]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[12] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[12] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[13]!=nil%>
+            <%if @arr2[13]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[13] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[13] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[14]!=nil%>
+            <%if @arr2[14]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[14] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[14] %></div>
+            <%end%>
+          <%end%>
+        </td>
+      </tr>
+      <tr bgcolor="#E6F5FF">
+        <td height="10">
+          <%if @arr1[15]!=nil%>
+            <%=@arr1[15]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[16]!=nil%>
+            <%=@arr1[16]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[17]!=nil%>
+            <%=@arr1[17]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[18]!=nil%>
+            <%=@arr1[18]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[19]!=nil%>
+            <%=@arr1[19]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[20]!=nil%>
+            <%=@arr1[20]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[21]!=nil%>
+            <%=@arr1[21]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+      </tr>
+      <tr>
+        <td height="40" align="center">
+          <%if @arr2[15]!=nil%>
+            <%if @arr2[15]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[15] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[15] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[16]!=nil%>
+            <%if @arr2[16]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[16] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[16] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[17]!=nil%>
+            <%if @arr2[17]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[17] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[17] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[18]!=nil%>
+            <%if @arr2[18]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[18] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[18] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[19]!=nil%>
+            <%if @arr2[19]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[19] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[19] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[20]!=nil%>
+            <%if @arr2[20]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[20] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[20] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[21]!=nil%>
+            <%if @arr2[21]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[21] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[21] %></div>
+            <%end%>
+          <%end%>
+        </td>
+      </tr>
+      <tr bgcolor="#E6F5FF">
+        <td height="10">
+          <%if @arr1[22]!=nil%>
+            <%=@arr1[22]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[23]!=nil%>
+            <%=@arr1[23]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[24]!=nil%>
+            <%=@arr1[24]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[25]!=nil%>
+            <%=@arr1[25]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[26]!=nil%>
+            <%=@arr1[26]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[27]!=nil%>
+            <%=@arr1[27]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[28]!=nil%>
+            <%=@arr1[28]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+      </tr>
+      <tr>
+        <td height="40" align="center">
+          <%if @arr2[22]!=nil%>
+            <%if @arr2[22]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[22] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[22] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[23]!=nil%>
+            <%if @arr2[23]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[23] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[23] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[24]!=nil%>
+            <%if @arr2[24]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[24] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[24] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[25]!=nil%>
+            <%if @arr2[25]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[25] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[25] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[26]!=nil%>
+            <%if @arr2[26]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[26] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[26] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[27]!=nil%>
+            <%if @arr2[27]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[27] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[27] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[28]!=nil%>
+            <%if @arr2[28]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[28] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[28] %></div>
+            <%end%>
+          <%end%>
+        </td>
+      </tr>
+      <tr bgcolor="#E6F5FF">
+        <td height="10">
+          <%if @arr1[29]!=nil%>
+            <%=@arr1[29]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[30]!=nil%>
+            <%=@arr1[30]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[31]!=nil%>
+            <%=@arr1[31]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[32]!=nil%>
+            <%=@arr1[32]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[33]!=nil%>
+            <%=@arr1[33]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[34]!=nil%>
+            <%=@arr1[34]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+        <td height="10">
+          <%if @arr1[35]!=nil%>
+            <%=@arr1[35]%> <%else%> &nbsp;
+          <%end%>
+        </td>
+      </tr>
+      <tr>
+        <td height="40" align="center">
+          <%if @arr2[29]!=nil%>
+            <%if @arr2[29]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[29] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[29] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[30]!=nil%>
+            <%if @arr2[30]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[30] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[30] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[31]!=nil%>
+            <%if @arr2[31]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[31] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[31] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[32]!=nil%>
+            <%if @arr2[32]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[32] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[32] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[33]!=nil%>
+            <%if @arr2[33]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[33] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[33] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[34]!=nil%>
+            <%if @arr2[34]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[34] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[34] %></div>
+            <%end%>
+          <%end%>
+        </td>
+        <td height="40" align="center">
+          <%if @arr2[35]!=nil%>
+            <%if @arr2[35]=='1'%>
+              是工作日 <br>
+              <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[35] %>
+            <%else%>
+              <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[35] %></div>
+            <%end%>
+          <%end%>
+        </td>
+      </tr>
+      <%if @arr1[35]!=nil%>
+        <tr bgcolor="#E6F5FF">
+          <td height="10">
+            <%if @arr1[36]!=nil%>
+              <%=@arr1[36]%> <%else%> &nbsp;
+            <%end%>
+          </td>
+          <td height="10">
+            <%if @arr1[37]!=nil%>
+              <%=@arr1[37]%> <%else%> &nbsp;
+            <%end%>
+          </td>
+          <td height="10">
+            <%if @arr1[38]!=nil%>
+              <%=@arr1[38]%> <%else%> &nbsp;
+            <%end%>
+          </td>
+          <td height="10">
+            <%if @arr1[39]!=nil%>
+              <%=@arr1[39]%> <%else%> &nbsp;
+            <%end%>
+          </td>
+          <td height="10">
+            <%if @arr1[40]!=nil%>
+              <%=@arr1[40]%> <%else%> &nbsp;
+            <%end%>
+          </td>
+          <td height="10">
+            <%if @arr1[41]!=nil%>
+              <%=@arr1[41]%> <%else%> &nbsp;
+            <%end%>
+          </td>
+          <td height="10">
+            <%if @arr1[42]!=nil%>
+              <%=@arr1[42]%> <%else%> &nbsp;
+            <%end%>
+          </td>
+        </tr>
+        <tr>
+          <td height="40" align="center">
+            <%if @arr2[36]!=nil%>
+              <%if @arr2[36]=='1'%>
+                是工作日 <br>
+                <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[36] %>
+              <%else%>
+                <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[36] %></div>
+              <%end%>
+            <%end%>
+          </td>
+          <td height="40" align="center">
+            <%if @arr2[37]!=nil%>
+              <%if @arr2[37]=='1'%>
+                是工作日 <br>
+                <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[37] %>
+              <%else%>
+                <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[37] %></div>
+              <%end%>
+            <%end%>
+          </td>
+          <td height="40" align="center">
+            <%if @arr2[38]!=nil%>
+              <%if @arr2[38]=='1'%>
+                是工作日 <br>
+                <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[38] %>
+              <%else%>
+                <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[38] %></div>
+              <%end%>
+            <%end%>
+          </td>
+          <td height="40" align="center">
+            <%if @arr2[39]!=nil%>
+              <%if @arr2[39]=='1'%>
+                是工作日 <br>
+                <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[39] %>
+              <%else%>
+                <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[39] %></div>
+              <%end%>
+            <%end%>
+          </td>
+          <td height="40" align="center">
+            <%if @arr2[40]!=nil%>
+              <%if @arr2[40]=='1'%>
+                是工作日 <br>
+                <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[40] %>
+              <%else%>
+                <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[40] %></div>
+              <%end%>
+            <%end%>
+          </td>
+          <td height="40" align="center">
+            <%if @arr2[41]!=nil%>
+              <%if @arr2[41]=='1'%>
+                是工作日 <br>
+                <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[41] %>
+              <%else%>
+                <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[41] %></div>
+              <%end%>
+            <%end%>
+          </td>
+          <td height="40" align="center">
+            <%if @arr2[42]!=nil%>
+              <%if @arr2[42]=='1'%>
+                是工作日 <br>
+                <%=button_to "设置为节假日", :action => "unset_date",:date => @arr1[42] %>
+              <%else%>
+                <div class="cGreen">是节假日 <%=button_to "设置为工作日", :action => "set_date",:date =>@arr1[42] %></div>
+              <%end%>
+            <%end%>
+          </td>
+        </tr>
+      <%else%>
+      <%end%>
+    </table>
+  </body>
+</html>

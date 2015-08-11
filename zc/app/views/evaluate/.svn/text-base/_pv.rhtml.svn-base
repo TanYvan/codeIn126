@@ -1,0 +1,2 @@
+<%=select(:evaluate,:evaluate_result,pv.collect{|p|[p.data_text,p.data_val]})%>
+

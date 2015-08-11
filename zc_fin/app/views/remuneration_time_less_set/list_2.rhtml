@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>案件 案件扣除时段</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  <%if session[:recevice_code_2]==nil%>
+    <script language="javascript">
+      window.open("/case_p/list_2?contr_r=remuneration_time_less_set&act_r=list_2","mainFrame")
+    </script>
+  <%end%>
+</head>
+<body>
+<div class="title"><span class="cBlue">案件扣除时段</span></div>
+  <div align="center" class="cDGray">
+     案件扣除时段
+    <div style="color:red"><%=flash[:notice]%></div>
+  </div>
+  <table class="list" width="95%">
+     <tr>
+       <th>在计算审限时应扣除的时段</th>
+       <td>
+           <%=h @case.limit_deduct_t%>
+       </td>
+     </tr>
+     <tr >
+        <th>
+          原因
+        </th>
+        <td>
+          <%=h @case.limit_deduct_text%>
+        </td>
+      </tr>
+    </table>
+</body>
+</html>

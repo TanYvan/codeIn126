@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员人案统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <table width="100%"  id="to_excel_9"><tr><td>
+          <div class="title"><span class="cBlue">仲裁员人案统计</span></div>
+          <br/>
+          <div align="left">仲裁员数量：<%=@arbitman_case.length%>  </div>
+          <br/>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th>
+                  <%if @order=="name desc"%>
+                    <%=link_to '仲裁员姓名↑',:action=>"list3_9",:order=>"name asc"%>
+                  <%elsif @order=="name asc"%>
+                    <%=link_to '仲裁员姓名↓',:action=>"list3_9",:order=>"name desc"%>
+                  <%else%>
+                    <%=link_to '仲裁员姓名',:action=>"list3_9",:order=>"name asc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="a1 desc"%>
+                    <%=link_to '在办案件数量↑',:action=>"list3_9",:order=>"a1 asc"%>
+                  <%elsif @order=="a1 asc"%>
+                    <%=link_to '在办案件数量↓',:action=>"list3_9",:order=>"a1 desc"%>
+                  <%else%>
+                    <%=link_to '在办案件数量',:action=>"list3_9",:order=>"a1 asc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="a2 desc"%>
+                    <%=link_to '已结案件数量↑',:action=>"list3_9",:order=>"a2 asc"%>
+                  <%elsif @order=="a2 asc"%>
+                    <%=link_to '已结案件数量↓',:action=>"list3_9",:order=>"a2 desc"%>
+                  <%else%>
+                    <%=link_to '已结案件数量',:action=>"list3_9",:order=>"a2 asc"%>
+                  <%end%>
+                </th>
+                <th>已结案件中，担任首席/独任的总数（A类）</th>
+                <th>A类：起草裁决书的数量</th>
+                <th>A类：延期裁决案件的数量</th>
+                <th>A类：被申请回避的次数</th>
+                <th>A类：平均结案时间</th>
+                <th>已结案件中，担任边裁案件的总数（B类）</th>
+                <th>B类：起草裁决书的数量</th>
+                <th>B类：延期裁决案件的数量</th>
+                <th>B类：被申请回避的次数</th>
+                <th>B类：平均结案时间</th>
+                <th>助理评价</th>
+                <th>起草人</th>
+                <th>校核评价</th>
+                <th  nowrap>性别</th>
+                <th   nowrap>手机</th>
+                <th   nowrap>电话</th>
+                <th   nowrap>传真</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for a in @arbitmancaseaa%>
+                <tr class="row<%=i % 2%>">
+                  <td nowrap><%=a.name%></td>
+                  <td nowrap>
+                    <%if a.a1!=0%>
+                      <%=link_to "#{a.a1}",{:action=>"list3_a1",:code=>a.code},:target=>"_blank"%>
+                    <%else%>
+                      <%=a.a1%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%if a.a2!=0%>
+                      <%=link_to "#{a.a2}",{:action=>"list3_a2",:code=>a.code},:target=>"_blank"%>
+                    <%else%>
+                      <%=a.a2%>
+                    <%end%>
+                  </td>
+                  <td nowrap><%if a.a_a!=0%><%=a.a_a%><%end%></td>
+                  <td nowrap><%if a.a_b!=0%><%=a.a_b%><%end%></td>
+                  <td nowrap><%if a.a_c!=0%><%=a.a_c%><%end%></td>
+                  <td nowrap><%if a.a_d!=0%><%=a.a_d%><%end%></td>
+                  <td nowrap><%if a.a_e!=0%><%=a.a_e%><%end%></td>
+                  <td nowrap><%if a.b_a!=0%><%=a.b_a%><%end%></td>
+                  <td nowrap><%if a.b_b!=0%><%=a.b_b%><%end%></td>
+                  <td nowrap><%if a.b_c!=0%><%=a.b_c%><%end%></td>
+                  <td nowrap><%if a.b_d!=0%><%=a.b_d%><%end%></td>
+                  <td nowrap><%if a.b_e!=0%><%=a.b_e%><%end%></td>
+                  <td  nowrap><%if a.score!=0%><%=a.score %><%end%></td>
+                  <td>
+                    <%award1=TbAwardDetail.find(:all,:conditions=>["a.used='Y' and a.draftsman_typ='0001' and a.draftsman=?",a.code],:joins=>"as a inner join tb_cases as c on a.recevice_code=c.recevice_code and c.used='Y' and c.caseendbook_id_first is not null")%>
+                    <%for aw in award1%>
+                      <%=TbDictionary.find(:first,:conditions=>["typ_code='0059' and state='Y' and used='Y' and data_val=?",aw.typ]).data_text%>
+                    <%end%>
+                  </td>
+                  <td  nowrap<%if a.score2!=0%><%=a.score2 %><%end%></td>
+                  <td  nowrap><%=a.sex %></td>
+                  <td   nowrap><%=a.mobiletel %></td>
+                  <td   nowrap><%=a.telh %></td>
+                  <td   nowrap><%=a.fax %></td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+          </table>
+        </td></tr></table>
+    <script langugae="javascript">to_excel(document.getElementById("to_excel_9"));
+
+    </script>
+  </body>
+</html>

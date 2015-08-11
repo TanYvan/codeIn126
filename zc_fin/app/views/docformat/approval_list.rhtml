@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>格式函管理</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">格式函管理</span></div>
+    <br>
+      <div align="center"><%=link_to  "创建", :action=>"approval_new",:format_code=>params[:format_code],:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+      <%=link_to "返回",:action=>"docformat_list",:format_code=>params[:doc_format],:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+      <div style="color:red"><%=flash[:notice]%></div> </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap="nowrap">
+          审批人
+        </th>
+        <th nowrap="nowrap">
+          审批时限
+        </th>
+        <th nowrap="nowrap">
+          编辑
+        </th>
+        <th nowrap="nowrap">
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for r in @approval%>
+        <tr class="row<%=i % 2%>">
+        <td >
+          <%=User.find_by_code(r.a_u).name%>
+        </td>
+        <td >
+          <%=h r.a_d%>天
+        </td>
+        <td >
+          <%=link_to "编辑",{:action=>'approval_edit',:id=>r,:format_code=>params[:format_code],:format_code=>params[:format_code],:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]} %>
+        </td>
+        <td>
+          <%=button_to "删除" ,{:action=>'approval_delete',:id=>r,:format_code=>params[:format_code],:format_code=>params[:format_code],:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]},:confirm=>"您确认要删除吗？"%>
+        </td>
+        <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

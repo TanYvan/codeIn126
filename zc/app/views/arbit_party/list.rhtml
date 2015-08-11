@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>仲裁员当事人查询</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员当事人查询</span></div>
+    <%form_tag :url=>{:action=>"list"} do%>
+      <table align="center">
+        <tr><td nowrap align="right">仲裁员姓名：</td>
+          <td align="left" nowrap><%=text_field_tag(:name)%></td>
+          <td nowrap align="right">姓名拼音缩写：</td>
+          <td align="left" nowrap><%=text_field_tag(:name1)%></td>
+        </tr>
+        <tr><td nowrap align="right">当事人名称：</td>
+          <td align="left" nowrap><%=text_field_tag(:party1)%></td>
+          <td nowrap align="right">代理人名称：</td>
+          <td align="left" nowrap><%=text_field_tag(:agent1)%></td>
+        </tr>
+      </table>
+      <%=submit_tag "查询" %>
+    <%end%>
+    <br><br>
+    <div class="cGreen">
+      <%if @name!=nil && @name1!=nil && @party1!=nil && @agent1!=nil && @name!='' && @name1!='' && @party1!='' && @agent1!=''%>
+        仲裁员姓名：<%=@name%>&nbsp;&nbsp;
+        姓名拼音缩写：<%=@name1%>&nbsp;&nbsp;
+        当事人名称：<%=@party1%>&nbsp;&nbsp;
+        代理人名称：<%=@agent1%>
+      <%else%>
+      <%end%>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>案件号</th>
+          <th nowrap>申请人</th>
+          <th nowrap>申请方代理人</th>
+          <th nowrap>被申请人</th>
+          <th nowrap>被申请方代理人</th>
+          <th nowrap>仲裁员姓名</th>
+          <th nowrap>仲裁员类型</th>
+          <th nowrap>选定方式</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @case!=nil%>
+          <%for q in @case%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap>
+                <%=q.recevice_code%>
+              </td>
+              <td nowrap>
+                <%@a=TbParty.find(:first,:conditions=>"recevice_code='#{q.recevice_code}' and partytype=1")%>
+                <%if @a!=nil%>
+                  <%=@a.partyname%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%@a=TbAgent.find(:first,:conditions=>"recevice_code='#{q.recevice_code}' and partytype=1")%>
+                <%if @a!=nil%>
+                  <%=@a.name%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%@a=TbParty.find(:first,:conditions=>"recevice_code='#{q.recevice_code}' and partytype=2")%>
+                <%if @a!=nil%>
+                  <%=@a.partyname%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%@a=TbAgent.find(:first,:conditions=>"recevice_code='#{q.recevice_code}' and partytype=2")%>
+                <%if @a!=nil%>
+                  <%=@a.name%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%@a=TbArbitman.find_by_sql("select a.name as name from tb_arbitmen as a,tb_casearbitmen as c
+                  where c.recevice_code='#{q.recevice_code}' and a.used='Y' and a.code=c.arbitman and
+                  c.arbitman='#{q.arbitman}' and c.arbitmantype='#{q.arbitmantype}' and c.used='Y'")%>
+                <%if @a!=nil%>
+                  <%for p in @a%>
+                    <%=p.name%>
+                  <%end%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%@a=TbDictionary.find(:first,:conditions=>"typ_code='0014' and state='Y' and data_val='#{q.arbitmantype}'")%>
+                <%if @a!=nil%>
+                  <%=@a.data_text%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%@a=TbDictionary.find(:first,:conditions=>"typ_code='0015' and state='Y' and data_val='#{q.arbitmansign}'")%>
+                <%if @a!=nil%>
+                  <%=@a.data_text%>
+                <%end%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

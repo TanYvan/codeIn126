@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加专家咨询委员会信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <br>
+  <div class="cDGray" align="center">添加专家咨询委员会信息(带<i>*</i>为必填项)   <%=link_to "返回",:action=>"expertconsult_list"%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :expertconsult ,:url=>{:action=>"expertconsult_create"}  do |f|%>
+      <table class="list">
+        <tr >
+          <th>
+           <i>*</i>姓名:
+          </th>
+          <td>
+            <%=f.text_field(:name)%><i><%=error_message_on(:expertconsult,:name)%></i>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            性别:
+          </th>
+          <td>
+            <%=f.select(:sex,[["男","男"],["女","女"]])%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>地址:
+          </th>
+          <td>
+            <%=f.text_field(:addr)%><i><%=error_message_on(:expertconsult,:addr)%></i>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            <i>*</i>联系电话:
+          </th>
+          <td>
+            <%=f.text_field(:tel)%><i><%=error_message_on(:expertconsult,:tel)%></i>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            电子邮件:
+          </th>
+          <td>
+            <%=f.text_field(:email,:style=>"width:15em")%>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            邮政编码:
+          </th>
+          <td>
+            <%=f.text_field(:postcode)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            本年度参与专家会议次数:
+          </th>
+          <td>
+            <%=f.text_field(:times)%>次
+          </td>
+        </tr>
+        <tr>
+          <th>
+            参与专家会议总次数:
+          </th>
+          <td>
+            <%=f.text_field(:total_times)%>次
+          </td>
+        </tr>
+       </table>
+        <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+
+  </body>
+</html>

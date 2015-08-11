@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>受理案件仲裁条款及争议金额分析</title>
+    <script src="/javascripts/pub.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">受理案件仲裁条款及争议金额分析</span></div>
+    <%form_tag ({:action=>"list"})  do %>
+      <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+      <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+      至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+      <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+      <%=submit_tag "查询" %>
+    <%end%>
+
+    <table align="center">
+      <tr>
+        <td>
+          <%form_tag({:action=>'list_1'},:target=>"_black") do %>
+            <%=submit_tag '生成Excel文档'%>
+          <%end%>
+        </td>
+      </tr>
+    </table>
+
+    <table id="report_excel"><tr><td>
+          <%if @case!=nil %>
+            <table border="1" bordercolor="#000000" style="width:100%; border:1px solid #000000; border-collapse: collapse;" cellspacing="0" cellpadding="3">
+              <tr>
+                <th colspan="10">
+                  <%=@d1%>至<%=@d2%>受理案件仲裁条款及争议金额分析
+                </th>
+              </tr>
+              <tr>
+                <td colspan="4">
+                </td>
+                <td>
+                  1百万以下
+                </td>
+                <td nowrap>
+                  1百万－5百万
+                </td>
+                <td nowrap>
+                  5百万－1千万
+                </td>
+                <td nowrap>
+                  1千万－5千万
+                </td>
+                <td nowrap>
+                  5千万－1亿
+                </td>
+                <td nowrap>
+                  1亿以上
+                </td>
+              </tr>
+              <%for c in @case%>
+                <tr >
+                  <th >
+                    <%=c.typ_name%>
+                  </th>
+                  <td colspan="3"></td>
+                  <td>
+                    <%=c.c_a%>
+                  </td>
+                  <td>
+                    <%=c.c_b%>
+                  </td>
+                  <td>
+                    <%=c.c_c%>
+                  </td>
+                  <td>
+                    <%=c.c_d%>
+                  </td>
+                  <td>
+                    <%=c.c_e%>
+                  </td>
+                  <td>
+                    <%=c.c_f%>
+                  </td>
+                </tr>
+                <tr>
+                  <td nowrap>
+                    <strong>案件数量</strong>
+                  </td>
+                  <td nowrap>
+                    <%=c.h%>
+                  </td>
+                  <td colspan="8">
+                  </td>
+                </tr>
+                <tr>
+                  <td nowrap>
+                    本诉明确争议金额
+                  </td>
+                  <td nowrap>
+                    <%=SysArg.compart2(c.b_amount_0001)%>
+                  </td>
+                  <td nowrap>
+                    反诉明确争议金额
+                  </td>
+                  <td nowrap>
+                    <%if c.f_amount_0001!=0%>
+                      <%=SysArg.compart2(c.f_amount_0001)%>
+                    <%else%>
+                      &nbsp;&nbsp;&nbsp;
+                    <%end%>
+                  </td>
+                  <td colspan="6">
+                  </td>
+                </tr>
+                <tr>
+                  <td nowrap>
+                    本诉不明确争议金额
+                  </td>
+                  <td nowrap>
+                    <%=SysArg.compart2(c.b_amount_0002)%>
+                  </td>
+                  <td nowrap>
+                    反诉不明确争议金额
+                  </td>
+                  <td nowrap>
+                    <%=SysArg.compart2(c.f_amount_0002)%>
+                  </td>
+                  <td colspan="6">
+                  </td>
+                </tr>
+                <tr>
+                  <td nowrap>
+                    本诉争议金额合计
+                  </td>
+                  <td nowrap>
+                    <%=SysArg.compart2(c.b_amount_h)%>
+                  </td>
+                  <td nowrap>
+                    反诉争议金额合计
+                  </td>
+                  <td nowrap>
+                    <%=SysArg.compart2(c.f_amount_h)%>
+                  </td>
+                  <td colspan="6">
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    争议金额总计
+                  </td>
+                  <td colspan="2">
+                    <%=SysArg.compart2(c.amount_h)%>
+                  </td>
+                  <td colspan="6">
+                  </td>
+                </tr>
+                <tr>
+                  <td nowrap>
+                    本诉无明确争议金额收费
+                  </td>
+                  <td nowrap>
+                    <%=SysArg.compart2(c.b_charge_0004)%>
+                  </td>
+                  <td nowrap>
+                    反诉无明确争议金额收费
+                  </td>
+                  <td nowrap>
+                    <%=SysArg.compart2(c.f_charge_0004)%>
+                  </td>
+                  <td colspan="6">
+                  </td>
+                </tr>
+                <tr>
+                  <td nowrap>
+                    本诉仲裁费(实收)
+                  </td>
+                  <td nowrap>
+                    <%=SysArg.compart2(c.b_charge)%>
+                  </td>
+                  <td nowrap>
+                    反诉仲裁费(实收)
+                  </td>
+                  <td nowrap>
+                    <%=SysArg.compart2(c.f_charge)%>
+                  </td>
+                  <td colspan="6">
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    仲裁费总计
+                  </td>
+                  <td colspan="2">
+                    <%=SysArg.compart2(c.charge_h)%>
+                  </td>
+                  <td colspan="6">
+                  </td>
+                </tr>
+
+              <%end%>
+            </table>
+          <%end%>
+        </td></tr></table>
+    <script langugae="javascript">to_excel(document.getElementById("report_excel"));
+      window.close();
+    </script>
+  </body>
+</html>

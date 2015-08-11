@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>仲裁员和助理的其它报酬 信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag :defaults%>
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+ 添加  仲裁员和助理的其它报酬   <%=link_to "返回",:action=>"list_2"%>
+
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :remun ,:url=>{:action=>"create_2"},:html=>{:onsubmit=>""}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            人员姓名:
+          </th>
+          <td>
+            <%op=User.find(:all,:conditions=>"used='Y' and code<>'admin'",:order=>"ord")%> 
+            <%=f.collection_select(:user_code, op,:code,:name)%>                                
+            <div style="color:red"><%=error_message_on(:remun,:p_typ)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            人员:
+          </th>
+          <td>
+            <div id='p_s'>
+            <%=f.select(:p,@pb)%> 
+            </div>
+            <div style="color:red"><%=error_message_on(:remun,:p)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            事项:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0050' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:obj_typ,op,:data_val,:data_text)%>   
+            <div style="color:red"><%=error_message_on(:remun,:obj_typ)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            工作量:
+          </th>
+          <td>
+            <%=f.text_field(:obj_num)%> 
+            <div style="color:red"><%=error_message_on(:remun,:obj_num)%></div>
+          </td>
+        </tr>                       
+      </table>
+      <br>
+        <div align="center"><%=submit_tag "提交" %></div>
+
+    <%end%>
+  </body>
+</html>

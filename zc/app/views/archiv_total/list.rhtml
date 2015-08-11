@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件归档统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件归档统计</span></div>
+    <%form_tag :url=>{:action=>"list3_11"} do%>
+      <table align="center">
+        <tr>
+          <%@caseassistant1=UserDuty.find_by_sql("select users.code as code,users.name as name from users,user_duties where users.used='Y' and  users.code=user_duties.user_code and user_duties.duty_code='0003'  order by users.name")%>
+          <td nowrap align="right">助理:</td>
+          <td align="left" nowrap>
+            <select name="clerk"/>
+            <option value='' selected>全部</option>
+            <%for a in @caseassistant1%>
+              <option value='<%=a.code%>' select><%=a.name%></option>
+            <%end%>
+  <%#*<select/>%>
+          </td>
+        </tr>
+        <tr><td nowrap align="right">结案时间：</td>
+          <td align="left"><%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+            至
+            <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+          </td></tr>
+        <tr><td colspan="2">
+            <%=submit_tag "查询" %>
+          </td></tr>
+      </table>
+    <%end%>
+    <div align="center">结案时间：<%=@d1%>至<%=@d2%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>助理</th>
+          <th nowrap>结案数/归档数</th>
+          <th nowrap>从结案到归档的平均时间(天)</th>
+          <th nowrap>从结案到档案接收的平均时间(天)</th>
+          <th nowrap>已归档正卷</th>
+          <th nowrap>已归档副卷</th>
+          <th nowrap>已归档光盘</th>
+          <th nowrap>已接收档案的裁决/撤案</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%n1=0%>
+        <%n2=0%>
+        <%n3=0%>
+        <%n4=0%>
+        <%for t in @ttt%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=t.name%></td>
+            <td nowrap>
+              <%=t.end_count%>/<%=t.arc_count%>
+              <%n1=n1 + t.end_count.to_i%>
+              <%n2=n2 + t.arc_count.to_i%>
+            </td>
+            <td nowrap><%if t.arc_count.to_i!=0%> <%= SysArg.round_2(t.d_count.to_i / t.arc_count.to_i)%> <%end%> </td>
+            <td nowrap><%if t.arc_count.to_i!=0%> <%= SysArg.round_2(t.d_count_2.to_i / t.arc_count.to_i)%> <%end%> </td>
+            <td nowrap><%=t.file_num_1 %> </td>
+            <td nowrap><%=t.file_num_2 %> </td>
+            <td nowrap><%=t.file_num_3 %> </td>
+            <td nowrap>
+              <%=t.file_typ_0002%>/<%=t.file_typ_0001%>
+              <%n4=n4 + t.file_typ_0002.to_i%>
+              <%n3=n3 + t.file_typ_0001.to_i%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+        <tr class="row<%=i % 2%>">
+          <td nowrap>总计</td>
+          <td nowrap>
+            <!--%=@ttt.sum{|a| a.end_count}%>/<#%=@ttt.sum{|a| a.arc_count}%-->
+            <%=n1%>/<%=n2%>
+          </td>
+          <td nowrap><%if @ttt.sum{|a| a.arc_count.to_i}.to_i!=0%> <%=SysArg.round_2(@ttt.sum{|a| a.d_count.to_i}.to_i / @ttt.sum{|a| a.arc_count.to_i}.to_i)%> <%end%></td>
+          <td nowrap><%if @ttt.sum{|a| a.arc_count.to_i}.to_i!=0%> <%=SysArg.round_2(@ttt.sum{|a| a.d_count_2.to_i}.to_i / @ttt.sum{|a| a.arc_count.to_i}.to_i)%> <%end%></td>
+          <td nowrap><%=@ttt.sum{|a| a.file_num_1}%></td>
+          <td nowrap><%=@ttt.sum{|a| a.file_num_2}%></td>
+          <td nowrap><%=@ttt.sum{|a| a.file_num_3}%></td>
+          <td nowrap>
+            <!--%=@ttt.sum{|a| a.file_typ_0001}%>/<#%=@ttt.sum{|a| a.file_typ_0002}%-->
+            <%=n4%>/<%=n3%>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

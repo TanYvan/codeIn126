@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员新增信息</title>
+    <%= javascript_include_tag "prototype" %>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/tab.css" type="text/css" rel="stylesheet" />
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员新增信息</span></div>
+    <div align="center">
+      <%form_tag :url=>{:action=>"list"} do%>
+        <table align="center">
+          <tr>
+            <td nowrap align="right">注册时间：</td>
+            <td align="left">
+              <%=text_field_tag(:d1, @d1, :readonly => "true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />至
+              <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+            </td>
+            <td nowrap align="right"></td>
+            <td nowrap align="right">
+              姓名：
+              <%=text_field_tag(:name,@name)%>
+              <%=submit_tag "查询" %>
+            </td>
+          </tr>
+        </table>
+      <%end%>
+    </div>
+    <div class="tabs" align="center">
+      <ul>
+        <li><a href="/arbitman_add_check/list" class="selected"><span>未确认</span></a></li>
+        <li><a href="/arbitman_add_check/list_2" ><span>已确认</span></a></li>
+      </ul>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table class="adminlist" cellspacing="1">
+      <thead>
+        <tr>
+          <th nowrap>
+            编号
+          </th>
+          <th nowrap>
+            姓名(身份证)
+          </th>
+          <th nowrap>性别</th>
+          <th nowrap>地区</th>
+          <th nowrap>单位</th>
+          <th nowrap>电话号码</th>
+          <th nowrap>邮政编码</th>
+          <th nowrap>注册时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @res.status == "1" && @res.dataset.size != "0"%>
+          <%for r in @res.dataset.rows %>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=h r.get_data("code") %>
+              </td>
+              <td><%=link_to  r.get_data("name_idcard"),{:action => "show_base", :arbitman_code=> r.get_data("code")}, :target => "_self" %></td>
+              <td><%=h r.get_data("sex") %></td>
+              <td><%@a=Region.find_by_code(r.get_data("area_code"))%><%if @a!=nil%><%=h @a.name %><%end%></td>
+              <td><%=h r.get_data("company") %></td>
+              <td><%=h r.get_data("telo") %></td>
+              <td><%=h r.get_data("postcode") %></td>
+              <td><%=h r.get_data("register_time") %></td>
+            </tr>
+            <%i+=1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+    <%= @page_bar%>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>语种</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">语种列表</span></div>
+    <br>
+    <!--关于仲裁员的各种链接的-->     
+    <div align="center">
+      <%=link_to "返回", :action => "show_arbitman", :id => @tb_arbitman.id%>
+      </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>语种</th>
+        <th nowrap>语言序号</th>
+        <th nowrap>听说能力</th>
+        <th nowrap>读写能力</th>
+        <th nowrap>备注</th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%if @tb_languages  != nil
+          for tb_language in @tb_languages %>
+          <tr class="row<%=i % 2%>">
+            <td><%= TbDictionary.find_arbit_type(9008,tb_language.language) %> </td>
+            <td><%= tb_language.lannum%> </td>
+            <td><%= TbDictionary.find_arbit_type(9009,tb_language.language) %></td>
+            <td><%= TbDictionary.find_arbit_type(9010,tb_language.language) %></td>
+            <td><%= tb_language.remark%> </td>
+         </tr>
+      <%i=i+1%>
+      <%end%>
+      <%end%>
+      </tbody>
+    </table>             
+  </body>
+</html>

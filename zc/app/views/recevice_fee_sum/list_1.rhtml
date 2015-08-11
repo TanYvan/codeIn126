@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <title>咨询案件情况</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <script type="text/javascript" src="/javascripts/pub.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">咨询案件情况（默认为上周）</span></div>
+    <%form_tag :action=>"list_1" do%>
+      <table>
+        <tr><td align="right">咨询时间：</td><td><%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+            至
+            <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+          </td>
+          <td colspan="2" align="center"><%=submit_tag "查询" %></td>
+          <td align="left"><input type="button" value="导出excel文档" onclick="to_excel(document.getElementById('to_excel_h'));"/></td>
+          
+        </tr>
+        <tr></tr>
+      </table>
+    <%end%>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist" id="to_excel_h">
+      <thead>
+        <tr>
+          <th nowrap>
+            <%if @order=="recevice_code desc"%>
+              <%=link_to '咨询流水号↑',:action=>"list_1",:order=>"recevice_code asc",:d1=>@d1,:d2=>@d2%>
+            <%elsif @order=="recevice_code asc"%>
+              <%=link_to '咨询流水号↓',:action=>"list_1",:order=>"recevice_code desc",:d1=>@d1,:d2=>@d2%>
+            <%else%>
+              <%=link_to '咨询流水号',:action=>"list_1",:order=>"recevice_code asc",:d1=>@d1,:d2=>@d2%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="receivedate desc"%>
+              <%=link_to '咨询日期↑',:action=>"list_1",:order=>"receivedate asc",:d1=>@d1,:d2=>@d2%>
+            <%elsif @order=="receivedate asc"%>
+              <%=link_to '咨询日期↓',:action=>"list_1",:order=>"receivedate desc",:d1=>@d1,:d2=>@d2%>
+            <%else%>
+              <%=link_to '咨询日期',:action=>"list_1",:order=>"receivedate asc",:d1=>@d1,:d2=>@d2%>
+            <%end%>
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+          <th nowrap>
+            <%if @order=="tb_cases.amount desc"%>
+              <%=link_to '总争议金额↑',:action=>"list_1",:order=>"tb_cases.amount asc",:d1=>@d1,:d2=>@d2%>
+            <%elsif @order=="tb_cases.amount asc"%>
+              <%=link_to '总争议金额↓',:action=>"list_1",:order=>"tb_cases.amount desc",:d1=>@d1,:d2=>@d2%>
+            <%else%>
+              <%=link_to '总争议金额',:action=>"list_1",:order=>"tb_cases.amount asc",:d1=>@d1,:d2=>@d2%>
+            <%end%>
+          </th>
+          <th>
+            应收
+          </th>
+          <th>
+            减交
+          </th>
+          <th>
+            实收
+          </th>
+          <th>
+            欠缴
+          </th>
+          <th>
+            咨询助理
+          </th>
+          <th>
+            选定的仲裁机构
+          </th>
+          <th>
+            办案助理
+          </th>
+          <th>
+            争议类型
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @case%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%=link_to c.recevice_code,{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>c.recevice_code},:target=>"_black"  %>
+            </td>
+            <td>
+              <%=h c.receivedate%>
+            </td>
+            <td>
+              <div align="left">
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </div>
+            </td>
+            <td>
+              <div align="left">
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </div>
+            </td>
+            <td>
+              <%=SysArg.compart1(c.amount)%>
+            </td>
+            <%
+            # 应交
+            c1=TbShouldCharge.sum("rmb_money",:conditions=>"(typ='0001' or typ='0004') and used='Y' and recevice_code='#{c.recevice_code}'")
+            # 实交
+            c2=TbShouldCharge.sum("re_rmb_money",:conditions=>"(typ='0001' or typ='0004') and used='Y' and recevice_code='#{c.recevice_code}'")
+            # 减交
+            c3=TbShouldCharge.sum("redu_rmb_money",:conditions=>"(typ='0001' or typ='0004') and used='Y' and recevice_code='#{c.recevice_code}'")
+            # 应退
+            c4=TbShouldRefund.sum("rmb_money",:conditions=>"(typ='0001' or typ='0004') and used='Y' and recevice_code='#{c.recevice_code}' and state<>3")
+            # 实退
+            c5=TbShouldRefund.sum("re_rmb_money",:conditions=>"(typ='0001' or typ='0004') and used='Y' and recevice_code='#{c.recevice_code}'  and state<>3")
+            # 减退
+            c6=TbShouldRefund.sum("redu_rmb_money",:conditions=>"(typ='0001' or typ='0004') and used='Y' and recevice_code='#{c.recevice_code}'  and state<>3")
+            if c1==nil
+              c1=0
+            end
+            if c2==nil
+              c2=0
+            end
+            if c3==nil
+              c3=0
+            end
+            if c4==nil
+              c4=0
+            end
+            if c5==nil
+              c5=0
+            end
+            if c6==nil
+              c6=0
+            end
+
+            c_rmb_money=c1 - (c4 - c6)
+            c_redu_rmb_money=c3
+            c_re_rmb_money=c2 - c5
+            c_c=c_rmb_money - c_re_rmb_money - c_redu_rmb_money
+          %>
+            <td>
+              <%if c_rmb_money>0%> <%=SysArg.compart1(c_rmb_money)%> <%end%>
+            </td>
+            <td>
+              <%if c_redu_rmb_money>0%> <%=SysArg.compart1(c_redu_rmb_money)%> <%end%>
+            </td>
+            <td>
+              <%if c_re_rmb_money>0%> <%=SysArg.compart1(c_re_rmb_money)%> <%end%>
+            </td>
+            <td>
+              <%if c_c>0%> <%=SysArg.compart1(c_c)%> <%end%>
+            </td>
+            <td>
+              <%unless c.clerk_2.blank?%>
+                <%username=User.find(:first,:conditions=>["used='Y' and code=?",c.clerk_2])%>
+                <%=username.name if username%>
+              <%end%>
+            </td>
+            <td>
+              <%=TbDictionary.find_by_typ_code_and_data_val_and_used_and_state("0004",c.agent,"Y","Y").data_text%>
+            </td>
+            <td>
+              <%unless c.clerk.blank?%>
+                <%username=User.find(:first,:conditions=>["used='Y' and code=?",c.clerk])%>
+                <%=username.name if username%>
+              <%end%>
+            </td>
+            <td>
+              <%=h c.dispute_type%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+          <tr class="row<%=i % 2%>">
+            <td colspan="4">
+              数量：<%=h @case.size%>
+            </td>
+            <td >
+              合计：<%=h SysArg.compart1(@case.sum{|c| c.amount})%>
+            </td>
+            <td colspan="8">
+
+            </td>
+          </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

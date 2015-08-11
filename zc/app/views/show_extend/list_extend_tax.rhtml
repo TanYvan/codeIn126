@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>扣税表</title>
+  <%= javascript_include_tag "prototype" %>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript">
+    function saveAsExcel(tableID){
+      var tb = new TableToExcel(tableID);
+      tb.setFontStyle("Courier New");
+      tb.setTableBorder(2);
+      tb.setColumnWidth(7);
+      tb.setFontSize(10);
+      tb.isLineWrap(true);
+      tb.getExcelFile();
+    }
+    /** 功能：HTML中Table对象转换为Excel通用对象.
+     * 参数：tableID HTML中Table对象的ID属性值
+     * 说明：
+     * 能适应复杂的HTML中Table对象的自动转换，能够自动根据行列扩展信息
+     * 合并Excel中的单元格，客户端需要安装有Excel
+     * 详细的属性、方法引用说明参见：Excel的Microsoft Excel Visual Basic参考
+     * 示范：
+     * var tb = new TableToExcel('demoTable');
+     * tb.setFontStyle("Courier New");
+     * tb.setFontSize(10); //推荐取值10
+     * tb.setFontColor(6); //一般情况不用设置
+     * tb.setBackGround(4); //一般情况不用设置
+     * tb.setTableBorder(2); //推荐取值2
+     * tb.setColumnWidth(10); //推荐取值10
+     * tb.isLineWrap(false);  //是否自动换行
+     * tb.isAutoFit(true);   //是否自适应宽度
+     * * tb.getExcelFile();
+     * 如果设置了单元格自适应，则设置单元格宽度无效
+     * 版本：1.0
+     **/
+    function TableToExcel(tableID){
+      this.tableBorder = -1; //边框类型，-1没有边框 可取1/2/3/4
+      this.backGround = 0; //背景颜色：白色 可取调色板中的颜色编号 1/2/3/4....
+      this.fontColor = 1; //字体颜色：黑色
+      this.fontSize = 10; //字体大小
+      this.fontStyle = "宋体"; //字体类型
+      this.rowHeight = -1; //行高
+      this.columnWidth = -1; //列宽
+      this.lineWrap = true; //是否自动换行
+      this.textAlign = -4108; //内容对齐方式 默认为居中
+      this.autoFit = true; //是否自适应宽度
+      this.tableID = tableID;
+    }
+
+    //匿名函数
+    TableToExcel.prototype.setTableBorder = function(excelBorder){
+      this.tableBorder = excelBorder;
+    };
+    TableToExcel.prototype.setBackGround = function(excelColor){
+      this.excelColer = excelColor;
+    };
+    TableToExcel.prototype.setFontColor = function(excelFontColor){
+      this.fontColor = excelFontColor;
+    };
+    TableToExcel.prototype.setFontSize = function(excelFontSize){
+      this.fontSize = excelFontSize;
+    };
+    TableToExcel.prototype.setFontStyle = function(excelFontStyle){
+      this.fontstyle = excelFontStyle;
+    };
+    TableToExcel.prototype.setRowHeight = function (excelRowHeight) {
+      this.rowHeight = excelRowHeight;
+    };
+    TableToExcel.prototype.setColumnWidth = function (excelColumnWidth) {
+      this.columnWidth = excelColumnWidth;
+    };
+    TableToExcel.prototype.isLineWrap = function (lineWrap) {
+      if (lineWrap == false || lineWrap == true) {
+        this.lineWrap = lineWrap;
+      }
+    };
+    TableToExcel.prototype.setTextAlign = function (textAlign) {
+      this.textAlign = textAlign;
+    };
+    TableToExcel.prototype.isAutoFit = function(autoFit){
+      if(autoFit == true || autoFit == false)this.autoFit = autoFit ;
+    };
+
+    TableToExcel.prototype.getExcelFile = function(){
+      var xls, myWorkbook, myWorksheet, myHTMLTableCell, myExcelCell, myExcelCell2;
+      var myCellColSpan, myCellRowSpan;
+      try{
+        xls = new ActiveXObject("Excel.Application");
+      }catch(e){
+        alert("无法启动Excel!\n\n如果您确信您的电脑中已经安装了Excel，"+"那么请调整IE的安全级别。\n\n具体操作：\n\n"+"工具 → Internet选项 → 安全 → 自定义级别 → 对没有标记为安全的ActiveX进行初始化和脚本运行 → 启用");
+        return false;
+      }
+      xls.Visible = true;
+      myWorkbook = xls.Workbooks.Add(); //增加一个Excel的WorkBook
+      xls.DisplayAlerts = false; //不显示 excel 程序的提示信息
+      myWorkbook.Worksheets(3).Delete(); // 删除 sheet3
+      myWorkbook.Worksheets(2).Delete(); // 删除 sheet2
+      xls.DisplayAlerts = true; //重新显示 excel 程序的提示信息
+      myWorksheet = myWorkbook.ActiveSheet;//获取 sheet1
+
+      myWorksheet.Columns(5).NumberFormatLocal = "0.00"; //设置第5列“应发数额”保留两位有效数字的形式显示
+      myWorksheet.Columns(6).NumberFormatLocal = "0.00";
+      myWorksheet.Columns(7).NumberFormatLocal = "0.00";
+      myWorksheet.Columns(8).NumberFormatLocal = "0.00";
+      myWorksheet.Columns(9).NumberFormatLocal = "0.00";
+      myWorksheet.Columns(10).NumberFormatLocal = "0.00";
+
+      //myWorksheet.Rows(1).Font.Bold = true; //第一行字体加粗
+      //myWorksheet.Rows(2).Font.Bold = true; //第二行字体加粗
+      myWorksheet.Rows(1+":"+2).Font.Bold = true; // 从第一行到第二行字体全部加粗
+
+
+      var readRow = 0, readCol = 0;
+      var totalRow = 0, totalCol = 0;
+
+      //设置列宽为指定值，否则默认 7
+      if(this.columnWidth != -1)
+        myWorksheet.Columns.ColumnWidth = this.columnWidth;
+      else
+        myWorksheet.Columns.ColumnWidth = 7;
+
+      //设置行高为指定值，否则默认 20
+      if(this.rowHeight != -1)
+        myWorksheet.Rows.RowHeight = this.rowHeight ;
+      else
+        myWorksheet.Rows.RowHeight = 20
+
+      var htmltable = $(this.tableID)
+      totalRow = htmltable.rows.length; //获取总行数
+      for(i=0; i<htmltable.rows(0).cells.length; i++){
+        myHTMLTableCell = htmltable.rows(0).cells(i);
+        myCellColSpan = myHTMLTableCell.colSpan;
+        totalCol = totalCol + myCellColSpan; //计算总列数（各个单元格的合并数之和）
+      }
+
+      //开始构件模拟表格
+      var excelTable = new Array();
+      for (i = 0; i <= totalRow; i++) {
+        excelTable[i] = new Array();
+        for (t = 0; t <= totalCol; t++) {
+          excelTable[i][t] = false;
+        }
+      }
+
+      //开始转换表格
+      for(z = 0; z < totalRow; z++){ // 遍历所有的行
+        readRow = z + 1; //excel表格 行
+        readCol = 0;     //excel表格 列
+        for (c = 0; c < htmltable.rows(z).cells.length; c++) { //遍历每一行的单元格
+          myHTMLTableCell = htmltable.rows(z).cells(c); //当前单元格
+          myCellColSpan = myHTMLTableCell.colSpan; // 当前单元格的 colspan
+          myCellRowSpan = myHTMLTableCell.rowSpan; // 当前单元格的 rowspan
+          for (y = 1; y <= totalCol; y++) {
+            if (excelTable[readRow][y] == false) {
+              readCol = y;
+              break;
+            }
+          }
+          if (myCellColSpan * myCellRowSpan > 1) { //合并了单元格
+            myExcelCell = myWorksheet.Cells(readRow, readCol);
+            myExcelCell2 = myWorksheet.Cells(readRow + myCellRowSpan - 1, readCol + myCellColSpan - 1);
+            myWorksheet.Range(myExcelCell, myExcelCell2).Merge(); //合并 myExcelCell 和 myExcelCell2
+            myExcelCell.HorizontalAlignment = this.textAlign;
+            myExcelCell.Font.Size = this.fontSize;
+            myExcelCell.Font.Name = this.fontStyle;
+            myExcelCell.wrapText = this.lineWrap;
+            myExcelCell.Interior.ColorIndex = this.backGround;
+            myExcelCell.Font.ColorIndex = this.fontColor;
+            if(this.tableBorder != -1){
+              myWorksheet.Range(myExcelCell, myExcelCell2).Borders.Weight = this.tableBorder ; //上、下、左、右 边框
+            }
+
+            myExcelCell.Value = myHTMLTableCell.innerText; //填写表格
+
+            for (row = readRow; row <= myCellRowSpan + readRow - 1; row++) {
+              for (col = readCol; col <= myCellColSpan + readCol - 1; col++) {
+                excelTable[row][col] = true;
+              }
+            }
+            readCol = readCol + myCellColSpan;
+          } else { // 未合并单元格
+            myExcelCell = myWorksheet.Cells(readRow, readCol);
+            myExcelCell.Value = myHTMLTableCell.innerText;
+            myExcelCell.HorizontalAlignment = this.textAlign;
+            myExcelCell.Font.Size = this.fontSize;
+            myExcelCell.Font.Name = this.fontStyle;
+            myExcelCell.wrapText = this.lineWrap;
+            myExcelCell.Interior.ColorIndex = this.backGround;
+            myExcelCell.Font.ColorIndex = this.fontColor;
+            if(this.tableBorder != -1){
+              myExcelCell.Borders(1).Weight = this.tableBorder ; //上
+              myExcelCell.Borders(2).Weight = this.tableBorder ; //下
+              myExcelCell.Borders(3).Weight = this.tableBorder ; //左
+              myExcelCell.Borders(4).Weight = this.tableBorder ; //右
+            }
+            excelTable[readRow][readCol] = true;
+            readCol = readCol + 1;
+          }
+        }
+      }
+
+      if(this.autoFit == true)
+        myWorksheet.Columns.AutoFit;
+      xls.UserControl = true;
+      xls = null;
+      myWorkbook = null;
+      myWorksheet = null;
+    }
+
+  </script>
+</head>
+<body>
+  <br/><br/>
+  <input id="to_excel" type="button" value='导出Excel表格' onclick="$('to_excel').style.display='none';saveAsExcel($('excel'));$('to_excel').style.display='';"/>
+  <br/><br/>
+  <%  taxtype1 = TbDictionary.find(:all,:conditions=>"typ_code like '9027%' and used='Y' and state='Y' ", :order => "ind,typ_code") %>
+  <table class="adminlist" cellspacing="1" id="excel">
+    <tr>
+      <td colspan="<%= 8 + taxtype1.size %>" style="text-align: center;font-size: 14px"><%=@tablename%></td>
+    </tr>
+    <tr>
+      <td nowrap style="text-align: center;font-size: 14px;width: 100px">序号</td>
+      <td nowrap style="text-align: center;font-size: 14px">姓名</td>
+      <td nowrap style="text-align: center;font-size: 14px">立案号</td>
+      <td nowrap style="text-align: center;font-size: 14px">结案号</td>
+      <td nowrap style="text-align: center;font-size: 14px">应发数额</td>
+      <%
+        taxtype1 = TbDictionary.find(:all,:conditions=>"typ_code='9027' and used='Y' and state='Y' ")
+        for t in taxtype1
+      %>
+      <td nowrap style="text-align: center;font-size: 14px"><%= t.data_text %></td>
+      <% end %>
+      <!--
+      <td nowrap style="text-align: center;font-size: 14px">个人所得税3.3%</td>
+      <td nowrap style="text-align: center;font-size: 14px">营业税5%</td>
+      <td nowrap style="text-align: center;font-size: 14px">营业税附加10%</td>
+      -->
+      <td nowrap style="text-align: center;font-size: 14px">应扣税款</td>
+      <td nowrap style="text-align: center;font-size: 14px">实发数额</td>
+      <td nowrap style="text-align: center;font-size: 14px">备注</td>
+    </tr>
+     <%i=1%>
+     <% if @tb_extends != nil
+      for tb_extend in @tb_extends %>
+        <tr>
+          <td nowrap style="text-align: center"><%= i.to_s %></td>
+          <td nowrap style="text-align: center"><%= tb_extend.p_name %></td>
+          <td nowrap style="text-align: center"><%= tb_extend.case_code %></td>
+          <td nowrap style="text-align: center"><%= tb_extend.end_code %></td>
+          <td nowrap style="text-align: center"><%= SysArg.round2f(tb_extend.should_rmb) %></td>
+          <%  for t in taxtype1 %>
+          <td>
+            <%unless tb_extend.tax_detail_mark.blank?%>
+              <%tax_d = TaxDetail.find_by_mark_and_code(tb_extend.tax_detail_mark, t.typ_code)%>
+              <%=tax_d.rmb if tax_d%>
+            <%end%>
+          </td>
+          <% end %>
+          <!--
+          <td nowrap style="text-align: center"><%= SysArg.round2f(tb_extend.tax_base_rmb.to_i*0.033) %></td>
+          <td nowrap style="text-align: center"><%= yys = SysArg.round2f(tb_extend.tax_base_rmb.to_i*0.05) %></td>
+          <td nowrap style="text-align: center"><%= SysArg.round2f(yys.to_f*0.1) %></td>
+          -->
+          <td nowrap style="text-align: center">
+            <%tax_aa=TaxDetail.find(:first,:conditions=>["code='0000-0000' and mark=?", tb_extend.tax_detail_mark])
+            tax_bb=TaxDetail.find(:first,:conditions=>["code='0000' and mark=?", tb_extend.tax_detail_mark])
+            if (tax_aa && tax_bb && tax_aa.rmb ==tax_bb.rmb) || !tax_bb%>
+              <%= SysArg.round2f(tb_extend.tax_rmb) %>
+            <%else%>
+              <div style="color:red"> <%= SysArg.round2f(tb_extend.tax_rmb) %> </div>
+            <%end%>
+          </td>
+          <td nowrap style="text-align: center"><%= SysArg.round2f(tb_extend.extend_rmb) %></td>
+          <td nowrap style="text-align: center"><%= tb_extend.remark %></td>
+        </tr>
+        <%i+=1%>
+      <%end%>
+    <%end%>
+    </table>
+</body>
+</html>
+

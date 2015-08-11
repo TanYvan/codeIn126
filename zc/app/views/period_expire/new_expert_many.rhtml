@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>届信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+    <div class="cDGray">仲裁员届信息维护列表(带<i>*</i>为必填项)  <%=link_to "返回", :action => "list_expires",:page=>params[:page],:page_lines=>params[:page_lines]%></div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :expire_b,:url=>{:action => "create_expert_many",:page=>params[:page],:page_lines=>params[:page_lines] } do |f|%>
+    <table cellspacing="1" class="list">
+        <tr>
+          <th nowrap><i>*</i>届：</th>
+          <td nowrap><%=f.text_field :expire%><i><%=error_message_on(:expire_b,:expire)%></i></td>
+        </tr>
+        <tr>
+          <th nowrap><i>*</i>备注：</th>
+          <td nowrap><%=f.text_area :remark,:rows=>4%><i><%=error_message_on(:expire_b,:remark)%></i></td>
+        </tr>
+    </table>
+    <%=submit_tag "确定" %>
+    <%end%>
+  </body>
+</html>

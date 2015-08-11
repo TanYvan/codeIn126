@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件收费明细信息对照</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件收费明细信息对照</span></div>
+    <br/>
+   当前案件
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <%=h @case.recevice_code%>
+        </td>
+        <td>
+          <%=h @case.receivedate%>
+        </td>
+        <td>
+          <%=h @case.case_code%>
+        </td>
+        <td>
+          <%=h @case.nowdate%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+      </tr>         
+      </tbody>
+    </table>
+    <hr size="1" color="#99CCFF" noshade/>
+    <%=link_to "返回收费对应案件列表",:action=>"charge_case_list"%>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            助理
+          </th>
+          <th nowrap>
+            助理确认时间
+          </th>
+          <th nowrap>
+            收款号
+          </th>
+          <!--
+          <th nowrap>
+            付款方
+          </th>
+          -->
+          <th nowrap>
+            付款方名称
+          </th>
+          <th nowrap>
+            付款方式
+          </th>
+          <th nowrap>
+            收款时间
+          </th>
+          <th nowrap>
+            币种
+          </th>
+          <th nowrap>
+            金额
+          </th>
+          <th nowrap>
+            汇率
+          </th>
+          <th nowrap>
+            实收金额(￥)
+          </th>
+          <th nowrap>
+            开票方式
+          </th>
+          <th nowrap>
+            开票当事人
+          </th>
+          <th nowrap>
+            开票备注
+          </th>
+          <th nowrap>
+            备注
+          </th>
+          <th nowrap>
+            拆分情况
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @charge%>
+        <tr class="row<%=i % 2%>">
+          <td nowrap>
+            <%=link_to  "修改" ,:action=>"charge_edit",:id=>c,:recevice_code=>params[:recevice_code]%>
+          </td>
+          <td nowrap>
+            <%=User.find_by_code(c.clerk).name%>
+          </td>
+          <td nowrap>
+            <%if c.check_dt!=nil%>
+                      <%=c.check_dt.to_s(:db)%>
+                    <%end%>
+            </td>
+            <td nowrap>
+              <%=c.code%>
+            </td>
+            <td nowrap>
+              <%=c.p%>
+            </td>
+            <td nowrap>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0034' and data_val='#{c.mode}'").data_text%>
+            </td>
+            <td nowrap>
+              <%=c.c_dt%>
+            </td>
+            <td nowrap>
+              <%=Money.find_by_code(c.currency).name%>
+            </td>
+            <td nowrap>
+              <%=c.f_money%>
+            </td>
+            <td nowrap>
+              <%=c.rate%>
+            </td>
+            <td nowrap>
+              <%=c.rmb_money%>
+            </td>
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0060' and data_val='#{c.ticket_typ}'").data_text unless c.ticket_typ.blank?%>
+            </td>
+            <td>
+              <%if c.bill_p
+                c.bill_p.split(",").each{|bill_p| %>
+                <%=h TbParty.find(bill_p).partyname%>
+                <br/>
+              <%}
+              end%>
+            </td>
+            <td>
+              <%=h c.bill_remark%>
+            </td>
+            <td nowrap>
+              <%=c.remark%>
+            </td>
+            <td>
+              <%if c.typ=='a' %>
+                 未拆分
+                 <%if c.should_id==0 %>
+                   <br/>
+                   未对应
+                   <br/>
+                   <%if  c.parent_id==0 && (c.bill.blank? || c.bill_p.blank?)%>
+                   <div style="color: red">请选择开票类型及开票当事人</div>
+                   <%else%>
+                     <%=button_to "拆分",:action=>"split_list",:charge_id=>c,:recevice_code=>params[:recevice_code]%>
+                   <%end%>
+                 <%else%>
+                   <br/>
+                   已对应
+                 <%end%>  
+              <%elsif c.typ=='b'%>
+                  已拆分
+                  <%if c.split_rmb_money!=c.rmb_money %>
+                    <div style="color:red">(未拆净)</div>
+                  <%end%>
+                  <%if  c.parent_id==0 && (c.bill.blank? || c.bill_p.blank?)%>
+                    <div style="color: red">请选择开票类型及开票当事人</div>
+                  <%else%>
+                    <%=button_to "拆分",:action=>"split_list",:charge_id=>c,:recevice_code=>params[:recevice_code]%>
+                  <%end%>
+              <%elsif c.typ=='c'%>
+                  拆分后
+                  <%if c.should_id==0 %>
+                   <br/>
+                   未对应
+                  <%else%>
+                   <br/>
+                   已对应
+                  <%end%>
+              <%end%>
+            </td>
+          </tr>          
+          <%i=i+1%>
+    <%end%>
+      </tbody>
+      </table>
+      <hr size="1" color="#99CCFF" noshade width="98%"/>
+       <br/>
+    <%rmb_money=TbShouldCharge.sum("rmb_money",:conditions=>"typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and typ<>'0009' and used='Y' and recevice_code='#{params[:recevice_code]}'")%>
+    <%re_rmb_money=TbShouldCharge.sum("re_rmb_money",:conditions=>"typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and used='Y' and recevice_code='#{params[:recevice_code]}'")%>
+    <%redu_rmb_money=TbShouldCharge.sum("redu_rmb_money",:conditions=>"typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and used='Y' and recevice_code='#{params[:recevice_code]}'")%>
+    <%if rmb_money==nil%>
+      <%rmb_money=0%>
+    <%end%>
+    <%if re_rmb_money==nil%>
+      <%re_rmb_money=0%>
+    <%end%>
+    <%if redu_rmb_money==nil%>
+      <%redu_rmb_money=0%>
+    <%end%>
+      <div align="left">应收款总额：<%=rmb_money%>(￥) 减交总额：<%=redu_rmb_money%>(￥)  实收总额：<%=re_rmb_money%>(￥)  欠缴总额：<%=rmb_money - redu_rmb_money - re_rmb_money%>(￥) </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              费用类型
+            </th>
+            <th nowrap>
+              交款方
+            </th>
+            <th nowrap>
+              币种
+            </th>
+            <th nowrap>
+              金额
+            </th>
+            <th nowrap>
+              汇率
+            </th>
+            <th nowrap>
+              应收费用(rmb)
+            </th>
+            <th nowrap>
+              收款编号
+            </th>
+            <th nowrap>
+              实收费用(rmb)
+            </th>
+            <th nowrap>
+              备注
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for p in @should%>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='0031' and data_val='#{p.typ}'").data_text%><br/>
+                <%if p.typ=='0001' or p.typ=='0004'%>
+                   <%=link_to  "查看明细",:action=>"detail_list",:id=>p,:recevice_code=>params[:recevice_code]%>
+                <%end%>
+              </td>
+              <td>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='0032' and data_val='#{p.payment}'").data_text%>
+              </td>
+              <td>
+                <%=Money.find_by_code(p.currency).name%>
+              </td>
+              <td>
+                <%=p.f_money%>
+              </td>
+              <td>
+                <%=p.rate%>
+              </td>
+              <td>
+                <%=p.rmb_money%>
+              </td>
+              <td nowrap>
+                <%=link_to '对应收款项目',:action=>"charge_corr_list",:should_charge_id=>p,:recevice_code=>params[:recevice_code]%>
+                <br/>
+                <%corr=TbChargeCorr.find(:all,:conditions=>"state=2 and used='Y' and should_charge_id='#{p.id}'",:order=>"charge_id")%>
+                <%for c in corr%>
+                          <%=TbCharge.find(c.charge_id).code%>(金额:<%=TbCharge.find(c.charge_id).rmb_money%>rmb)
+                  <br/>
+                <%end%>
+              </td>
+              <td>
+                <%=p.re_rmb_money%> 
+              </td>
+              <td>
+                <%=p.remark%> 
+              </td>
+            </tr>          
+            <%i=i+1%>
+      <%end%>
+        </tbody>
+      </table>
+    
+    </body>
+  </html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>附件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">附件</span></div>
+    <br/>
+    <!--关于仲裁员的各种链接的-->     
+    <div align="center">
+      <%if params[:show]!="1" %>
+        <%=link_to "增加", :action => "new_att", :id => @tb_arbitman.id%>&nbsp;&nbsp;
+        <%=link_to "返回", :controller => "arbitman",:action => "edit_arbitman", :id => @tb_arbitman.id%>
+      <%end%>
+      </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>
+              附件类型
+            </th>
+            <th nowrap>
+              文件名称
+            </th>
+            <th nowrap>
+              上传时间
+            </th>
+            <th nowrap>
+              下载
+            </th>
+            <th nowrap>
+              删除
+            </th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for a in @att%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%=@att_typ[a.category]%>
+            </td>
+            <td>
+              <%=a.file_name%>
+            </td>
+            <td>
+              <%=a.u_t.to_s(:db) if a.u_t%>
+            </td>
+            <td>
+              <%=link_to "下载" ,:action=>"att_down",:id=>a.att_id%>
+            </td>
+            <td>
+              <%=button_to "删除" ,{:action=>'att_delete',:id=>a.att_id ,:arbitman_id => @tb_arbitman.id} ,:confirm=>"您确认要删除吗？",:method=>"post"%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>             
+  </body>
+</html>

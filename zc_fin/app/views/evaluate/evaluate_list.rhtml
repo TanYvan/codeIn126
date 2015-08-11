@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员评价</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+        仲裁员评价
+      </span></div>
+    <%=button_to "返回案件列表",:action=>"list"%>
+    <br/>
+    <%if @case!=nil%>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              咨询流水号
+            </th>
+            <th nowrap>
+              咨询日期
+            </th>
+            <th nowrap>
+              立案号
+            </th>
+            <th nowrap>
+              立案日期
+            </th>
+            <th nowrap>
+              申请人
+            </th>
+            <th nowrap>
+              被申请人
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @case.recevice_code%>
+            </td>
+            <td>
+              <%=h @case.receivedate%>
+            </td>
+            <td>
+              <%=h @case.case_code%>
+            </td>
+            <td>
+              <%=h @case.nowdate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br/>
+      <br/>
+      <hr size="1" color="#99CCFF" noshade/>
+      <div align="center" class="cDGray">
+        仲裁员评价信息表
+        <%if @evaluate.empty?%>
+          <%=link_to  "批量创建",{:action=>"new_all_2",:recevice_code=>@case.recevice_code},:confirm=>"您确认要批量创建吗？"%>
+        <%else%>
+          <%=link_to  "批量修改",{:action=>"edit_all_2",:recevice_code=>@case.recevice_code},:confirm=>"您确认要批量修改吗？"%>
+        <%end%>
+        <!--<%=link_to  "创建", :action=>"evaluate_new",:recevice_code=>@case.recevice_code%>-->
+        <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>
+              仲裁员类型
+            </th>
+            <th nowrap>
+              仲裁员
+            </th>
+            <th nowrap>
+              评价阶段
+            </th>
+            <th nowrap>
+              评价内容
+            </th>
+            <th nowrap>
+              评价分数
+            </th>
+            <th nowrap>
+              备注
+            </th>
+            <th nowrap>
+              修改
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%if @evaluate!=nil %>
+            <%for p in @evaluate%>
+              <tr class="row<%=i % 2%>">
+                <td>
+                  <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{p.arbitman_type}'").data_text%>
+                </td>
+                <td>
+                  <%@arbitman=TbArbitman.find(:first,:conditions=>"code='#{p.arbitman}' and used='Y'")%>
+                  <%if @arbitman!=nil%>
+                    <%=@arbitman.name%>
+                  <%end%>
+                </td>
+                <td>
+                  <%=TbDictionary.find(:first,:conditions=>"typ_code='8160' and data_val='#{p.parent_val}' and state='Y' and used='Y'").data_text%>
+                </td>
+                <td>
+                  <div align="left">
+                    <%=TbDictionary.find(:first,:conditions=>"typ_code='8160' and data_val='#{p.data_val}' and state='Y' and used='Y'").data_text%>
+                  </div>
+                </td>
+                <td>
+                  <div align="left">
+                    <%=p.score%>
+                  </div>
+                </td>
+                <td>
+                  <div align="left">
+                    <%=p.remark%>
+                  </div>
+                </td>
+                <td>
+                  <%=link_to "修改",:action=>"evaluate_edit",:id=>p,:recevice_code=>@case.recevice_code,:data_val=>p.data_val%>
+                </td>
+              </tr>
+              <%i=i+1%>
+            <%end%>
+          </tbody>
+        </table>
+      <%end%>
+      <div align="center">
+        <%form_tag ({:action=>'marke_2',:recevice_code=>@case.recevice_code},:target=>"_black") do%>
+          <%=submit_tag '生成Word文档'%>
+        <%end%>
+      </div>
+    <%end%>
+  </body>
+</html>

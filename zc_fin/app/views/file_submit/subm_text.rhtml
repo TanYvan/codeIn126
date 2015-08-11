@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>档案提交</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <div class="title"><span class="cBlue">档案提交</span></div>
+  <br>
+  <%=link_to "返回",:action=>"list",:order=>params[:order],:page=>params[:page],:search_condit=>params[:search_condit],:page_lines=>params[:page_lines]%>
+  <br/>
+  案件咨询号:<%=@case.recevice_code%>  立案号:<%=@case.case_code%>
+  <br/>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :case ,:url=>{:action=>"subm",:id=>@case.id,:order=>params[:order],:page=>params[:page],:search_condit=>params[:search_condit],:page_lines=>params[:page_lines]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            正卷数:
+          </th>
+          <td align="left">
+            <%=f.text_field(:file_num_1)%>         
+            <div style="color:red"><%=error_message_on(:case,:file_num_1)%></div>
+          </td>
+        </tr> 
+        <tr>
+          <th>
+            副卷数:
+          </th>
+          <td align="left">
+            <%=f.text_field(:file_num_2)%>         
+            <div style="color:red"><%=error_message_on(:case,:file_num_2)%></div>
+          </td>
+        </tr> 
+        <tr>
+          <th>
+            庭审光盘数:
+          </th>
+          <td align="left">
+            <%=f.text_field(:file_num_3)%>         
+            <div style="color:red"><%=error_message_on(:case,:file_num_3)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            归档类别:
+          </th>
+          <td align="left">
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0047' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:file_typ, op,:data_val,:data_text)%>       
+            <div style="color:red"><%=error_message_on(:case,:file_typ)%></div>
+          </td>
+        </tr> 
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td align="left">
+            <%=f.text_area(:file_submit_remark,:rows=>8)%>         
+            <div style="color:red"><%=error_message_on(:case,:file_submit_remark)%></div>
+          </td>
+        </tr>      
+      </table>
+      <div align="center"><%=submit_tag "提交" %></div>
+          
+    <%end%>
+              
+  </body>
+</html>

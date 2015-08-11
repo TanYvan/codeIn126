@@ -1,0 +1,2 @@
+module FeesQueryHelper
+end

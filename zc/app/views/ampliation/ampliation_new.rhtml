@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@caseorg=TbCaseorg.find(:first,:conditions=>["used='Y' and recevice_code=?", session[:recevice_code]])%>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加案件延期信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script language="javascript">
+      function checkForm(){
+        if(document.getElementById("ampliation_delayDate").value<document.getElementById("ampliation_delayTerm").value){
+          alert("延期后日期需大于原审限日期!");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+  <div class="cDGray" align="center">添加案件延期信息(带<i>*</i>为必填项)   <%=link_to "返回",:action=>"ampliation_list"%>
+  <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :ampliation ,:url=>{:action=>"ampliation_create"},:html =>{:onsubmit=>"return checkForm();"}  do |f|%>
+      <table class="list">
+        <tr >
+          <th nowrap>
+            提出人类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8110' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:requestman_typ,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <!--tr>
+          <th>
+           <i>*</i>提出人:
+           </th>
+          <td>
+            <#%=f.text_field(:requestman)%>
+          </td>
+        </tr-->
+        <tr >
+          <th>
+           提出日期:
+          </th>
+          <td>
+            <%=f.text_field(:requestdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('ampliation_requestdate'),'yyyy-MM-dd')"/>
+            
+          </td>
+        </tr>
+        
+        <tr>
+          <th nowrap>（原）审限日期：</th>
+          <td><%if @caseorg!=nil%><%=@caseorg.limitdate%><%end%></td>
+        </tr>
+        <tr >
+          <th>
+            最终审限:
+          </th>
+          <td>
+             <%=f.text_field(:delayTerm,:readonly=>'y')%>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            延期后日期:
+          </th>
+          <td>
+             <%=f.text_field(:delayDate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('ampliation_delayDate'),'yyyy-MM-dd')"/>
+
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            <i>*</i>原因:
+          </th>
+          <td>
+            <%=f.text_area(:reason,:rows=>4)%> <i><%=error_message_on(:ampliation,:reason)%></i>
+          </td>
+        </tr>
+
+       </table>
+        <br/><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

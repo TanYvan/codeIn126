@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>指定仲裁助理</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">指定仲裁助理</span></div>
+    <br>
+    <table class="adminlist" cellspacing="1">
+      <thead>
+      <tr>
+          <th>
+          仲裁助理
+        </th>
+        <th >
+          指定
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%for c in @clerks%>
+        <tr class="row<%=i % 2%>">
+          <td>
+            <%=h c.name%>
+          </td>
+          <td>
+            <%=button_to "指定" ,:action=>"clerk_select",:c_id=>params[:id],:clerk=>c.code,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page]%>
+          </td>
+        </tr>
+        <%i=i+1%>
+      <%end%>
+      </tbody>
+  </table>
+  <br>
+    <div align="center">
+    <%=link_to  "返回", :action=>"list",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page]%>
+    </div>
+  </body>
+</html>

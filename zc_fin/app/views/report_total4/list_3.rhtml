@@ -1,0 +1,330 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>平均结案时间统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">平均结案时间统计</span></div>
+    <div align="center">
+      <%form_tag ({:action=>"list_3"})  do %>
+        <%=select_tag(:typ,options_for_select([["结案时间","1"],["立案时间","2"]],@typ))%>
+        <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+      <%end %>
+    </div>
+    <br/><br/><br/>
+         <%pt=PubTool.new%>
+        <div align="center">
+          <%=@typ_t[@typ]%>: <%=@d1%>至<%=@d2%>办案平均时间统计
+        </div>
+    <table  cellspacing="1" class="list">
+      <tr>
+        <th colspan="8">裁决及和裁案件</th>
+      </tr>
+      <tr>
+        <td nowrap>
+          仲裁类型
+        </td>
+        <td >
+          姓名
+        </td>
+        <td nowrap>
+          案件数量
+        </td>
+        <td nowrap>
+          立案－组庭
+        </td>
+        <td nowrap>
+          组庭－首次开庭
+        </td>
+        <td nowrap>
+          首次开庭－结案
+        </td>
+        <td nowrap>
+          组庭－结案
+        </td>
+        <td nowrap>
+          立案－结案
+        </td>
+      </tr>
+      <%c_ccc=0%>
+      <%c_d1=0%>
+      <%c_d2=0%>
+      <%c_d3=0%>
+      <%c_d4=0%>
+      <%c_d5=0%>
+      <%for op in @op%>
+        <%if @typ=='1'%>
+          <%@zl=VCaseTimeQueryList.find_by_sql("select users.code as code,users.name as name,sum(CASE WHEN (nowdate is  null or orgdate is  null) THEN 0 ELSE DATEDIFF(orgdate,nowdate)  END) as d1,sum(CASE WHEN (orgdate is  null or sittingdate is  null) THEN 0 ELSE DATEDIFF(sittingdate,orgdate)  END) as d2,sum(CASE WHEN (decideDate is  null or sittingdate is  null) THEN 0 ELSE DATEDIFF(decideDate,sittingdate)  END) as d3,sum(CASE WHEN (orgdate is  null or decideDate is  null) THEN 0 ELSE DATEDIFF(decideDate,orgdate)  END) as d4 ,sum(CASE WHEN (nowdate is  null or decideDate is  null) THEN 0 ELSE DATEDIFF(decideDate,nowdate)  END) as d5 , count(clerk) as c   from v_case_time_query_lists,users,user_duties where v_case_time_query_lists.aribitprog_num='#{op.data_val}' and decideDate is not null and endStyle<>'0003' and decideDate>='#{@d1}' and decideDate<='#{@d2}' and  v_case_time_query_lists.clerk=users.code and users.states='Y' and  users.code=user_duties.user_code and user_duties.duty_code='0003' group by v_case_time_query_lists.clerk,v_case_time_query_lists.aribitprog_num order by users.ord,users.name,v_case_time_query_lists.aribitprog_num")%>
+        <%else%>
+          <%@zl=VCaseTimeQueryList.find_by_sql("select users.code as code,users.name as name,sum(CASE WHEN (nowdate is  null or orgdate is  null) THEN 0 ELSE DATEDIFF(orgdate,nowdate)  END) as d1,sum(CASE WHEN (orgdate is  null or sittingdate is  null) THEN 0 ELSE DATEDIFF(sittingdate,orgdate)  END) as d2,sum(CASE WHEN (decideDate is  null or sittingdate is  null) THEN 0 ELSE DATEDIFF(decideDate,sittingdate)  END) as d3,sum(CASE WHEN (orgdate is  null or decideDate is  null) THEN 0 ELSE DATEDIFF(decideDate,orgdate)  END) as d4 ,sum(CASE WHEN (nowdate is  null or decideDate is  null) THEN 0 ELSE DATEDIFF(decideDate,nowdate)  END) as d5 , count(clerk) as c   from v_case_time_query_lists,users,user_duties where v_case_time_query_lists.aribitprog_num='#{op.data_val}' and decideDate is not null and endStyle<>'0003' and nowdate>='#{@d1}' and nowdate<='#{@d2}' and v_case_time_query_lists.clerk=users.code and users.states='Y' and  users.code=user_duties.user_code and user_duties.duty_code='0003' group by v_case_time_query_lists.clerk,v_case_time_query_lists.aribitprog_num order by users.ord,users.name,v_case_time_query_lists.aribitprog_num")%>
+        <%end%>
+        <%i=1%>
+        <%for zl in @zl%>
+          <%if zl!=nil%>
+            <tr>
+              <%if i==1%>
+                <td rowspan="<%=@zl.length%>"  nowrap><%=op.data_text%></td>
+              <%end%>
+              <td  nowrap>
+                <%=link_to zl.name,{:action=>"list_3_detail",:zl=>zl.code,:typ=>@typ,:d1=>@d1,:d2=>@d2,:aribitprog_num=>op.data_val},:target=>"_blank"%>
+              </td>
+              <td nowrap>
+                <%=zl.c%>
+              </td>
+                <%c_to_i=zl.c.to_i%>
+              <td nowrap>
+                <%if c_to_i!=0%> <%=pt.round_2(zl.d1.to_f / zl.c.to_i)%> <%end%>
+              </td>
+              <td nowrap>
+                <%if c_to_i!=0%> <%=pt.round_2(zl.d2.to_f / zl.c.to_i) %> <%end%>
+              </td>
+              <td nowrap>
+                <%if c_to_i!=0%> <%=pt.round_2(zl.d3.to_f / zl.c.to_i) %> <%end%>
+              </td>
+              <td nowrap>
+                <%if c_to_i!=0%> <%=pt.round_2(zl.d4.to_f / zl.c.to_i) %> <%end%>
+              </td>
+              <td nowrap>
+                <%if c_to_i!=0%> <%=pt.round_2(zl.d5.to_f / zl.c.to_i) %> <%end%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+
+        <%if @zl.length>0%>
+          <tr style="background-color: #F7F7F7">
+            <%ccc=@zl.sum{|z| z.c.to_i}%>
+            <td colspan="3">
+              <div align="center">
+                （案件数量小计：<%=ccc%>)&nbsp;&nbsp;&nbsp;&nbsp;平均
+              </div>
+              <%c_ccc=c_ccc + ccc%>
+            </td>  
+            <td nowrap>
+              <%if ccc!=0%>
+                <%=pt.round_2(@zl.sum{|z| z.d1.to_f} / ccc)%>
+              <%end%>
+              <%c_d1=c_d1 + @zl.sum{|z| z.d1.to_f}%>
+            </td>
+            <td nowrap>
+              <%if ccc!=0%>
+                <%=pt.round_2(@zl.sum{|z| z.d2.to_f} / ccc)%>
+              <%end%>
+              <%c_d2=c_d2 + @zl.sum{|z| z.d2.to_f}%>
+            </td>
+            <td nowrap>
+              <%if ccc!=0%>
+                <%=pt.round_2(@zl.sum{|z| z.d3.to_f} / ccc)%>
+              <%end%>
+              <%c_d3=c_d3 + @zl.sum{|z| z.d3.to_f}%>
+            </td>
+            <td nowrap>
+              <%if ccc!=0%>
+                <%=pt.round_2(@zl.sum{|z| z.d4.to_f} / ccc)%>
+              <%end%>
+              <%c_d4=c_d4 + @zl.sum{|z| z.d4.to_f}%>
+            </td>
+            <td nowrap>
+              <%if ccc!=0%>
+                <%=pt.round_2(@zl.sum{|z| z.d5.to_f} / ccc)%>
+              <%end%>
+              <%c_d5=c_d5 + @zl.sum{|z| z.d5.to_f}%>
+            </td>
+          </tr>
+        <%end%>
+
+      <%end%>
+      <tr>
+        <td colspan='3'>
+          <div align="center">(案件数量合计：<%=c_ccc%>)&nbsp;&nbsp;&nbsp;&nbsp;平均</div>
+        </td>
+
+        <td nowrap>
+          <%if c_ccc!=0%>
+            <%=pt.round_2(c_d1 / c_ccc)%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if c_ccc!=0%>
+            <%=pt.round_2(c_d2 / c_ccc)%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if c_ccc!=0%>
+            <%=pt.round_2(c_d3 / c_ccc)%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if c_ccc!=0%>
+            <%=pt.round_2(c_d4 / c_ccc)%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if c_ccc!=0%>
+            <%=pt.round_2(c_d5 / c_ccc)%>
+          <%end%>
+        </td>
+      </tr>
+    </table>
+    <br/><br/>
+
+    <table  cellspacing="1" class="list">
+      <tr>
+        <th colspan="8">撤案案件</th>
+      </tr>
+      <tr>
+        <td nowrap>
+          仲裁类型
+        </td>
+        <td >
+          姓名
+        </td>
+        <td nowrap>
+          案件数量
+        </td>
+        <td nowrap>
+          立案－组庭
+        </td>
+        <td nowrap>
+          组庭－首次开庭
+        </td>
+        <td nowrap>
+          首次开庭－结案
+        </td>
+        <td nowrap>
+          组庭－结案
+        </td>
+        <td nowrap>
+          立案－结案
+        </td>
+      </tr>
+      <%c_ccc=0%>
+      <%c_d1=0%>
+      <%c_d2=0%>
+      <%c_d3=0%>
+      <%c_d4=0%>
+      <%c_d5=0%>
+      <%for op in @op%>
+        <%if @typ=='1'%>
+          <%@zl=VCaseTimeQueryList.find_by_sql("select users.code as code,users.name as name,sum(CASE WHEN (nowdate is  null or orgdate is  null) THEN 0 ELSE DATEDIFF(orgdate,nowdate)  END) as d1,sum(CASE WHEN (orgdate is  null or sittingdate is  null) THEN 0 ELSE DATEDIFF(sittingdate,orgdate)  END) as d2,sum(CASE WHEN (decideDate is  null or sittingdate is  null) THEN 0 ELSE DATEDIFF(decideDate,sittingdate)  END) as d3,sum(CASE WHEN (orgdate is  null or decideDate is  null) THEN 0 ELSE DATEDIFF(decideDate,orgdate)  END) as d4 ,sum(CASE WHEN (nowdate is  null or decideDate is  null) THEN 0 ELSE DATEDIFF(decideDate,nowdate)  END) as d5 , count(clerk) as c   from v_case_time_query_lists,users,user_duties where v_case_time_query_lists.aribitprog_num='#{op.data_val}' and decideDate is not null and endStyle='0003' and decideDate>='#{@d1}' and decideDate<='#{@d2}' and  v_case_time_query_lists.clerk=users.code and users.states='Y' and  users.code=user_duties.user_code and user_duties.duty_code='0003' group by v_case_time_query_lists.clerk,v_case_time_query_lists.aribitprog_num order by users.ord,users.name,v_case_time_query_lists.aribitprog_num")%>
+        <%else%>
+          <%@zl=VCaseTimeQueryList.find_by_sql("select users.code as code,users.name as name,sum(CASE WHEN (nowdate is  null or orgdate is  null) THEN 0 ELSE DATEDIFF(orgdate,nowdate)  END) as d1,sum(CASE WHEN (orgdate is  null or sittingdate is  null) THEN 0 ELSE DATEDIFF(sittingdate,orgdate)  END) as d2,sum(CASE WHEN (decideDate is  null or sittingdate is  null) THEN 0 ELSE DATEDIFF(decideDate,sittingdate)  END) as d3,sum(CASE WHEN (orgdate is  null or decideDate is  null) THEN 0 ELSE DATEDIFF(decideDate,orgdate)  END) as d4 ,sum(CASE WHEN (nowdate is  null or decideDate is  null) THEN 0 ELSE DATEDIFF(decideDate,nowdate)  END) as d5 , count(clerk) as c   from v_case_time_query_lists,users,user_duties where v_case_time_query_lists.aribitprog_num='#{op.data_val}' and decideDate is not null and endStyle='0003' and nowdate>='#{@d1}' and nowdate<='#{@d2}' and v_case_time_query_lists.clerk=users.code and users.states='Y' and  users.code=user_duties.user_code and user_duties.duty_code='0003' group by v_case_time_query_lists.clerk,v_case_time_query_lists.aribitprog_num order by users.ord,users.name,v_case_time_query_lists.aribitprog_num")%>
+        <%end%>
+        <%i=1%>
+        <%for zl in @zl%>
+          <%if zl!=nil%>
+            <tr>
+              <%if i==1%>
+                <td rowspan="<%=@zl.length%>"  nowrap><%=op.data_text%></td>
+              <%end%>
+              <td  nowrap>
+                <%=link_to zl.name,{:action=>"list_3b_detail",:zl=>zl.code,:typ=>@typ,:d1=>@d1,:d2=>@d2,:aribitprog_num=>op.data_val},:target=>"_blank"%>
+              </td>
+              <td nowrap>
+                <%=zl.c%>
+              </td>
+                <%c_to_i=zl.c.to_i%>
+              <td nowrap>
+                <%if c_to_i!=0%> <%=pt.round_2(zl.d1.to_f / zl.c.to_i)%> <%end%>
+              </td>
+              <td nowrap>
+                <%if c_to_i!=0%> <%=pt.round_2(zl.d2.to_f / zl.c.to_i) %> <%end%>
+              </td>
+              <td nowrap>
+                <%if c_to_i!=0%> <%=pt.round_2(zl.d3.to_f / zl.c.to_i) %> <%end%>
+              </td>
+              <td nowrap>
+                <%if c_to_i!=0%> <%=pt.round_2(zl.d4.to_f / zl.c.to_i) %> <%end%>
+              </td>
+              <td nowrap>
+                <%if c_to_i!=0%> <%=pt.round_2(zl.d5.to_f / zl.c.to_i) %> <%end%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+
+
+        <%if @zl.length>0%>
+          <tr style="background-color: #F7F7F7">
+            <%ccc=@zl.sum{|z| z.c.to_i}%>
+            <td colspan="3">
+              <div align="center">
+                （案件数量小计：<%=ccc%>)&nbsp;&nbsp;&nbsp;&nbsp;平均
+              </div>
+              <%c_ccc=c_ccc + ccc%>
+            </td>
+            <td nowrap>
+              <%if ccc!=0%>
+                <%=pt.round_2(@zl.sum{|z| z.d1.to_f} / ccc)%>
+              <%end%>
+              <%c_d1=c_d1 + @zl.sum{|z| z.d1.to_f}%>
+            </td>
+            <td nowrap>
+              <%if ccc!=0%>
+                <%=pt.round_2(@zl.sum{|z| z.d2.to_f} / ccc)%>
+              <%end%>
+              <%c_d2=c_d2 + @zl.sum{|z| z.d2.to_f}%>
+            </td>
+            <td nowrap>
+              <%if ccc!=0%>
+                <%=pt.round_2(@zl.sum{|z| z.d3.to_f} / ccc)%>
+              <%end%>
+              <%c_d3=c_d3 + @zl.sum{|z| z.d3.to_f}%>
+            </td>
+            <td nowrap>
+              <%if ccc!=0%>
+                <%=pt.round_2(@zl.sum{|z| z.d4.to_f} / ccc)%>
+              <%end%>
+              <%c_d4=c_d4 + @zl.sum{|z| z.d4.to_f}%>
+            </td>
+            <td nowrap>
+              <%if ccc!=0%>
+                <%=pt.round_2(@zl.sum{|z| z.d5.to_f} / ccc)%>
+              <%end%>
+              <%c_d5=c_d5 + @zl.sum{|z| z.d5.to_f}%>
+            </td>
+          </tr>
+        <%end%>
+
+      <%end%>
+      <tr>
+        <td colspan='3'>
+          <div align="center">(案件数量合计：<%=c_ccc%>)&nbsp;&nbsp;&nbsp;&nbsp;平均</div>
+        </td>
+        <td nowrap>
+          <%if c_ccc!=0%>
+            <%=pt.round_2(c_d1 / c_ccc)%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if c_ccc!=0%>
+            <%=pt.round_2(c_d2 / c_ccc)%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if c_ccc!=0%>
+            <%=pt.round_2(c_d3 / c_ccc)%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if c_ccc!=0%>
+            <%=pt.round_2(c_d4 / c_ccc)%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if c_ccc!=0%>
+            <%=pt.round_2(c_d5 / c_ccc)%>
+          <%end%>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

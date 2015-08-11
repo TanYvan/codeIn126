@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>选择url</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <base   target="_self"/>
+  </head>
+  <body>
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    <input type='button' value="置空" onclick="window.returnValue='++';window.close();">
+    <table class="adminlist" cellspacing="1" width="100%">
+      <thead>
+        <tr>
+          <th nowrap>
+            选择
+          </th>
+          <th nowrap>
+            页面编码
+          </th>
+          <th nowrap>
+            页面名称
+          </th>
+          <th nowrap>
+            url
+          </th>
+          <th nowrap>
+            控制器
+          </th>
+          <th nowrap>
+            action
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @pages!=nil%>
+        <%for p in @pages%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap>
+              <%if p.url.lstrip!=''%>
+                <input type='button' value="选择" onclick="window.returnValue='<%=p.url + "+" + p.controllers + "+" + p.actions%>';window.close();">
+              <%end%>
+            </td>
+            <td nowrap>
+              <%=p.code%>
+            </td>
+            <td nowrap>
+              <div align="left"><%=p.name%></div>
+            </td>
+            <td nowrap>
+              <div align="left"><%=p.url%></div>
+            </td>
+            <td nowrap>
+              <div align="left"><%=p.controllers%></div>
+            </td>
+            <td nowrap>
+              <%=p.actions%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>订房管理</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span>
+    订房管理信息
+    </span></div>
+    <div align="center">
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+    <br>
+      <div align="left" class="cDGray"> &nbsp;&nbsp;&nbsp;&nbsp;
+     <%=link_to  "<u>预订</u>", :action=>"arbithotel_new"%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+          <th nowrap>
+            <%if @order=="case_code desc"%>
+              <%=link_to '案件编号↑',:action=>"arbithotel_list",:order=>"case_code asc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="case_code asc"%>
+              <%=link_to '案件编号↓',:action=>"arbithotel_list",:order=>"case_code desc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '案件编号',:action=>"arbithotel_list",:order=>"case_code asc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="usestyle desc"%>
+              <%=link_to '使用类型↑',:action=>"arbithotel_list",:order=>"usestyle asc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="usestyle asc"%>
+              <%=link_to '使用类型↓',:action=>"arbithotel_list",:order=>"usestyle desc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '使用类型',:action=>"arbithotel_list",:order=>"usestyle asc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="arbitman desc"%>
+              <%=link_to '仲裁员↑',:action=>"arbithotel_list",:order=>"arbitman asc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="arbitman asc"%>
+              <%=link_to '仲裁员↓',:action=>"arbithotel_list",:order=>"arbitman desc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '仲裁员',:action=>"arbithotel_list",:order=>"arbitman asc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="usedate desc"%>
+              <%=link_to '入住日期↑',:action=>"arbithotel_list",:order=>"usedate asc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="usedate asc"%>
+              <%=link_to '入住日期↓',:action=>"arbithotel_list",:order=>"usedate desc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '入住日期',:action=>"arbithotel_list",:order=>"usedate asc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="days desc"%>
+              <%=link_to '住宿天数↑',:action=>"arbithotel_list",:order=>"days asc",:page=>@arbithotel_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="days asc"%>
+              <%=link_to '住宿天�

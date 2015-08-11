@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  
+  <head>
+    <title>当事人、代理人查询</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">当事人、代理人查询</span></div>
+    <div align="center">
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <div align="left"><%if @hant_search_1_text!=nil%>&nbsp;查询条件：<%=@hant_search_1_text%><%end%></div>
+    <div align="left">符合条件记录数：<%=@c_l.length%>件</div>
+    <table width="100%"><tr><td>
+   <table cellspacing="1" class="adminlist">
+     <tfoot>
+      <tr>
+        <td colspan="17">
+          <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.previous %>
+          <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.next %>
+        
+          <%if @case_pages.current.previous or @case_pages.current.next%>
+            <form action="/case_query1/list_8" method="get" onsubmit="return page_check('page_lines','page');">
+              每页<input type=text name='page_lines' id='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' id='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+     </tfoot>
+      <thead>
+      <tr >
+        <th nowrap>
+          案件进度
+        </th>
+        <th nowrap>
+          <%if @order=="tb_cases_general_code desc"%>
+            <%=link_to '总案号↑',:action=>"list_8",:order=>"tb_cases_general_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_cases_general_code asc"%>
+            <%=link_to '总案号↓',:action=>"list_8",:order=>"tb_cases_general_code desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '总案号',:action=>"list_8",:order=>"tb_cases_general_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="right(tb_cases_case_code,7) desc"%>
+            <%=link_to '立案号↑',:action=>"list_8",:order=>"right(tb_cases_case_code,7) asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="right(tb_cases_case_code,7) asc"%>
+            <%=link_to '立案号↓',:action=>"list_8",:order=>"right(tb_cases_case_code,7) desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '立案号',:action=>"list_8",:order=>"right(tb_cases_case_code,7) asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_cases_end_code desc"%>
+            <%=link_to '结案号↑',:action=>"list_8",:order=>"tb_cases_end_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_cases_end_code asc"%>
+            <%=link_to '结案号↓',:action=>"list_8",:order=>"tb_cases_end_code desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '结案号',:action=>"list_8",:order=>"tb_cases_end_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_parties_partytype desc"%>
+            <%=link_to '申(被)请人类型↑',:action=>"list_8",:order=>"tb_parties_partytype asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_parties_partytype asc"%>
+            <%=link_to '申(被)请人类型↓',:action=>"list_8",:order=>"tb_parties_partytype desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '申(被)请人类型',:action=>"list_8",:order=>"tb_parties_partytype asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_parties_commissary desc"%>
+            <%=link_to '法定代表人↑',:action=>"list_8",:order=>"tb_parties_commissary asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_parties_commissary asc"%>
+            <%=link_to '法定代表人↓',:action=>"list_8",:order=>"tb_parties_commissary desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '法定代表人',:action=>"list_8",:order=>"tb_parties_commissary asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_parties_partyname desc"%>
+            <%=link_to '申(被)请人名称↑',:action=>"list_8",:order=>"tb_parties_partyname asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_parties_partyname asc"%>
+            <%=link_to '申(被)请人名称↓',:action=>"list_8",:order=>"tb_parties_partyname desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '申(被)请人名称',:action=>"list_8",:order=>"tb_parties_partyname asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_parties_addr desc"%>
+            <%=link_to '申(被)请人地址↑',:action=>"list_8",:order=>"tb_parties_addr asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_parties_addr asc"%>
+            <%=link_to '申(被)请人地址↓',:action=>"list_8",:order=>"tb_parties_addr desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '申(被)请人地址',:action=>"list_8",:order=>"tb_parties_addr asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_parties_postcode desc"%>
+            <%=link_to '申(被)请人邮编↑',:action=>"list_8",:order=>"tb_parties_postcode asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_parties_postcode asc"%>
+            <%=link_to '申(被)请人邮编↓',:action=>"list_8",:order=>"tb_parties_postcode desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '申(被)请人邮编',:action=>"list_8",:order=>"tb_parties_postcode asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_parties_tel desc"%>
+            <%=link_to '申(被)请人电话↑',:action=>"list_8",:order=>"tb_parties_tel asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_parties_tel asc"%>
+            <%=link_to '申(被)请人电话↓',:action=>"list_8",:order=>"tb_parties_tel desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '申(被)请人电话',:action=>"list_8",:order=>"tb_parties_tel asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_agents_name desc"%>
+            <%=link_to '代理人名称↑',:action=>"list_8",:order=>"tb_agents_name asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_parties_tel asc"%>
+            <%=link_to '代理人名称↓',:action=>"list_8",:order=>"tb_agents_name desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '代理人名称',:action=>"list_8",:order=>"tb_agents_name asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_agents_company desc"%>
+            <%=link_to '代理人单位↑',:action=>"list_8",:order=>"tb_agents_company asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_parties_tel asc"%>
+            <%=link_to '代理人单位↓',:action=>"list_8",:order=>"tb_agents_company desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '代理人单位',:action=>"list_8",:order=>"tb_agents_company asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_agents_addr desc"%>
+            <%=link_to '代理人地址↑',:action=>"list_8",:order=>"tb_agents_addr asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_parties_tel asc"%>
+            <%=link_to '代理人地址↓',:action=>"list_8",:order=>"tb_agents_addr desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '代理人地址',:action=>"list_8",:order=>"tb_agents_addr asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_agents_postcode desc"%>
+            <%=link_to '代理人邮编↑',:action=>"list_8",:order=>"tb_agents_postcode asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_agents_postcode asc"%>
+            <%=link_to '代理人邮编↓',:action=>"list_8",:order=>"tb_agents_postcode desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '代理人邮编',:action=>"list_8",:order=>"tb_agents_postcode asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_agents_tel desc"%>
+            <%=link_to '代理人电话↑',:action=>"list_8",:order=>"tb_agents_tel asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_agents_tel asc"%>
+            <%=link_to '代理人电话↓',:action=>"list_8",:order=>"tb_agents_tel desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '代理人电话',:action=>"list_8",:order=>"tb_agents_tel asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_agents_mobiletel desc"%>
+            <%=link_to '代理人手机↑',:action=>"list_8",:order=>"tb_agents_mobiletel asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_agents_mobiletel asc"%>
+            <%=link_to '代理人手机↓',:action=>"list_8",:order=>"tb_agents_mobiletel desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '代理人手机',:action=>"list_8",:order=>"tb_agents_mobiletel asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @case%>
+      <tr class="row<%=i % 2%>">
+        <td nowrap>
+          <%=@state[c.tb_cases_state]%>
+        </td>
+        <td nowrap>
+          <%=h c.tb_cases_general_code%>
+        </td>
+        <td nowrap>
+          <%=h c.tb_cases_case_code%>
+        </td>
+        <td nowrap>
+          <%=h c.tb_cases_end_code%>
+        </td>
+        <td>
+          <%=h @sss[c.tb_parties_partytype]%>
+        </td>
+        <td>
+          <%=h c.tb_parties_commissary%>
+        </td>
+        <td>
+          <%=h c.tb_parties_partyname%>
+        </td>
+        <td>
+          <%=h c.tb_parties_addr%>
+        </td>
+        <td>
+          <%=h c.tb_parties_postcode%>
+        </td>
+        <td>
+          <%=h c.tb_parties_tel%>
+        </td>
+        <td>
+          <%=h c.tb_agents_name%>
+        </td>
+        <td>
+          <%=h c.tb_agents_company%>
+        </td>
+        <td>
+          <%=h c.tb_agents_addr%>
+        </td>
+        <td>
+          <%=h c.tb_agents_postcode%>
+        </td>
+        <td>
+          <%=h c.tb_agents_tel%>
+        </td>
+        <td>
+          <%=h c.tb_agents_mobiletel%>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    </td></tr></table>
+  </body>
+</html>

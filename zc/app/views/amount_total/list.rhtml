@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>争议金额统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script type="text/javascript" src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">争议金额统计</span></div>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+      <input type="button" value="导出excel文档" onclick=to_excel(document.getElementById("to_excel_g")); />
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <div align="left">
+<%if @hant_search_1_text!=nil%>&nbsp;查询条件：<%=@hant_search_1_text%><%end%>    
+    </div>
+    <%if @typ!=nil %>
+      <table id="to_excel_g" cellspacing="1" class="adminlist">
+        <tr>
+          <td >
+            仲裁类型
+          </td>
+          <td nowrap>
+            总争议金额
+          </td>
+          <td nowrap>
+            1千万以下
+          </td>
+          <td nowrap>
+            1千万-5千万之间
+          </td>
+          <td nowrap>
+            5千万以上
+          </td>
+        </tr>
+        <%for typ in @typ%>
+          <tr >
+            <td >
+              <%=typ.data_text%>
+            </td>
+            <td>
+              <%a=TbCase.sum("amount",:conditions=>"used='Y' and  state>=4 and aribitprog_num='#{typ.data_val}' and #{@hant_search_1_word}")%>
+              <%if a==nil%>
+                <%a=0%>
+              <%else%>
+                <%=SysArg.compart2(a.to_f)%>
+              <%end%>
+              <%#=link_to "#{SysArg.compart2(a)}",:action=>"every_case",:aribitprog_num=>typ.data_val,:d1=>@d1,:d2=>@d2%>
+            </td>
+            <td>
+              <%b=TbCase.count("used='Y' and  state>=4  and amount<10000000  and aribitprog_num='#{typ.data_val}' and #{@hant_search_1_word}")%>
+              <%if b==nil%>
+                <%b=0%>
+              <%end%>
+              <%#=b%>
+              <%=link_to "#{SysArg.compart2(b)}",{:action=>"every_case1",:aribitprog_num=>typ.data_val,:hant_search_1_word=>@hant_search_1_word,:hant_search_1_text=>@hant_search_1_text},:target=>"_blank"%>
+            </td>
+            <td>
+              <%c=TbCase.count("used='Y' and  state>=4  and amount>=10000000 and amount<50000000 and aribitprog_num='#{typ.data_val}' and #{@hant_search_1_word}")%>
+              <%if c==nil%>
+                <%c=0%>
+              <%end%>
+              <%#=c%>
+              <%=link_to "#{SysArg.compart2(c)}",{:action=>"every_case2",:aribitprog_num=>typ.data_val,:hant_search_1_word=>@hant_search_1_word,:hant_search_1_text=>@hant_search_1_text},:target=>"_blank"%>
+            </td>
+            <td>
+              <%d=TbCase.count("used='Y' and  state>=4  and amount>=50000000 and aribitprog_num='#{typ.data_val}' and #{@hant_search_1_word}")%>
+              <%if d==nil%>
+                <%d=0%>
+              <%end%>
+              <%=link_to "#{SysArg.compart2(d)}",{:action=>"every_case3",:aribitprog_num=>typ.data_val,:hant_search_1_word=>@hant_search_1_word,:hant_search_1_text=>@hant_search_1_text},:target=>"_blank"%>
+            </td>
+          </tr>
+        <%end%>
+        <tr>
+          <td nowrap>
+            总计
+          </td>
+          <td>
+              <%a=TbCase.sum("amount",:conditions=>"used='Y' and  state>=4 and #{@hant_search_1_word}")%>
+              <%if a==nil%>
+                <%#a=0%>
+              <%end%>
+              <%=SysArg.compart2(a)%>
+            </td>
+            <td>
+              <%b=TbCase.count("used='Y' and  state>=4  and amount<10000000  and #{@hant_search_1_word}")%>
+              <%if b==nil%>
+                <%b=0%>
+              <%end%>
+              <%=b%>
+            </td>
+            <td>
+              <%c=TbCase.count("used='Y' and  state>=4  and amount>=10000000 and amount<50000000  and #{@hant_search_1_word}")%>
+              <%if c==nil%>
+                <%c=0%>
+              <%end%>
+              <%=c%>
+            </td>
+            <td>
+              <%d=TbCase.count("used='Y' and  state>=4  and amount>=50000000   and #{@hant_search_1_word}")%>
+              <%if d==nil%>
+                <%d=0%>
+              <%end%>
+              <%=d%>
+            </td>
+        </tr>
+      </table>
+    <%end%>
+  </body>
+</html>

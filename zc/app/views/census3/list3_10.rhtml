@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员人案按时间统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <%= javascript_include_tag  'sort_functions'%>
+  </head>
+  <body>
+    <table width="100%">
+      <tr>
+        <td>
+          <div class="title">
+            <span class="cBlue">仲裁员人案按时间统计</span>
+          </div>
+          <%form_tag :url=>{:action=>"list3_10"} do%>
+            <table align="center">
+              <tr>
+                <td nowrap align="right">时间段类型:</td>
+                <td align="left" nowrap>
+                  <%=select_tag(:datestyle,options_for_select([["立案时间","01"],["组庭时间","02"],["结案时间","03"]],@datestyle))%>
+                </td>
+              </tr>
+              <tr>
+                <td nowrap align="right">时间段：</td>
+                <td align="left">
+                  <%=text_field_tag(:d1, @d1, :readonly => "true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />至
+                  <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2"><%=submit_tag "查询" %></td></tr>
+            </table>
+          <%end%>
+          <br/>
+          <div align="center"><%=@state[@datestyle]%>：<%=@d1%>至<%=@d2%></div>
+          <i><%=  flash[:notice] %></i>
+          <div align="left">仲裁员数量：<%=@arbitman_case.length%></div>
+          <br/>
+          <table cellspacing="1" class="adminlist" id="tblResult">
+            <thead>
+              <tr>
+                <th>仲裁员姓名</th>
+                <th >案件数量</th>
+                <th >该阶段延期案件数量</th>
+                <th >延期信息</th>
+                <th nowrap>性别</th>
+                <th nowrap>手机</th>
+                <th nowrap>电话</th>
+                <th nowrap>传真</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for a in @arbitman_case%>
+                <tr class="row<%=i % 2%>">
+                  <td nowrap>
+                    <%=link_to a.name,{:action=>"list3_10a",:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle,:code=>a.code},:target=>"_blank"%>
+                  </td>
+                  <td nowrap>
+                    <%if @datestyle=='01'%>
+                      <%a1=VArbitmanCase.find(:first,:select=>"count(distinct recevice_code) as ni",:conditions=>["nowdate>=? and nowdate<=? and code=?",@d1,@d2,a.code]) %>
+                     <%elsif @datestyle=='02'%>
+                      <%a1=VArbitmanCase.find(:first,:select=>"count(distinct recevice_code) as ni",:conditions=>["orgdate>=? and orgdate<=? and code=?",@d1,@d2,a.code]) %>
+                    <%else%>
+                      <%a1=VArbitmanCase.find(:first,:select=>"count(distinct recevice_code) as ni",:conditions=>["decideDate>=? and decideDate<=? and code=?",@d1,@d2,a.code]) %>
+                    <%end%>
+                    <%if a1%>
+                      <%a1 = a1.ni.to_i%>
+                      <%= a1 %>
+                      <%  #  =link_to "#{a1}",{:action=>"list3_10a",:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle,:code=>a.code},:target=>"_blank"%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%if @datestyle=='01'%>
+                      <%b=VArbitmanCase.find(:all, :select=>"distinct v_arbitman_cases.recevice_code as recevice_code,v_arbitman_cases.case_code as case_code,tb_casedelays.id as id, tb_casedelays.delayDate as delayDate,tb_casedelays.reason as reason", :from => "v_arbitman_cases,tb_casedelays", :conditions=>["v_arbitman_cases.nowdate>=? and v_arbitman_cases.nowdate<=? and v_arbitman_cases.code=? and v_arbitman_cases.recevice_code=tb_casedelays.recevice_code and tb_casedelays.used='Y'", @d1, @d2, a.code]) %>
+                     <%elsif @datestyle=='02'%>
+                      <%b=VArbitmanCase.find(:all, :select=>"distinct v_arbitman_cases.recevice_code as recevice_code,v_arbitman_cases.case_code as case_code,tb_casedelays.id as id, tb_casedelays.delayDate as delayDate, tb_casedelays.reason as reason", :from => "v_arbitman_cases,tb_casedelays", :conditions=>["v_arbitman_cases.orgdate>=? and v_arbitman_cases.orgdate<=? and v_arbitman_cases.code=? and v_arbitman_cases.recevice_code=tb_casedelays.recevice_code and tb_casedelays.used='Y'", @d1, @d2, a.code]) %>
+                    <%else%>
+                      <%b=VArbitmanCase.find(:all, :select=>"distinct v_arbitman_cases.recevice_code as recevice_code,v_arbitman_cases.case_code as case_code,tb_casedelays.id as id, tb_casedelays.delayDate as delayDate, tb_casedelays.reason as reason", :from => "v_arbitman_cases,tb_casedelays", :conditions=>["v_arbitman_cases.decideDate>=? and v_arbitman_cases.decideDate<=? and v_arbitman_cases.code=? and v_arbitman_cases.recevice_code=tb_casedelays.recevice_code and tb_casedelays.used='Y'", @d1, @d2, a.code]) %>
+                    <%end%>
+                    <%if b%>
+                      <%= b.size %>
+                      <%  #  =link_to "#{a1}",{:action=>"list3_10a",:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle,:code=>a.code},:target=>"_blank"%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%for bb in b%>
+                      <%=link_to bb.case_code, {:controller=>"every_casebase",:action=>"every_list",:recevice_code=>bb.recevice_code},:target=>"blank"%>&nbsp&nbsp<%=bb.delayDate.to_s if bb.delayDate%>&nbsp&nbsp<%=bb.reason%><br/>
+                    <%end%>
+                  </td>
+                  <td nowrap><%=a.sex %></td>
+                  <td nowrap><%=a.mobiletel %></td>
+                  <td nowrap><%=a.telh %></td>
+                  <td nowrap><%=a.fax %></td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+  <script  type="text/javascript">
+    QuickSort(document.getElementById('tblResult'),1,'int',-1);
+  </script>
+</html>

@@ -1,0 +1,17 @@
+if @res.status == "1" && @res.dataset.size!="0"
+          for r in @res.dataset.rows
+            language_sub = LanguageSub.new
+            language_sub = r.put_to(language_sub)
+            language_sub.save
+
+            language = Language.new
+            language = r.put_to(language)
+            language.save
+
+            language_sub.p_id=language.id
+            language_sub.save
+
+            language.sub_id = language_sub.id
+            language.save
+          end
+        end

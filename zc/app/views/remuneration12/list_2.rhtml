@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员报酬——绩效评价信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">绩效评价信息</span></div>
+      <div align="center" class="cDGray">
+        绩效评价信息
+        <%if @remun.empty? and false %><%=link_to  "批量创建",{:action=>"new_all_2"},:confirm=>"您确认要批量创建吗？"%> <%end%>  <%=link_to  "创建", :action=>"new_2"%>
+        <div style="color:red"><%=flash[:notice]%></div>
+      </div><br/>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>仲裁员</th>
+            <th nowrap>考核项目</th>
+            <th nowrap width="50%">评价</th>
+            <th nowrap>修改</th>
+            <th nowrap>删除</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <% if @remun !=nil %>
+            <%for p in @remun%>
+                <tr>
+                  <td rowspan="7">
+                    <%=TbArbitman.find_by_code(p.p_code).name%>
+                  </td>
+                  <td>开庭、合议情况</td>
+                  <td><%=@rs1[p.item1] %></td>
+                  <td rowspan="7">
+                    <%if p.grade.blank?%>
+                      <%=link_to "修改",:action=>"edit_2",:id=>p%>
+                    <%end%>
+                  </td>
+                  <td rowspan="7">
+                    <%if p.grade.blank?%>
+                      <%=button_to "删除",{:action=>"delete_2",:id=>p},:confirm=>"您确认要删除吗？"%>
+                    <%end%>
+                  </td>
+                </tr>
+                <tr class="row<%=i % 2%>">
+                  <td>阅卷情况和案情掌握情况</td>
+                  <td><%=@rs1[p.item2] %></td>
+                </tr>
+                <tr class="row<%=i % 2%>">
+                  <td>对裁决书的修改意见</td>
+                  <td><%=@rs1[p.item3] %></td>
+                </tr>
+                <tr class="row<%=i % 2%>">
+                  <td>因仲裁员原因延长裁限情况</td>
+                  <td><%=@rs2[p.item4] %></td>
+                </tr>
+                <tr class="row<%=i % 2%>">
+                  <td rowspan="2">仲裁员违反《仲裁员行为考察规定》<br/>第十条任一款</td>
+                  <td><%=@rs3[p.item5] %></td>
+                </tr>
+                <tr class="row<%=i % 2%>">
+                  <td>备注：<br/><%= p.item5_remark %></td>
+                </tr>
+                <tr class="row<%=i % 2%>">
+                  <td>其他</td>
+                  <td><%=p.item6 %></td>
+                </tr>
+              <%i=i+1%>
+            <%end%>
+        <%end%>
+        </tbody>
+      </table>
+  </body>
+</html>

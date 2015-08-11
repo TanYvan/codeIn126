@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>裁决书制作等级评价</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script type="text/javascript">
+      function check(){
+        if(!/^-?\d+[\.\d]?\d{0,2}$/.test(document.getElementById("remun_grade_xs").value)){
+          alert("请输入等级百分比为数字型！");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+  <div class="title"><span class="cBlue">裁决书制作等级评价</span></div><br/>
+  <div class="cDGray"> <%=link_to "返回",:action=>"list_1", :evaluate => params[:evaluate], :yyy => params[:yyy] %></div><br/>
+  <div style="color:red"><%=flash[:notice]%></div>
+    <%  form_for :remun ,:url=>{:action=>"update_1",:id => params[:id], :yyy => params[:yyy], :evaluate => params[:evaluate]}, :html =>{:onsubmit=>"return check();"} do |f| %>
+      <table class="list">
+        <%
+          @casearbitman = TbCasearbitman.find_by_sql(
+            "select tb_arbitmen.code as code ,tb_arbitmen.Name as name
+             from tb_casearbitmen ,tb_arbitmen
+             where tb_casearbitmen.recevice_code='#{session[:recevice_code_2]}' and tb_casearbitmen.used='Y'
+                   and tb_casearbitmen.arbitman=tb_arbitmen.code order by tb_arbitmen.name"
+          )
+          # 裁决书类型
+          @typs = TbDictionary.find(:all, :conditions => "typ_code='9022' and state='Y' and used='Y'", :order => 'data_val', :select => "data_val,data_text" )
+          @rs1  = TbDictionary.find(:all, :conditions => "typ_code='9023' and state='Y' and used='Y'", :order => 'data_val', :select => "data_val,data_text").collect{|p|[p.data_text,p.data_val]}
+        %>
+        <tr>
+          <th>裁决书类型:</th>
+          <td>
+            <%= f.collection_select(:typ, @typs, :data_val, :data_text,{},{:disabled => "true"}) %>
+            <div style="color:red"><%= error_message_on(:remun, :typ) %></div>
+          </td>
+        </tr>
+        <tr>
+          <th>承担人:</th>
+          <td>
+            <%= f.collection_select(:p_code, @casearbitman, :code, :name,{},{:disabled => "true"}) %>
+            <div style="color:red"><%= error_message_on(:remun, :p_code) %></div>
+          </td>
+        </tr>
+        <tr>
+          <th>校核人评价:</th>
+          <td>
+              <% staff = TbCheckStaff.find(:all,:conditions=>"used='Y' and recevice_code='#{session[:recevice_code_2]}'") %>
+              <table style="background-color: #F7FDFC; border-spacing: 1px;width: 70%;border-collapse: collapse; align: center;">
+                <% staff.each do |s| %>
+                  <% if @remun.typ == "0001" %>
+                    <% judge = TbAwardJudge.find(:first,:conditions=>"used='Y' and recevice_code='#{session[:recevice_code_2]}' and u='#{s.staff}'") %>
+                    <tr>
+                      <td style="width: 50px"><%= @c3 = User.find(:first,:conditions=>["code=?",s.staff]).name   %></td>
+                      <td style="width: 100px"><%= judge.wanzheng if !judge.blank? %></td>
+                    </tr>
+                 <% end %>
+
+                 <% if @remun.typ == "0002" %>
+                   <% judge = TbAwardJudge.find(:first,:conditions=>"used='Y' and recevice_code='#{session[:recevice_code_2]}' and u='#{s.staff}'") %>
+                   <tr>
+                     <td style="width: 50px"><%= @c3 = User.find(:first,:conditions=>["code=?",s.staff]).name   %></td>
+                     <td style="width: 100px"><%= judge.zctyijian if !judge.blank? %></td>
+                   </tr>
+                 <% end %>
+
+                 <% if @remun.typ == "0003" %>
+                   <% judge = TbAwardJudge.find(:first,:conditions=>"used='Y' and recevice_code='#{session[:recevice_code_2]}' and u='#{s.staff}'") %>
+                   <tr>
+                     <td style="width: 50px"><%= @c3 = User.find(:first,:conditions=>["code=?",s.staff]).name   %></td>
+                     <td style="width: 100px"><%= judge.zjbfcj if !judge.blank? %></td>
+                   </tr>
+                <% end %>
+                <% end %>
+              </table>
+            </td>
+        </tr>
+        <tr>
+          <th>等级百分比:</th>
+          <td>
+            <%=f.text_field(:grade_xs)%>%
+            <div style="color:red"><%= error_message_on(:remun,:grade_xs) %></div>
+          </td>
+        </tr>
+        <tr>
+          <th>备注:</th>
+          <td>
+            <%=f.text_area(:remark,"cols"=>'50',"rows"=>"5")%>
+            <div style="color:red"><%= error_message_on(:remun,:remark) %></div>
+          </td>
+        </tr>
+      </table>
+      <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+  </body>
+</html>

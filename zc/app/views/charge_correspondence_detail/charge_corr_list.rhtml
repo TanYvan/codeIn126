@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>收款信息对应</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">收款信息对应</span></div>
+    <br>
+    <%=link_to "返回到案件收费明细信息列表",:action=>"list",:recevice_code=>params[:recevice_code]%>
+         &nbsp;&nbsp;&nbsp;   
+    <%=link_to  "选择收款项目", :action=>"charge_corr_add",:should_charge_id=>params[:should_charge_id],:recevice_code=>params[:recevice_code]%>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <br>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            收款号
+          </th>
+          <!--
+          <th nowrap>
+            付款方
+          </th>
+          -->
+          <!--
+          <th nowrap>
+            付款方名称
+          </th>
+          -->
+          <th nowrap>
+            付款方式
+          </th>
+          <th nowrap>
+            收款时间
+          </th>
+          <th nowrap>
+            币种
+          </th>
+          <th nowrap>
+            金额
+          </th>
+          <th nowrap>
+            汇率
+          </th>
+          <th nowrap>
+            金额(￥)
+          </th>
+          <th nowrap>
+            备注
+          </th>
+          <th nowrap>
+            删除
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @charge_corr%>
+        <%@charge=TbCharge.find(c.charge_id)%>
+        <tr class="row<%=i % 2%>">
+            <td nowrap>
+              <%=@charge.code%>
+            </td>
+            <!--
+            <td nowrap>
+              <% # =TbDictionary.find(:first,:conditions=>"typ_code='0033' and data_val='#{@charge.ptyp}'").data_text%>
+            </td>
+            -->
+            <td nowrap>
+              <%=@charge.p%>
+            </td>
+            <td nowrap>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0034' and data_val='#{@charge.mode}'").data_text%>
+            </td>
+            <td nowrap>
+              <%=@charge.c_dt%>
+            </td>
+            <td nowrap>
+              <%=Money.find_by_code(@charge.currency).name%>
+            </td>
+            <td nowrap>
+              <%=@charge.f_money%>
+            </td>
+            <td nowrap>
+              <%=@charge.rate%>
+            </td>
+            <td nowrap>
+              <%=@charge.rmb_money%>
+            </td>
+            <td nowrap>
+              <%=@charge.remark%>
+            </td>
+            <td>
+              <%=button_to "删除",{:action=>"charge_corr_delete",:id=>c,:should_charge_id=>params[:should_charge_id],:recevice_code=>params[:recevice_code]},:confirm=>"您确认要删除吗？"%>
+            </td>
+          </tr>          
+          <%i=i+1%>
+    <%end%>
+      </table>
+    
+  </body>
+</html>

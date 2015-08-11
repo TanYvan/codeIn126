@@ -1,0 +1,500 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>报酬发放情况 </title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">报酬发放情况<% if @tb_extend.blank? %>(出纳未确认) <%else%>(出纳确认)<%end%></span></div>
+    <% if @tb_extend.blank? %>
+    <div align="left"></div>
+      非本单位
+        <%
+          c="recevice_code='#{@rc}' and extend_code='' and p_typ ='0001' and p not in (select code from tb_arbitmen where isunit='Y') "
+          @provide_p1 = VProvide.find(:all,:conditions=>c,:order=>"right(case_code,7) desc,p_typ,p,typ")
+      %>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr>
+          <th nowrap>人员类别</th>
+            <th nowrap>姓名</th>
+            <th nowrap>银行类别</th>
+            <th nowrap>银行</th>
+            <th nowrap>账号</th>
+            <th nowrap>案号</th>
+            <th nowrap>发放状态</th>
+            <th nowrap>类型</th>
+            <th nowrap>应发数额</th>
+            <th nowrap>应扣税款</th>
+            <th nowrap>实发数额</th>
+      </tr>
+      </thead>
+      <%tax=Tax.new%>
+        <tbody>
+          <%i=0%>
+      <% for pp in @provide_p1 %>
+          <% tb_arbitman = TbArbitman.find_by_code(pp.p) %>
+          <% user = User.find_by_code(pp.p) %>
+          <% tb_Remu23 = TbRemuneration23.find(pp.id_id) if pp.typ == '4' or pp.typ == '5'%>
+      <tr class="row<%=i % 2%>">
+        <td><!-- 人员类别 -->
+          <%=@typ1[pp.p_typ]%>
+        </td>
+        <td><!-- 姓名 -->
+          <%if pp.p_typ=="0001"%>
+          <% name = tb_arbitman.name%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <% name = user.name%>
+          <%else%>
+          <%end%>
+          <%= name %>
+        </td>
+        <td><!-- 银行类别 -->
+          <%if pp.p_typ=="0001"%>
+          <%bank_typ=tb_arbitman.bank_typ%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <%bank_typ=user.bank_typ%>
+          <%else%>
+          <%end%>
+          <%if bank_typ!=nil and bank_typ!=''%>
+            <%=@bank_typ[bank_typ]%>
+          <%end%>
+        </td>
+        <td><!-- 银行 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankname%>
+          <%else%>
+            <%=user.bankname%>
+          <%end%>
+        </td>
+        <td><!-- 账号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankaccount%>
+          <%else%>
+            <%=user.bankaccount%>
+          <%end%>
+        </td>
+        <td><%=pp.case_code%></td><!-- 案号 -->
+        <td>出纳未发放</td><!-- 发放状态 -->
+        <td><!-- 类型 -->
+          <%if pp.typ=='4' or pp.typ=='5'%>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{tb_Remu23.typ}'").data_text%>
+          <%else%>
+            <%=@typ2[pp.typ]%>
+          <%end%>
+        </td>
+        <td><!-- 应发 -->
+          <%if pp.typ=="1" %>
+          <%= SysArg.round2f(pp.yf_rmb)%>
+          <%elsif pp.typ=="2" %>
+            <%= SysArg.round2f(pp.yf_rmb)%>
+          <%elsif pp.typ=="3"%>
+            <%=SysArg.round2f(pp.yf_rmb*-1) %>
+          <%elsif pp.typ=="4" or pp.typ=="5" %>
+            <%=SysArg.round2f(tb_Remu23.should_rmb)%>
+          <%else%>
+          <%end%>
+        </td>
+        <!--<td> 应纳税所得额
+          <%if pp.typ == "1" %>
+          <%ynssde = SysArg.round2f(tax.get_tax_base_1(pp.yf_rmb))%>
+          <%elsif pp.typ=="2" or pp.typ=="3"%>
+            0.00
+          <%elsif pp.typ=="4"  or pp.typ=="5"%>
+            <%ynssde=SysArg.round2f(tb_Remu23.tax_base_rmb)%>
+          <%else%>
+          <%end%>
+          <%= ynssde %>
+        </td>-->
+        <td><!-- 应扣税款 -->
+          <%if pp.typ=="1" %>
+          <%=SysArg.round2f(tax.get_tax_1(ynssde.to_i,'N')) %>
+          <%elsif pp.typ=="2" or pp.typ=="3"%>
+            0.00
+          <%elsif pp.typ=="4"  or pp.typ=="5"%>
+            <%=SysArg.round2f(tb_Remu23.tax_rmb)%>
+          <%else%>
+          <%end%>
+        </td>
+        <td><!-- 实发数额 -->
+          <%if pp.typ=="1" %>
+            <%=SysArg.round2f(pp.yf_rmb - tax.get_tax_1(pp.yf_rmb,'N'))%>
+          <%elsif pp.typ=="2" %>
+            <%=SysArg.round2f(pp.yf_rmb)%>
+          <%elsif pp.typ=="3"%>
+            <%=SysArg.round2f(pp.yf_rmb)* -1%>
+          <%elsif pp.typ=="4"  or pp.typ=="5"%>
+            <%=SysArg.round2f(tb_Remu23.extend_rmb) %>
+          <%else%>
+          <%end%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+      <br/>
+      本单位
+<%
+          c="recevice_code='#{@rc}' and extend_code='' and p not in (select code from tb_arbitmen where isunit='N') and isextend<>'Y'"
+          @provide_p2 = VProvide.find(:all,:conditions=>c,:order=>"right(case_code,7) desc,p_typ,p,typ")
+      %>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr>
+          <th nowrap>人员类别</th>
+          <th nowrap>姓名</th>
+          <th nowrap>银行类别</th>
+          <th nowrap>银行</th>
+          <th nowrap>帐号</th>
+          <th nowrap>身份证号</th>
+          <th nowrap>咨询流水号</th>
+          <th nowrap>立案号</th>
+          <th nowrap>结案号</th>
+          <th nowrap>类型</th>
+          <th nowrap>应发数额</th>
+      </tr>
+      </thead>
+      <%tax=Tax.new%>
+         <tbody>
+          <%i=0%>
+      <% for pp in @provide_p2 %>
+          <% tb_arbitman = TbArbitman.find_by_code(pp.p) %>
+          <% user = User.find_by_code(pp.p) %>
+          <% tb_Remu23 = TbRemuneration23.find(pp.id_id) if pp.typ == '4' or pp.typ == '5'%>
+      <tr class="row<%=i % 2%>">
+        <td><!-- 人员类别 -->
+          <%=@typ1[pp.p_typ]%>
+        </td>
+        <td><!-- 姓名 -->
+          <%if pp.p_typ=="0001"%>
+          <%=tb_arbitman.name%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <%=user.name%>
+          <%else%>
+          <%end%>
+        </td>
+        <td><!-- 银行类别 -->
+          <%if pp.p_typ=="0001"%>
+          <%bank_typ=tb_arbitman.bank_typ%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <%bank_typ=user.bank_typ%>
+          <%else%>
+          <%end%>
+          <%if bank_typ!=nil and bank_typ!=''%>
+            <%=@bank_typ[bank_typ]%>
+          <%end%>
+        </td>
+        <td><!-- 银行 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankname%>
+          <%else%>
+            <%=user.bankname%>
+          <%end%>
+        </td>
+        <td><!-- 账号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankaccount%>
+          <%else%>
+            <%=user.bankaccount%>
+          <%end%>
+        </td>
+        <td><!-- 身份证号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.id_card%>
+          <%else%>
+            <%=user.id_card%>
+          <%end%>
+        </td>
+        <td><%=pp.recevice_code%></td><!-- 咨询流水号 -->
+        <td><%=pp.case_code%></td><!-- 案号 -->
+        <td><%=pp.end_code%></td><!-- 结案号 -->
+
+        <td><!-- 类型 -->
+          <%if pp.typ=='4' or pp.typ=='5'%>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{tb_Remu23.typ}'").data_text%>
+          <%else%>
+            <%=@typ2[pp.typ]%>
+          <%end%>
+        </td>
+        <td><!-- 应发 -->
+          <%if pp.typ=="1" %>
+          <%=SysArg.round2f(pp.yf_rmb.round)%>
+          <%elsif pp.typ=="2" %>
+            <%=SysArg.round2f(pp.yf_rmb)%>
+          <%elsif pp.typ=="3"%>
+            <%=SysArg.round2f(pp.yf_rmb).to_f * -1%>
+          <%elsif pp.typ=="4" or pp.typ=="5" %>
+            <%=SysArg.round2f(tb_Remu23.should_rmb)%>
+          <%else%>
+          <%end%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <% else %>
+      <%
+        @tb_extend1 =  TbExtend.find_by_sql("select * from tb_extends where recevice_code='#{@rc}' and used='Y' and t_extend_code='' ") #待发放 extend_code 有值
+        @tb_extend2 =  TbExtend.find_by_sql("select * from tb_extends where recevice_code='#{@rc}' and used='Y' and t_extend_code<>'' ") #已发放 t_extend_code 有值
+      %>
+      待发放：
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>人员类别</th>
+            <th nowrap>姓名</th>
+            <th nowrap>银行类别</th>
+            <th nowrap>银行</th>
+            <th nowrap>账号</th>
+            <th nowrap>案号</th>
+            <th nowrap>发放状态</th>
+            <th nowrap>发放编号</th>
+            <th nowrap>类型</th>
+            <th nowrap>应发数额</th>
+            <th nowrap>应扣税款</th>
+            <th nowrap>实发数额</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <% for t in @tb_extend1
+                tb_arbitman = TbArbitman.find_by_code(t.p)
+                user = User.find_by_code(t.p)
+          %>
+          <tr class="row<%=i % 2%>">
+            <td><!-- 人员类别 -->
+                <%=@typ1[t.p_typ]%>
+            </td>
+            <td><!-- 姓名 -->
+              <%if t.p_typ=="0001"%>
+              <% name = tb_arbitman.name%>
+              <%elsif t.p_typ=="0002" or t.p_typ=="0003" or t.p_typ=="0004"%>
+                <% name = user.name %>
+              <%else%>
+              <%end%>
+              <%= name %>
+            </td>
+            <td><!-- 银行类别 -->
+              <%if t.p_typ=="0001"%>
+              <%bank_typ=tb_arbitman.bank_typ%>
+              <%elsif t.p_typ=="0002" or t.p_typ=="0003" or t.p_typ=="0004"%>
+                <%bank_typ=user.bank_typ%>
+              <%else%>
+              <%end%>
+              <%if bank_typ!=nil and bank_typ!=''%>
+                <%=@bank_typ[bank_typ]%>
+              <%end%>
+            </td>
+            <td><!-- 银行 -->
+              <%if t.p_typ=="0001"%>
+                <%=tb_arbitman.bankname%>
+              <%else%>
+                <%=user.bankname%>
+              <%end%>
+            </td>
+            <td><!-- 发放状态 -->
+              <%= t.t_extend_code.blank?? "出纳未发放":"出纳已发放" %>
+            </td>
+            <td><!-- 账号 -->
+              <%if t.p_typ=="0001"%>
+                <%=tb_arbitman.bankaccount%>
+              <%else%>
+                <%=user.bankaccount%>
+              <%end%>
+            </td>
+            <td><%=t.case_code%></td><!-- 立案号 -->
+            <td><!-- 发放编号 -->
+              <%=t.t_extend_code%>
+            </td>
+            <td><!-- 类型 -->
+              <%=@typ2[t.typ]%>
+            </td>
+            <td><!-- 应发 -->
+              <%= SysArg.round2f(t.should_rmb) %>
+            </td>
+            <td><!-- 应扣税款 -->
+              <%= SysArg.round2f(t.tax_rmb) %>
+            </td>
+            <td><!-- 实发数额 -->
+              <%= SysArg.round2f(t.extend_rmb) %>
+            </td>
+          </tr>
+          <%i=i+1%>
+          <%end%>
+        </tbody>
+      </table>
+      <br/><hr size="1" color="#99CCFF" noshade/><br/><br/>
+      已发放(外单位)：
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>人员类别</th>
+            <th nowrap>姓名</th>
+            <th nowrap>银行类别</th>
+            <th nowrap>银行</th>
+            <th nowrap>账号</th>
+            <th nowrap>案号</th>
+            <th nowrap>发放编号</th>
+            <th nowrap>类型</th>
+            <th nowrap>应发数额</th>
+            <th nowrap>应扣税款</th>
+            <th nowrap>实发数额</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <% for t in @tb_extend2
+                tb_arbitman = TbArbitman.find_by_code(t.p)
+                user = User.find_by_code(t.p)
+          %>
+          <tr class="row<%=i % 2%>">
+            <td><!-- 人员类别 -->
+                <%=@typ1[t.p_typ]%>
+            </td>
+            <td><!-- 姓名 -->
+              <%if t.p_typ=="0001"%>
+              <% name = tb_arbitman.name%>
+              <%elsif t.p_typ=="0002" or t.p_typ=="0003" or t.p_typ=="0004"%>
+                <% name = user.name %>
+              <%else%>
+              <%end%>
+              <%= name %>
+            </td>
+            <td><!-- 银行类别 -->
+              <%if t.p_typ=="0001"%>
+              <%bank_typ=tb_arbitman.bank_typ%>
+              <%elsif t.p_typ=="0002" or t.p_typ=="0003" or t.p_typ=="0004"%>
+                <%bank_typ=user.bank_typ%>
+              <%else%>
+              <%end%>
+              <%if bank_typ!=nil and bank_typ!=''%>
+                <%=@bank_typ[bank_typ]%>
+              <%end%>
+            </td>
+            <td><!-- 银行 -->
+              <%if t.p_typ=="0001"%>
+                <%=tb_arbitman.bankname%>
+              <%else%>
+                <%=user.bankname%>
+              <%end%>
+            </td>
+            <td><!-- 账号 -->
+              <%if t.p_typ=="0001"%>
+                <%=tb_arbitman.bankaccount%>
+              <%else%>
+                <%=user.bankaccount%>
+              <%end%>
+            </td>
+            <td><%=t.case_code%></td><!-- 立案号 -->
+            <td><!-- 发放编号 -->
+              <%=t.t_extend_code%>
+            </td>
+            <td><!-- 类型 -->
+              <%=@typ2[t.typ]%>
+            </td>
+            <td><!-- 应发 -->
+              <%= SysArg.round2f(t.should_rmb) %>
+            </td>
+            <td><!-- 应扣税款 -->
+              <%= SysArg.round2f(t.tax_rmb) %>
+            </td>
+            <td><!-- 实发数额 -->
+              <%= SysArg.round2f(t.extend_rmb) %>
+            </td>
+          </tr>
+          <%i=i+1%>
+          <%end%>
+        </tbody>
+      </table>
+      <br/>
+      已发放(本单位)：
+      <%
+        c="extend_code='' and p not in (select code from tb_arbitmen where isunit='N') and isextend='Y' "
+        @provide_p = VProvide.find(:all,:conditions=>c,:order=>"right(case_code,7) desc,p_typ,p,typ")
+      %>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr>
+          <th nowrap>人员类别</th>
+          <th nowrap>姓名</th>
+          <th nowrap>银行类别</th>
+          <th nowrap>银行</th>
+          <th nowrap>帐号</th>
+          <th nowrap>案号</th>
+          <th nowrap>类型</th>
+          <th nowrap>应发数额</th>
+      </tr>
+      </thead>
+        <tbody>
+          <%i=0%>
+      <% for pp in @provide_p %>
+          <% tb_arbitman = TbArbitman.find_by_code(pp.p) %>
+          <% user = User.find_by_code(pp.p) %>
+          <% tb_Remu23 = TbRemuneration23.find(pp.id_id) if pp.typ == '4' or pp.typ == '5'%>
+      <tr class="row<%=i % 2%>">
+        <td><!-- 人员类别 -->
+          <%=@typ1[pp.p_typ]%>
+        </td>
+        <td><!-- 姓名 -->
+          <%if pp.p_typ=="0001"%>
+          <%=tb_arbitman.name%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <%=user.name%>
+          <%else%>
+          <%end%>
+        </td>
+        <td><!-- 银行类别 -->
+          <%if pp.p_typ=="0001"%>
+          <%bank_typ=tb_arbitman.bank_typ%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <%bank_typ=user.bank_typ%>
+          <%else%>
+          <%end%>
+          <%if bank_typ!=nil and bank_typ!=''%>
+            <%=@bank_typ[bank_typ]%>
+          <%end%>
+        </td>
+        <td><!-- 银行 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankname%>
+          <%else%>
+            <%=user.bankname%>
+          <%end%>
+        </td>
+        <td><!-- 账号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankaccount%>
+          <%else%>
+            <%=user.bankaccount%>
+          <%end%>
+        </td>
+        <td><%=pp.case_code%></td><!-- 案号 -->
+        <td><!-- 类型 -->
+          <%if pp.typ=='4' or pp.typ=='5'%>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{tb_Remu23.typ}'").data_text%>
+          <%else%>
+            <%=@typ2[pp.typ]%>
+          <%end%>
+        </td>
+        <td><!-- 应发 -->
+          <%if pp.typ=="1" %>
+          <%=SysArg.round2f(pp.yf_rmb.round)%>
+          <%elsif pp.typ=="2" %>
+            <%=SysArg.round2f(pp.yf_rmb)%>
+          <%elsif pp.typ=="3"%>
+            <%=SysArg.round2f(pp.yf_rmb).to_f * -1%>
+          <%elsif pp.typ=="4" or pp.typ=="5" %>
+            <%=SysArg.round2f(tb_Remu23.should_rmb)%>
+          <%else%>
+          <%end%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+
+    <% end %>
+  </body>
+</html>

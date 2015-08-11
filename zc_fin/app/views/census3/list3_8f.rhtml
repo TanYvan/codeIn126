@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>当事人统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <br/>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案日期</th>
+          <th  nowrap>立案号</th>
+          <th  nowrap>申请人(地区)</th>
+          <th  nowrap>被申请人(地区)</th>
+          <th  nowrap>争议金额(￥)</th>
+          <th  nowrap>办案助理</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for vv in @v_list%>
+          <%if vv!=nil%>
+            <%pa1=0%>
+            <%pa2=0%>
+            <%pa3=0%>
+            <%pa4=0%>
+            <%p1 = VCaseQuery1List1.find(:all,:conditions=>["tb_cases_recevice_code=? and tb_cases_nowdate>=? and tb_cases_nowdate<=? and tb_cases_agent=? and tb_parties_partytype=1 and tb_parties_area<>''",vv.tb_cases_recevice_code,params[:d1],params[:d2],params[:agent]])%>
+            <%p2 = VCaseQuery1List1.find(:all,:conditions=>["tb_cases_recevice_code=? and tb_cases_nowdate>=? and tb_cases_nowdate<=? and tb_cases_agent=? and tb_parties_partytype=2 and tb_parties_area<>''",vv.tb_cases_recevice_code,params[:d1],params[:d2],params[:agent]])%>
+            <%p_12=p1.length+p2.length%>
+            <%if p1!=nil%><!--申请人是国内广东省以外的-->
+              <%p1.each do |p_1|%>
+                <%if p_1.tb_parties_area!=nil%>
+                  <%if p_1.tb_parties_area.slice(0,3)=="001" and  p_1.tb_parties_area.slice(0,6)!="001001"%>
+                    <%pa1=pa1+1%>
+                  <%end%><!--申请人是国外的-->
+                  <%if p_1.tb_parties_area.slice(0,3)!="001"%>
+                    <%pa3=pa3+1%>
+                  <%end%>
+                <%end%>
+              <%end%>
+            <%end%>
+            <%if p2!=nil%> <!--被申请人是国外的-->
+              <%p2.each do |p_2|%>
+                <%if p_2.tb_parties_area!=nil%>
+                  <%if p_2.tb_parties_area.slice(0,3)!="001"%>
+                    <%pa2=pa2+1%>
+                  <%end%><!--被申请人是国内广东省以外的-->
+                  <%if p_2.tb_parties_area.slice(0,3)=="001" and  p_2.tb_parties_area.slice(0,6)!="001001"%>
+                    <%pa4=pa4+1%>
+                  <%end%>
+                <%end%>
+              <%end%>
+            <%end%>
+            <%if (pa1+pa2)==p_12 or (pa3+pa4)==p_12%>
+              <tr class="row<%=i % 2%>">
+                <td nowrap><%=vv.tb_cases_nowdate%></td>
+                <td nowrap><%=link_to "#{vv.tb_cases_case_code}",{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>vv.tb_cases_recevice_code},:target=>"_black" %></td>
+                <td>
+                  <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{vv.tb_cases_recevice_code}' and used='Y' and partytype=1")%>
+                  <%ttpp=''%>
+                  <%for tp in @tp%>
+                    <%if tp!=nil%>
+                      <%ar1=Region.find_by_code(tp.area)%>
+                      <%if ar1!=nil%>
+                        <%ttpp=ttpp  + tp.partyname + "(" + ar1.name + ")" + " <br/>"%>
+                      <%else%>
+                        <%ttpp=ttpp + tp.partyname +  " <br/>"%>
+                      <%end%>
+                    <%end%>
+                  <%end%>
+                  <%=ttpp%>
+                </td>
+                <td>
+                  <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{vv.tb_cases_recevice_code}' and used='Y' and partytype=2")%>
+                  <%ttpp=''%>
+                  <%for tp in @party2%>
+                    <%if tp!=nil%>
+                      <%ar1=Region.find_by_code(tp.area)%>
+                      <%if ar1!=nil%>
+                        <%ttpp=ttpp + tp.partyname + "(" + ar1.name + ")"+ " <br/>"%>
+                      <%else%>
+                        <%ttpp=ttpp + tp.partyname +  " <br/>"%>
+                      <%end%>
+                    <%end%>
+                  <%end%>
+                  <%=ttpp%>
+                </td>
+                <td nowrap><%=SysArg.compart2(vv.tb_cases_amount)%></td>
+                <td nowrap><%=User.find(:first,:conditions=>["used='Y' and code=?",vv.tb_cases_clerk]).name %></td>
+              </tr>
+            <%end%>
+          <%end%>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

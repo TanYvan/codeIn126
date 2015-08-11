@@ -1,0 +1,2 @@
+module RemindTotalHelper
+end

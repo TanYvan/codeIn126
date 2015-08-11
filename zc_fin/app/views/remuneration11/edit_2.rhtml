@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 绩效评价信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+      添加绩效评价信息   <%=link_to "返回",:action=>"list_2"%>
+    </div><br/>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <%
+      @casearbitman = TbCasearbitman.find_by_sql(
+        "select tb_arbitmen.code as code ,tb_arbitmen.name as name
+         from tb_casearbitmen ,tb_arbitmen
+         where tb_casearbitmen.recevice_code='#{session[:recevice_code_1]}' and tb_casearbitmen.used='Y'
+               and tb_casearbitmen.arbitman=tb_arbitmen.code
+         order by tb_casearbitmen.arbitmantype" )
+      @rs1 = TbDictionary.find(:all, :conditions => "typ_code='9023' and state='Y' and used='Y'", :order => 'data_val', :select => "data_val,data_text").collect{|p|[p.data_text,p.data_val]}
+      @rs2 = TbDictionary.find(:all, :conditions => "typ_code='9024' and state='Y' and used='Y'", :order => 'data_val', :select => "data_val,data_text").collect{|p|[p.data_text,p.data_val]}
+      @rs3 = TbDictionary.find(:all, :conditions => "typ_code='9025' and state='Y' and used='Y'", :order => 'data_val', :select => "data_val,data_text").collect{|p|[p.data_text,p.data_val]}
+    %>
+    <%form_for :remun ,:url=>{:action=>"update_2", :id => params[:id]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>仲裁员:</th>
+          <td colspan="2">
+            <%=f.collection_select(:p_code,@casearbitman,:code,:name, {}, :disabled => true)%>
+            <div style="color:red"><%=error_message_on(:remun,:p_code)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th rowspan="7">考核项目:</th>
+          <td>开庭、合议情况:</td>
+          <td>
+            <%= f.select(:item1, @rs1) %>
+            <div style="color:red"><%= error_message_on(:remun, :item1) %></div>
+          </td>
+        </tr>
+        <tr>
+          <td>阅卷情况和案情掌握情况:</td>
+          <td>
+            <%= f.select(:item2, @rs1) %>
+            <div style="color:red"><%= error_message_on(:remun, :item2) %></div>
+          </td>
+        </tr>
+        <tr>
+          <td>对裁决书的修改意见:<br/>(对不负责撰写裁决书的仲裁员)</td>
+          <td>
+            <%= f.select(:item3, @rs1.insert(0, ["",""])) %>
+            <div style="color:red"><%= error_message_on(:remun, :item3) %></div>
+          </td>
+        </tr>
+        <tr>
+          <td>因仲裁员原因延长裁限情况:</td>
+          <td>
+            <%= f.select(:item4, @rs2.insert(0, ["",""]) ) %>
+            <div style="color:red"><%= error_message_on(:remun, :item4) %></div>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="2">仲裁员违反《仲裁员行为考察规定》<br/>第十条任一款:</td>
+          <td>
+            <%= f.select(:item5, @rs3.insert(0, ["",""])) %>
+            <div style="color:red"><%= error_message_on(:remun, :item5) %></div>
+          </td>
+        </tr>
+        <tr>
+          <td><%= f.text_area(:item5_remark,"cols"=>'45',"rows"=>"3") %>（备注）
+            <div style="color:red"><%= error_message_on(:remun, :item5_remark) %></div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <br/>其他:<br/><br/>&nbsp;<%=f.text_area(:item6,"cols"=>'70',"rows"=>"7")%>
+            <div style="color:red"><%= error_message_on(:remun, :item6) %></div>
+            <br/>
+          </td>
+        </tr>
+      </table>
+      <br/>
+      <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+  </body>
+</html>

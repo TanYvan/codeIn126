@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>办案时间统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">办案时间统计</span></div>
+    <div align="center">
+      <%form_tag ({:action=>"list"})  do %>
+        <%=select_tag(:typ,options_for_select([["结案时间","1"],["立案时间","2"],["立案结案时间","3"]],@typ))%>
+          <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        案件类型：<%=select_tag(:case_typ,options_for_select([["全部","0"],["涉外","1"],["国内","2"]],@case_typ))%>
+        程序类型：<%=select_tag(:prog_typ,options_for_select([["全部","0"],["普通","1"],["简易","2"]],@prog_typ))%>
+        结案方式：<%=select_tag(:end_typ,options_for_select([["全部","0"],["裁决","1"],["和解","2"],["撤案","3"]],@end_typ))%>
+        <%=submit_tag "查询" %>
+    <%end %>
+    </div>
+ 
+      <%pt=PubTool.new%>
+      <hr>
+      助理办案平均时间统计
+      <table  cellspacing="1" class="adminlist">
+        <tr>
+          <th colspan="4">
+            <%=@typ_t[@typ]%>: <%=@d1%>至<%=@d2%> 案件类型:<%=@case_typ_t[@case_typ]%> 程序类型:<%=@prog_typ_t[@prog_typ]%> 结案方式:<%=@end_typ_t[@end_typ]%> 办案时间统计
+          </th>
+        </tr>
+        <tr>
+          <td >
+            名称
+          </td>
+          <td nowrap>
+            类型
+          </td>
+          <td nowrap>
+            数量
+          </td>
+          <td nowrap>
+            立案－结案(平均时间)
+          </td>
+        </tr>
+        <%for zl in @zl_total%>
+        <tr>
+          <td nowrap>
+            <%=zl.name%>
+          </td>
+          <td nowrap>
+            <%=zl.org%>
+          </td>
+          <td nowrap>
+            <%=zl.c%>
+          </td>
+          <%c_to_i=zl.c.to_i%>
+          <td nowrap>
+            <%if c_to_i!=0%><%=pt.round_2(zl.d5.to_f / zl.c.to_i) %><%end%>
+          </td>
+        </tr>
+        <%end%>
+      </table>
+      <hr>
+      助理组庭案件平均时间统计
+      <table  cellspacing="1" class="adminlist">
+        <tr>
+          <th colspan="14">
+            <%=@typ_t[@typ]%>: <%=@d1%>至<%=@d2%> 案件类型:<%=@case_typ_t[@case_typ]%> 程序类型:<%=@prog_typ_t[@prog_typ]%> 结案方式:<%=@end_typ_t[@end_typ]%> 办案时间统计
+          </th>
+        </tr>
+        <tr>
+          <td >
+            立案号
+          </td>
+          <td nowrap>
+            总案号
+          </td>
+          <td nowrap>
+            结案号
+          </td>
+          <td nowrap>
+            助理
+          </td>
+          <td nowrap>
+            申请人
+          </td>
+          <td nowrap>
+            被申请人
+          </td>
+          <td nowrap>
+            立案时间
+          </td>
+          <td nowrap>
+            组庭时间
+          </td>
+          <td nowrap>
+            开庭时间
+          </td>
+          <td nowrap>
+            结案时间
+          </td>
+          <td nowrap>
+            立案－组庭
+          </td>
+          <td nowrap>
+            组庭－首次开庭
+          </td>
+          <td nowrap>
+            首次开庭－结案
+          </td>
+          <td nowrap>
+            组庭－结案
+          </td>
+          <td nowrap>
+            立案－结案
+          </td>
+        </tr>
+        <%for c in @zl_2%>
+          <tr >
+            <td >
+              <%=link_to c.case_code,{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>c.recevice_code},:target=>"_black"  %>
+            </td>
+            <td>
+              <%=c.general_code%>
+            </td>
+            <td>
+              <%=c.end_code%>
+            </td>
+            <td>
+              <%=c.name%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%=c.nowdate.to_s %>
+            </td>
+            <td>
+              <%=c.orgdate.to_s %>
+            </td>
+            <td>
+              <%=c.sittingdate.to_s %>
+            </td>
+            <td>
+              <%=c.decideDate.to_s %>
+            </td>
+            <td>
+              <%=c.d1%>
+            </td>
+            <td>
+              <%=c.d2%>
+            </td>
+            <td>
+              <%=c.d3%>
+            </td>
+            <td>
+              <%=c.d4%>
+            </td>
+            <td>
+              <%=c.d5%>
+            </td>
+          </tr>
+        <%end%>
+      </table>  
+    <hr>
+      助理未组庭案件平均时间统计
+      <table  cellspacing="1" class="adminlist">
+        <tr>
+          <th colspan="14">
+            <%=@typ_t[@typ]%>: <%=@d1%>至<%=@d2%> 案件类型:<%=@case_typ_t[@case_typ]%> 程序类型:<%=@prog_typ_t[@prog_typ]%> 结案方式:<%=@end_typ_t[@end_typ]%> 办案时间统计
+          </th>
+        </tr>
+        <tr>
+          <td >
+            立案号
+          </td>
+          <td nowrap>
+            总案号
+          </td>
+          <td nowrap>
+            结案号
+          </td>
+          <td nowrap>
+            助理
+          </td>
+          <td nowrap>
+            申请人
+          </td>
+          <td nowrap>
+            被申请人
+          </td>
+          <td nowrap>
+            立案时间
+          </td>
+          <td nowrap>
+            组庭时间
+          </td>
+          <td nowrap>
+            开庭时间
+          </td>
+          <td nowrap>
+            结案时间
+          </td>
+          <td nowrap>
+            立案－组庭
+          </td>
+          <td nowrap>
+            组庭－首次开庭
+          </td>
+          <td nowrap>
+            首次开庭－结案
+          </td>
+          <td nowrap>
+            组庭－结案
+          </td>
+          <td nowrap>
+            立案－结案
+          </td>
+        </tr>
+        <%for c in @zl_3%>
+          <tr >
+            <td >
+              <%=link_to c.case_code,{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>c.recevice_code},:target=>"_black"  %>
+            </td>
+            <td>
+              <%=c.general_code%>
+            </td>
+            <td>
+              <%=c.end_code%>
+            </td>
+            <td>
+              <%=c.name%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%=c.nowdate.to_s %>
+            </td>
+            <td>
+              <%=c.orgdate.to_s %>
+            </td>
+            <td>
+              <%=c.sittingdate.to_s %>
+            </td>
+            <td>
+              <%=c.decideDate.to_s %>
+            </td>
+            <td>
+              <%=c.d1%>
+            </td>
+            <td>
+              <%=c.d2%>
+            </td>
+            <td>
+              <%=c.d3%>
+            </td>
+            <td>
+              <%=c.d4%>
+            </td>
+            <td>
+              <%=c.d5%>
+            </td>
+          </tr>
+        <%end%>
+      </table>  
+    <hr>
+  </body>
+</html>

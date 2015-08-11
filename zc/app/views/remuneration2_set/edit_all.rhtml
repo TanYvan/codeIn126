@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>批量修改 阅卷信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <script language="javascript">
+      function su(){
+        <%for p in @remun%>
+        obj=document.getElementById("new_rmb_id_<%=p.id%>");
+        if ( /^[0-9]*[1-9][0-9]*$/.test(obj.value) || /^[1-9]d*.d*|0.d*[1-9]d*|0?.0+|0$/.test(obj.value) ) 
+          {     
+          }     
+          else     
+            {    
+              alert("请输入数字！");   
+              return false;    
+            }
+        <%end%>
+        var commit = document.getElementsByName("commit");
+        for(i=0; i<commit.length; i++)
+        {
+          commit[i].style.display='none';
+        }
+      }
+    </script>
+  </head>
+  <body>
+  <div class="title"><span class="cBlue">批量修改 阅卷信息</span></div>
+  <div align="center">
+ <%=link_to "返回",:action=>"list"%>
+  </div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :remun ,:url=>{:action=>"update_all"},:html=>{:onsubmit=>"return su();"}  do |f|%>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+            仲裁员
+          </th>
+          <th nowrap>
+            阅读页数
+          </th>
+          <th nowrap>
+            金额
+          </th>
+          <th nowrap>
+            类别和档次
+          </th>
+        <th nowrap>
+            备注
+          </th>
+          </tr>
+        </thead>
+        <tbody>
+        <%i=0%>
+        <%for p in @remun%>
+          <%if TbBonusPenalty.find(:first,:conditions=>"recevice_code='#{session[:recevice_code_2]}' and typ='0001' and p='#{p.arbitman}' and used='Y' and extend_code=''")!=nil %>
+            <tr class="row<%=i % 2%>">
+              <input type="hidden" id="hid_id_<%=p.id%>" name="hid_name_<%=p.id%>" value="<%=p.id%>" />
+              <td>
+              <%=TbArbitman.find_by_code(p.arbitman).name%>
+              </td>
+              <td>
+                <%=p.p%>
+              </td>
+              <td>
+                <input type="hidden" id="old_rmb_id_<%=p.id%>" name="old_rmb_name_<%=p.id%>" value="<%=p.rmb%>" />
+                <input type="text" id="new_rmb_id_<%=p.id%>" name="new_rmb_name_<%=p.id%>" value="<%=p.rmb%>" />
+              </td>
+              <td>
+                <input type="text" id="grade_id_<%=p.id%>" name="grade_name_<%=p.id%>" value="<%=p.grade%>" />
+              </td>
+              <td>
+                <input type="text" id="remark_id_<%=p.id%>" name="remark_name_<%=p.id%>" value="<%=p.remark%>" />
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+        </tbody>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+            
+  </body>
+</html>

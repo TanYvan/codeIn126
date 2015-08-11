@@ -1,0 +1,2 @@
+module CaseConsultation3Helper
+end

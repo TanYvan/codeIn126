@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>待退费信息--处长确认</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <h2 class="strong">
+      <div id="link1">
+        <table align="center" bgcolor="#E1F4FF">
+          <tr><td>
+              <%= link_to "待退费信息",   :action => "list"%>
+            </td><td width="0.01px" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "待退费信息历史记录（一年未确认）",   :action => "list_2"%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            </tr>
+        </table>
+      </div>
+    </h2>
+    <div class="title"><span class="cBlue">待退费信息历史记录（一年未确认）</span></div>
+    <br/>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              重新提交
+            </th>
+            <th>
+              案件咨询流水号
+            </th>
+            <th nowrap>
+              立案号
+            </th>
+            <th nowrap>
+              助理
+            </th>
+            <th nowrap>
+              费用类型
+            </th>
+            <th nowrap>
+              退款方
+            </th>
+            <th nowrap>
+              退款人
+            </th>
+            <th nowrap>
+              币种
+            </th>
+            <th nowrap>
+              金额
+            </th>
+            <th nowrap>
+              汇率
+            </th>
+            <th nowrap>
+              应退费用(￥)
+            </th>
+            <th nowrap>
+              减退费用(￥)
+            </th>
+            <th nowrap>
+              应实退费用(￥)
+            </th>
+            <th nowrap>
+              备注
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for p in @should%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap>
+                <%=button_to "重新提交",:action=>"check_2",:id=>p%>
+              </td>
+              <td nowrap>
+                <%=p.recevice_code%>
+              </td>
+              <td nowrap>
+                <%=p.case_code%>
+              </td>
+              <td nowrap>
+                <%user=User.find_by_code(p.u)%>
+                <%if user!=nil%><%=user.name%><%end%>
+              </td>
+              <td nowrap>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='0031' and data_val='#{p.typ}'").data_text%>
+                <%if p.typ=='0001' or p.typ=='0004'%>
+                  <%=link_to  "查看明细",{:action=>"detail_list",:id=>p,:parent_id=>p,:recevice_code=>p.recevice_code},:target=>"_blank"%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='0032' and data_val='#{p.payment}'").data_text%>
+              </td>
+              <td nowrap>
+                <%=p.partyname%>
+              </td>
+              <td nowrap>
+                <%=Money.find_by_code(p.currency).name%>
+              </td>
+              <td nowrap>
+                <%=p.f_money%>
+              </td>
+              <td nowrap>
+                <%=p.rate%>
+              </td>
+              <td nowrap>
+                <%=p.rmb_money%>
+              </td>
+              <td>
+                <%=p.redu_rmb_money%>
+              </td>
+              <td>
+                <%= p.rmb_money - p.redu_rmb_money%>
+              </td>
+              <td>
+                <%=p.remark%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+      </table>
+
+  </body>
+</html>

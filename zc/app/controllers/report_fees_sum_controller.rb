@@ -1,0 +1,2 @@
+class ReportFeesSumController < ApplicationController
+end

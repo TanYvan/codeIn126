@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>结案类型统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script>
+      function checkForm(){
+        if(document.getElementById("date1").value==null && document.getElementById("date2").value==null){
+          alert("请选择统计时间！");
+          return false;
+        }
+        if(document.getElementById("date1").value>document.getElementById("date2").value){
+          alert("统计时间错误，请重新选择！");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">结案类型统计</span></div>
+    <%form_tag :url=>{:action=>"list"},:html =>{:onsubmit=>"return checkForm();"} do%>
+      <table align="center"><tr><td nowrap align="right">
+          时间段类型：</td>
+          <td align="left" nowrap>
+            <%=select(:j,:datestyle,[["立案时间段","0001"],["结案时间段","0002"],["立案结案时间段","0003"]])%>
+        </td></tr>
+        <tr><td nowrap align="right">
+          统计时间段：</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" >
+            --
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" >
+        </td></tr>
+      </table>
+      <%=submit_tag "查询" %>
+    <%end%>
+    <br>
+    <br>
+    <div class="cGreen">
+      <%if @clerks_1 != nil%>
+        时间段类型:<%=@datestyle_state[@datestyle]%> 统计时间段:<%=@date1%>至<%=@date2%>
+      <%end%>
+    </div>
+    <hr size="1" color="#99CCFF" noshade width="90%">
+    在职人员办案统计
+    <%if @clerks_1==nil%>
+    <%else%>
+      <table  width="85%"  class="list">
+        <tr>
+          <th nowrap>助理</th>
+          <th nowrap>立案总数</th>
+          <th nowrap>结案总数</th>
+          <%for end_t in @end_type%>
+            <td><div align="center"><%=end_t.data_text%></div</td>
+          <%end%>
+        </tr>
+        <%for clerk in @clerks_1%>
+          <tr>
+            <td><div align="center"><%=clerk.name%></div></td>
+            <td><div align="center"><%=TbCase.find(:first,:conditions=> "tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  ).id_count%></div></td>
+            <td><div align="center"><%=TbCase.find(:first,:conditions=> "tb_cases.clerk='#{clerk.code}' and  tb_cases.end_date>='#{@date1}' and tb_cases.end_date<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  ).id_count%></div></td>
+            <%for end_t in @end_type%>
+              <td align="center" >
+                <div align="center">
+                  <%if @datestyle=='0001'%>
+                    <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.caseendbook_id_first=tb_caseendbooks.id and tb_cases.used='Y' and tb_cases.state>=100 and tb_caseendbooks.used='Y'" , :conditions=> "tb_caseendbooks.endStyle='#{end_t.data_val}' and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                  <%elsif @datestyle=='0002'%>
+                    <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.caseendbook_id_first=tb_caseendbooks.id and tb_cases.used='Y' and tb_cases.state>=100 and tb_caseendbooks.used='Y'" , :conditions=> "tb_caseendbooks.endStyle='#{end_t.data_val}' and tb_cases.clerk='#{clerk.code}' and  tb_cases.end_date>='#{@date1}' and tb_cases.end_date<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                  <%elsif @datestyle=='0003'%>
+                    <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.caseendbook_id_first=tb_caseendbooks.id and tb_cases.used='Y' and tb_cases.state>=100 and tb_caseendbooks.used='Y'" , :conditions=> "tb_caseendbooks.endStyle='#{end_t.data_val}' and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and  tb_cases.end_date>='#{@date1}' and tb_cases.end_date<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                  <%end%>
+                  <%=ccc.id_count%>
+                </div
+              </td>
+            <%end%>
+          </tr>
+        <%end%>
+      </table>
+    <%end%>
+    <br>
+    <br>
+    <br>
+    <hr size="1" color="#99CCFF" noshade width="90%">
+    离职人员办案统计
+    <%if @clerks_2==nil%>
+    <%else%>
+      <table  width="85%"  class="list">
+        <tr>
+          <th nowrap>助理</th>
+          <th nowrap>立案总数</th>
+          <th nowrap>结案总数</th>
+          <%for end_t in @end_type%>
+            <td><div align="center"><%=end_t.data_text%></div</td>
+          <%end%>
+        </tr>
+        <%for clerk in @clerks_2%>
+          <tr>
+            <td><div align="center"><%=clerk.name%></div></td>
+            <td><div align="center"><%=TbCase.find(:first,:conditions=> "tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  ).id_count%></div></td>
+            <td><div align="center"><%=TbCase.find(:first,:conditions=> "tb_cases.clerk='#{clerk.code}' and  tb_cases.end_date>='#{@date1}' and tb_cases.end_date<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  ).id_count%></div></td>
+            <%for end_t in @end_type%>
+              <td align="center" >
+                <div align="center">
+                  <%if @datestyle=='0001'%>
+                    <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.caseendbook_id_first=tb_caseendbooks.id and tb_cases.used='Y' and tb_cases.state>=100 and tb_caseendbooks.used='Y'" , :conditions=> "tb_caseendbooks.endStyle='#{end_t.data_val}' and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                  <%elsif @datestyle=='0002'%>
+                    <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.caseendbook_id_first=tb_caseendbooks.id and tb_cases.used='Y' and tb_cases.state>=100 and tb_caseendbooks.used='Y'" , :conditions=> "tb_caseendbooks.endStyle='#{end_t.data_val}' and tb_cases.clerk='#{clerk.code}' and  tb_cases.end_date>='#{@date1}' and tb_cases.end_date<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                  <%elsif @datestyle=='0003'%>
+                    <% ccc=TbCase.find(:first,:joins=>"inner join tb_caseendbooks on tb_cases.caseendbook_id_first=tb_caseendbooks.id and tb_cases.used='Y' and tb_cases.state>=100 and tb_caseendbooks.used='Y'" , :conditions=> "tb_caseendbooks.endStyle='#{end_t.data_val}' and tb_cases.clerk='#{clerk.code}' and  tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and  tb_cases.end_date>='#{@date1}' and tb_cases.end_date<='#{@date2}'" ,:select=>"count(distinct tb_cases.id) as id_count"  )%>
+                  <%end%>
+                  <%=ccc.id_count%>
+                </div
+              </td>
+            <%end%>
+          </tr>
+        <%end%>
+      </table>
+    <%end%>
+
+  </body>
+</html>

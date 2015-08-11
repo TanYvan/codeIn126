@@ -1,0 +1,2 @@
+module ShouldRefundCheckedHelper
+end

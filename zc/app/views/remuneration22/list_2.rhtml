@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件 仲裁员和助理的其它办案报酬维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员和助理的其它办案报酬维护</span></div>
+      <div align="center" class="cDGray">
+        仲裁员和助理的其它办案报酬维护
+        <%=link_to  "创建", :action=>"new_2"%>
+        <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              人员类型
+            </th>
+            <th nowrap>
+              人员
+            </th>
+            <th nowrap>
+              事项
+            </th>
+            <th nowrap>
+              工作量
+            </th>
+            <th nowrap>
+              备注
+            </th>
+            <th nowrap>
+              删除
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for p in @remun%>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=@p_typ[p.p_typ]%>
+              </td>
+              <td>
+                <%if p.p_typ=='0001'%>
+                  <%=TbArbitman.find_by_code(p.p).name%>
+                <%else%>
+                  <%@u=User.find_by_code(p.p)%>
+                  <%if @u!=nil%>
+                    <%=@u.name%>
+                  <%end%>
+                <%end%>
+              </td>
+              <td>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='0049' and data_val='#{p.obj_typ}'").data_text%>
+              </td>
+              <td>
+                <%=p.obj_num%>
+              </td>
+              <td>
+                <%=p.remark%>
+              </td>
+              <td>
+                <%if  p.rmb==0%>
+                  <%=button_to "删除",{:action=>"delete_2",:id=>p},:confirm=>"您确认要删除吗？"%>
+                <%end%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+      </table>
+  </body>
+</html>

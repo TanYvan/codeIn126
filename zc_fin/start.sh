@@ -1,0 +1,1 @@
+nohup mongrel_rails start -c /usr/local/zc_fin -p 3200 &

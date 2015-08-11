@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>异地待发报酬清单</title>
+  <%= javascript_include_tag "prototype" %>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  <script src="/javascripts/pub.js"></script>
+</head>
+<body>
+  <input  id='to_word' type='button' value='导出word' onclick="document.getElementById('to_word').style.display='none';to_word();document.getElementById('to_word').style.display='block';"/>
+  <br/>
+   <div>华南国际经济贸易仲裁委员会</div>
+   <div>异地待发报酬清单</div>  
+  <table class="adminlist" cellspacing="1">
+    <thead>
+    <tr> 
+      <th nowrap>序号</th>
+      <th nowrap>姓名</th>
+      <th nowrap>账号</th>
+      <th nowrap>开户行名称</th>
+      <th nowrap>金额（元）</th> 
+    </tr>
+    </thead>
+    <tbody>
+    <%i=1%>
+    <% if @tb_extends != nil%>
+      <%for tb_extend in @tb_extends %>        
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=  i %></td>
+            <td nowrap><%=tb_extend.p_name%></td>
+            <td nowrap><%=  tb_extend.bank_account%></td>
+            <td nowrap><%=  tb_extend.bankname%></td>
+            <td nowrap><%=  tb_extend.extend_rmb%></td>
+          </tr>
+          <%i=i+1%>
+      <%end%>    
+    <%end%>
+    <tr> 
+      <td colspan="3">合计</td>
+      <td colspan="2"><%=@tb_extends.sum{|tb_extend| tb_extend.extend_rmb}.to_f%></td> 
+    </tr>
+    </tbody>
+    </table>
+</body>
+</html>
+

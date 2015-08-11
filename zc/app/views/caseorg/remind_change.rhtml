@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改 仲裁员回避</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script language="javascript">
+        function checkForm(){
+          if (document.getElementById("evite_remind_reason").value==""){
+            alert("请填写提醒变更理由");
+            return false;
+           }
+          return true;
+        }
+    </script>
+  </head>
+  <body>
+    <div align="center" class="cDGray">
+  提醒情况
+   <%=link_to "返回",:action=>"evite_list",:org_id=>params[:org_id]%>
+  </div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :evite ,:url=>{:action=>"remind_update",:id=>params[:id],:org_id=>params[:org_id]},:html=>{:onsubmit=>"return checkForm();"}  do |f|%>
+      <table class="list">
+        <tr >
+          <th>
+            提醒情况:
+          </th>
+          <td>
+            <%=f.select(:remind,[["提醒",1],["不提醒",2]])%>                                                
+            <div style="color:red"><%=error_message_on(:evite,:remind)%></div>
+          </td>
+        </tr>             
+        <tr >
+          <th>
+            <i>*</i>提醒变更理由:
+          </th>
+          <td>
+            <%=f.text_field(:remind_reason)%>                                                
+            <div style="color:red"><%=error_message_on(:evite,:remind_reason)%></div>
+          </td>
+        </tr>   
+      </table>
+        <div align="center"><%=submit_tag "提交" %></div>
+
+    <%end%>
+  </body>
+</html>

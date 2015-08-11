@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员信息维护</title>
+    <%= javascript_include_tag "prototype" %>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员列表</span></div>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+      <%= button_to "添加仲裁员", :action => "new_arbitman"%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table class="adminlist" cellspacing="1">
+      <thead>
+        <tr>
+          <th nowrap>序号</th>
+          <th nowrap>
+            <%if @order=="code desc"%>
+              <%=link_to '编号↑',:action=>"list_arbitman",:order=>"code asc",:page=>@tb_arbitman_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="code asc"%>
+              <%=link_to '编号↓',:action=>"list_arbitman",:order=>"code desc",:page=>@tb_arbitman_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '编号',:action=>"list_arbitman",:order=>"code asc",:page=>@tb_arbitman_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="name desc"%>
+              <%=link_to '姓名↑',:action=>"list_arbitman",:order=>"name asc",:page=>@tb_arbitman_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="name asc"%>
+              <%=link_to '姓名↓',:action=>"list_arbitman",:order=>"name desc",:page=>@tb_arbitman_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '姓名',:action=>"list_arbitman",:order=>"name asc",:page=>@tb_arbitman_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>性别</th>
+          <th nowrap>地区</th>
+          <th nowrap>单位</th>
+          <th nowrap>电话号码</th>
+          <th nowrap>邮政编码</th>
+          <th nowrap>更名</th>
+          <th nowrap>修改</th>
+          <th nowrap>删除</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%j=0%>
+        <%i=1%>
+        <% if @tb_arbitmen != nil
+          for tb_arbitman in @tb_arbitmen %>
+            <tr class="row<%=j % 2%>">
+              <td><%=  i %></td>
+              <td>
+                <%=  tb_arbitman.code%>
+              </td>
+              <td><%=  tb_arbitman.name%></td>
+              <td><%= tb_arbitman.sex%></td>
+              <td><%@a=Region.find_by_code(tb_arbitman.area_code)%><%if @a!=nil%><%=@a.name%><%end%></td>
+              <td><%=tb_arbitman.company%></td>
+              <td><%=tb_arbitman.telo%></td>
+              <td><%=tb_arbitman.postcode%></td>
+              <td><%=link_to "更名",{:action => "name_edit",:id => tb_arbitman.id, :search_condit=>@search_condit,:order=>@order,:page=>@tb_arbitman_pages.current.number,:page_lines=>@page_lines} %></td>
+              <td><%=link_to "修改",{:action => "edit_arbitman",:id => tb_arbitman.id, :search_condit=>@search_condit,:order=>@order,:page=>@tb_arbitman_pages.current.number,:page_lines=>@page_lines} %></td>
+              <td><%=button_to "删除",{:action => "delete_arbitman",:id => tb_arbitman.id, :search_condit=>@search_condit,:order=>@order,:page=>@tb_arbitman_pages.current.number,:page_lines=>@page_lines}, :confirm => "确认删除?", :method => "post" %></td>
+            </tr>
+            <%i+=1%>
+            <%j=j+1%>
+          <%end%>
+
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="10">
+            <%= link_to '上一页', { :page => @tb_arbitman_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_arbitman_pages.current.previous %>
+            <%=pagination_links( @tb_arbitman_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @tb_arbitman_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_arbitman_pages.current.next %>
+
+            <%if @tb_arbitman_pages.current.previous or @tb_arbitman_pages.current.next%>
+              <form action="/arbitman/list_arbitman" method="get" >
+                每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                <input type=text name='page' size=5 class="SingleLineInput" value=<%= @tb_arbitman_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='跳转' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+
+    </table>
+  </body>
+</html>

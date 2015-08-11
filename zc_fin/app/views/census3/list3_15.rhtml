@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+      <%
+    if params[:datestyle] == "01"
+      title = "律师事务所"
+    elsif params[:datestyle] == "02"
+      title = "律师"
+    else
+      title = "仲裁员"
+    end %>
+    <title><%= title  %>统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <script src="/javascripts/WebCalendar.js" type="text/javascript"></script>
+  </head>
+  <body>
+      <div class="title"><span class="cBlue"><%= title  %>统计</span></div>
+    <%form_tag :url=>{:action=>"list3_15"} do%>
+      <table align="center">
+        <tr>
+          <td nowrap align="right">类型:</td>
+          <td align="left" nowrap>
+            <%=select_tag(:datestyle,options_for_select([["律师事务所","01"],["律师","02"],["仲裁员","03"]],@datestyle))%>
+          </td>
+        </tr>
+        <tr><td nowrap align="right">立案时间：</td>
+          <td align="left"><%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+            至
+            <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+          </td></tr>
+        <tr><td colspan="2">
+            <%=submit_tag "查询" %>
+          </td></tr>
+      </table>
+    <%end%>
+    <i><%=flash[:notice]%></i>
+    <%if @datestyle == '01'%><!--律师事务所统计-->
+      <div align="left">律师事务所数量：<%=@n1.length%></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>律师事务所名称</th>
+            <th nowrap>
+              <%if @order=="count( DISTINCT recevice_code) desc"%>
+                <%=link_to '案件数量↑',:action=>"list3_15",:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle,:order=>"count( DISTINCT recevice_code) asc"%>
+              <%else%>
+                <%=link_to '案件数量↓',:action=>"list3_15",:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle,:order=>"count( DISTINCT recevice_code) desc"%>
+              <%end%>
+            </th>
+            <th nowrap>总争议标的(￥)</th>
+            <th nowrap>手机</th>
+            <th nowrap>电话号码</th>
+            <th nowrap>传真</th>
+            <th nowrap>地址</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for a in @arbitman_case1%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap><%=a.company%></td>
+              <td nowrap style="text-align: center">
+                <% a_id = VAgent.find(:all,:select=>"DISTINCT recevice_code ", :conditions=>["nowdate>=? and nowdate<=? and company=?",@d1,@d2,a.company])%>
+                <%=link_to "#{a_id.size}",:action=>"list3_15a",:d1=>@d1,:d2=>@d2,:company=>a.company,:datestyle=>@datestyle%>
+              </td>
+              <%
+                amount_count = 0
+                for b in a_id
+                  current_case = TbCase.find(:first,:conditions=>" recevice_code = '#{b.recevice_code}' and used='Y' ")
+                  amount_count += current_case.amount
+                end
+              %>
+              <td nowrap style="text-align: right"><%=SysArg.compart2(amount_count) %></td>
+              <td nowrap><%=a.mobiletel %></td>
+              <td nowrap><%=a.tel %></td>
+              <td nowrap><%=a.post_tel_code %></td>
+              <td nowrap><%=a.addr %></td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6">
+              <%= link_to '上一页', { :page => @arbitman_case1_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle } if @arbitman_case1_pages.current.previous %>
+              <%=pagination_links( @arbitman_case1_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle}})%>
+              <%= link_to '下一页', { :page => @arbitman_case1_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle  } if @arbitman_case1_pages.current.next %>
+
+              <%if @arbitman_case1_pages.current.previous or @arbitman_case1_pages.current.next%>
+              <form action="/census3/list3_11" method="get" onsubmit="return page_check('page_lines','page');">
+                  每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                  <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @arbitman_case1_pages.current.number %> />
+                  <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                  页
+                  <input type=hidden name='order' value="<%=@order%>" />
+                  <input type=hidden name='d1' value="<%=@d1%>" />
+                  <input type=hidden name='d2' value="<%=@d2%>" />
+                  <input type=hidden name='datestyle' value="<%=@datestyle%>" />
+                  <input type='submit' value='确定' />
+                </form>
+              <%end%>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    <%  elsif  @datestyle == '02'%> <!-- 律师统计 -->
+      <div align="left">律师数量：<%=@n2.length%>  </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>律师姓名</th>
+            <th nowrap>所在单位</th>
+            <th nowrap>
+              <%if @order=="count( DISTINCT recevice_code) desc"%>
+                <%=link_to '案件数量↑',:action=>"list3_15",:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle,:order=>"count( DISTINCT recevice_code) asc"%>
+              <%else%>
+                <%=link_to '案件数量↓',:action=>"list3_15",:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle,:order=>"count( DISTINCT recevice_code) desc"%>
+              <%end%>
+            </th>
+            <th nowrap>总争议标的(￥)</th>
+            <th nowrap>手机</th>
+            <th nowrap>电话号码</th>
+            <th nowrap>传真</th>
+            <th nowrap>地址</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for a in @arbitman_case2%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap><%= a.name %></td>
+              <td nowrap><%= a.company %></td>
+              <td nowrap style="text-align: center">
+                <% a_id = VAgent.find(:all,:select=>"DISTINCT recevice_code ", :conditions=>["status='0001' and nowdate>=? and nowdate<=? and name=? and company=?",@d1,@d2,a.name,a.company])%>
+                <%=link_to "#{a_id.size}",:action=>"list3_15a",:d1=>@d1,:d2=>@d2,:name=>a.name,:datestyle=>@datestyle,:company=>a.company%>
+              </td>
+              <%
+                amount_count = 0
+                for b in a_id
+                  current_case = TbCase.find(:first,:conditions=>" recevice_code = '#{b.recevice_code}' and used='Y' ")
+                  amount_count += current_case.amount
+                end
+              %>
+              <td nowrap style="text-align: right"><%=SysArg.compart2(amount_count) %></td>
+              <td nowrap><%= a.mobiletel %> </td>
+              <td nowrap><%= a.tel %> </td>
+              <td nowrap><%= a.post_tel_code %> </td>
+              <td nowrap><%= a.addr %> </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6">
+              <%= link_to '上一页', { :page => @arbitman_case2_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle } if @arbitman_case2_pages.current.previous %>
+              <%=pagination_links( @arbitman_case2_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_liness,:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle  }})%>
+              <%= link_to '下一页', { :page => @arbitman_case2_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle } if @arbitman_case2_pages.current.next %>
+
+              <%if @arbitman_case2_pages.current.previous or @arbitman_case2_pages.current.next%>
+                <form action="/census3/list3_11" method="get" onsubmit="return page_check('page_lines','page');">
+                  每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                  <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @arbitman_case2_pages.current.number %> />
+                  <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                  页
+                  <input type=hidden name='order' value="<%=@order%>" />
+                  <input type=hidden name='d1' value="<%=@d1%>" />
+                  <input type=hidden name='d2' value="<%=@d2%>" />
+                  <input type=hidden name='datestyle' value="<%=@datestyle%>" />
+                  <input type='submit' value='确定' />
+                </form>
+              <%end%>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    <% else %>
+      <div align="left">仲裁员数量：<%=@n3.length%> </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>仲裁员姓名</th>
+            <th nowrap>性别</th>
+            <th nowrap>
+              <%if @order=="count( DISTINCT recevice_code) desc"%>
+                <%=link_to '案件数量↑',:action=>"list3_15",:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle,:order=>"count( DISTINCT recevice_code) asc"%>
+              <%else%>
+                <%=link_to '案件数量↓',:action=>"list3_15",:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle,:order=>"count( DISTINCT recevice_code) desc"%>
+              <%end%>
+            </th>
+            <th nowrap>总争议标的(￥)</th>
+            <th nowrap>手机</th>
+            <th nowrap>电话号码</th>
+            <th nowrap>传真</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for a in @arbitman_case2%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap><%= a.name %></td>
+              <td nowrap><%= a.sex %></td>
+              <td nowrap style="text-align: center">
+                <% a_id = VArbitmanCase.find(:all,:select=>"DISTINCT recevice_code ", :conditions=>["code is not null and nowdate>=? and nowdate<=? and code=? ",@d1,@d2,a.code])%>
+                <%=link_to "#{a_id.size}",:action=>"list3_15a",:d1=>@d1,:d2=>@d2,:code=>a.code,:name=>a.name,:datestyle=>@datestyle%>
+              </td>
+              <%
+                amount_count = 0
+                for b in a_id
+                  current_case = TbCase.find(:first,:conditions=>" recevice_code = '#{b.recevice_code}' and used='Y' ")
+                  amount_count += current_case.amount
+                end
+              %>
+              <td nowrap style="text-align: right"><%=SysArg.compart2(amount_count) %></td>
+              <td nowrap><%= a.mobiletel %> </td>
+              <td nowrap><%= a.telh %> </td>
+              <td nowrap><%= a.fax %> </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6">
+              <%= link_to '上一页', { :page => @arbitman_case2_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle } if @arbitman_case2_pages.current.previous %>
+              <%=pagination_links( @arbitman_case2_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_liness,:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle  }})%>
+              <%= link_to '下一页', { :page => @arbitman_case2_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:d1=>@d1,:d2=>@d2,:datestyle=>@datestyle } if @arbitman_case2_pages.current.next %>
+
+              <%if @arbitman_case2_pages.current.previous or @arbitman_case2_pages.current.next%>
+                <form action="/census3/list3_11" method="get" onsubmit="return page_check('page_lines','page');">
+                  每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                  <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @arbitman_case2_pages.current.number %> />
+                  <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                  页
+                  <input type=hidden name='order' value="<%=@order%>" />
+                  <input type=hidden name='d1' value="<%=@d1%>" />
+                  <input type=hidden name='d2' value="<%=@d2%>" />
+                  <input type=hidden name='datestyle' value="<%=@datestyle%>" />
+                  <input type='submit' value='确定' />
+                </form>
+              <%end%>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    <%end%>
+  </body>
+</html>

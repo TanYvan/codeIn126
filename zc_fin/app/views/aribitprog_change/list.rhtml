@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件仲裁程序变更 信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件仲裁程序变更 信息</span></div>
+    <br/>
+    <%if @case!=nil%>
+      当前案件
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              咨询流水号
+            </th>
+            <th nowrap>
+              咨询日期
+            </th>
+            <th nowrap>
+              立案号
+            </th>
+            <th nowrap>
+              立案日期
+            </th>
+            <th nowrap>
+              申请人
+            </th>
+            <th nowrap>
+              被申请人
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @case.recevice_code%>
+            </td>
+            <td>
+              <%=h @case.receivedate%>
+            </td>
+            <td>
+              <%=h @case.case_code%>
+            </td>
+            <td>
+              <%=h @case.nowdate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    <%end%>
+    <div class="cDGray">
+      <%=link_to  "返回", :action=>"case_list",:recevice_code=>params[:recevice_code],:search_condit=>params[:search_condit],:order=>params[:order],:page_lines=>params[:page_lines]%>
+      <%=link_to  "创建", {:action=>"new",:recevice_code=>params[:recevice_code],:search_condit=>params[:search_condit],:order=>params[:order],:page_lines=>params[:page_lines]},:confirm=>"您确认仲裁程序变更吗？"%>
+    </div>
+
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            变更时间
+          </th>
+          <th nowrap>
+            变更人
+          </th>
+          <th nowrap>
+            变更前
+          </th>
+          <th nowrap>
+            变更后
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for p in @aribitprog_change%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%=p.u_t.to_s(:db)%>
+            </td>
+            <td>
+              <%=User.find_by_code(p.u).name%>
+            </td>
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0001' and data_val='#{p.aribitprog_before}'").data_text%>
+            </td>
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0001' and data_val='#{p.aribitprog_after}'").data_text%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>仲裁员办案情况评价表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/sty.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <table  id="to_word_c" align="center" width="100%"><tr><td>
+          <div class="cGray" align="center" style="font-weight: 400">
+            案件编号：<%=@case_code%>
+          </div>
+          <table  class="list">
+            <tr>
+              <th nowrap>阶段</th>
+              <th nowrap>评价内容</th>
+              <%for arb in @casearbitman%>
+                <th nowrap><%=arb.arbitmantype_name%><br/>（<%=arb.name%>）</th>
+              <%end%>
+            </tr>
+            <%for t1 in @tbmark1%>
+              <tr>
+                <td nowrap>
+                  <% if t1.data_parent=='' %><%=t1.data_text%><%end%>
+                </td>
+                <td><%=t1.data_text%></td>
+                <%for arb in @casearbitman%>
+                  <td>
+                    <%ev=TbEvaluate.find(:first,:conditions=>"used='Y' and recevice_code='#{params[:recevice_code]}' and data_val='#{t1.data_val}' and arbitman='#{arb.code}'")%>
+                    <%if ev!=nil%>
+                      <%if ev.score!=nil and ev.score!=0%>
+                        <%=ev.score%><%if ev.remark!=nil and ev.remark!=""%>(<%=ev.remark%>)<%end%>
+                      <%end%>
+                    <%end%>
+                  </td>
+                <%end%>
+              </tr>
+            <%end%>
+            <tr>
+              <th nowrap></th>
+              <th>总分（以100分为基准进行加分和减分）</th>
+              <%for arb in @casearbitman%>
+                <%ev=TbEvaluate.sum(:score,:conditions=>["used='Y' and recevice_code=? and arbitman=? ",params[:recevice_code],arb.code])%>
+                <%if ev==nil%>
+                  <%ev=0%>
+                <%end%>
+                <%ev=100 + ev%>
+                <th nowrap>
+                  <%=ev%>
+                </th>
+              <%end%>
+            </tr>
+            <tr>
+              <th nowrap></th>
+              <th>评价（100分以上---特别优秀；95-100分---优秀，但有点小瑕疵；80分-95分---合格；80分以下---不合格）</th>
+              <%for arb in @casearbitman%>
+                <%ev=TbEvaluate.sum(:score,:conditions=>["used='Y' and recevice_code=? and arbitman=? ",params[:recevice_code],arb.code])%>
+                <%if ev==nil%>
+                  <%ev=0%>
+                <%end%>
+                <%ev=100 + ev%>
+                <th nowrap>
+                  <%if ev>100%>
+                    特别优秀
+                  <%elsif ev>95 and ev<=100%>
+                    优秀，但有点小瑕疵
+                  <%elsif ev>80 and ev<=95%>
+                    合格
+                  <%else%>
+                    不合格
+                  <%end%>
+                </th>
+              <%end%>
+            </tr>
+          </table>
+        </td></tr></table>
+  </body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改 仲裁员和助理的其它办案报酬</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <div class="title"><span class="cBlue">修改 仲裁员和助理的其它办案报酬</span></div>
+  <div align="center">
+ <%=link_to "返回",:action=>"list"%>
+  </div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :remun ,:url=>{:action=>"update",:id=>params[:id],:old_rmb=>@remun.rmb}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            人员类型:
+          </th>
+          <td>
+            <%@p_typ={'0001'=>'仲裁员','0002'=>'助理'}%>
+            <%=@p_typ[@remun.p_typ]%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            人员:
+          </th>
+          <td>
+            <%if @remun.p_typ=='0001'%>
+            <%=TbArbitman.find_by_code(@remun.p).name%>
+            <%else%>
+            <%=User.find_by_code(@remun.p).name%>
+            <%end%>                                               
+          </td>
+        </tr>
+        <tr>
+          <th>
+            事项:
+          </th>
+          <td>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0049' and data_val='#{@remun.obj_typ}'").data_text%>                                             
+          </td>
+        </tr>
+        <tr>
+          <th>
+            工作量:
+          </th>
+          <td>
+            <%=@remun.obj_num%>                                             
+          </td>
+        </tr>
+        <tr>
+          <th>
+            类别和档次:
+          </th>
+          <td>
+            <%=f.text_field(:grade)%>                                                   
+            <div style="color:red"><%=error_message_on(:remun,:grade)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            金额:
+          </th>
+          <td>
+            <%=f.text_field(:rmb)%>                                                   
+            <div style="color:red"><%=error_message_on(:remun,:rmb)%></div>                                              
+          </td>
+         </tr>
+         <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_field(:remark,:size=>50)%>                                      
+            <div style="color:red"><%=error_message_on(:remun,:remark)%></div>
+          </td>
+        </tr>  
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+            
+  </body>
+</html>

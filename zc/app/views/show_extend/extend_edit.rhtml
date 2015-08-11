@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改报酬信息</title>
+    <%= javascript_include_tag :defaults%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">修改报酬信息</span></div>
+    <br/>
+
+    <div style="color:red">
+      <div align="center"><%=flash[:notice]%></div>
+    </div>
+    <div align="center">
+      <%form_for :tb_extend ,:url=>{:action=>"extend_update",:id=>params[:id]}  do |f|%>
+      </div>
+      <table class="list">
+        <tr>
+          <th nowrap>姓名:</th>
+          <td nowrap>
+            <%=@tb_extend.p_name%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>银行:</th>
+          <td nowrap>
+            <%=f.text_field(:bankname,:style=>"width:30em")%>
+            <div style="color:red"><%=error_message_on(:tb_extend,:bankname)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>账号:</th>
+          <td nowrap>
+            <%=f.text_field(:bank_account,:style=>"width:30em")%>
+            <div style="color:red"><%=error_message_on(:tb_extend,:bank_account)%></div>
+         </td>
+        </tr>
+        <tr>
+          <th nowrap>邮件:</th>
+          <td nowrap>
+            <%=f.text_field(:email,:style=>"width:30em")%>
+            <div style="color:red"><%=error_message_on(:tb_extend,:email)%></div>
+          </td>
+         </tr>
+      </table>
+      <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+  </body>
+</html>

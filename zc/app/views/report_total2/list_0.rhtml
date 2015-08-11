@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>在办案件统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td>
+          <div align="left">
+            <div class="title"><span class="cBlue">在办案件统计</span></div>
+            <br/><br/>共有<%= @count %>条记录
+          </div>
+          <%if @case != nil %>
+            <br/>
+            <table cellspacing="1" class="adminlist">
+              <thead>
+                <tr>
+                  <th nowrap="true">
+                    <%if @order == "right(ca_cc,7) desc"%>
+                      <%= link_to '立案号↑', :action => "list_0", :order => "right(ca_cc,7) asc", :page => @case_pages.current.number, :search_condit => @search_condit, :page_lines => @page_lines, :d1 => params[:d1], :d2 => params[:d2] %>
+                    <% elsif @order=="ca_cc asc"%>
+                      <%= link_to '立案号↓', :action => "list_0", :order => "right(ca_cc,7) desc",:page => @case_pages.current.number, :search_condit => @search_condit, :page_lines => @page_lines, :d1 => params[:d1], :d2 => params[:d2] %>
+                    <%else%>
+                      <%= link_to '立案号',  :action => "list_0", :order => "right(ca_cc,7) asc", :page => @case_pages.current.number, :search_condit => @search_condit, :page_lines => @page_lines, :d1 => params[:d1], :d2 => params[:d2] %>
+                    <%end%>
+                  </th>
+                  <th nowrap="true">
+                    <%if @order=="ca_clerk_name desc"%>
+                      <%=link_to '经办人↑',:action=>"list_0",:order=>"ca_clerk_name asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="ca_clerk_name asc"%>
+                      <%=link_to '经办人↓',:action=>"list_0",:order=>"ca_clerk_name desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '经办人',:action=>"list_0",:order=>"ca_clerk_name asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th nowrap="true" style="width:300px">申请人</th>
+                  <th nowrap="true" style="width:300px">代理人（申）</th>
+                  <th nowrap="true" style="width:300px">被申请人</th>
+                  <th nowrap="true" style="width:300px">代理人（被)</th>
+                  <th nowrap="true">
+                    <% if @order == "ca_nowdate desc" %>
+                      <%= link_to '通知日期↑', :action => "list_0", :order => "ca_nowdate asc", :page => @case_pages.current.number, :search_condit => @search_condit, :page_lines => @page_lines, :d1 => params[:d1], :d2 => params[:d2] %>
+                    <% elsif @order == "ca_nowdate asc" %>
+                      <%= link_to '通知日期↓', :action => "list_0", :order => "ca_nowdate desc",:page => @case_pages.current.number, :search_condit => @search_condit, :page_lines => @page_lines, :d1 => params[:d1], :d2 => params[:d2] %>
+                    <% else%>
+                      <%= link_to '通知日期',  :action => "list_0", :order => "ca_nowdate asc", :page => @case_pages.current.number, :search_condit => @search_condit, :page_lines => @page_lines, :d1 => params[:d1], :d2 => params[:d2] %>
+                    <% end %>
+                  </th>
+                  <th nowrap="true">组庭日期&nbsp;</th>
+                  <th nowrap="true" style="width:150px">仲裁员</th>
+                  <th nowrap="true">审限日期&nbsp;</th>
+                  <th nowrap="true">延期日期&nbsp;</th>
+                  <th nowrap="true">
+                    <%if @order=="c_rmb_money desc"%>
+                      <%=link_to '应收(本请求)↑',:action=>"list_0",:order=>"c_rmb_money asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_rmb_money asc"%>
+                      <%=link_to '应收(本请求)↓',:action=>"list_0",:order=>"c_rmb_money desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '应收(本请求)',:action=>"list_0",:order=>"c_rmb_money asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+
+                  <th nowrap="true">
+                    <%if @order=="c_re_rmb_money desc"%>
+                      <%=link_to '实收(本请求)↑',:action=>"list_0",:order=>"c_re_rmb_money asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_re_rmb_money asc"%>
+                      <%=link_to '实收(本请求)↓',:action=>"list_0",:order=>"c_re_rmb_money desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '实收(本请求)',:action=>"list_0",:order=>"c_re_rmb_money asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+
+                  <th nowrap="true">
+                    <%if @order=="c_rmb_money_2 desc"%>
+                      <%=link_to '应收(反请求)↑',:action=>"list_0",:order=>"c_rmb_money_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_rmb_money_2 asc"%>
+                      <%=link_to '应收(反请求)↓',:action=>"list_0",:order=>"c_rmb_money_2 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '应收(反请求)',:action=>"list_0",:order=>"c_rmb_money_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+
+                  <th nowrap="true">
+                    <%if @order=="c_re_rmb_money_2 desc"%>
+                      <%=link_to '实收(反请求)↑',:action=>"list_0",:order=>"c_re_rmb_money_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_re_rmb_money_2 asc"%>
+                      <%=link_to '实收(反请求)↓',:action=>"list_0",:order=>"c_re_rmb_money_2 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '实收(反请求)',:action=>"list_0",:order=>"c_re_rmb_money_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"} %>
+                <%i=0%>
+                <%for c in @case%>
+                  <tr class="row<%=i % 2%>">
+                    <td nowrap="true">
+                      <%=link_to "#{c.ca_cc}",{:controller=>'every_casebase',:action=>"every_list_2",:recevice_code=>"#{c.ca_rc}"},:target=>"_blank"%>
+                    </td>
+                    <td nowrap="true">
+                      <%=c.ca_clerk_name%>
+                    </td>
+                    <td >
+                      <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.ca_rc}'",:order=>"id")%>
+                      <%ttpp=''%>
+                      <%for tp in @tp%>
+                        <%ttpp=ttpp+ "【"+ tp.partyname + "】"%>
+                      <%end%>
+                      <%=ttpp%>
+                    </td>
+                    <td >
+                      <%agent1=TbAgent.find(:all,:conditions=>["used='Y' and recevice_code=? and partytype=1",c.ca_rc])%>
+                      <%age=""%>
+                      <%for ag in agent1%>
+                        <%age= age + "<br/>『[" + ag.name + "(" + ag.company + ")]』" %>
+                      <%end%>
+                      <%=age%>
+                    </td>
+                    <td >
+                      <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.ca_rc}'",:order=>"id")%>
+                      <%ttpp=''%>
+                      <%for tp in @tp%>
+                        <%ttpp= ttpp + "【"+tp.partyname + "】"%>
+                      <%end%>
+                      <%=ttpp%>
+                    </td>
+                    <td>
+                      <%agent1=TbAgent.find(:all,:conditions=>["used='Y' and recevice_code=? and partytype=2",c.ca_rc])%>
+                      <%age=""%>
+                      <%for ag in agent1%>
+                        <%age=age + "<br/>『[" + ag.name + "(" + ag.company + " )]』"%>
+                      <%end%>
+                      <%=age%>
+                    </td>
+                    <td nowrap="true">
+                      <%=c.ca_nowdate.to_s(:db)%>
+                    </td>
+                    <td nowrap="true">
+                      <% co = TbCaseorg.find(:first,:conditions=>"recevice_code='#{c.ca_rc}' and used='Y'")%>
+                      <%= co.orgdate if co != nil  %>
+                    </td>
+                    <td >
+                      <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",c.ca_rc])%>
+                      <%if @arbit.empty?%>
+                        未组成
+                      <%else%>
+                        <%for arb in @arbit%>
+                          <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+                          <br/>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap="true"><%if co!=nil%><%=co.limitdate.to_s + "&nbsp;" %><%end%></td>
+                    <% ampliation = TbCasedelay.find(:all,:order=>'id',:conditions=>"recevice_code='#{c.ca_rc}' and used='Y'") %>
+                    <td nowrap="true">
+                      <% for a in ampliation %>
+                        <%= a.delayDate.to_s + "<br/>" %>
+                      <% end -%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.c_rmb_money.round)%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.c_re_rmb_money.round)%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.c_rmb_money_2.round)%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.c_re_rmb_money_2.round)%>
+                    </td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+                <tr class="row<%=i % 2%>">
+                  <td colspan="11" style="color: #333333;font-weight: bold;text-align:right;">
+                    合计
+                  </td>
+                  <td >
+                    <%a4=@case.sum{|cas| cas.c_rmb_money}%>
+                    <%=SysArg.compart2(a4.round)%>
+                  </td>
+                  <td >
+                    <%a6=@case.sum{|cas| cas.c_re_rmb_money}%>
+                    <%=SysArg.compart2(a6.round)%>
+                  </td>
+                  <td >
+                    <%a11=@case.sum{|cas| cas.c_rmb_money_2}%>
+                    <%=SysArg.compart2(a11.round)%>
+                  </td>
+                  <td >
+                    <%a13=@case.sum{|cas| cas.c_re_rmb_money_2}%>
+                    <%=SysArg.compart2(a13.round)%>
+                  </td>
+                </tr>
+                <tr class="row<%=i % 2%>">
+                  <td colspan="15" style="text-align: right">
+                    应收（本请求+反请求）：<%=SysArg.compart2((a4 + a11).round)%>&nbsp;&nbsp;&nbsp;&nbsp;
+                    实收（本请求+反请求）：<%=SysArg.compart2((a6 + a13).round)%>
+                  </td>
+                </tr>
+                <tr style="color: #333333;font-weight: bold;">
+                  <td nowrap="true">立案号</td>
+                  <td nowrap="true">经办人</td>
+                  <td nowrap="true">申请人</td>
+                  <td nowrap="true">代理人（申）</td>
+                  <td nowrap="true">被申请人</td>
+                  <td nowrap="true">代理人（被）</td>
+                  <td nowrap="true">通知日期</td>
+                  <td nowrap="true">组庭日期</td>
+                  <td nowrap="true">仲裁员</td>
+                  <td nowrap="true">审限日期</td>
+                  <td nowrap="true">延期日期</td>
+                  <td nowrap="true">应收(本请求)</td>
+                  <td nowrap="true">实收(本请求)</td>
+                  <td nowrap="true">应收(反请求)</td>
+                  <td nowrap="true">实收(反请求)</td>
+                </tr>
+              </tbody>
+            </table>
+          <%end%>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

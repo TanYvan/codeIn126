@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员相关设置</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">仲裁员相关设置</span></div>
+    <br>
+            <div align="center">
+      <%=link_to "返回",:action=> "show_arbitman", :id => @tb_arbitman.id%>
+        </div>
+      <br>
+       <table class="list">
+          <tr>
+            <th>是否接收开庭通知短信：</th>
+            <td><%if @tb_arbitman.setting == '1'%>是<%else %>否<%end%></td>
+          </tr> 
+          <tr>
+            <th>开庭时间要求：</th>
+            <td><%=@tb_arbitman.sittingtime %></td>
+          </tr>
+          <tr>
+            <th>培训要求：</th>
+            <td><%=@tb_arbitman.train%></td>
+          </tr>
+          <tr>
+            <th>住宿要求：</th>
+            <td><%=@tb_arbitman.recommendation%></td>
+          </tr>
+          <tr>
+            <th>接收文件特别要求：</th>
+            <td><%=@tb_arbitman.file%></td>
+          </tr>
+        </table>
+  </body>
+</html>

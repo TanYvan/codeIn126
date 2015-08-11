@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 仲裁员回避信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/pub.js"></script>
+    <script language="javascript">
+      function getcondi()
+      { //选择申请人
+        var chec = document.getElementsByName("che_p");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+'、';
+        }
+
+        aa=a.substr(0, a.length -1 )
+        var c = document.getElementById("condi");
+        c.value=aa;
+
+        //选择被申请人
+        var chet = document.getElementsByName("che_t");
+        var b=''
+        for(i=0; i<chet.length; i++)
+        {
+          if (chet[i].checked == true)
+            b=b+chet[i].value+'、';
+        }
+        bb=b.substr(0, b.length -1 )
+        var c2 = document.getElementById("condi");
+        c2.value=bb;
+        //不能同时选择
+        if(aa!='' && bb!=''){
+          alert("申请人和被申请人不能同时选择！");
+          return false;
+        }
+        if(aa!='' && bb==''){
+          var c = document.getElementById("condi");
+          c.value='a'+aa;
+        }else if(aa=='' && bb!=''){
+          var c2 = document.getElementById("condi");
+          c2.value='b'+bb;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+  <div class="cDGray">添加仲裁员回避信息 <%=link_to "返回",:action=>"evite_list",:org_id=>params[:org_id],:recevice_code=>params[:recevice_code]%>
+  </div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :evite ,:url=>{:action=>"evite_create",:org_id=>params[:org_id],:recevice_code=>params[:recevice_code]},:html=>{:onsubmit=>"return getcondi()"}  do |f|%>
+      <table class="list">
+         <tr >
+          <th>
+            (当事人)提出人选择:
+          </th>
+          <td>
+            <%@op1=TbParty.find_by_sql("select id,partyname from tb_parties where recevice_code='#{@recevice_code}' and used='Y' and partytype=1 order by partytype,id")%>
+            <%if @op1!=nil%>
+              <%for p in @op1%>
+                <input type='checkbox' id='che' name='che_p' value="<%=p.partyname%>" /><%=p.partyname%><br/>
+              <%end%>
+            <%end%>
+            <hr size="1" color="#99CCFF" width="20%" noshade />
+            <%@op2=TbParty.find_by_sql("select id,partyname from tb_parties where recevice_code='#{@recevice_code}' and used='Y' and partytype=2 order by partytype,id")%>
+            <%if @op2!=nil%>
+              <%for p2 in @op2%>
+                <input type='checkbox' id='che' name='che_t' value="<%=p2.partyname%>" /><%=p2.partyname%><br/>
+              <%end%>
+            <%end%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            被申请回避者:
+          </th>
+          <td>
+            <%@arbitman_now=TbCasearbitman.find_by_sql("select distinct tb_arbitmen.code as code ,tb_arbitmen.name as name from tb_arbitmen,tb_casearbitmen where tb_casearbitmen.recevice_code='#{params[:recevice_code]}' and  tb_arbitmen.code=tb_casearbitmen.arbitman and tb_casearbitmen.used='Y' and tb_arbitmen.used='Y' order by tb_arbitmen.name")%>
+            <%=f.collection_select(:arbitman,@arbitman_now,:code,:name)%>     
+            <div style="color:red"><%=error_message_on(:evite,:arbitman)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            收到回避申请的日期:
+          </th>
+          <td >
+            <%=f.text_field(:requestdate,:size=>10)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('evite_requestdate'),'yyyy-MM-dd')"/>
+            <div style="color:red"><%=error_message_on(:evite,:requestdate)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            转交对方当事人和仲裁庭的日期:
+          </th>
+          <td >
+            <%=f.text_field(:senddate,:size=>10)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('evite_senddate'),'yyyy-MM-dd')"/>
+            <div style="color:red"><%=error_message_on(:evite,:senddate)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            被申请回避者或对方当事人反馈意见日期:
+          </th>
+          <td >
+            <%=f.text_field(:dat1,:size=>10)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('evite_dat1'),'yyyy-MM-dd')"/>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            起草回避/不予回避决定草稿的日期:
+          </th>
+          <td >
+            <%=f.text_field(:draftingdate,:size=>10)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('evite_draftingdate'),'yyyy-MM-dd')"/>
+            <div style="color:red"><%=error_message_on(:evite,:draftingdate)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            决定草稿完成的日期:
+          </th>
+          <td >
+            <%=f.text_field(:drafteddate,:size=>10,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('evite_drafteddate'),'yyyy-MM-dd')"/>
+            <div style="color:red"><%=error_message_on(:evite,:drafteddate)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            报分会审查日期:
+          </th>
+          <td >
+            <%=f.text_field(:dat2,:size=>10,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('evite_dat2'),'yyyy-MM-dd')"/>
+            <div style="color:red"><%=error_message_on(:evite,:reporteddate)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            上报总会审查日期:
+          </th>
+          <td >
+            <%=f.text_field(:reporteddate,:size=>10,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('evite_reporteddate'),'yyyy-MM-dd')"/>
+            <div style="color:red"><%=error_message_on(:evite,:reporteddate)%></div>
+          </td>
+        </tr>
+          <tr>
+          <th>
+            正式作出回避/不予回避决定日期:
+          </th>
+          <td >
+            <%=f.text_field(:dat3,:size=>10,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('evite_dat3'),'yyyy-MM-dd')"/>
+           </td>
+        </tr>
+        <tr>
+          <th>
+           是否回避:
+          </th>
+          <td>
+            <%=f.select(:figure,['是','否'])%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+           备注:
+          </th>
+          <td >
+            <%=f.text_area(:reason,:rows=>4)%>
+            <div style="color:red"><%=error_message_on(:evite,:reason)%></div>
+          </td>
+        </tr> 
+      </table>
+      <br/>
+        <div align="center">
+          <%=hidden_field_tag :condi,''%>
+        <%=submit_tag "提交" %>
+        </div>
+    <%end%>
+  </body>
+</html>

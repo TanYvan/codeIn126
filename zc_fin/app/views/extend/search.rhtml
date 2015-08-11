@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>已发放报酬查询</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/javascripts/prototype.js" ></script>
+    <script type="text/javascript">
+      function to_excel(obj){
+        window.clipboardData.setData("Text",obj.innerHTML);
+        try {
+          var xls    = new ActiveXObject ( "Excel.Application" );
+         }catch(e) {
+             alert( "要打印该表，您必须安装Excel电子表格软件，同时浏览器须使用“ActiveX 控件”，您的浏览器须允许执行控件。");
+             return "";
+         }
+        xls.DisplayAlerts = false
+        xls.visible =true;  //设置excel为可见
+        var xlBook = xls.Workbooks.Add;
+        var xlsheet = xlBook.Worksheets(1);
+
+
+        xlsheet.Rows(1).RowHeight = 20;
+        xlsheet.Rows(1).Font.Size=12;
+        xlsheet.Rows(1).Font.Name="黑体";
+
+        xlsheet.Columns(4).ColumnWidth = 20;
+        xlsheet.Columns(5).ColumnWidth = 18;
+        xlsheet.Columns(6).ColumnWidth = 18;
+        xlsheet.Columns(7).ColumnWidth = 11;
+        xlsheet.Columns(8).ColumnWidth = 15;
+        xlsheet.Columns(9).ColumnWidth = 12;
+        xlsheet.Columns(10).ColumnWidth = 10;
+        xlsheet.Columns(11).ColumnWidth = 11;
+        xlsheet.Columns(13).ColumnWidth = 15;
+        xlsheet.Columns(14).ColumnWidth = 15;
+        xlsheet.Columns(16).ColumnWidth = 10;
+        xlsheet.Columns(17).ColumnWidth = 15;
+        xlsheet.Paste();
+
+        xlsheet.Columns(5).NumberFormatLocal = "@"; //设置第2列“账号”为文本格式
+        xlsheet.Columns(6).NumberFormatLocal = "@"; //设置第2列“身份证号”为文本格式
+        xlsheet.Columns(12).NumberFormatLocal = "0.00";
+        xlsheet.Columns(13).NumberFormatLocal = "0.00";
+        xlsheet.Columns(14).NumberFormatLocal = "0.00";
+        xlsheet.Columns(15).NumberFormatLocal = "0.00";
+        xlsheet.Columns(16).NumberFormatLocal = "0.00";
+        xlsheet.Columns(17).NumberFormatLocal = "0.00";
+        xlsheet.Columns(18).NumberFormatLocal = "0.00";
+
+
+        xlsheet.Hyperlinks.Delete();
+        window.clipboardData.setData("Text","")
+    }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">已发放报酬查询</span></div>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <div align="left"><% if @hant_search_1_text != nil %>查询条件：<%=@hant_search_1_text%><%end%></div>
+      <table cellspacing="1" class="adminlist" id="yyy">
+        <thead>
+        <tr>
+          <th nowrap>发放时间</th>
+          <th nowrap>人员类别</th>
+          <th nowrap>&nbsp;姓  名&nbsp;</th>
+          <th nowrap>银行类别</th>
+          <th nowrap>银行</th>
+          <th nowrap>帐号</th>
+          <th nowrap>身份证号</th>
+          <th nowrap>咨询流水号</th>
+          <th nowrap>立案号</th>
+          <th nowrap>结案号</th>
+          <th nowrap>发放编号</th>
+          <th nowrap>类型</th>
+          <th nowrap>应发数额</th>
+          <th nowrap>应纳税所得额</th>
+          <%
+            taxtype1 = TbDictionary.find(:all,:conditions=>"typ_code='9027' and used='Y' and state='Y' ", :order => "ind")
+            for t in taxtype1
+          %>
+          <th nowrap><%= t.data_text %></th>
+          <% end %>
+          <!--
+          <th nowrap>个人所得税3.3%</th>
+          <th nowrap>营业税5%</th>
+          <th nowrap>营业税附加10%</th>
+          -->
+          <th nowrap>应扣税款</th>
+          <th nowrap>实发数额</th>
+      </tr>
+      </thead>
+        <tbody>
+          <%i=0%>
+      <% for pp in @tb_extends %>
+          <% tb_arbitman = TbArbitman.find_by_code(pp.p) %>
+          <% user = User.find_by_code(pp.p) %>
+      <tr class="row<%=i % 2%>">
+        <td><!-- 发放时间 -->
+          <%=pp.t_extend_t.to_s(:db)%>
+        </td>
+        <td><!-- 人员类别 -->
+          <%=@typ1[pp.p_typ]%>
+        </td>
+        <td><!-- 姓名 -->
+          <%if pp.p_typ=="0001"%>
+          <% name = tb_arbitman.name%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <% name = user.name %>
+          <%else%>
+          <%end%>
+          <%= name %>
+        </td>
+        <td><!-- 银行类别 -->
+          <%if pp.p_typ=="0001"%>
+          <%bank_typ=tb_arbitman.bank_typ%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <%bank_typ=user.bank_typ%>
+          <%else%>
+          <%end%>
+          <%if bank_typ!=nil and bank_typ!=''%>
+            <%=@bank_typ[bank_typ]%>
+          <%end%>
+        </td>
+        <td><!-- 银行 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankname%>
+          <%else%>
+            <%=user.bankname%>
+          <%end%>
+        </td>
+        <td><!-- 账号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankaccount%>
+          <%else%>
+            <%=user.bankaccount%>
+          <%end%>
+        </td>
+        <td><!-- 身份证号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.id_card%>
+          <%else%>
+            <%=user.id_card%>
+          <%end%>
+        </td>
+        <td><%=pp.recevice_code%></td><!-- 咨询流水号 -->
+        <td><%=pp.case_code%></td><!-- 立案号 -->
+        <td><%=pp.end_code%></td><!-- 结案号 -->
+
+        <td><!-- 发放编号 -->
+          <%=pp.t_extend_code%>
+        </td>
+        <td><!-- 类型 -->
+          <%=@typ2[pp.typ]%>
+        </td>
+        <td><!-- 应发 -->
+          <%= SysArg.round2f(pp.should_rmb) %>
+        </td>
+        <td><!-- 应纳税所得额 -->
+          <%= ynssde=SysArg.round2f(pp.tax_base_rmb) %>
+        </td>
+        <%
+          for t in taxtype1
+        %>
+        <td><%= SysArg.round2f(ynssde.to_i*t.data_val.to_f) %></td>
+        <% end %>
+        <!--
+        <td><%= SysArg.round2f(ynssde.to_i*0.033) %></td>
+        <td><%= yys = SysArg.round2f(ynssde.to_i*0.05) %></td>
+        <td><%= SysArg.round2f(yys.to_f*0.1) %></td>
+        -->
+        <td><!-- 应扣税款 -->
+          <%= SysArg.round2f(pp.tax_rmb) %>
+        </td>
+        <td><!-- 实发数额 -->
+          <%= SysArg.round2f(pp.extend_rmb) %>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+      <tfoot>
+          <tr>
+            <td colspan="18" align="right">
+              <%= link_to '上一页', { :page => @extend_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @extend_pages.current.previous %>
+              <%= pagination_links( @extend_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+              <%= link_to '下一页', { :page => @extend_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @extend_pages.current.next %>
+
+              <%if @extend_pages.current.previous or @extend_pages.current.next%>
+                <form action="/extend/search" method="get" >
+                  每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                  <input type=text name='page' size=5 class="SingleLineInput" value=<%= @extend_pages.current.number %> />
+                  <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                  页
+                  <input type=hidden name='order' value="<%=@order%>" />
+                  <input type='submit' value='确定' />
+                </form>
+              <%end%>
+            </td>
+          </tr>
+        </tfoot>
+    </table>
+    <br/>
+    <div align="center" id ="excel" style="display: none;">
+        <div id="xxx"></div>
+    </div>
+    <div align="center">
+      <%= link_to_remote "导出所有数据为Excel文档",
+        :url=>{:action=>'search_remote',:search_condit=>@search_condit,:hant_search_1_word => params[:hant_search_1_word],:from => "list38" },
+        :update=>"xxx",
+        :before=>"",
+        :complete => "to_excel($('xxx'))" %>
+    </div>
+    <%form_for :user ,:url=>{:action=>"gxh" } do |f|%>
+      <input type="hidden" id="rmb_hant_search_1_word" name="rmb_hant_search_1_word" value="<%=params[:hant_search_1_word]%>" />
+      <%=submit_tag "生成感谢函" %>
+    <%end%>
+
+
+  </body>
+</html>

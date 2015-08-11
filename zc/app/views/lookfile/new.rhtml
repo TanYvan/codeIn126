@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加档案查询信息</title>
+  <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  添加档案查询信息   <%=link_to "返回",:action=>"list"%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :lookfile ,:url=>{:action=>"create"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            查看人:
+          </th>
+          <td>
+            <%=f.text_field(:man)%>
+
+          </td>
+        </tr>
+        <tr>
+          <th>
+            查看时间:
+          </th>
+          <td>
+            <%=f.text_field(:see_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('lookfile_see_date'),'yyyy-MM-dd')">
+          </td>
+        </tr>
+        <tr>
+          <th>
+            查看原因:
+          </th>
+          <td>
+            <%=f.text_area(:reason,:rows=>4)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remark,:rows=>5)%>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "查看" %>
+      </div>
+    <%end%>
+  </body>
+</html>

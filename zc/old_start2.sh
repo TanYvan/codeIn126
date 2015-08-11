@@ -1,0 +1,12 @@
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3000 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3001 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3002 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3003 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3004 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3005 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3006 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3007 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3008 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3009 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3010 &
+nohup mongrel_rails start -e production -c /usr/local/zc -p 3011 &

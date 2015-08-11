@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>本单位报酬发放编号列表</title>
+  <%= javascript_include_tag "prototype" %>
+  <%= javascript_include_tag  'WebCalendar'%>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+   <div class="title"><span class="cBlue">本单位报酬发放编号列表</span></div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <div align="center">
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+   <div align="left"><%if @hant_search_1_text!=nil%>查询条件：<%=@hant_search_1_text%><%end%></div>
+  <table class="adminlist" cellspacing="1">
+    <thead>
+    <tr> 
+      <th nowrap>发放编号</th>
+      <th nowrap>用户</th>
+      <th nowrap>发放时间</th>
+      <th nowrap>备注</th>
+      <th nowrap>查看</th>
+      <th nowrap>操作时间</th>
+      <th nowrap>删除</th>
+     </tr>
+    </thead>
+      <tbody>
+        <%j=0%>
+   <%i=1%>
+   <% if @extend_codes != nil
+    for tb_extend_code in @extend_codes %>        
+        <tr class="row<%=j % 2%>">
+          <td><%= tb_extend_code.t_extend_code%></td>
+          <%uuu = User.find_by_code(tb_extend_code.u)%>
+          <td><%=  uuu.name if uuu%></td>
+          <td><%=  tb_extend_code.extend_date%></td>
+          <td><%=  tb_extend_code.remark%></td>
+          <td><%=link_to "查看",{:action => "list_extend_2",:t_extend_code => tb_extend_code.t_extend_code,:search_condit=>@search_condit,:order=>@order,:page=>@extend_code_pages.current.number,:page_lines=>@page_lines} %></td>
+          <td><%=  tb_extend_code.t.to_s(:db)%></td>
+          <td><%=button_to ("删除",{:action=>"cancel_2",:id=>tb_extend_code},:confirm=>"您确认要删除吗？") if (tb_extend_code.t_extend_code==@last_code) %></td>
+        </tr>
+        <%i+=1%>
+        <%j=j+1%>
+    <%end%> 
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="9">
+          <%= link_to '上一页', { :page => @extend_code_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @extend_code_pages.current.previous %>
+          <%=pagination_links( @extend_code_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @extend_code_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @extend_code_pages.current.next %>
+
+          <%if @extend_code_pages.current.previous or @extend_code_pages.current.next%>
+            <form action="/show_extend/list_extend_code" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @extend_code_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='跳转' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </tfoot>
+    <%end%>
+    </table>
+</body>
+</html>

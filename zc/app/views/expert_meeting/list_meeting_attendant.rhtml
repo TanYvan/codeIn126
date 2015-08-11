@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>会议参与人员</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    
+    <div class="title"><span class="cBlue"><div align="center">会议参与人员列表</div></span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>专家编号</th>
+          <th nowrap>姓名</th>
+          <th nowrap>删除</th>
+        </tr>        
+      </thead>
+      <tbody>
+        <%j=0%>
+        <% if @meeting_attendant != nil%>
+            <% for meeting_attedant in @meeting_attendant %>
+                <tr class="row<%=j%2%>">
+                  <td><%= meeting_attedant.expert_code %></td>
+                  <td><%= TbExpertconsult.find_by_code(meeting_attedant.expert_code).name  %></td>
+                  <td><%=button_to "删除", {:action => "delete_meeting_attendant", :id => meeting_attedant, 
+                          :meeting_id => params[:meeting_id]}, :confirm => "确认删除?", :method => "post" %></td>
+                </tr>
+                <%j=j+1%>
+            <%end%>        
+        <%end%>        
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="3">
+          <%= link_to '上一页', { :page => @meeting_attedant_pages.current.previous  ,:page_lines=>@page_lines ,:meeting_id => @meeting_id } if @meeting_attedant_pages.current.previous %>
+          <%=pagination_links( @meeting_attedant_pages,{:params=>{:page_lines=>@page_lines }})%>
+          <%= link_to '下一页', { :page => @meeting_attedant_pages.current.next ,:page_lines=>@page_lines ,:meeting_id => @meeting_id } if @meeting_attedant_pages.current.next %>
+
+          <%if @meeting_attedant_pages.current.previous or @meeting_attedant_pages.current.next%>
+            <form action="/expert_meeting/list_meeting_attendant" method="get" >
+              每页<input type=text name='page_lines' class="SingleLineInput" value=<%=@page_lines%> />条记录,第
+              <input type=text name='page' class="SingleLineInput" value=<%= @meeting_attedant_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+      </tfoot>
+    </table>
+    <div align="center"><%= link_to "选择专家", :action => "new_meeting_attendant",:meeting_id => params[:meeting_id] %></div>
+    <div style="color:red"><%=flash[:notice]%></div>
+  </body>
+</html>

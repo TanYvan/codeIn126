@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>涉外案件主体类型统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">涉外案件主体类型统计</span></div>
+    <%form_tag :url=>{:action=>"list"} do%>
+      <table align="center">
+        <tr>
+          <td nowrap align="right">
+            时间段类型：</td>
+          <td align="left" nowrap> 
+            <%=select_tag :datestyle,options_for_select([["立案时间段","0001"],["结案时间段","0002"],["立案结案时间段","0003"]],@datestyle)%>
+          </td>
+        </tr>
+        <tr>
+          <td nowrap align="right">
+            统计时间段：
+          </td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" />
+            --
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" />
+          </td>
+        </tr>
+        <tr>
+          <td nowrap align="right">
+            结案与否：
+          </td>
+          <td align="left" nowrap>
+            <%=select_tag :endcase,options_for_select([["全部","001"],["是","01"],["否","02"]],@endcase)%>
+          </td>
+        </tr>
+      </table>
+      <%=submit_tag "查询" %>
+    <input type="button" value="导出excel文档" onclick=to_excel(document.getElementById("to_excel_m")); />
+    <%end%>
+    <br/><br/>
+    <i><%=flash[:notice]%></i>
+    <div class="cGreen">
+        时间段类型：<%=@dispute[@datestyle]%>&nbsp;&nbsp;
+        统计时间段：<%=@date1%>至<%=@date2%>&nbsp;&nbsp;
+        结案与否：<%=@dispute2[@endcase]%>&nbsp;&nbsp;
+    </div>
+    <table id="to_excel_m" width="80%"  class="list">
+      <tr bgcolor="#E6F5FF">
+        <td><div align="center">类型</div></td>
+        <td><div align="center">数量</div></td>
+        <td><div align="center">百分数(%)</div></td>
+      </tr>
+      <%if @case!=nil%>
+        <%for p in @case%>
+          <tr>
+            <td>
+              <div align="center">
+                <%dat=TbDictionary.find(:first,:conditions=>"typ_code='8140' and data_val='#{p.case_type1}'")%>
+                <%if dat!=nil%>
+                  <%=dat.data_text%>
+                <%end%>
+              </div>
+            </td>
+            <td><div align="center"><%=link_to p.num ,{:action=>"list_2",:case_type1=>p.case_type1,:datestyle=>@datestyle,:date1=>@date1,:date2=>@date2,:endcase=>@endcase},:target=>"_blank"%></div></td>
+            <td>
+              <div align="center">
+                <%if @case_c!=0%>
+                  <%=(p.num.to_f / @case_c * 10000).round/100.0 %>
+                <%end%>
+              </div>
+            </td>
+          </tr>
+        <%end%>
+        <tr>
+          <td>
+            <div align="center">
+              合计
+            </div>
+          </td>
+          <td><div align="center"><%=@case_c%></div></td>
+          <td>
+            <div align="center">
+            </div>
+          </td>
+        </tr>
+      <%end%>
+    </table>
+  </body>
+</html>

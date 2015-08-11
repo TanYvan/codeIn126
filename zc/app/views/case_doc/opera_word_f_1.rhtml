@@ -1,0 +1,62 @@
+<html>
+  <head><title>word生成外部函</title>
+  <script language="javascript"> 
+      try
+      {
+        var myDocApp =new ActiveXObject("word.Application"); 
+        try
+        {
+          myDocApp.visible = true; 
+          myDocApp.activate(); 
+          myDocApp.NormalTemplate.Saved=true;
+          //var myDoc = myDocApp.documents.open("<%=@file_path%>"); 
+          var myDoc=myDocApp.Documents.add("<%=@file_path%>",0,1); 
+          <!-- 用替换书签的内容的方法，删除内部函抬头 -->
+          try
+          {
+             if (myDoc.Bookmarks.exists("title"))
+             {
+               myDoc.Bookmarks("title").Range=""
+
+             }
+             if (myDoc.Bookmarks.exists("title2"))
+             {
+               myDoc.Bookmarks("title2").Range=""
+
+             }
+          }
+          catch (e)
+          { 
+           alert("由于内部函台头中书签被部分删除而导致javascript错误.");
+          }
+          //myDoc.save(); 
+          myDocApp.Selection.InsertFile("<%=@head_path%>")
+          myDocApp.ActiveWindow.ActivePane.view.Type=3; 
+          //myDoc.save();   
+          myDoc.PrintPreview(); 
+          window.close();
+        }
+        catch (e)
+        { 
+          alert("由于客户端 windows api 错误导致word调用出错，请重试生成。如果还是不能解决，请重新启动计算机后再次重试。");
+        }
+
+
+
+      }
+      catch (e)
+      {
+       alert("word调用失败，请把浏览器的安全设置中的【ActiveX控件和插件】相关设置为启用状态。");
+      }
+    </script> 
+  </head>
+  <body>
+     正在打开word文档。。。。。。。。。。。。。。
+     <form id="form1" action="" method="post" name="form1" target="_self">
+     </form>
+     <script language="javascript"> 
+      document.getElementById("form1").action="/case_doc/opera?id=<%=params[:id]%>&recevice_code=<%=params[:recevice_code]%>";
+      document.getElementById("form1").submit();
+     </script>
+  </body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件终审</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%if session[:recevice_code]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list?contr_r=case_end&act_r=list","mainFrame")
+      </script>
+    <%end%>
+  </head>
+  <body>
+    <div class="title">
+      <span class="cBlue">案件终审</span>
+    </div>
+    
+    <%if @case == nil%>
+      <div align="center">
+        请选择您要办理的案件
+      <%end%>
+      <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"case_end",:act_r=>"list"%>
+      <%if @case!=nil%>
+        当前案件
+      </div>
+
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>咨询流水号</th>
+            <th nowrap>咨询日期</th>
+            <th nowrap>立案号</th>
+            <th nowrap>立案日期</th>
+            <th nowrap>申请人</th>
+            <th nowrap>被申请人</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @case.recevice_code%>
+            </td>
+            <td>
+              <%=h @case.receivedate%>
+            </td>
+            <td>
+              <%=h @case.case_code%>
+            </td>
+            <td>
+              <%=h @case.nowdate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br/>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <br/>
+      <hr size="1" color="#99CCFF" noshade/>
+      <div align="center" class="cDGray">
+        案件终审
+      </div>
+      <%if @r_mes==""%>
+        <%form_tag :action=>"final_do" do %>
+          <table align="center">
+            <tr><td align="left">终审日期:
+                <%=text_field_tag(:dat,Time.now.to_date,:size=>8,:readonly => "true")%>
+                <input type="button" value="..." onclick="SelectDate(document.getElementById('dat'),'yyyy-MM-dd')" />
+              </td>
+            </tr>
+          </table>
+          <%=submit_tag "终审" %>
+        <%end%>
+      <%else%>
+        <br/>
+        <i style="text-align: left;">不能终审：<%=@r_mes%></i>
+        <br/>
+        <br/>
+      <%end%>
+      <br/>
+      <br/>
+      <i style="color:gray; "><%if @m_fee!=""%>提示：<%=@m_fee%><%end%></i>
+      <br/>
+      <br/>
+      <br/>
+      <h4 style="font-size: 15px" align="left">
+        &nbsp;&nbsp;&nbsp;&nbsp;案件终审必须符合以下条件： 存在立案号；存在办案助理；存在受理日期；案件合同已经上传；代理人所在单位不能为空（不知道可填写“未知”）；无欠缴费用；仲裁费应收费用对应正确，且拆分正确，费用明细都已对应；如果有开庭时间，则必须有开庭时间对应的庭审笔录；简易程序有一名仲裁员，普通程序有三名仲裁员（撤案结案方式的，案件可以没有仲裁员）；有仲裁员的案件，必须进行仲裁员评价；存在结案号；存在结案方式；存在结案日期；存在裁决书；案件费用对应：不存在未对应费用记录；日期判断标准：立案日期<=组庭日期<=开庭日期<=结案日期；案件必须存在校核信息；如果有管辖权异议，必须上传管辖权决定。仲裁员实际开支费如果没有缴纳，将提醒出来，但可以通过终审。
+      </h4>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+<html>
+  <head><title>word编辑格式函</title>
+    <script type="text/javascript">
+      var myDocApp = new ActiveXObject("word.Application");
+      myDocApp.visible = true; //对象可见
+      myDocApp.activate();
+      myDocApp.NormalTemplate.Saved = true;
+      var myDoc = myDocApp.documents.open("<%= @file_path%>");
+      window.close()
+    </script> 
+  </head>
+  <body>
+  </body>
+</html>

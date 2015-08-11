@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    
+    <div class="title"><span class="cBlue"><div  align="center">仲裁员信息</div></span></div>
+      
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            类型
+          </th>
+          <th nowrap>
+            仲裁员
+          </th>
+          <th nowrap>
+            指定方式
+          </th>
+          <th nowrap>
+            实际开支费用RMB
+          </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @arbitman%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{p.arbitmantype}'").data_text%>
+        </td>
+        <td>
+          <%=TbArbitman.find_by_code(p.arbitman).name%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0015' and data_val='#{p.arbitmansign}'").data_text%>
+        </td>
+        <td nowrap>
+          <%=p.rmb_money.to_i%>元
+        </td>
+        <td>
+            <%=link_to "删除",{:action=>"arbitman_delete",:id=>p,:org_id=>params[:org_id]},:confirm=>"您确认要删除吗？"%>
+        </td>
+      <%i=i+1%>
+      </tr>
+      <%end%>
+
+      </tbody>
+    </table>
+    <br>
+    <div align="center">
+      <%=link_to  "创建", :action=>"arbitman_new",:org_id=>params[:org_id]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+  </body>
+</html>

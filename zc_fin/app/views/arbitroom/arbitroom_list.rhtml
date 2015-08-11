@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>仲裁庭管理</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="title"><span>
+    仲裁庭管理信息
+</span></div>
+<div align="center">
+  <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+</div>
+  <br>
+    <div align="left"> &nbsp;&nbsp;&nbsp;&nbsp;
+     <%=link_to  "<u>预订</u>", :action=>"arbitroom_new"%>
+  <div style="color:red"><%=flash[:notice]%></div>
+</div>
+<table cellspacing="1" class="adminlist">
+<thead>
+  <tr >
+    <th nowrap>
+      使用日期
+    </th>
+    <th nowrap>
+      预订人
+    </th>
+    <th nowrap>
+      仲裁庭
+    </th>
+    <th nowrap>
+      开庭时间
+    </th>
+    <th nowrap>
+      闭庭时间
+    </th>
+    <th nowrap>
+      占用时长
+    </th>
+    <th nowrap>
+      使用类型
+    </th>
+    <th nowrap>
+      修改
+    </th>
+    <th nowrap>
+      删除
+    </th>
+  </tr>
+</thead>
+<tbody>
+<%i=0%>
+<%for p in @arbitroom%>
+  <tr class="row<%=i % 2%>">
+      <td>
+    <%=p.sittingdate%>
+    </td>
+    <td>
+    <%if p.usestyle=='0001' or p.usestyle=='0002'%>
+        <%=User.find_by_code(p.u).name%>
+    <%else%>
+        <%=p.userId%>
+    <%end%>
+    </td>
+    <td>
+      <%=TbDictionary.find(:first,:conditions=>"typ_code='0023'  and  data_val='#{p.sittingplace}'").data_text%>
+    </td>
+    <td>
+      <%=p.open_t%>
+    </td>
+    <td>
+      <%=p.close_t%>
+    </td>
+    <td>
+      <%=p.usetime%>
+    </td>
+    <td>
+      <%=TbDictionary.find(:first,:conditions=>"typ_code='0028'  and  data_val='#{p.usestyle}'").data_text%>
+    </td>
+    <%if p.usestyle=='0001' or p.usestyle=='0002'%>
+      <td>
+      </td>
+      <td>
+      </td>
+    <%else%>
+      <td>
+        <%=link_to "修改",:action=>"arbitroom_edit",:id=>p%>
+      </td>
+      <td>
+        <%=button_to "删除",{:action=>"arbitroom_delete",:id=>p},:confirm=>"您确认要删除吗？"%>
+      </td>
+    <%end%>
+  </tr>
+  <%i=i+1%>
+<%end%>
+</tbody>
+<tfoot>
+  <tr>
+    <td colspan="9">
+      <%= link_to '上一页', { :page => @arbitroom_pages.current.previous  ,:page_lines=>@page_lines  } if @arbitroom_pages.current.previous %>
+      <%=pagination_links( @arbitroom_pages,{:params=>{:page_lines=>@page_lines  }})%>
+      <%= link_to '下一页', { :page => @arbitroom_pages.current.next ,:page_lines=>@page_lines  } if @arbitroom_pages.current.next %>
+
+      <%if @arbitroom_pages.current.previous or @arbitroom_pages.current.next%>
+        <form action="/arbitroom/arbitroom_list" method="get" >
+          每页<input type=text name='page_lines' size=5 class="SingleLineInput" value=<%=@page_lines%> />条记录,第
+                   <input type=text name='page' size=5 class="SingleLineInput" value=<%= @arbitroom_pages.current.number %> />
+                   <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                   页
+                   <input type=hidden name='order' value="<%=@order%>" />
+                   <input type='submit' value='确定' />
+        </form>
+      <%end%>
+    </td>
+  </tr>
+</tfoot>
+</table>
+</body>
+</html>

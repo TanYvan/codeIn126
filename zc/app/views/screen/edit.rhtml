@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加仲裁资料</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script language="javascript">
+      function check_f2(){
+        if(document.getElementById("tb_new_create_date").value==""){
+          alert("请选择发布日期!")
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <br/>
+    <div class="cDGray" align="center">添加仲裁资料
+      <br/>
+      <%=link_to "返回",:action=>"list",:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :tb_new ,:url=>{:action=>"update",:id=>params[:id]},:html=>{:onsubmit=>"return check_f2();"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            标题:
+          </th>
+          <td>
+            <%=f.text_area(:title,:rows=>1)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            发布日期:
+          </th>
+          <td>
+            <%=f.text_field(:create_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('tb_new_create_date'),'yyyy-MM-dd')" />
+          </td>
+        </tr>
+        <tr>
+          <th>
+            是否触摸屏发布:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8127' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:forbidden, op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            发布内容:
+          </th>
+          <td>
+            <%=f.hidden_field(:content)%>
+            <iframe id="myEditor" src="/editor/editor.htm?id=tb_new_content" frameborder="0" scrolling="no" width="550" height="220"></iframe> 
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

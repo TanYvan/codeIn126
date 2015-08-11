@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员人案统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <table width="100%"><tr><td>
+          <div class="title"><span class="cBlue">仲裁员人案统计</span></div>
+          <%=button_to "刷新",:action=>"list3_9",:up=>1%>
+          <br/>
+          <div align="left">
+            正在办案及已办过案的仲裁员数：<%=@arbitmancase.length%>
+            &nbsp;&nbsp;
+            仲裁员总数：<%=@arbitmanl %>&nbsp;&nbsp;
+            正在办案及已办过案的仲裁员数/仲裁员总数：<%if @arbitmanl!=0%>
+              <%=(@arbitmancase.length.to_i*10000/@arbitmanl).round/100.0 %>%
+            <%end%>
+          </div>
+          <br/>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th>
+                  <%if @order=="name desc"%>
+                    <%=link_to '仲裁员姓名↑',:action=>"list3_9",:order=>"name asc"%>
+                  <%elsif @order=="name asc"%>
+                    <%=link_to '仲裁员姓名↓',:action=>"list3_9",:order=>"name desc"%>
+                  <%else%>
+                    <%=link_to '仲裁员姓名',:action=>"list3_9",:order=>"name desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="a1 desc,name asc"%>
+                    <%=link_to '在办案件数量↑',:action=>"list3_9",:order=>"a1 asc,name asc"%>
+                  <%elsif @order=="a1 asc,name asc"%>
+                    <%=link_to '在办案件数量↓',:action=>"list3_9",:order=>"a1 desc,name asc"%>
+                  <%else%>
+                    <%=link_to '在办案件数量',:action=>"list3_9",:order=>"a1 desc,name asc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="a2 desc"%>
+                    <%=link_to '已结案件数量↑',:action=>"list3_9",:order=>"a2 asc"%>
+                  <%elsif @order=="a2 asc"%>
+                    <%=link_to '已结案件数量↓',:action=>"list3_9",:order=>"a2 desc"%>
+                  <%else%>
+                    <%=link_to '已结案件数量',:action=>"list3_9",:order=>"a2 desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="a_a desc"%>
+                    <%=link_to "<div style='font-weight: bolder'>已结案件中，担任首席/独任的总数（A类）↑</div>",:action=>"list3_9",:order=>"a_a asc"%>
+                  <%elsif @order=="a_a asc"%>
+                    <%=link_to "<div style='font-weight: bolder'>已结案件中，担任首席/独任的总数（A类）↓</div>",:action=>"list3_9",:order=>"a_a desc"%>
+                  <%else%>
+                    <%=link_to "<div style='font-weight: bolder'>已结案件中，担任首席/独任的总数（A类）</div>",:action=>"list3_9",:order=>"a_a desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="a_b desc"%>
+                    <%=link_to 'A类：起草裁决书的数量↑',:action=>"list3_9",:order=>"a_b asc"%>
+                  <%elsif @order=="a_b asc"%>
+                    <%=link_to 'A类：起草裁决书的数量↓',:action=>"list3_9",:order=>"a_b desc"%>
+                  <%else%>
+                    <%=link_to 'A类：起草裁决书的数量',:action=>"list3_9",:order=>"a_b desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="a_c desc"%>
+                    <%=link_to 'A类：延期裁决案件的数量↑',:action=>"list3_9",:order=>"a_c asc"%>
+                  <%elsif @order=="a_c asc"%>
+                    <%=link_to 'A类：延期裁决案件的数量↓',:action=>"list3_9",:order=>"a_c desc"%>
+                  <%else%>
+                    <%=link_to 'A类：延期裁决案件的数量',:action=>"list3_9",:order=>"a_c desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="a_d desc"%>
+                    <%=link_to 'A类：被申请回避的次数↑',:action=>"list3_9",:order=>"a_d asc"%>
+                  <%elsif @order=="a_d asc"%>
+                    <%=link_to 'A类：被申请回避的次数↓',:action=>"list3_9",:order=>"a_d desc"%>
+                  <%else%>
+                    <%=link_to 'A类：被申请回避的次数',:action=>"list3_9",:order=>"a_d desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="a_e desc"%>
+                    <%=link_to 'A类：平均结案时间(天)↑',:action=>"list3_9",:order=>"a_e asc"%>
+                  <%elsif @order=="a_e asc"%>
+                    <%=link_to 'A类：平均结案时间(天)↓',:action=>"list3_9",:order=>"a_e desc"%>
+                  <%else%>
+                    <%=link_to 'A类：平均结案时间(天)',:action=>"list3_9",:order=>"a_e desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="b_a desc"%>
+                    <%=link_to "<div style='font-weight: bolder'>已结案件中，担任边裁案件的总数（B类）↑</div>",:action=>"list3_9",:order=>"b_a asc"%>
+                  <%elsif @order=="b_a asc"%>
+                    <%=link_to "<div style='font-weight: bolder'>已结案件中，担任边裁案件的总数（B类）↓</div>",:action=>"list3_9",:order=>"b_a desc"%>
+                  <%else%>
+                    <%=link_to "<div style='font-weight: bolder'>已结案件中，担任边裁案件的总数（B类）</div>",:action=>"list3_9",:order=>"b_a desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="b_b desc"%>
+                    <%=link_to 'B类：起草裁决书的数量↑',:action=>"list3_9",:order=>"b_b asc"%>
+                  <%elsif @order=="b_b asc"%>
+                    <%=link_to 'B类：起草裁决书的数量↓',:action=>"list3_9",:order=>"b_b desc"%>
+                  <%else%>
+                    <%=link_to 'B类：起草裁决书的数量',:action=>"list3_9",:order=>"b_b desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="b_c desc"%>
+                    <%=link_to 'B类：延期裁决案件的数量↑',:action=>"list3_9",:order=>"b_c asc"%>
+                  <%elsif @order=="b_c asc"%>
+                    <%=link_to 'B类：延期裁决案件的数量↓',:action=>"list3_9",:order=>"b_c desc"%>
+                  <%else%>
+                    <%=link_to 'B类：延期裁决案件的数量',:action=>"list3_9",:order=>"b_c desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="b_d desc"%>
+                    <%=link_to 'B类：被申请回避的次数↑',:action=>"list3_9",:order=>"b_d asc"%>
+                  <%elsif @order=="b_d asc"%>
+                    <%=link_to 'B类：被申请回避的次数↓',:action=>"list3_9",:order=>"b_d desc"%>
+                  <%else%>
+                    <%=link_to 'B类：被申请回避的次数',:action=>"list3_9",:order=>"b_d desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="b_e desc"%>
+                    <%=link_to 'B类：平均结案时间(天)↑',:action=>"list3_9",:order=>"b_e asc"%>
+                  <%elsif @order=="b_e asc"%>
+                    <%=link_to 'B类：平均结案时间(天)↓',:action=>"list3_9",:order=>"b_e desc"%>
+                  <%else%>
+                    <%=link_to 'B类：平均结案时间(天)',:action=>"list3_9",:order=>"b_e desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="score desc"%>
+                    <%=link_to '助理评价↑',:action=>"list3_9",:order=>"score asc"%>
+                  <%elsif @order=="score asc"%>
+                    <%=link_to '助理评价↓',:action=>"list3_9",:order=>"score desc"%>
+                  <%else%>
+                    <%=link_to '助理评价',:action=>"list3_9",:order=>"score desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="ad desc"%>
+                    <%=link_to '起草裁决数量↑',:action=>"list3_9",:order=>"ad asc"%>
+                  <%elsif @order=="ad asc"%>
+                    <%=link_to '起草裁决数量↓',:action=>"list3_9",:order=>"ad desc"%>
+                  <%else%>
+                    <%=link_to '起草裁决数量',:action=>"list3_9",:order=>"ad desc"%>
+                  <%end%>
+                </th>
+                <th>
+                  <%if @order=="score2 desc"%>
+                    <%=link_to '校核评价↑',:action=>"list3_9",:order=>"score2 asc"%>
+                  <%elsif @order=="score2 asc"%>
+                    <%=link_to '校核评价↓',:action=>"list3_9",:order=>"score2 desc"%>
+                  <%else%>
+                    <%=link_to '校核评价',:action=>"list3_9",:order=>"score2 desc"%>
+                  <%end%>
+                </th>
+                <th>仲裁员评价加减分</th>
+                <th  nowrap>性别</th>
+                <th   nowrap>手机</th>
+                <th   nowrap>电话</th>
+                <th   nowrap>传真</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for a in @arbitmancase%>
+                <tr class="row<%=i % 2%>">
+                  <td><%=a.name%></td>
+                  <td nowrap>
+                    <%if a.a1!=0%>
+                      <%=link_to "#{a.a1}",{:action=>"list3_a1",:code=>a.code},:target=>"_blank"%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%if a.a2!=0%>
+                      <%=link_to "#{a.a2}",{:action=>"list3_a2",:code=>a.code,:ni=>a.a2,:k=>"2"},:target=>"_blank"%>
+                    <%end%>
+                  </td>
+                  <td nowrap><%if a.a_a!=0%><%=link_to "<div style='font-weight: bolder'>#{a.a_a}</div>",{:action=>"list3_a2",:code=>a.code,:ni=>a.a2,:k=>"3"},:target=>"_blank"%><%end%></td>
+                  <td nowrap><%if a.a_b!=0%><%=link_to "#{a.a_b}",{:action=>"list3_a2",:code=>a.code,:k=>"4"},:target=>"_blank"%><%end%></td>
+                  <td nowrap><%if a.a_c!=0%><%=link_to "#{a.a_c}",{:action=>"list3_a2",:code=>a.code,:k=>"5"},:target=>"_blank"%><%end%></td>
+                  <td nowrap><%if a.a_d!=0%><%=link_to "#{a.a_d}",{:action=>"list3_a2",:code=>a.code,:k=>"6"},:target=>"_blank"%><%end%></td>
+                  <td nowrap><%if a.a_e!=0%><%=link_to "#{a.a_e}",{:action=>"list3_a2",:code=>a.code,:k=>"7"},:target=>"_blank"%><%end%></td>
+                  <td nowrap><%if a.b_a!=0%><%=link_to "<div style='font-weight: bolder'>#{a.b_a}</div>",{:action=>"list3_a2",:code=>a.code,:k=>"8"},:target=>"_blank"%><%end%></td>
+                  <td nowrap><%if a.b_b!=0%><%=link_to "#{a.b_b}",{:action=>"list3_a2",:code=>a.code,:k=>"9"},:target=>"_blank"%><%end%></td>
+                  <td nowrap><%if a.b_c!=0%><%=link_to "#{a.b_c}",{:action=>"list3_a2",:code=>a.code,:k=>"10"},:target=>"_blank"%><%end%></td>
+                  <td nowrap><%if a.b_d!=0%><%=link_to "#{a.b_d}",{:action=>"list3_a2",:code=>a.code,:k=>"11"},:target=>"_blank"%><%end%></td>
+                  <td nowrap><%if a.b_e!=0%><%=link_to "#{a.b_e}",{:action=>"list3_a2",:code=>a.code,:k=>"12"},:target=>"_blank"%><%end%></td>
+                  <%ni=format('%.1f',a.score.to_f)%>
+                  <td  nowrap><%if a.score!=0%><%=link_to "#{ni}",{:action=>"list3_a2",:code=>a.code,:k=>"13"},:target=>"_blank" %><%end%></td>
+                  <!--td><#%if a.ad!=0%><#%=link_to "#{a.ad}",{:action=>"list3_a2",:code=>a.code,:k=>"14"},:target=>"_blank"%><#%end%></td-->
+                  <td  nowrap><%if a.ad!=0%><%=a.ad%><%end%></td>
+                  <%nl=format('%.1f',a.score2.to_f)%>
+                  <!--td  nowrap><#%if a.score2!=0%><#%=link_to "#{nl}",{:action=>"list3_a2",:code=>a.code,:k=>"15"},:target=>"_blank" %><#%end%></td-->
+                  <!--评分（60分以下为较差、60-80分为一般、80-100分为优秀）-->
+                  <td  nowrap>
+                    <%if a.score2!=0 %>
+                      <%=link_to "#{nl}",{:action=>"list3_a2",:code=>a.code,:k=>"15"},:target=>"_blank"%>
+                    <%end%>
+                  </td>
+                  <td nowrap><%=link_to "查看",{:action=>"list3_a4",:code=>a.code},:target=>"_blank" %></td>
+                  <td  nowrap><%=a.sex %></td>
+                  <td   nowrap><%=a.mobiletel %></td>
+                  <td   nowrap><%=a.telh %></td>
+                  <td   nowrap><%=a.fax %></td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+          </table>
+        </td></tr></table>
+<%#*<div align="center">%>
+<%#form_tag({:action=>'list3_91'},:target=>"_black") do %>
+<%#=submit_tag '生成Excel文档'%>
+<%#end%>
+<%#*</div>%>
+  </body>
+</html>

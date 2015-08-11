@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title> </title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><%=@name%>的案件</span></div>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案日期</th>
+          <th  nowrap>立案号</th
+          <th  nowrap>检测日期</th>
+          <th  nowrap>申请人</th>
+          <th  nowrap>被申请人</th>
+          <th  nowrap>争议金额(￥)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for a in @case%>
+          <tr class="row<%=i % 2%>">
+            <%c = TbCase.find_by_recevice_code(a.recevice_code)%>
+            <td nowrap><%=c.nowdate%></td>
+            <td nowrap><%=link_to "#{c.case_code}",{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>a.recevice_code},:target=>"_black" %></td>
+            <td nowrap="nowrap">
+              <%al=TbDetection.find(:all,:conditions=>["recevice_code=? and used='Y'",a.recevice_code])%>
+              <%for ala in al%>
+                <%=ala.make_date%><br/>
+              <%end%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=1")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=2")%>
+              <%ttpp=''%>
+              <%for tp in @party2%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td nowrap><%=SysArg.compart2(c.amount)%></td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

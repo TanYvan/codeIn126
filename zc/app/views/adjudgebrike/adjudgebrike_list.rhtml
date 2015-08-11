@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁中止与仲裁恢复</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <%if session[:recevice_code]==nil%>
+        <script language="javascript">
+          window.open("/case_p/list?contr_r=adjudgebrike&act_r=adjudgebrike_list","mainFrame")
+        </script>
+      <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+        仲裁中止与仲裁恢复信息
+      </span></div>
+    <div align="center">
+      <%if @case==nil%>
+        请选择您要办理的案件
+      <%end%>
+      <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"adjudgebrike",:act_r=>"adjudgebrike_list"%>
+      <%if @case!=nil%>
+        当前案件
+      </div>
+
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              咨询流水号
+            </th>
+            <th nowrap>
+              咨询日期
+            </th>
+            <th nowrap>
+              立案号
+            </th>
+            <th nowrap>
+              立案日期
+            </th>
+            <th nowrap>
+              申请人
+            </th>
+            <th nowrap>
+              被申请人
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @case.recevice_code%>
+            </td>
+            <td>
+              <%=h @case.receivedate%>
+            </td>
+            <td>
+              <%=h @case.case_code%>
+            </td>
+            <td>
+              <%=h @case.nowdate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br/>
+      <!--%form_for :case,:url=>{:action=>"adjudgebrike_list_update"}  do |f|%>
+       <table class="list" width="20%">
+        <tr >
+            <th nowrap>
+            案件状态:
+            </th>
+            <td>
+  <%#=f.select(:stoped, [["办理",0],["中止",1]])%>
+            </td>
+         </tr>
+        </table>
+  <%#=submit_tag "提交" %>
+      <#%end%>-->
+      <br/>
+      <hr size="1" color="#99CCFF" noshade/>
+      <div align="center" class="cDGray">
+        仲裁中止信息    <%=link_to  "创建", :action=>"adjudgebrike_new",:recevice_code=>@case.recevice_code%>
+        <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              要求中止方
+            </th>
+            <th nowrap>
+              名称
+            </th>
+            <th nowrap>
+              案件状态
+            </th>
+            <th>
+              中止日期
+            </th>
+            <th nowrap>
+              原因
+            </th>
+            <th nowrap>
+              恢复日期
+            </th>
+            <th nowrap>
+              设置
+            </th>
+            <th nowrap>
+              修改
+            </th>
+            <th nowrap>
+              删除
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%if @adjudgebrike != nil
+            for p in @adjudgebrike%>
+              <tr class="row<%=i % 2%>">
+                <td>
+                  <%=TbDictionary.find(:first,:conditions=>"typ_code='8106'  and  data_val='#{p.requestman_type}'").data_text%>
+                </td>
+                <td>
+                  <%=p.linkman_name%>
+                </td>
+                <td>
+                  <%=@state[p.stoped]%>
+                </td>
+                <td>
+                    <%=p.end_date%>
+                </td>
+                <td>
+                  <%=TbDictionary.find(:first,:conditions=>"typ_code='8107'  and  data_val='#{p.reason}'").data_text%>
+                </td>
+                <td><%=p.start_date%></td>
+                <td><%=link_to "恢复",:action=>"set_up",:id=>p,:recevice_code=>@case.recevice_code%></td>
+                <td>
+                  <%=link_to "修改",:action=>"adjudgebrike_edit",:id=>p%>
+                </td>
+                <td>
+                  <%if i+1==@adjudgebrike.length%>
+                    <%=button_to "删除",{:action=>"adjudgebrike_delete",:id=>p},:confirm=>"您确认要删除吗？"%>
+                  <%end%>
+                </td>
+              </tr>
+              <%i=i+1%>
+            <%end%>
+          </tbody>
+        <%end%>
+      <%end%>
+    </table>
+  </body>
+</html>

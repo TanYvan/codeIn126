@@ -1,0 +1,1 @@
+<%=select("party", "subprofession",@subprofession.collect{|p|[p.data_text,p.data_val]},{:selected => (@subprofession[1].data_val unless @subprofession[1].blank?)} )%>

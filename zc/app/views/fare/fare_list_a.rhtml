@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>案件收费快算</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件收费快算</span></div>
+    <%form_tag :action=>"fare_list_a" do%>
+      <table align="center"><tr><td nowrap>
+            争议金额：<%=text_field_tag(:total_money,@total_money)%>元&nbsp;&nbsp;&nbsp;
+            收费算法：
+            <%=select(:j,:cost_type,@charge)%>
+            <%=submit_tag "计算" %>
+        </td></tr>
+      </table>
+      <%if @total_money==nil || @total_money==""%>
+        <div class="cDRed"><%=flash[:notice]%></div>
+      <%else%>
+        <div class="cGreen"><%=Cost.new.fun[@ntype]%>   申请人</div>
+        <table align="center" class="list" width="50%">
+          <tr><td><div align="right">争议金额(人民币)：</div></td><td><i><%=@total_money%></i>元</td></tr>
+          <tr><td><div align="right">受理费 立案费(人民币)：</div></td><td><i><%=@registration_fee_1%></i>元</td></tr>
+          <tr><td><div align="right">处理费 办案费(人民币)：</div></td><td><i><%=@arbitration_fee_1%></i>元</td></tr>
+          <tr><td><div align="right">合计(人民币)：</div></td><td><i><%=@registration_fee_1+@arbitration_fee_1%></i>元</td></tr>
+         </table>
+        <br/>
+        <br/>
+        <table align="center" class="list" width="50%">
+				<TBODY>
+				按“申请作出和解裁决案件仲裁收费暂行办法”计算
+				<TR>
+				<td><div align="center">原计算金额</div></td>
+				<td><div align="center">收取比例</div></td>
+				<td><div align="center">收取金额</div></td>
+				<td><div align="center">减交金额</div></td>
+				</TR>
+				<% 
+				    intPara1=@total_money.to_i/10000				
+				    intPara=intPara1.to_f
+					  dis=0.0000
+					  x=0.0000
+						if intPara <= 100 
+						    dis=50
+					  elsif 100 < intPara && intPara <= 500 
+						      x = ( intPara - 100 ) * 5 / 400
+						      dis = 50 - x
+						elsif 500 < intPara && intPara <= 1000 
+						      x=(intPara-500)*5/500
+						      dis=45-x
+						elsif 1000 < intPara && intPara <= 5000 
+						    x=(intPara-1000)*5/4000
+						    dis=40-x
+						elsif 5000 < intPara && intPara <= 10000 
+						    x=(intPara-5000)*5/5000
+						    dis=35-x
+						else 
+						    dis=30
+						end 
+						  totalfee=@registration_fee_1+@arbitration_fee_1
+						  
+						         if totalfee < 6100
+							            dis=100
+							            takeoff_fee=0
+							            dis_fee=totalfee							        
+							        else 
+							            dis_fee = ((totalfee * dis)/ 100).round
+							            if dis_fee < 6100  
+							                  dis_fee = 6100							        
+							            end
+							            takeoff_fee=totalfee-dis_fee						       
+        						 
+						 				 end
+              
+				%>
+				<TR>
+				<td><div align="center"><i><%=totalfee%></i>元</div></td>
+				<td><div align="center"><%=dis%>%</div></td>
+				<td><div align="center"><i><%=dis_fee.to_i %></i>元</div></td>
+				<td><div align="center"><i><%=takeoff_fee.to_i%></i>元</div></td>
+				</TR>
+				<%if dis==30 %>
+				    <TR><td colspan="4" ><div align="left"><font color="red">争议金额在1亿元（不含）以上的，收取比例为仲裁费用的30%-25%，此处按30%计算，仅供参考，请特别注意！</font></div></td></TR>
+				<% end %>
+				</TBODY></TABLE>
+        <br/>
+        <hr/>
+        <br/>
+        <div class="cGreen"><%=Cost.new.fun[@ntype]%>   被申请人</div>
+        <table align="center" class="list" width="50%">
+          <tr><td><div align="right">争议金额(人民币)：</div></td><td><i><%=@total_money%></i>元</td></tr>
+          <tr><td><div align="right">受理费 立案费(人民币)：</div></td><td><i><%=@registration_fee_2%></i>元</td></tr>
+          <tr><td><div align="right">处理费 办案费(人民币)：</div></td><td><i><%=@arbitration_fee_2%></i>元</td></tr>
+          <tr><td><div align="right">合计(人民币)：</div></td><td><i><%=@registration_fee_2+@arbitration_fee_2%></i>元</td></tr>
+        </table>
+      <%end%>
+    <%end%>
+    <br/>
+  </body>
+</html>

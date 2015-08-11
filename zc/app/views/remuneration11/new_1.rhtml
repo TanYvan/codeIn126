@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 裁决书制作信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+      添加裁决书制作信息 <%=link_to "返回",:controller => "remuneration11", :action=>"list_1"%>
+    </div><br/>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <%
+      @casearbitman = TbCasearbitman.find_by_sql(
+        "select tb_arbitmen.code as code ,tb_arbitmen.Name as name
+         from tb_casearbitmen ,tb_arbitmen
+         where tb_casearbitmen.recevice_code='#{session[:recevice_code_1]}' and tb_casearbitmen.used='Y'
+               and tb_casearbitmen.arbitman=tb_arbitmen.code order by tb_casearbitmen.arbitmantype"
+      )
+      # 裁决书类型
+      @typs = TbDictionary.find(:all, :conditions => "typ_code='9022' and state='Y' and used='Y'", :order => 'data_val', :select => "data_val,data_text" )
+    %>
+    <% form_for :remun ,:url => {:action => "create_1"}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>裁决书类型:</th>
+          <td>
+            <%= f.collection_select(:typ, @typs, :data_val, :data_text) %>
+            <div style="color:red"><%= error_message_on(:remun, :typ) %></div>
+          </td>
+        </tr>
+        <tr>
+          <th>承担人:</th>
+          <td>
+            <%= f.collection_select(:p_code, @casearbitman, :code, :name) %>
+            <div style="color:red"><%= error_message_on(:remun, :p_code) %></div>
+          </td>
+        </tr>
+        <tr>
+          <th>备注:</th>
+          <td>
+            <%=f.text_area(:remark,"cols"=>'50',"rows"=>"5")%>
+            <div style="color:red"><%=error_message_on(:remun,:remark)%></div>
+          </td>
+        </tr>
+      </table>
+      <br/>
+      <div align="center"><%= submit_tag "提交" %></div>
+    <% end %>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员教育情况</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/tab.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="tabs" align="center">
+      <ul>
+        <li><a href="/arbitman_add_check/show_base?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>仲裁员基本信息</span></a></li>
+        <li><a href="/arbitman_add_check/show_educate?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" class="selected"><span>教育情况</span></a></li>
+        <li><a href="/arbitman_add_check/show_industry?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>行业</span></a></li>
+        <li><a href="/arbitman_add_check/show_resume?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>简历</span></a></li>
+        <li><a href="/arbitman_add_check/show_language?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>语种</span></a></li>
+        <li><a href="/arbitman_add_check/show_att?arbitman_code=<%=params[:arbitman_code]%>&show=<%=params[:show]%>" ><span>个人附件</span></a></li>
+      </ul>
+    </div>
+    <caption>
+      <%unless params[:show] == "1"%>
+        <%= link_to "返回" ,:action => "list"%>
+      <%end%>
+      &nbsp
+    </caption>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>毕业或结业时间</th>
+        <th nowrap>所学专业</th>
+        <th nowrap>毕业院校</th>
+        <th nowrap>学历</th>
+        <th nowrap>学位</th>
+        <th nowrap>证书编号</th>
+        <th nowrap>是否法学</th>
+        <th nowrap>是否国外</th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @res.status == "1" && @res.dataset.size != "0"%>
+            <%for r in @res.dataset.rows %>
+                <tr class="row<%=i % 2%>">
+                  <td><%=h r.get_data("graduatedate")%> </td>
+                  <td><%=h r.get_data("specialty")%> </td>
+                  <td><%=h r.get_data("school")%> </td>
+                  <%@a = TbDictionary.find_by_typ_code_and_data_val('9006',r.get_data("studycalendar"))%>
+                  <td><%=@a.data_text  if @a%></td>
+                  <%@a = TbDictionary.find_by_typ_code_and_data_val('9007',r.get_data("degree"))%>
+                  <td><%=@a.data_text  if @a%></td>
+                  <td><%=h r.get_data("degreeletter")%> </td>
+                  <td><%={"1"=>"是","0"=>"否"}[r.get_data("lawyercalendar")]%></td>
+                  <td><%={"1"=>"是","0"=>"否"}[r.get_data("lawyercalendar")]%></td>
+                </tr>
+                <%i=i+1%>
+            <%end%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>
+

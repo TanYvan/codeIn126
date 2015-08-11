@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员拒绝</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员拒绝</span></div>
+    <br>
+    <i><%=flash[:notice]%></i>
+    <div align="center"><%=link_to "添加", :action =>"select_invite"%></div>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>仲裁员姓名</th>
+          <th nowrap>案件编号</th>
+          <th nowrap>仲裁员类别</th>
+          <th nowrap>修改</th>
+          <th nowrap>删除</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%if @tb_invites!=nil
+            for tb_invite in @tb_invites%>        
+                <tr>         
+                  <td><%= TbArbitman.find_by_code(tb_invite.arbitman).name  %></td>         
+                  <td><%=tb_invite.case_code%></td>
+                  <!--从字典表中读取数据显示-->
+                  <td>
+                    <%= TbDictionary.find_arbit_type(9011,tb_invite.clas)%>
+                  </td>          
+                  <td><%=link_to "修改",{:action => "edit_invite",:id => tb_invite,:page=>@tb_invite_pages.current.number,:page_lines=>@page_lines} %></td>
+                  <td><%=button_to "删除",{:action => "delete_invite" , :id => tb_invite, :page=>@tb_invite_pages.current.number,:page_lines=>@page_lines},:confirm=>"您确认要删除吗？",:method=>"post" %></td>
+                </tr>
+            <%end%>
+        <%end%>
+      </tbody>
+    </table>   
+    <tfoot>
+      <tr>
+        <td><%=link_to "上一页", { :page => @tb_invite_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines } if @tb_invite_pages.current.previous %>
+          <%=pagination_links( @tb_invite_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines }})%>
+          <%=link_to "下一页",  { :page => @tb_invite_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines } if @tb_invite_pages.current.next  %>
+          
+          <%if @tb_invite_pages.current.previous or @tb_invite_pages.current.next%>
+            <form action="/invite/list_invite" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @tb_invite_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>       
+      </tr>
+    </tfoot>  
+    
+  </body>  
+</html>

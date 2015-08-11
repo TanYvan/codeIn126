@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <%=javascript_include_tag "prototype"%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/tab.css" type="text/css" rel="stylesheet" />
+    <title>
+    </title>
+  </head>
+  <body>
+    <div class="title">更新数据上传</div>
+
+<div class="clear"></div>
+<div style="height:4px; width:100%; background-color:#83ACCA" ></div>
+    <br/><br/>
+    <%form_tag "/data_imp/up", :multipart=>true do %>
+      <%=file_field_tag('file')%>
+          <br/>
+      <%=submit_tag '上传',:onclick=>'OnUpload();',:id=>'btnUpload'%>
+      <div class="title" style="display:none" id="divPrompt" align="center">
+        <div align="center"><font class="cRed" id="ftContent">数据上传中，请稍候...</font></div>
+      </div>
+    <%end%>
+        <br/><br/>
+        <div align="center"><font class="cRed"><%=flash[:result]%></font></div>
+        <hr/>
+  </body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件应交费信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件应交费信息  咨询流水号:<%=params[:recevice_code]%> 立案号:<%=TbCase.find_by_recevice_code(params[:recevice_code]).case_code%></span></div>
+    <br/>
+   <div class="cDGray"> <%=link_to  "创建",:controller=>"should_charge",:action=>"new",:recevice_code=>params[:recevice_code],:t_typ=>params[:t_typ]%></div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <%rmb_money=TbShouldCharge.sum("rmb_money",:conditions=>"typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and typ<>'0009' and used='Y' and recevice_code='#{params[:recevice_code]}'")%>
+    <%re_rmb_money=TbShouldCharge.sum("re_rmb_money",:conditions=>"typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and used='Y' and recevice_code='#{params[:recevice_code]}'")%>
+    <%redu_rmb_money=TbShouldCharge.sum("redu_rmb_money",:conditions=>"typ<>'0002' and typ<>'0003' and typ<>'0005' and typ<>'0006' and used='Y' and recevice_code='#{params[:recevice_code]}'")%>
+    <%if rmb_money==nil%>
+      <%rmb_money=0%>
+    <%end%>
+    <%if re_rmb_money==nil%>
+      <%re_rmb_money=0%>
+    <%end%>
+    <%if redu_rmb_money==nil%>
+      <%redu_rmb_money=0%>
+    <%end%>
+    <%
+    # 如果案件有多交仲裁费的情况，应交款总额需要减去这部分费用。
+    %>
+
+    <div align="left">应交款总额：<%=rmb_money%>(￥)  减交总额：<%=redu_rmb_money%>(￥) 实收总额：<%=re_rmb_money%>(￥)  欠缴总额：<%=rmb_money - redu_rmb_money - re_rmb_money%>(￥) </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          费用类型
+        </th>
+        <th nowrap>
+          交款方
+        </th>
+        <th nowrap>
+          应收费用(￥)
+        </th>
+        <th nowrap>
+          减交(￥)
+        </th>
+        <th nowrap>
+          收款编号
+        </th>
+        <th nowrap>
+            实收费用(￥)
+        </th>
+        <th nowrap>
+          备注
+        </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @should%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0031' and data_val='#{p.typ}'").data_text%>
+          <%if p.typ=='0001' or p.typ=='0004'%>
+            <%=link_to  "查看明细",:action=>"detail_list",:id=>p,:parent_id=>p,:recevice_code=>params[:recevice_code],:t_typ=>params[:t_typ]%>
+            <%s_c=TbShouldCharge.sum(:rmb_money,:conditions=>["used='Y' and parent_id=?",p.id])%>
+            <%if s_c!=p.rmb_money%>
+              <div style="color:red">明细数据错误</div>
+            <%end%>
+          <%end%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0032' and data_val='#{p.payment}'").data_text%>
+        </td>
+        <td>
+          <%=p.rmb_money%>
+        </td>
+        <td>
+          <%=p.redu_rmb_money%>
+        </td>
+        <td>
+          <%corr=TbChargeCorr.find(:all,:conditions=>"state=2 and used='Y' and should_charge_id='#{p.id}'",:order=>"charge_id")%>
+           <%for c in corr%>
+             <%if c.charge_id!=nil%>
+              <%=TbCharge.find(c.charge_id).code%>(金额:<%=TbCharge.find(c.charge_id).rmb_money%>rmb)
+             <%else%>
+             <%end%>
+             <br/>
+           <%end%>
+        </td>
+        <td>
+          <%=p.re_rmb_money%>
+        </td>
+        <td>
+          <%=p.remark%>
+        </td>
+        <td>
+           <%if p.typ!='0001'%>
+           <%=link_to "修改",:controller=>"should_charge",:action=>"edit",:id=>p,:recevice_code=>params[:recevice_code],:t_typ=>params[:t_typ]%>
+           <%end%>
+        </td>
+        <td>
+          <%if p.typ!='0001' and p.redu_rmb_money==0%>
+            <%if TbChargeCorr.find(:all,:conditions=>"used='Y' and state<>3 and should_charge_id=#{p.id}").empty?%>
+              <%=button_to "删除",{:controller=>"should_charge",:action=>"delete",:id=>p,:recevice_code=>params[:recevice_code],:t_typ=>params[:t_typ]},:confirm=>"您确认要删除吗？"%>
+            <%else%>
+
+            <%end%>
+          <%end%>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <%if params[:t_typ]=="1" and (flash[:notice]!=nil or params[:t_typ2]=="1") %>
+      <script language="javascript">
+       parent.location.href=parent.location.href;
+       parent.location.reload(); 
+      </script>
+    <%end%>
+  </body>
+</html>

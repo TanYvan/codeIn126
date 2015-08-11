@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改结案处理</title>
+    <%= javascript_include_tag :defaults%>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <script language="javascript">
+      function r_s(){
+        new Ajax.Request('/caseend_book2/p_set?recevice_code=<%=params[:recevice_code]%>&endStyle='+document.getElementById("caseendbook_endStyle").value, {asynchronous:true, evalScripts:true});
+        return false;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray" align="center">修改结案处理  <%=link_to "返回",:action=>"caseendbook_list",:recevice_code=>params[:recevice_code]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :caseendbook ,:url=>{:action=>"caseendbook_update",:id=>params[:id],:recevice_code=>params[:recevice_code]} do |f|%>
+     <table class="list">
+        <tr>
+          <th nowrap>
+            申请人:
+          </th>
+          <td>
+            <%@party=TbParty.find(:all,:conditions=>"recevice_code='#{session[:recevice_code]}' and partytype=1 and used='Y'",:order=>'id')%>
+            <%if @party!=nil%>
+              <%for t in @party%>
+                <%=t.partyname%><br>
+              <%end%>
+            <%else%>
+            <%end%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            被申请人:
+          </th>
+          <td>
+            <%@party=TbParty.find(:all,:conditions=>"recevice_code='#{session[:recevice_code]}' and partytype=2 and used='Y'",:order=>'id')%>
+            <%if @party!=nil%>
+              <%for t2 in @party%>
+                <%=t2.partyname%><br>
+              <%end%>
+            <%else%>
+            <%end%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            结案方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8117' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:endStyle,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            结案时间:
+          </th>
+          <td>
+            <%=f.text_field(:decideDate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('caseendbook_decideDate'),'yyyy-MM-dd')" >
+
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            裁决书编号:
+          </th>
+          <td>
+            <div id='pv_1'><%=f.text_field(:file_arbitBookNum)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            结案号:
+          </th>
+          <td>
+            <div id='pv_2'><%=f.text_field(:arbitBookNum)%></div>
+            <input id='code_create'  type='button' value="生成结案号" onclick="r_s()">
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            送交申请人日期:
+          </th>
+          <td>
+            <%if @caseendbook.sendDate!=nil%>
+              <%=@caseendbook.sendDate.to_s(:db)%>
+            <%end%>
+            <!--
+            <%=f.text_field(:sendDate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('caseendbook_sendDate'),'yyyy-MM-dd')" >
+            -->
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            送达方式:
+          </th>
+          <td>
+            <%if @caseendbook.isSendStyle!=nil%>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='8118'  and  data_val='#{@caseendbook.isSendStyle}'").data_text%>
+            <%end%>
+            <!--
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8118' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sendStyle,op,:data_text,:data_text)%>
+            -->
+          </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            被送交申请人日期:
+          </th>
+          <td>
+            <%if @caseendbook.isSendDate!=nil%>
+              <%=@caseendbook.isSendDate.to_s(:db)%>
+            <%end%>
+            <!--
+            <%=f.text_field(:isSendDate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('caseendbook_isSendDate'),'yyyy-MM-dd')" >
+            -->
+          </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            被送达方式:
+          </th>
+          <td>
+            <%if @caseendbook.isSendStyle!=nil%>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='8119'  and  data_val='#{@caseendbook.isSendStyle}'").data_text%>
+            <%end%>
+            <!--
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8119' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:isSendStyle,op,:data_val,:data_text)%>
+            -->
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+    <hr size="1" color="#99CCFF" noshade>  
+    <iframe frameborder=0 src="/caseend_book2/book_list?p_id=<%=@id%>&recevice_code=<%=params[:recevice_code]%>"  noresize  style="width:700px;height:400px" align=center> </iframe>
+  </body>
+</html>
+

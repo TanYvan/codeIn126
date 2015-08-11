@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 组庭信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script language="javascript">
+      function org_d(){
+        alert("jsya");
+        document.getElementById(caseorg_sendrdate).value = document.getElementById(caseorg_orgdate).value;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  添加 组庭信息   <%=link_to "返回",:action=>"caseorg_list"%>
+
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :caseorg ,:url=>{:action=>"caseorg_create"}  do |f|%>
+      <table class="list">  
+        <!--tr>
+          <th nowrap>
+            组庭方式:
+          </th>
+          <td>
+            <#%op=TbDictionary.find(:all,:conditions=>"typ_code='0012' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <#%=f.collection_select(:orgstyle,op,:data_val,:data_text)%>
+          </td>
+        </tr-->
+        <tr>
+          <th nowrap>
+            组庭日期:
+          </th>
+          <td>
+            <%=f.text_field(:orgdate,:readonly=>"true",:onchange=>"alert('aaaa');")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('caseorg_orgdate'),'yyyy-MM-dd');" />
+            
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            组庭通知发出日期:
+          </th>
+          <td>
+            <%=f.text_field(:sendrdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('caseorg_sendrdate'),'yyyy-MM-dd')" />                                                  
+            
+          </td>
+        </tr>
+        <!--tr>
+          <th nowrap>
+            送达方式:
+          </th>
+          <td>
+            <#%op=TbDictionary.find(:all,:conditions=>"typ_code='0013' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <#%=f.collection_select(:sendrstyle,op,:data_val,:data_text)%> 
+          </td>
+        </tr-->
+         
+        <!--tr>
+          <th nowrap>
+            仲裁员指定截止日期:
+          </th>
+          <td>
+            <#%=f.text_field(:assigndate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('caseorg_assigndate'),'yyyy-MM-dd')" />                                                              
+            
+          </td>
+        </tr-->
+        <!--
+        <tr>
+          <th nowrap>
+            审限日期:
+          </th>
+          <td>
+            <#%=f.text_field(:limitdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('caseorg_limitdate'),'yyyy-MM-dd')" />                                                                          
+            
+          </td>
+        </tr>     
+
+          -->
+                       
+      </table>
+      <br/>
+        <div align="center"><%=submit_tag "提交" %></div>
+
+    <%end%>
+  </body>
+</html>

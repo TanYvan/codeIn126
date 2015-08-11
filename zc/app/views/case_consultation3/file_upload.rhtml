@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>案件合同上传</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+      案件合同上传  <%=link_to "返回",:action=>"file_list", :recevice_code => @file.recevice_code %>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_tag "/case_consultation3/file_upload_do" ,:multipart => true do %>
+        <input type="hidden" name=recevice_code value=<%=@file.recevice_code%> />
+        <input type="hidden" name="id" value=<%=@file.id %> />
+        <%=file_field_tag('file',:size=>80)%>
+      <br/>
+      <%=submit_tag '上传'%>
+    <%end%>
+  </body>
+</html>

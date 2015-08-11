@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改裁决书报校核</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+      <%=link_to "返回",:action=>"award_list"%>
+      <div class="cDGray" align="center">修改 裁决书报校核信息    </div>
+      <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :award ,:url=>{:action=>"award_update",:id=>params[:id],:recevice_code=>params[:recevice_code]}  do |f|%>
+     <table class="list">        
+        <tr>
+          <th>类别：</th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0058' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:end_typ, op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            持少数意见的仲裁员：
+          </th>
+          <td>
+            <%=f.select(:arbiter,@pb)%>
+          </td>
+        </tr>
+        <tr>
+          <th>助理意见：</th>
+          <td>
+            <%=f.select(:advice,[['有',1],['无',0]])%>
+          </td>
+        </tr>
+        <tr id="b" >
+          <th>
+            具体意见：
+          </th>
+          <td>
+            <%=f.text_area :remark,:rows=>4%>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+     <hr size="1" color="#99CCFF" noshade/>
+     <iframe frameborder=0 src="/award/award_detail_list?p_id=<%=params[:id]%>"  noresize  style="width:700px;height:350px" align=center> </iframe>
+     <hr size="1" color="#99CCFF" noshade/>
+     <iframe frameborder=0 src="/award/award1_list?award_id=<%=params[:id]%>"  noresize  style="width:700px;height:550px" align=center> </iframe>
+  </body>
+</html>
+

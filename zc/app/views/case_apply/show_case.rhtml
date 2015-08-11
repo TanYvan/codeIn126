@@ -1,0 +1,606 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件申请信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件申请信息</span></div>
+    <%if @res_case.status == "1" && @res_case.dataset.size != "0"%>
+      <form action="/<%=params["new_url"]%>/new" method="post" >
+       <input type="hidden" id="apply_code" name="apply_code"  value="<%=@res_case.dataset.get_data(0,"apply_code")%>" />
+       <input type="hidden" id="apply_casereason" name="apply_casereason"  value="<%=@res_case.dataset.get_data(0,"casereason")%>" />
+       <input type="hidden" id="apply_remark" name="apply_remark"  value="<%=@res_case.dataset.get_data(0,"remark")%>" />
+       <input type="hidden" id="apply_acceptt" name="apply_acceptt"  value="<%=@apply_acceptt%>" />
+       <input type="submit" name="submit"  value="创建咨询案件" />
+      </form>
+    <%end%>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            申请编号
+          </th>
+          <th nowrap>
+            案由
+          </th>
+          <th nowrap>
+            案件备注
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @res_case.status == "1" && @res_case.dataset.size != "0"%>
+          <%for r in @res_case.dataset.rows %>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=h r.get_data("apply_code")%>
+              </td>
+              <td>
+                <%=h r.get_data("casereason")%>
+              </td>
+              <td>
+                <%=h r.get_data("remark")%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <br/>
+    <div class="title"><span class="cBlue">申请人信息</span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th>
+            当事人
+          </th>
+          <th>
+            是否个人
+          </th>
+          <th>
+            法定代表人/负责人
+          </th>
+          <th>
+            职务
+          </th>
+          <th>
+            传真
+          </th>
+          <th>
+            邮编
+          </th>
+          <th>
+            行业大类
+          </th>
+          <th>
+            行业小类
+          </th>
+          <th>
+            地址
+          </th>
+          <th>
+            地区
+          </th>
+          <th>
+            email
+          </th>
+          <th>
+            短信手机
+          </th>
+          <th>
+            除短信手机之外的其它联系方式
+          </th>
+        </tr>
+      </thead>
+      <%  party = {} %>
+      <tbody>
+        <%i=0%>
+        <%if @res_party.status == "1" && @res_party.dataset.size != "0"%>
+          <%for r in @res_party.dataset.rows %>
+            <% party.merge!({r.get_data("id") => r.get_data("partyname")})%>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=h r.get_data("partyname")%>
+              </td>
+              <td>
+                <% a = {"1" => "是","2" => "否"} %>
+                <%=h a[r.get_data("isperson")]%>
+              </td>
+              <td>
+                <%=h r.get_data("commissary")%>
+              </td>
+              <td>
+                 <%=TbDictionary.find(:first,:conditions=>"typ_code='8141'  and  data_val='#{r.get_data("dutyName")}'").data_text unless r.get_data("dutyName").blank? %>
+              </td>
+              <td>
+                <%=h r.get_data("post_tel_code")%>
+              </td>
+              <td>
+                <%=h r.get_data("postcode")%>
+              </td>
+              <td>
+                 <%=TbDictionary.find(:first,:conditions=>"typ_code='9019'  and  data_val='#{r.get_data("profession")}'").data_text unless r.get_data("profession").blank? %>
+              </td>
+              <td>
+                 <%=TbDictionary.find(:first,:conditions=>"typ_code='9019'  and  data_val='#{r.get_data("subprofession")}'").data_text unless r.get_data("subprofession").blank? %>
+              </td>
+              <td>
+                <%=h r.get_data("addr")%>
+              </td>
+              <td>
+                <%=Region.find_by_code(r.get_data("area")).name unless r.get_data("area").blank? %>
+              </td>
+              <td>
+                <%=h r.get_data("email")%>
+              </td>
+              <td>
+                <%=h r.get_data("mobileTel")%>
+              </td>
+              <td>
+                <%=h r.get_data("tel")%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <br/>
+    <div class="title"><span class="cBlue">代理人信息</span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th>
+            申请人
+          </th>
+          <th>
+            代理人姓名
+          </th>
+          <th>
+            身份
+          </th>
+          <th>
+            职务
+          </th>
+          <th>
+            邮编
+          </th>
+          <th>
+            所在单位
+          </th>
+          <th>
+            联系人地址
+          </th>
+          <th>
+            email
+          </th>
+          <th>
+            短信手机
+          </th>
+          <th>
+            除短信手机之外的其它联系方式
+          </th>
+          <th>
+            传真
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @res_agent.status == "1" && @res_agent.dataset.size != "0"%>
+          <%for r in @res_agent.dataset.rows %>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=party[r.get_data("party_id")] unless r.get_data("party_id").blank?%>
+              </td>
+              <td>
+                <%=h r.get_data("name")%>
+              </td>
+              <td>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='0007'  and  data_val='#{r.get_data("status")}'").data_text unless r.get_data("status").blank? %>
+              </td>
+              <td>
+                <%=h r.get_data("duty")%>
+              </td>
+              <td>
+                <%=h r.get_data("postcode")%>
+              </td>
+              <td>
+                <%=h r.get_data("company")%>
+              </td>
+              <td>
+                <%=h r.get_data("addr")%>
+              </td>
+              <td>
+                <%=h r.get_data("email")%>
+              </td>
+              <td>
+                <%=h r.get_data("mobiletel")%>
+              </td>
+              <td>
+                <%=h r.get_data("tel")%>
+              </td>
+              <td>
+                <%=h r.get_data("post_tel_code")%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <br/>
+    <div class="title"><span class="cBlue">请求信息</span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th>
+            申请人
+          </th>
+          <th>
+            仲裁请求
+          </th>
+          <th>
+            事实理由
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @res_party_request.status == "1" && @res_party_request.dataset.size != "0"%>
+          <%for r in @res_party_request.dataset.rows %>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=party[r.get_data("party_id")] unless r.get_data("party_id").blank?%>
+              </td>
+              <td>
+                <%=h r.get_data("request_text")%>
+              </td>
+              <td>
+                <%=h r.get_data("factreason")%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <br/>
+    <div class="title"><span class="cBlue">合同信息</span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th>
+            签订日期
+          </th>
+          <th>
+            合同编号及名称
+          </th>
+          <th>
+            备注
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @res_contractsign.status == "1" && @res_contractsign.dataset.size != "0"%>
+          <%for r in @res_contractsign.dataset.rows %>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=r.get_data("contractdate")%>
+              </td>
+              <td>
+                <%=h r.get_data("pactname")%>
+              </td>
+              <td>
+                <%=h r.get_data("note")%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <br/>
+    <div class="title"><span class="cBlue">被申请人信息</span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th>
+            当事人
+          </th>
+          <th>
+            是否个人
+          </th>
+          <th>
+            法定代表人/负责人
+          </th>
+          <th>
+            职务
+          </th>
+          <th>
+            传真
+          </th>
+          <th>
+            邮编
+          </th>
+          <th>
+            行业大类
+          </th>
+          <th>
+            行业小类
+          </th>
+          <th>
+            地址
+          </th>
+          <th>
+            地区
+          </th>
+          <th>
+            email
+          </th>
+          <th>
+            短信手机
+          </th>
+          <th>
+            除短信手机之外的其它联系方式
+          </th>
+        </tr>
+      </thead>
+      <%  party = {} %>
+      <tbody>
+        <%i=0%>
+        <%if @res_party2.status == "1" && @res_party2.dataset.size != "0"%>
+          <%for r in @res_party2.dataset.rows %>
+            <% party.merge!({r.get_data("id") => r.get_data("partyname")})%>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=h r.get_data("partyname")%>
+              </td>
+              <td>
+                <% a = {"1" => "是","2" => "否"} %>
+                <%=h a[r.get_data("isperson")]%>
+              </td>
+              <td>
+                <%=h r.get_data("commissary")%>
+              </td>
+              <td>
+                 <%=TbDictionary.find(:first,:conditions=>"typ_code='8141'  and  data_val='#{r.get_data("dutyName")}'").data_text unless r.get_data("dutyName").blank? %>
+              </td>
+              <td>
+                <%=h r.get_data("post_tel_code")%>
+              </td>
+              <td>
+                <%=h r.get_data("postcode")%>
+              </td>
+              <td>
+                 <%=TbDictionary.find(:first,:conditions=>"typ_code='9019'  and  data_val='#{r.get_data("profession")}'").data_text unless r.get_data("profession").blank? %>
+              </td>
+              <td>
+                 <%=TbDictionary.find(:first,:conditions=>"typ_code='9019'  and  data_val='#{r.get_data("subprofession")}'").data_text unless r.get_data("subprofession").blank? %>
+              </td>
+              <td>
+                <%=h r.get_data("addr")%>
+              </td>
+              <td>
+                <%=Region.find_by_code(r.get_data("area")).name unless r.get_data("area").blank? %>
+              </td>
+              <td>
+                <%=h r.get_data("email")%>
+              </td>
+              <td>
+                <%=h r.get_data("mobileTel")%>
+              </td>
+              <td>
+                <%=h r.get_data("tel")%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <br/>
+    <div class="title"><span class="cBlue">案件附件</span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th>
+            类型
+          </th>
+          <th>
+            上传时间
+          </th>
+          <th>
+            文件名
+          </th>
+          <th>
+            备注
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @res_att.status == "1" && @res_att.dataset.size != "0"%>
+          <%for r in @res_att.dataset.rows %>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=TbDictionary.find(:first,:conditions=>["typ_code='9104' and data_val=?", r.get_data("category")]).data_text unless r.get_data("category").blank? %>
+              </td>
+              <td>
+                <%=h r.get_data("up_time")%>
+              </td>
+              <td>
+                <%=h r.get_data("file_name")%>
+                 <%=link_to  "下载" ,:action=>"get_file",:id=>r.get_data("id") %>
+              </td>
+              <td>
+                <%=h r.get_data("remark")%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <br/>
+    <div class="title"><span class="cBlue">用户信息</span></div>
+    <%if @w_user != nil%>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th>
+            用户类型
+          </th>
+          <th>
+            状态
+          </th>
+          <th>
+            用户编号
+          </th>
+          <th>
+            姓名
+          </th>
+          <th>
+            电话
+          </th>
+          <th>
+            email
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            当事方用户
+          </td>
+          <td>
+            内网用户信息
+          </td>
+          <td>
+            <%=h  @w_user.code%>
+          </td>
+          <td>
+            <%=h  @w_user.name_idcard%>
+          </td>
+          <td>
+            <%=h  @w_user.telephone%>
+          </td>
+          <td>
+            <%=h  @w_user.email%>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <%end%>
+
+    <%if @res_w_user != nil && @res_w_user.status == "1" && @res_w_user.dataset.size != "0"%>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th>
+            用户类型
+          </th>
+          <th>
+            状态
+          </th>
+          <th>
+            用户编号
+          </th>
+          <th>
+            姓名
+          </th>
+          <th>
+            电话
+          </th>
+          <th>
+            email
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%for r in @res_w_user.dataset.rows %>
+        <tr>
+          <td>
+            当事方用户
+          </td>
+          <td>
+            外网用户信息
+          </td>
+          <td>
+            <%=h  r.get_data("code")%>
+          </td>
+          <td>
+            <%=h  r.get_data("name_idcard") %>
+          </td>
+          <td>
+            <%=h  r.get_data("telephone")%>
+          </td>
+          <td>
+            <%=h  r.get_data("email")%>
+          </td>
+        </tr>
+        <%end%>
+      </tbody>
+    </table>
+
+    <%end%>
+
+    <%if @user != nil%>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th>
+            用户类型
+          </th>
+          <th>
+            用户编号
+          </th>
+          <th>
+            姓名
+          </th>
+          <th>
+            电话
+          </th>
+          <th>
+            email
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            助理
+          </td>
+          <td>
+            <%=h  @user.code%>
+          </td>
+          <td>
+            <%=h  @user.name%>
+          </td>
+          <td>
+            <%=h  @user.telephone%>
+          </td>
+          <td>
+            <%=h  @user.email%>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <%end%>
+
+    <br/>
+    <br/>
+  </body>
+</html>

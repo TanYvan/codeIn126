@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>地区案件数量统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script language="javascript">
+      function aa(){
+        //var b =document.getElementById("institute");
+        a=window.showModalDialog('/region_select/tree',"","dialogWidth=350px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          document.getElementById("area").value=a
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">地区案件数量统计</span></div>
+    <div align="center">
+      <%form_tag ({:action=>"list_5"})  do %>
+        <%@ar=Region.find(:all,:order=>"code")%>
+        <%=select_tag(:area,options_for_select(@ar.collect{|p|[p.name,p.code]},@area))%>
+        <input type="button" value="选择" onclick="aa()">
+          <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+    <%end %>
+    </div>
+    <%if @re!=nil%>
+      <%pt=PubTool.new%>
+      <table  cellspacing="1" class="list">
+        <tr>
+          <td >
+            地区名称
+          </td>
+          <td nowrap>
+            案件数量
+          </td>
+        </tr>
+        <%for re in @re%>
+          <tr >
+            <td>
+              <%=Region.find_by_code(re.code).name%>
+            </td>
+            <td>
+              <%=link_to "#{re.c}",{:action=>"list_5a",:code=>re.code,:d1=>@d1,:d2=>@d2,:nn=>re.c},:target=>"_black"%>
+            </td>
+          </tr>
+        <%end%>
+        <%for re_2 in @re_2%>
+          <tr >
+            <td>
+              <%=Region.find_by_code(@area).name%>
+            </td>
+            <td>
+              <%=link_to "#{re_2.c}",{:action=>"list_self",:code=>re_2.code,:d1=>@d1,:d2=>@d2},:target=>"_black"%>
+            </td>
+          </tr>
+        <%end%>
+        <tr >
+          <td>
+            合计
+          </td>
+          <td>
+            <%=@re.sum{|r| r.c.to_i} + @re_2.sum{|r| r.c.to_i}%>
+          </td>
+        </tr>
+      </table>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>前一月数据统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag'WebCalendar'%>
+    <script type="text/javascript" src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">前一月数据统计</span></div>
+    <div align="center">
+      <%form_tag ({:action=>"list_1"})do %>
+        <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+        <input type="button" value="导出excel文档" onclick=to_excel(document.getElementById("to_excel_z")); />
+      <%end %>
+    </div>
+    <br/>
+    <br/>
+    <table id="to_excel_z" ><tr><td>
+          立案案件表
+          <table cellspacing="1" class="list" style=" width: 100%">
+            <tr>
+              <th rowspan="2">助理</th>
+              <th rowspan="2">咨询接待案件</th>
+              <th colspan="4">新立案件</th>
+              <th rowspan="2">结案总数</th>
+              <th colspan="3">裁决（含和裁）</th>
+              <th rowspan="2">撤案</th>
+              <th rowspan="2">裁决更正</th>
+              <th rowspan="2">补充裁决</th>
+            </tr>
+            <tr>
+              <th >总数</th>
+              <th>简易程序</th>
+              <th>普通程序</th>
+              <th>金融规则</th>
+              <th>简易程序</th>
+              <th>普通程序</th>
+              <th>金融规则</th>
+            </tr>
+            <%for c in @clerk%>
+              <tr>
+                <td><%=c.name%></td><!--助理姓名-->
+                <td>
+                  <%a=TbCase.count(["clerk_2=? and used='Y' and receivedate>=? and receivedate<=? and state != -2",c.code,@d1,@d2])%>
+                  <%=link_to "#{a}",{:action=>"list1",:code=>c.code,:d1=>@d1,:d2=>@d2},:target=>"_black"%>
+                </td><!--咨询数量-->
+                <%simple_n=TbCase.count(["clerk=? and used='Y' and nowdate>=? and nowdate<=? and state>=4 and (aribitprog_num='0002' or aribitprog_num='0004')",c.code,@d1,@d2])%>
+                <%general_n=TbCase.count(["clerk=? and used='Y' and nowdate>=? and nowdate<=? and state>=4 and (aribitprog_num='0001' or aribitprog_num='0003')",c.code,@d1,@d2])%>
+                <%finance_n=TbCase.count(["clerk=? and used='Y' and nowdate>=? and nowdate<=? and state>=4 and (aribitprog_num='0005' or aribitprog_num='0006' or aribitprog_num='0007' or aribitprog_num='0008')",c.code,@d1,@d2])%>
+                <td>
+                  <%=link_to "#{simple_n + general_n + finance_n}",{:action=>"list2",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"1"},:target=>"_black"%>
+                </td><!--新立案件总数-->
+                <td><%=link_to "#{simple_n}",{:action=>"list2",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"2"},:target=>"_black"%></td> <!--简易-->
+                <td><%=link_to "#{general_n}",{:action=>"list2",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"3"},:target=>"_black"%></td><!--普通-->
+                <td><%=link_to "#{finance_n}",{:action=>"list2",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"4"},:target=>"_black"%></td><!--金融-->
+
+                <!-- 结案 -->
+                <%cend1=TbCase.find(:first,:select=>"count(c.recevice_code) as a1",:conditions=>["c.clerk=? and c.used='Y' and (c.aribitprog_num='0002' or c.aribitprog_num='0004') and e.used='Y' and e.endStyle<>'0003' and e.decideDate>=? and e.decideDate<=?",c.code,@d1,@d2],:joins=>"as c inner join tb_caseendbooks as e on c.recevice_code=e.recevice_code")  -%>
+                <%cend2=TbCase.find(:first,:select=>"count(c.recevice_code) as a1",:conditions=>["c.clerk=? and c.used='Y' and (c.aribitprog_num='0001' or c.aribitprog_num='0003') and e.used='Y' and e.endStyle<>'0003' and e.decideDate>=? and e.decideDate<=?",c.code,@d1,@d2],:joins=>"as c inner join tb_caseendbooks as e on c.recevice_code=e.recevice_code")  -%>
+                <%cend3=TbCase.find(:first,:select=>"count(c.recevice_code) as a1",:conditions=>["c.clerk=? and c.used='Y' and (c.aribitprog_num='0005' or c.aribitprog_num='0006'  or c.aribitprog_num='0007' or c.aribitprog_num='0008') and e.used='Y' and e.endStyle<>'0003' and e.decideDate>=? and e.decideDate<=?",c.code,@d1,@d2],:joins=>"as c inner join tb_caseendbooks as e on c.recevice_code=e.recevice_code")  -%>
+                <%cend4=TbCase.find(:first,:select=>"count(c.recevice_code) as a1",:conditions=>["c.clerk=? and c.used='Y' and e.used='Y' and e.endStyle='0003' and e.decideDate>=? and e.decideDate<=?",c.code,@d1,@d2],:joins=>"as c inner join tb_caseendbooks as e on c.recevice_code=e.recevice_code")  -%>
+                <%
+                  c1 = cend1.a1.to_i if cend1!=nil
+                  c2 = cend2.a1.to_i if cend2!=nil
+                  c3 = cend3.a1.to_i if cend3!=nil
+                  c4 = cend4.a1.to_i if cend4!=nil
+                %>
+                <td><%=link_to "#{c1 + c2 + c3 + c4}",{:action=>"list3",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"1"},:target=>"_black"-%></td><!--结案总数-->
+                <td><%=link_to "#{c1}",{:action=>"list3",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"2"},:target=>"_black"%></td><!--结案 简易-->
+                <td><%=link_to "#{c2}",{:action=>"list3",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"3"},:target=>"_black"%></td><!--结案 普通-->
+                <td><%=link_to "#{c3}",{:action=>"list3",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"4"},:target=>"_black"%></td><!--结案 金融-->
+                <td><%=link_to "#{c4}",{:action=>"list3",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"5"},:target=>"_black"%></td><!--结案 撤案-->
+                <%endbook=TbCase.find_by_sql("select count(distinct(b.recevice_code)) as b from tb_cases as c,tb_caseendbooks as e,case_books as b where c.clerk='#{c.code}' and c.used='Y' and c.recevice_code=b.recevice_code and c.caseendbook_id_last=b.p_id and b.used='Y' and b.book_dat>='#{@d1}' and b.book_dat<='#{@d2}' and b.typ='0002' and b.book_typ='0004'")%>
+                <td>
+                  <%e1 = PubTool.new.get_first_record(endbook)%>
+                  <%if e1!=nil%>
+                    <%=link_to "#{e1.b}",{:action=>"list4",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"1"},:target=>"_black"%>
+                  <%end%>
+                </td><!--裁决更正-->
+                <%endbook=TbCase.find_by_sql("select count(distinct(b.recevice_code)) as b from tb_cases as c,tb_caseendbooks as e,case_books as b where c.clerk='#{c.code}' and c.used='Y' and c.recevice_code=b.recevice_code and c.caseendbook_id_last=b.p_id and b.used='Y' and b.book_dat>='#{@d1}' and b.book_dat<='#{@d2}' and b.typ='0002' and b.book_typ='0005'")%>
+                <td>
+                  <%e2 = PubTool.new.get_first_record(endbook)%>
+                  <%if e2!=nil%>
+                    <%=link_to "#{e2.b}",{:action=>"list4",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"2"},:target=>"_black"%>
+                  <%end%>
+                </td><!--补充裁决-->
+              </tr>
+            <%end%>
+          </table>
+          <br/>
+          <br/>
+          在办案件表
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th nowrap="nowrap">助理</th>
+                <th >发文量</th>
+                <th >管辖权异议</th>
+                <th >仲裁员回避</th>
+                <th >延期案件数量</th>
+                <th >专家咨询会</th>
+                <th >含涉外仲裁员的</th>
+                <th >仲裁语言为英文的</th>
+                <th >适用ICC规则、UNCITRAL RULES、其他规则</th>
+                <th >有检测、审计、鉴定事宜的</th>
+              </tr>
+            </thead>
+            <%for c in @clerk%>
+              <tr>
+                <td nowrap="nowrap"><%=c.name%></td>
+                <td nowrap="nowrap">
+                  <%=TbDoc.count(["ss_t>=? and ss_t<=? and used='Y' and send_code is not null and u=?",@d1,@d2,c.code])%>
+                </td>
+                <td nowrap="nowrap">
+                  <%j=TbJurisdiction.find(:first,:select=>"count(distinct(recevice_code)) as n",:conditions=>["request_date>=? and request_date<=? and u=? and used='Y'",@d1,@d2,c.code])%>
+                  <%if j!=nil%>
+                    <%=link_to "#{j.n}",{:action=>"list11",:code=>c.code,:d1=>@d1,:d2=>@d2},:target=>"_black"%>
+                  <%end%>
+                </td>
+                <td nowrap="nowrap">
+                  <%e=TbEvite.find(:first,:select=>"count(distinct(recevice_code)) as n",:conditions=>["requestdate>=? and requestdate<=? and u=? and used='Y'",@d1,@d2,c.code])%>
+                  <%if e!=nil%>
+                    <%=link_to "#{e.n}",{:action=>"list12",:code=>c.code,:d1=>@d1,:d2=>@d2},:target=>"_black"%>
+                  <%end%>
+                </td>
+                <td nowrap="nowrap">
+                  <%d=TbCasedelay.find(:first,:select=>"count(distinct(recevice_code)) as n",:conditions=>["requestdate>=? and requestdate<=? and u=? and used='Y'",@d1,@d2,c.code])%>
+                  <%if d!=nil%>
+                    <%=link_to "#{d.n}",{:action=>"list13",:code=>c.code,:d1=>@d1,:d2=>@d2},:target=>"_black"%>
+                  <%end%>
+                </td>
+                <td nowrap="nowrap">
+                  <%e=TbExpert.find(:first,:select=>"count(distinct(recevice_code)) as n",:conditions=>["convoke_date>=? and convoke_date<=? and u=? and used='Y'",@d1,@d2,c.code])%>
+                  <%if e!=nil%>
+                    <%=link_to "#{e.n}",{:action=>"list14",:code=>c.code,:d1=>@d1,:d2=>@d2},:target=>"_black"%>
+                  <%end%>
+                </td>
+                <td nowrap="nowrap">
+                  <%e2=TbCaseorg.find_by_sql("select count(distinct(o.recevice_code)) as n from tb_caseorgs as o,tb_casearbitmen as m,tb_arbitmen as a where o.u='#{c.code}' and o.orgdate>='#{@d1}' and o.orgdate<='#{@d2}' and o.used='Y' and o.recevice_code=m.recevice_code and m.used='Y' and m.arbitman=a.code and a.used='Y' and a.area_code>'004'")%>
+                  <%e = PubTool.new.get_first_record(e2)%>
+                  <%if e!=nil%>
+                    <%=link_to "#{e.n}",{:action=>"list15",:code=>c.code,:d1=>@d1,:d2=>@d2},:target=>"_black"%>
+                  <%end%>
+                </td>
+                <td nowrap="nowrap">
+                  <%k6=TbCase.count(["nowdate>=? and nowdate<=? and clerk=? and used='Y' and language='0002'",@d1,@d2,c.code])%>
+                  <%=link_to "#{k6}",{:action=>"list16",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>"6"},:target=>"_black"%>
+                </td>
+                <td nowrap="nowrap">
+                  <%k7=TbCase.count(["nowdate>=? and nowdate<=? and clerk=? and used='Y' and app_rules<>'0001' and app_rules<>'0002'",@d1,@d2,c.code])%>
+                  <%=link_to "#{k7}",{:action=>"list16",:code=>c.code,:d1=>@d1,:d2=>@d2,:k=>7},:target=>"_black"%>
+                </td>
+                <td nowrap="nowrap">
+                  <%d=TbDetection.find(:first,:select=>"count(distinct(recevice_code)) as n",:conditions=>["make_date>=? and make_date<=? and u=? and used='Y'",@d1,@d2,c.code])%>
+                  <%if d!=nil%>
+                    <%=link_to "#{d.n}",{:action=>"list17",:code=>c.code,:d1=>@d1,:d2=>@d2},:target=>"_black"%>
+                  <%end%>
+                </td>
+              </tr>
+            <%end%>
+          </table>
+        </td></tr></table>
+  </body>
+</html>

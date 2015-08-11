@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>待支出信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">待支出信息</span></div>
+    <br/>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          确认
+        </th>
+        <th nowrap>
+          案件咨询流水号
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          助理
+        </th>
+        <th nowrap>
+          助理提交时间
+        </th>
+        <th nowrap>
+          费用类别
+        </th>
+        <th nowrap>
+          实收款单位
+        </th>
+        <th nowrap>
+          金额
+        </th>
+        <th nowrap>
+          备注
+        </th>
+        <th nowrap>
+          <%if @order=="check2_u desc"%>
+            <%=link_to '处长↑',:action=>"list",:order=>"check2_u asc",:search_condit=>@search_condit%>
+          <%elsif @order=="check2_u asc"%>
+            <%=link_to '处长↓',:action=>"list",:order=>"check2_u desc",:search_condit=>@search_condit%>
+          <%else%>
+            <%=link_to '处长',:action=>"list",:order=>"check2_u asc",:search_condit=>@search_condit%>
+          <%end%>
+        </th>
+        <th nowrap>
+
+          <%if @order=="check2_dt desc"%>
+            <%=link_to '处长确认时间↑',:action=>"list",:order=>"check2_dt asc",:search_condit=>@search_condit%>
+          <%elsif @order=="check2_dt asc"%>
+            <%=link_to '处长确认时间↓',:action=>"list",:order=>"check2_dt desc",:search_condit=>@search_condit%>
+          <%else%>
+            <%=link_to '处长确认时间',:action=>"list",:order=>"check2_dt asc",:search_condit=>@search_condit%>
+          <%end%>
+        </th>
+        <th nowrap>
+          处长确认备注
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @should%>
+      <tr class="row<%=i % 2%>">
+        <td nowrap>
+          <%=button_to "支出确认",:action=>"edit",:id=>p%>
+        </td>
+        <td nowrap>
+          <%=p.recevice_code%>
+        </td>
+        <td nowrap>
+          <%=p.case_code%>
+        </td>
+        <td nowrap>
+          <%if p.u!=nil and p.u!=""%>
+            <%=User.find_by_code(p.u).name%>
+          <%end%> 
+        </td>
+        <td>
+          <%=p.expend_date%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0035' and data_val='#{p.typ}'").data_text%>
+        </td>
+        <td>
+          <%=p.expend_object%>
+        </td>
+        <td>
+          <%=p.rmb_money%>
+        </td>
+        <td>
+          <%=p.remark%>
+        </td>
+        <td nowrap>
+          <%if p.check2_u!=nil and p.check2_u!=""%>
+            <%=User.find_by_code(p.check2_u).name%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if p.check2_dt!=nil%>
+           <%=p.check2_dt.to_date.to_s(:db)%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%=p.check2_remark%>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    
+  </body>
+</html>

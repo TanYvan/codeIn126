@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  
+  <head>
+    <title>案件费用平衡表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+      <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <%if @case!=nil%>
+      <%@endbook=TbCaseendbook.find_by_recevice_code(@case.recevice_code)%>
+    <div class="title"   align="center"> 
+    案件费用平衡表<br/>受案日期:<%=@case.accepttime.to_s%> 受案号:<%=@case.case_code%>
+    <%if @endbook!=nil%>
+     结案日期:<%=@endbook.decideDate%> 结案号:<%=@endbook.arbitBookNum%>
+    <%end%>
+    </div>
+   <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>        
+        <th nowrap>
+          费用类别
+        </th>
+        <th nowrap>
+          实收（合计）
+        </th>
+        <th nowrap>
+          支出合计
+        </th>
+        <th nowrap>
+          结余
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          办案费用
+        </td>
+        <td>
+          <%c2=TbShouldCharge.sum("re_rmb_money",:conditions=>"(typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+          <%if c2==nil%>
+            <%c2=0%>
+          <%end%>
+          <%c5=TbShouldRefund.sum("re_rmb_money",:conditions=>"(typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}'  and state<>3")%>
+          <%if c5==nil%>
+            <%c5=0%>
+          <%end%>
+          <%=c2 -c5%>
+        </td>
+        <td>
+          <%c_extend=TbExtend.sum("should_rmb",:conditions=>"used='Y' and recevice_code='#{@case.recevice_code}' and (typ='1' or typ='4') and t_extend_code<>''")%>
+          <%if c_extend==nil%>
+            <%c_extend=0%>
+          <%end%>
+          <%=c_extend%>
+        </td>
+        <td>
+          <%=c2 - c5 - c_extend%>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          代收代支
+        </td>
+        <td>
+          <%d2=TbShouldCharge.sum("re_rmb_money",:conditions=>"typ='0007' and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+          <%if d2==nil%>
+            <%d2=0%>
+          <%end%>
+          <%d5=TbShouldRefund.sum("re_rmb_money",:conditions=>"typ='0007' and used='Y' and recevice_code='#{@case.recevice_code}'  and state<>3")%>
+          <%if d5==nil%>
+            <%d5=0%>
+          <%end%>
+          <%=d2 - d5%>
+        </td>
+        <td>
+          <%d_extend=TbExpendDetail.sum("rmb_money",:conditions=>"used='Y' and recevice_code='#{@case.recevice_code}'")%>
+          <%if d_extend==nil%>
+            <%d_extend=0%>
+          <%end%>
+          <%=d_extend%>
+        </td>
+        <td>
+          <%=d2 - d5 - d_extend%>
+        </td>
+      </tr>  
+      <tr>
+        <td>
+          仲裁员实际开支费用（包括仲裁庭）
+        </td>
+        <td>
+          <%e2=TbShouldCharge.sum("re_rmb_money",:conditions=>"typ='0008' and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+          <%if e2==nil%>
+            <%e2=0%>
+          <%end%>
+          <%e5=TbShouldRefund.sum("re_rmb_money",:conditions=>"typ='0008' and used='Y' and recevice_code='#{@case.recevice_code}'  and state<>3")%>
+          <%if e5==nil%>
+            <%e5=0%>
+          <%end%>
+          <%=e2 -e5%>
+        </td>
+        <td>
+          <%e_extend_2=TbArbitmanSpend.sum("rmb_money",:conditions=>"used='Y' and recevice_code='#{@case.recevice_code}'")%>
+          <%if e_extend_2==nil%>
+            <%e_extend_2=0%>
+          <%end%>
+          <%e_extend_3=TbArbitcourtSpend.sum("rmb_money",:conditions=>"used='Y' and recevice_code='#{@case.recevice_code}'")%>
+          <%if e_extend_3==nil%>
+            <%e_extend_3=0%>
+          <%end%>
+          <%e_extend=e_extend_2 + e_extend_3%>
+          <%=e_extend%>
+        </td>
+        <td>
+          <%=e2 - e5 - e_extend%>
+        </td>
+      </tr>  
+      <tr>
+        <td>
+          合计
+        </td>
+        <td>
+          <%=(c2 -c5) + (d2 -d5) + (e2 -e5)%>
+        </td>
+        <td>
+          <%=c_extend + d_extend + e_extend%>
+        </td>
+        <td>
+          <%=((c2 - c5) + (d2 - d5) + (e2 - e5)) - (c_extend + d_extend + e_extend)%>
+        </td>
+      </tr>  
+      </tbody>
+    </table>
+    <%end%>
+  </body>
+</html>

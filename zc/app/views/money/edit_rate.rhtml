@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>汇率修改</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+ <br>
+  <div class="cDGray" align="center">汇率修改   <%=link_to "返回",:action=>"list"%></div>
+<div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :moneylog ,:url=>{:action=>"rate_update",:id=>params[:id]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            货币编码:
+           </th>
+          <td>
+            <%=@moneylog[:code]%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            货币名称:
+          </th>
+          <td>
+            <%=@moneylog[:name]%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            汇率:
+          </th>
+          <td>
+            <%=f.text_field(:rate)%>
+            <div style="color:red"><%=error_message_on(:moneylog,:rate)%></div>
+          </td>
+        </tr>
+       </table>
+       <br>
+       <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

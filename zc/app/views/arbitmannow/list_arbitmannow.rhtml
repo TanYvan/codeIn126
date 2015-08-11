@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员解聘续聘</title>
+     <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script language="JavaScript">
+          function checkall() {
+            var a='';
+            if (document.getElementById("cheall").value=='t' )
+            {
+              document.getElementById("cheall").value='f';
+            }
+            else
+            {
+              a='true';
+              document.getElementById("cheall").value='t';
+            }
+            var chec = document.getElementsByName("che");
+            for(i=0; i<chec.length; i++)
+            { 
+              chec[i].checked = a;
+            }
+         }
+        
+        function getcondi()
+        {
+            var chec = document.getElementsByName("che");
+            var a='';
+            for(i=0; i<chec.length; i++)
+            {
+                if (chec[i].checked == true)
+                    a=a+chec[i].value+',';
+            }
+            aa=a.substr(0, a.length -1 )
+            var c = document.getElementById("condi_k");
+            c.value=aa;
+            var cc = document.getElementById("condi_s");
+            cc.value=aa;
+       }
+    </script>     
+  </head>  
+  <body> 
+      <div class="title">仲裁员解聘续聘信息维护</div>
+   <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+    <div align="center">
+      <%=link_to "增聘仲裁员", :action => "arbitman_select"%>
+    </div>
+        <div style="color:red"><%=flash[:notice]%></div>
+     <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th>
+          <input type='checkbox' id='cheall' name='cheall' value='f' onclick = "checkall()"  />
+        </th>
+        <th nowrap>编码</th>
+        <th nowrap>姓名(系统唯一)</th>
+        <th nowrap>姓名拼音缩写</th>
+        <th nowrap>姓名(身份证)</th>
+        <th nowrap>年龄</th>
+        <th nowrap>续聘</th>
+        <th nowrap>解聘</th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%if @tb_arbitmannows == nil  
+          flash[:notice] = "没有仲裁员对象！"
+      else 
+          for tb_arbitmannow in @tb_arbitmannows %>                  
+              <tr class="row<%=i % 2%>">
+                <td>
+                  <input type='checkbox' id='che' name='che' value=<%=tb_arbitmannow.arbitman_num%> />
+                </td>
+                <td>
+                  <%=tb_arbitmannow.arbitman_num%>
+                </td>
+                <td><%=tb_arbitmannow.name %></td>
+                <td><%=tb_arbitmannow.spell %></td>
+                <td><%=tb_arbitmannow.name_idcard %></td>
+                <td><%=tb_arbitmannow.age %></td>
+                <td><%=link_to "续聘", :action => "new_continuation", :id => tb_arbitmannow.arbitman_num, :search_condit=>@search_condit,:order=>@order,:page=>@tb_arbitmannow_pages.current.number,:page_lines=>@page_lines %></td>
+                <td><%=link_to "解聘", :action => "new_dismiss", :id => tb_arbitmannow.arbitman_num, :search_condit=>@search_condit,:order=>@order,:page=>@tb_arbitmannow_pages.current.number,:page_lines=>@page_lines %></td>
+              </tr>
+              <%i=i+1%>
+          <%end%>
+      <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="5">
+          <%= link_to '上一页', { :page => @tb_arbitmannow_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_arbitmannow_pages.current.previous %>  
+          <%=pagination_links( @tb_arbitmannow_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @tb_arbitmannow_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_arbitmannow_pages.current.next %>
+
+          <% if @tb_arbitmannow_pages.current.previous or @tb_arbitmannow_pages.current.next%>
+            <form action="/arbitmannow/list_arbitmannow" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @tb_arbitmannow_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='跳转' />
+            </form>
+          <% end%>
+        </td>
+      </tr>
+    </tfoot>
+    </table>   
+    <table align="center">
+      <tr>
+        <td>
+              <%form_tag({:action=>'new_continuation_many'},{:onsubmit=>'getcondi()',:page=>@tb_arbitmannow_pages.current.number,:page_lines=>@page_lines}) do %>
+              <%=hidden_field_tag :condi_k ,''%>
+              <%=submit_tag '续聘所选'%>
+            <%end%>
+        </td>
+        <td>
+              <%form_tag({:action=>'new_dismiss_many'},{:onsubmit=>'getcondi()',:page=>@tb_arbitmannow_pages.current.number,:page_lines=>@page_lines}) do %>
+              <%=hidden_field_tag :condi_s ,''%>
+              <%=submit_tag '解聘所选'%>
+            <%end%>
+        </td>
+      </tr>      
+    </table>
+  </body>
+  <br>
+    <hr size="1" color="#99CCFF" noshade>
+     <iframe FRAMEBORDER=0 src="/arbitmannow/list_actions" noresize style="width:700px;height:400px" align=center> </iframe>
+ </html>

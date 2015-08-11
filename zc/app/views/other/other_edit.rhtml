@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改其他方面信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <div class="cDGray" align="center">修改其他方面信息(带<i>*</i>为必填项)  <%=link_to "返回",:action=>"other_list"%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+ <br>
+    <%form_for :other ,:url=>{:action=>"other_update",:id=>params[:id],:recevice_code=>params[:recevice_code]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            时间:
+           </th>
+          <td>
+            <%=f.text_field(:o_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('other_o_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>内容:
+          </th>
+          <td>
+            <%=f.text_area(:content)%><i><%=error_message_on(:other,:content)%></i>
+          </td>
+        </tr>
+       </table>
+        <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>
+

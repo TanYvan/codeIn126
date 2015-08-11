@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>业务专长</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">    
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">业务专长列表</span></div>
+    <br>
+    <div align="center">
+      <%= link_to "返回", :action => "show_arbitman", :id => @id %>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>序号</th>
+          <th nowrap>专业名称</th>
+        </tr>        
+      </thead>
+      <tbody>
+        <%i=1%>
+        <%j=0%>
+        <%if @specialities != nil
+            for speciality in @specialities %>
+                <tr class="row<%=i % 2%>">
+                  <td><%= i %></td>
+                  <% dictionary_text = TbDictionary.find_name_with_code(speciality.speciality_num) %>
+                  <td><%= dictionary_text.data_text %></td><!--专业名称-->
+                </tr>
+                <%i+=1%>
+                <%j+=1%>
+            <%end%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

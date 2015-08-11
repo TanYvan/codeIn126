@@ -1,0 +1,30 @@
+<%= error_messages_for 'page' %>
+
+<!--[form:page]-->
+<table class="list">
+  <tr>
+  <th>编码</th>
+  <td align=left><%= text_field 'page', 'code' %></td>
+  <tr>
+    <th>名称</th>
+    <td align=left><%= text_field 'page', 'name' ,:style=>"width:20em" %></td>
+  </tr>
+  <tr>
+    <th>Url</th>
+    <td align=left><%= text_field 'page', 'url' ,:style=>"width:20em" %></td>
+  </tr>
+  <tr>
+    <th>Controllers</th>
+    <td align=left><%= text_field 'page', 'controllers',:style=>"width:20em"  %></td>
+  </tr>
+  <tr>
+    <th>actions</th>
+    <td align=left><%= text_field 'page', 'actions' ,:style=>"width:20em"  %></td>
+  </tr>
+  <tr>
+  <th>状态</th>
+  <td align=left><%= select 'page', 'status' ,[['Y','Y'],['N','N']],:size=>100  %></td>
+  <tr>
+</table>
+<!--[eoform:page]-->
+

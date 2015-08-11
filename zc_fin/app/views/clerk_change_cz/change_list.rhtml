@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件助理变更--处长</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件助理变更</span></div>
+    <div align="center">
+    <div align="center" class="cDGray">
+      <%=link_to "返回",:action=>"list",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+      助理变更(案件咨询号：<%=TbCase.find(params[:case_id]).recevice_code%>)      
+    </div>
+    <br/>
+    <%=link_to  "创建", :action=>"new",:case_id=>"#{params[:case_id]}",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            变更时间
+          </th>
+          <th nowrap>
+            变更前
+          </th>
+          <th nowrap>
+            变更后
+          </th>
+          <th nowrap>
+            理由
+          </th>
+          <th nowrap>
+            操作情况
+          </th>
+          <th nowrap>
+            操作人
+          </th>
+          <th nowrap>
+            操作时间
+          </th>
+      </tr>
+      </thead>
+        <tbody>
+          <%i=0%>
+      <%for p in @change%>
+      <tr class="row2">
+        <td>
+          <%=p.changedate%>
+        </td>
+        <td>
+          <%if p.beforeclerk==''%>
+            
+          <%else%>
+            <%=User.find_by_code(p.beforeclerk).name%>
+          <%end%>
+        </td>
+        <td>
+          <%=User.find_by_code(p.afterclerk).name%>
+        </td>
+        <td >
+          <%=p.reason%>
+        </td>
+        <td >
+          <%=@falg[p.falg]%>
+        </td>
+        <td >
+          <%=User.find_by_code(p.u).name%>
+        </td>
+        <td >
+          <%=p.t.to_s(:db)%>
+        </td>
+      <%i=i+1%>
+      </tr>
+      <%end%>
+      </tbody>
+    </table>  
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>上传照片</title>
+    <%= javascript_include_tag  'navigator'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <link >
+  </head>
+  <body> 
+    <div style="color:red"><%=flash[:notice]%></div>
+    <input type="hidden" id="navigator_type" name="navigator[type]" value="">
+    <%if @tb_photo %>
+            <div align="center">   
+              <%if @tb_arbitman.pic=='Y'%>
+                <%=image_tag("/arbitman_pic/" + @tb_photo.pic_name, :class => "bevel")%>   
+              <%end%>              
+            </div>
+            <div align="center">
+              <%if @tb_arbitman.pic=='Y'%>
+                 <%=link_to "删除照片", :action => "delete_photo", :id => params[:id], :photo_id => @tb_photo %>
+              <%end%>
+            </div>   
+    <%else%>
+        <div align="center">
+          <%if @tb_arbitman.pic=='N'%>
+           <%= "尚未上传照片" %>
+          <%end%> 
+        </div>
+    <%end%>      
+    <div align="center">
+      <%if @tb_arbitman.pic=='N'%>
+        <%=link_to "上传照片", :action => "upload_photo", :id => params[:id]%>  
+      <%end%>      
+    </div>
+  </body>
+</html>
+

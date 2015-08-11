@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加专家咨询信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <script language="javascript">
+      function checkdate(){
+        if(document.getElementById("expert_convoke_date").value==""){
+          alert("请选择专家会议召开的时间");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+  <div class="cDGray" align="center">添加专家咨询信息(带<i>*</i>为必填项)   <%=link_to "返回",:action=>"expert_list"%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :expert ,:url=>{:action=>"expert_create"},:html =>{:onsubmit=>"return checkdate();"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th nowrap>
+            <i>*</i>提出人:
+           </th>
+          <td>
+            <%=f.text_field(:presenter)%><i><%=error_message_on(:expert,:presenter)%></i>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            提出时间:
+          </th>
+          <td>
+            <%=f.text_field(:present_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('expert_present_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            <i>*</i>拟交专家咨询的问题:
+          </th>
+          <td>
+            <%=f.text_area(:problem,:rows=>1)%><i><%=error_message_on(:expert,:problem)%></i>
+           </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            审批时间:
+          </th>
+          <td>
+            <%=f.text_field(:approval_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('expert_approval_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+
+        <tr>
+          <th nowrap>
+            会议资料交专家时间:
+          </th>
+          <td>
+             <%=f.text_field(:hand_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('expert_hand_date'),'yyyy-MM-dd')" >
+         </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            专家会议召开的时间:
+          </th>
+          <td>
+             <%=f.text_field(:convoke_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('expert_convoke_date'),'yyyy-MM-dd')" >
+         </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            与会专家名单:
+          </th>
+          <td>
+            <%=f.text_area(:alllist,:rows=>4)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            与会仲裁庭成员:
+          </th>
+          <td>
+            <%=f.text_area(:member,:rows=>4)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th nowrap>
+            会议记要:
+          </th>
+          <td>
+            <%=f.text_area(:summary,:rows=>4)%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            会议纪要转仲裁庭时间:
+          </th>
+          <td>
+             <%=f.text_field(:turn_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('expert_turn_date'),'yyyy-MM-dd')" >
+         </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            仲裁庭反馈信息:
+          </th>
+          <td>
+            <%=f.text_area(:feedback_information,:rows=>4)%>
+          </td>
+        </tr>
+       </table>
+       <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

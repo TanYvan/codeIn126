@@ -1,0 +1,19 @@
+<html>
+  <head><title></title>
+    <script language="javascript">
+      try
+      {
+        ie=new ActiveXObject("InternetExplorer.Application");
+        ie.Visible = true;
+        ie.navigate("<%=@url%>");
+        window.close();
+      }
+      catch (e)
+      {
+        alert("IE调用失败，请把浏览器的安全设置中的【ActiveX控件和插件】相关设置为启用状态。");
+      }
+    </script> 
+  </head>
+  <body>
+  </body>
+</html>

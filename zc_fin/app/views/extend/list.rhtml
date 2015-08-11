@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件报酬</title>
+    <script type="text/javascript" src="/javascripts/prototype.js" ></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+      function checkall() {
+        var a='';
+        if (document.getElementsByName("cheall").value == 't'){
+          document.getElementsByName("cheall").value = 'f';
+        }else{
+          a = 'true';
+          document.getElementsByName("cheall").value = 't';
+        }
+        var chec = document.getElementsByName("che");
+        for(i = 0; i < chec.length; i++){
+          chec[i].checked = a;
+        }
+      }
+
+      function getcondi(){
+        if(window.confirm('确认转为待发放吗？')) {
+        }else{
+          return false;
+        }
+        var chec = document.getElementsByName("che");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+',';
+
+        }
+        aa=a.substr(0, a.length -1 )
+        if (aa==''){
+          alert("请选择发放信息");
+          return false;
+        }
+        var c = document.getElementById("condi");
+        c.value=aa;
+
+        var commit = document.getElementsByName("commit");
+        for(i=0; i<commit.length; i++)
+        {
+          commit[i].style.display='none';
+        }
+
+      }
+
+      function to_excel(obj){
+        window.clipboardData.setData("Text",obj.innerHTML);
+        try {
+          var xls    = new ActiveXObject ( "Excel.Application" );
+         }catch(e) {
+             alert( "要打印该表，您必须安装Excel电子表格软件，同时浏览器须使用“ActiveX 控件”，您的浏览器须允许执行控件。");
+             return "";
+         }
+        xls.DisplayAlerts = false
+        xls.visible =true;  //设置excel为可见
+        var xlBook = xls.Workbooks.Add;
+        var xlsheet = xlBook.Worksheets(1);
+
+
+        xlsheet.Rows(1).RowHeight = 20;
+        xlsheet.Rows(1).Font.Size=12;
+        xlsheet.Rows(1).Font.Name="黑体";
+
+
+
+        xlsheet.Columns(4).ColumnWidth = 20;
+        xlsheet.Columns(5).ColumnWidth = 20;
+        xlsheet.Columns(6).ColumnWidth = 20;
+        xlsheet.Columns(7).ColumnWidth = 11;
+        xlsheet.Columns(8).ColumnWidth = 15;
+        xlsheet.Columns(9).ColumnWidth = 12;
+        xlsheet.Columns(10).ColumnWidth = 10;
+        xlsheet.Columns(11).ColumnWidth = 11;
+        xlsheet.Columns(13).ColumnWidth = 15;
+        xlsheet.Columns(14).ColumnWidth = 15;
+        xlsheet.Columns(16).ColumnWidth = 10;
+        xlsheet.Columns(17).ColumnWidth = 15;
+
+        xlsheet.Paste();
+
+
+        xlsheet.Columns(12).NumberFormatLocal = "0.00";
+        xlsheet.Columns(13).NumberFormatLocal = "0.00";
+        xlsheet.Columns(14).NumberFormatLocal = "0.00";
+        xlsheet.Columns(15).NumberFormatLocal = "0.00";
+        xlsheet.Columns(16).NumberFormatLocal = "0.00";
+        xlsheet.Columns(17).NumberFormatLocal = "0.00";
+        xlsheet.Columns(18).NumberFormatLocal = "0.00";
+
+        xlsheet.Columns(5).NumberFormatLocal = "@"; //设置第2列“账号”为文本格式
+        xlsheet.Columns(6).NumberFormatLocal = "@"; //设置第2列“身份证号”为文本格式
+
+        xlsheet.Hyperlinks.Delete();
+        window.clipboardData.setData("Text","")
+    }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件报酬（非本单位仲裁员）</span></div>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <div align="left"><%if @hant_search_1_text!=nil%>查询条件：<%=@hant_search_1_text%><%end%></div>
+      <div align="left"><%=button_to "全部计算", :action=>"tax_count", :hant_search_1_word=>params[:hant_search_1_word] ,:hant_search_1_text =>params[:hant_search_1_text], :search_condit => params[:search_condit]%></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr>
+          <th nowrap>
+            <input type='checkbox'  id='cheall' name='cheall' value='f'  onclick="checkall()"/>
+          </th>
+          <th nowrap>立案号</th>
+          <th nowrap>结案号</th>
+          <th nowrap>&nbsp;姓  名&nbsp;</th>
+          <th nowrap>类型</th>
+          <th nowrap>应发数额</th>
+          <th nowrap>应纳税所得额</th>
+          <th nowrap>扣税合计</th>
+          <th nowrap>实发数额</th>
+          <th nowrap>开户行名称</th>
+          <th nowrap>银行类别</th>
+          <th nowrap>银行编号</th>
+          <th nowrap>银行帐号</th>
+          <th nowrap>身份证号码</th>
+          <th nowrap>电子邮件地址</th>
+          <th nowrap>人员类别</th>
+          <th nowrap>咨询流水号</th>
+      </tr>
+      </thead>
+      <%tax=Tax.new%>
+        <tbody>
+          <%i=0%>
+      <% for pp in @provide_p %>
+          <% tb_arbitman = TbArbitman.find_by_code(pp.p) %>
+          <% user = User.find_by_code(pp.p) %>
+          <% tb_Remu23 = TbRemuneration23.find(pp.id_id) if pp.typ == '4' or pp.typ == '5'%>
+          <%ttt=TaxDetail.find_by_mark_and_name(pp.typ + "_" + pp.p_typ + "_" + pp.id_id.to_s ,"合计")
+          if ttt
+            ttt_rmb=ttt.rmb
+          else
+            ttt_rmb=0
+          end
+           %>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%if pp.typ=="1" %>
+            <%if ttt%>
+              <input type='checkbox'  id='che' name='che' value='<%=pp.typ%>_<%=pp.p_typ%>_<%=pp.id_id%>' />
+            <%end%>
+          <%else%>
+            <input type='checkbox'  id='che' name='che' value='<%=pp.typ%>_<%=pp.p_typ%>_<%=pp.id_id%>' />
+          <%end%>
+        </td>
+        <td><%=pp.case_code%></td><!-- 案号 -->
+        <td><%=pp.end_code%></td><!-- 结案号 -->
+        <td><!-- 姓名 -->
+          <%if pp.p_typ=="0001"%>
+          <% name = tb_arbitman.name%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <% name = user.name%>
+          <%else%>
+          <%end%>
+          <%= name %>
+        </td>
+        <td><!-- 类型 -->
+          <%if pp.typ=='4' or pp.typ=='5'%>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{tb_Remu23.typ}'").data_text%>
+          <%else%>
+            <%=@typ2[pp.typ]%>
+          <%end%>
+        </td>
+                <td><!-- 应发 -->
+          <%if pp.typ=="1" %>
+          <%= SysArg.round2f(pp.yf_rmb)%>
+          <%elsif pp.typ=="2" %>
+            <%= SysArg.round2f(pp.yf_rmb)%>
+          <%elsif pp.typ=="3"%>
+            <%=SysArg.round2f(pp.yf_rmb*-1) %>
+          <%elsif pp.typ=="4" or pp.typ=="5" %>
+            <%=SysArg.round2f(tb_Remu23.should_rmb)%>
+          <%else%>
+          <%end%>
+        </td>
+        <td><!-- 应纳税所得额 -->
+          <%if pp.typ == "1" %>
+          <%ynssde = SysArg.round2f(tax.get_tax_base_1(pp.yf_rmb))%>
+          <%elsif pp.typ=="2" or pp.typ=="3"%>
+            0.00
+          <%elsif pp.typ=="4"  or pp.typ=="5"%>
+            <%ynssde=SysArg.round2f(tb_Remu23.tax_base_rmb)%>
+          <%else%>
+          <%end%>
+          <%= ynssde %>
+        </td>
+        <td><!-- 应扣税款 -->
+          
+          <%if pp.typ=="1" %>
+          <%tax_a=TaxDetail.find(:first,:conditions=>["name='合计_理论值' and mark=?", pp.typ + "_" + pp.p_typ + "_" + pp.id_id.to_s])
+          tax_b=TaxDetail.find(:first,:conditions=>["name='合计' and mark=?", pp.typ + "_" + pp.p_typ + "_" + pp.id_id.to_s])
+          if (tax_a && tax_b && tax_a.rmb ==tax_b.rmb) || !tax_b%>
+            <%=ttt_rmb%>
+          <%else%>
+            <div style="color:red"> <%=ttt_rmb%> </div>
+          <%end%>
+           <%=button_to "编辑", {:action=> "edit_tax", :mark=>pp.typ + "_" + pp.p_typ + "_" + pp.id_id.to_s, :ynssde=>ynssde.to_s, :hant_search_1_word=>params[:hant_search_1_word] ,:hant_search_1_text =>params[:hant_search_1_text], :search_condit => params[:search_condit]},:method=>"post"%>
+          <%#=SysArg.round2f(tax.get_tax_1(ynssde.to_i,'N')) %>
+          <%elsif pp.typ=="2" or pp.typ=="3"%>
+            <%=0.00%>
+          <%elsif pp.typ=="4"  or pp.typ=="5"%>
+            <%=SysArg.round2f(tb_Remu23.tax_rmb)%>
+          <%else%>
+          <%end%>
+           
+        </td>
+        <td><!-- 实发数额 -->
+          <%if pp.typ=="1" %>
+            <%=SysArg.round2f(pp.yf_rmb - ttt_rmb)%>
+          <%elsif pp.typ=="2" %>
+            <%=SysArg.round2f(pp.yf_rmb)%>
+          <%elsif pp.typ=="3"%>
+            <%=SysArg.round2f(pp.yf_rmb)* -1%>
+          <%elsif pp.typ=="4"  or pp.typ=="5"%>
+            <%=SysArg.round2f(tb_Remu23.extend_rmb) %>
+          <%else%>
+          <%end%>
+        </td>
+        <td><!-- 银行 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankname%>
+          <%else%>
+            <%=user.bankname%>
+          <%end%>
+        </td>
+        <td><!-- 银行类别 -->
+          <%if pp.p_typ=="0001"%>
+          <%bank_typ=tb_arbitman.bank_typ%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <%bank_typ=user.bank_typ%>
+          <%else%>
+          <%end%>
+          <%if bank_typ!=nil and bank_typ!=''%>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='8201' and data_val='#{bank_typ}'").data_text%>
+          <%else%>
+          <%end%>
+        </td>
+        <td><!-- 银行编号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bank_code%>
+          <%else%>
+            <%=user.bank_code%>
+          <%end%>
+        </td>
+        <td><!-- 账号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.bankaccount%>
+          <%else%>
+            <%=user.bankaccount%>
+          <%end%>
+        </td>
+        <td><!-- 身份证号 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.id_card%>
+          <%else%>
+            <%=user.id_card%>
+          <%end%>
+        </td>
+        <td><!-- 邮件 -->
+          <%if pp.p_typ=="0001"%>
+            <%=tb_arbitman.email%>
+          <%else%>
+            <%=user.email%>
+          <%end%>
+        </td>
+        <td><!-- 人员类别 -->
+          <%=@typ1[pp.p_typ]%>
+        </td>
+        <td><%=pp.recevice_code%></td><!-- 咨询流水号 -->
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <%form_tag({:action=>'extend_do'},{:onsubmit=>'return getcondi()'}) do %>
+       <%=hidden_field_tag :condi,''%>
+       <%=submit_tag '转为待发放'%>
+    <%end%>
+    <div align="center" id ="excel" style="display: none;">
+        <div id="xxx"></div>
+    </div>
+    <div align="center">
+      <%= link_to_remote "导出所有数据为Excel文档",
+        :url=>{:action=>'list_remote',:search_condit=>@search_condit,:hant_search_1_word => params[:hant_search_1_word] },
+        :update=>"xxx",
+        :before=>"",
+        :complete => "to_excel($('xxx'))" %>
+    </div>
+  </body>
+</html>

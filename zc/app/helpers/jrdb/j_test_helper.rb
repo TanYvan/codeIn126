@@ -1,0 +1,2 @@
+module Jrdb::JTestHelper
+end

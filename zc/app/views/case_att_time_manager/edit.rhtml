@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>附件上传的时间管理</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script src="/javascripts/pub.js"  type="text/javascript"></script>
+  </head>
+  <body>
+    <br/>
+    <div class="cDGray" align="center">
+      附件上传的时间管理 <%=link_to "返回",:action=>"list"%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <br/>
+    <%form_for :att_time ,:url=>{:action=>"update",:id=> @att_time.id} do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            附件类型:
+          </th>
+          <td>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='9105' and data_val='#{@att_time.typ_code}'").data_text%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            上传截至时间:
+          </th>
+          <td>
+            <%=f.text_field(:up_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('att_time_up_date'),'yyyy-MM-dd')" />
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %></div>
+    <%end%>
+  </body>
+</html>

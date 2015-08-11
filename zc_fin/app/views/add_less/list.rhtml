@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员评价加减分统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script type="text/jscript" src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+
+    <div class="title"><span class="cBlue">仲裁员评价加减分统计</span></div>
+
+    <%form_tag :url=>{:action=>"list"} do%>仲裁员姓名拼音缩写：
+      <%=text_field_tag(:spell,@spell)%>
+      <%=submit_tag "查询" %>
+    <%end%>
+    <%if !(@spell.blank?)%>
+      <div align="center">仲裁员<%=@name%>评价表:</div>
+    <%end%>
+    <br/>
+    <table cellspacing="1" class="adminlist" style=" width: 60%">
+      <thead>
+        <tr>
+          <th nowrap>立案号</th>
+          <th nowrap>姓名</th>
+          <th nowrap>加分数</th>
+          <th nowrap>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for a in @add_less1%>
+          <tr class="row<%=i % 2%>" >
+            <%aa=TbCase.find_by_recevice_code(a.recevice_code)%>
+            <td nowrap>
+              <%=aa.case_code%>
+            </td>
+            <td nowrap><%=a.name%></td>
+            <td nowrap><%=a.score%></td>
+            <td nowrap>
+              <%=a.remark%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">
+            <%= link_to '上一页', { :page => @add_less1_pages.current.previous ,:spell=>@spell,:page_lines=>@page_lines  } if @add_less1_pages.current.previous %>
+            <%=pagination_links( @add_less1_pages,{:params=>{:spell=>@spell,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @add_less1_pages.current.next ,:spell=>@spell,:page_lines=>@page_lines  } if @add_less1_pages.current.next %>
+
+            <%if @add_less1_pages.current.previous or @add_less1_pages.current.next%>
+              <form action="/add_less/list" method="get" onsubmit="return page_check('page_lines','page');">
+                每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @add_less1_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    <br/>
+    <br/>
+
+    <table cellspacing="1" class="adminlist" style=" width: 60%">
+      <thead>
+        <tr>
+          <th nowrap>立案号</th>
+          <th nowrap>姓名</th>
+          <th nowrap>减分数</th>
+          <th nowrap>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for b in @add_less2%>
+          <tr class="row<%=i % 2%>" >
+            <%bb=TbCase.find_by_recevice_code(b.recevice_code)%>
+            <td nowrap>
+              <%=bb.case_code %>
+            </td>
+            <td nowrap><%=b.name%></td>
+            <td nowrap><%=b.score%></td>
+            <td nowrap>
+              <%=b.remark%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">
+            <%= link_to '上一页', { :page => @add_less2_pages.current.previous ,:spell=>@spell,:page_lines=>@page_lines  } if @add_less2_pages.current.previous %>
+            <%=pagination_links( @add_less2_pages,{:params=>{:spell=>@spell,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @add_less2_pages.current.next ,:spell=>@spell,:page_lines=>@page_lines  } if @add_less2_pages.current.next %>
+
+            <%if @add_less2_pages.current.previous or @add_less2_pages.current.next%>
+              <form action="/add_less/list" method="get" onsubmit="return page_check('page_lines','page');">
+                每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @add_less2_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

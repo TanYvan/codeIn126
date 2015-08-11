@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>管辖权决定详细信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">管辖权决定详细信息</span></div>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案日期</th>
+          <th  nowrap>立案号</th>
+          <!--th >提出人类型</th-->
+          <th >提出人名称</th>
+          <th>异议提出日期</th>
+          <th>决定作出日期</th>
+          <th  nowrap>助理</th>
+          <th>申请人</th>
+          <th>被申请人</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for a in @juri%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=a.nowdate%></td>
+            <td nowrap><%=a.case_code %></td>
+            <!--td nowrap><#%if a.submitman=='0001' %>申请人<#%else%>被申请人<#%end%></td-->
+            <td nowrap><%=a.request_man %></td>
+            <td>
+              <%=TbJurisdiction.find(:first,:conditions=>["used='Y' and recevice_code=?",a.recevice_code]).request_date%>
+            </td>
+            <td><%=a.decide_date %></td>
+            <td nowrap><%=User.find(:first,:conditions=>["used='Y' and code=?",a.clerk]).name %></td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=1")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=2")%>
+              <%ttpp=''%>
+              <%for tp in @party2%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+             <%=ttpp%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

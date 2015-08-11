@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>仲裁员报酬调整</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript">
+      function check(){
+        new2 = document.getElementById("new2").value;
+        if(new2  == "" || new2  == null ){
+          alert("请输入值！");
+          return false;
+        }
+        if(!/^-?\d+[\.\d]?\d{0,2}$/.test(new2)){
+          alert("请输入数字！");
+          return false;
+        }
+        old = document.getElementById("old").value;
+        //change = document.getElementById("new").value;
+        change = new2 - <%=@remun.gc_rmb%>;
+        document.getElementById("new").value = change;
+        if(change == "" || change == null ){
+          alert("请输入值！");
+          return false;
+        }
+        if(!/^-?\d+[\.\d]?\d{0,2}$/.test(change)){
+          alert("请输入数字！");
+          return false;
+        }
+        bonus = Math.abs((100*change)/old-100).toFixed(12);
+        if((change-old)>0){
+          document.getElementById("remun_bonus").value = bonus;
+          document.getElementById("remun_penalty").value = 0;
+          if (document.getElementById("remun_reason").value ==""  || document.getElementById("remun_reason").value == null ){
+            alert("请输入调整原因！");
+            return false;
+          }
+          return true;
+        }else{
+          document.getElementById("remun_penalty").value = bonus;
+          document.getElementById("remun_bonus").value = 0;
+          if ( change-old !=0 && (document.getElementById("remun_reason").value ==""  || document.getElementById("remun_reason").value == null )){
+            alert("请输入调整原因！");
+            return false;
+          }
+          return true;
+        }
+        return false;
+      }
+    </script>
+  </head>
+  <body>
+  <div class="title"><span class="cBlue">仲裁员报酬调整</span></div>
+  <div align="center">
+ <%=link_to "返回",:action=>"list_4"%>
+  </div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :remun ,:url=>{:action=>"update_4",:id=>params[:id]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>办案人:</th>
+          <td>
+          <%if @remun.typ=='0001'%>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{TbCasearbitman.find(:first,:conditions=>"used='Y' and recevice_code='#{@remun.recevice_code}' and arbitman='#{@remun.p}'",:order=>"arbitmantype").arbitmantype}'").data_text%>
+          <%elsif @remun.typ=='0002'%>
+            助理
+          <%else%>
+          <%end%>
+        </td>
+        </tr>
+        <tr>
+          <th>姓名:</th>
+           <td>
+          <%if @remun.typ=='0001'%>
+            <%=TbArbitman.find_by_code(@remun.p).name%>
+          <%elsif @remun.typ=='0002'%>
+            <%=User.find_by_code(@remun.p).name%>
+          <%else%>
+          <%end%>  
+          </td>
+        </tr>
+        <tr>
+          <th>基本报酬数额：</th>
+          <td>
+            <input type="text" id="old" disabled="disabled" value="<%=@remun.zc_rmb%>" />
+          </td>
+        </tr>
+        <tr>
+          <th>基本报酬调整为：</th>
+          <td>
+            <input type="text" id="new"  disabled="disabled"  name="new" value="<%=(@remun.zc_rmb * (1 + @remun.bonus/100 - @remun.penalty/100)).round(2) %>" onchange="check();"/>
+          </td>
+        </tr>
+        <tr>
+          <th>基本报酬增加比例：</th>
+          <td>
+            <%=f.text_field(:bonus)%>
+            <div style="color:red"><%=error_message_on(:remun,:bonus)%></div>                                              
+          </td>
+        </tr>
+        <tr>
+          <th>基本报酬减少比例：</th>
+          <td>
+            <%=f.text_field(:penalty)%>
+            <div style="color:red"><%=error_message_on(:remun,:penalty)%></div>                                              
+          </td>
+        </tr>
+        <tr>
+          <th>稿酬：</th>
+          <td>
+            <%=@remun.gc_rmb%>                                        
+          </td>
+        </tr>
+        <tr>
+          <th>总报酬额调整为：</th>
+          <td>
+            <input type="text" id="new2" name="new2" value="<%=(@remun.zc_rmb * (1 + @remun.bonus/100 - @remun.penalty/100)).round(2) + @remun.gc_rmb %>" onchange="check();"/>
+          </td>
+        </tr>
+        <tr>
+          <th>调整原因：</th>
+          <td>
+            <%=f.text_area(:reason,:rows=>4)%>                                                   
+            <div style="color:red"><%=error_message_on(:remun,:reason)%></div>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交",:onclick =>"return check();" %>
+      </div>
+    <%end%>
+  </body>
+</html>

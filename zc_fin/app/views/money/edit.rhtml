@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>币种信息维护</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+ <br>
+  <div class="cDGray" align="center">币种信息维护<%=link_to "返回",:action=>"list"%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :money ,:url=>{:action=>"update",:id=>@money.id}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            货币编码:
+           </th>
+          <td>
+            <%=@money.code%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            货币名称:
+          </th>
+          <td>
+            <%=@money.name%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            汇率:
+          </th>
+          <td>
+            <%=@money["rate"]%>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_field(:remark)%>
+          </td>
+        </tr>
+       </table>
+       <br>
+       <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>
+

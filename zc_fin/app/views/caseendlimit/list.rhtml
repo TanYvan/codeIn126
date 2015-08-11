@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>在办案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">所有在办案件</span></div>
+    <div style="color:red"><%=flash[:notice] -%></div>
+    <br/>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name -%>
+    </div>
+    <br/>
+    <div align="left"><%if @hant_search_1_text!=nil%>&nbsp;查询条件：<%=@hant_search_1_text%><%end%></div>
+    <div align="left">&nbsp;案件数量：<%= @ca.length -%></div>
+    <div align="left">&nbsp;变色说明：对于普通程序，2个月内到期为绿色，1个月内到期为黄色，半个月到期为红色。对于简易程序，一个月到期为绿色，半个月到期为黄色，一周到期为红色。</div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>
+            <%if @order=="tb_cases_nowdate desc"%>
+              <%=link_to '立案日期↑',:action=>"list",:order=>"tb_cases_nowdate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="tb_cases_nowdate asc"%>
+              <%=link_to '立案日期↓',:action=>"list",:order=>"tb_cases_nowdate desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '立案日期',:action=>"list",:order=>"tb_cases_nowdate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="right(tb_cases_case_code,7) desc"%>
+              <%=link_to '立案号↑',:action=>"list",:order=>"right(tb_cases_case_code,7) asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="right(tb_cases_case_code,7) asc"%>
+              <%=link_to '立案号↓',:action=>"list",:order=>"right(tb_cases_case_code,7) desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '立案号',:action=>"list",:order=>"right(tb_cases_case_code,7) asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>仲裁程序</th>
+          <th nowrap>案件阶段</th>
+          <th nowrap>审限或最终延期日期</th>
+          <th nowrap>申请人</th>
+          <th nowrap>被申请人</th>
+          <th nowrap>办案助理</th>
+          <th nowrap>选择</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% i=0 -%>
+        <% for c in @case_4 -%>
+          <%   da = PubTool.getd(c.recevice_code)  -%>
+        <tr
+          <%  if da != ""  -%>
+             class="<% if c.aribitprog_num=='0001' or c.aribitprog_num=='0003' or c.aribitprog_num=='0005' or c.aribitprog_num=='0007' -%>
+              <%  if da > 30 and da <= 60  -%>
+                    row5
+                  <%  elsif da > 15 and da <= 30  -%>
+                    row3
+                  <%  elsif da <= 15  -%>
+                    row4
+                  <% end -%>
+                <% else -%>
+                  <% if da>15 and da<=30 -%>
+                    row5
+                  <% elsif da>7 and da<=15 -%>
+                    row3
+                  <% elsif da<=7 -%>
+                    row4
+                  <% end -%>
+                <% end -%>
+                "
+              <%  else -%>
+                class="row<%=i % 2 -%>"
+              <%  end  -%>>
+              <td nowrap><%=c.nowdate -%></td>
+              <td nowrap><%=c.case_code -%></td>
+              <td><%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text -%>
+              </td><% s = TbCase.find_by_recevice_code(c.recevice_code).stoped -%>
+              <td><%=@state[c.state.to_i] -%><%if s==1-%>(中止)<%end-%></td>
+              <td nowrap><%=TbCase.find_by_recevice_code(c.recevice_code).finally_limit_dat -%></td>
+              <td><%  @tp = TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id") -%>
+                <%  ttpp = ''  -%>
+                <%  for tp in @tp  -%>
+                  <%  ttpp = ttpp + tp.partyname + " <br>"  -%>
+                <%  end  -%>
+                <% if ttpp!=''  -%>
+                  <%  ttpp = ttpp.slice(0,ttpp.length - 5)  -%>
+                <%  end  -%>
+                <%= ttpp  -%>
+              </td>
+              <td><% @tp = TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id") -%>
+                <% ttpp='' -%>
+                <% for tp in @tp -%>
+                  <% ttpp=ttpp + tp.partyname + " <br>"  -%>
+                <% end -%>
+                <% if ttpp!='' -%>
+                  <% ttpp=ttpp.slice(0,ttpp.length - 5)  -%>
+                <% end -%>
+                <%=ttpp -%>
+              </td>
+              <td>
+                <%= User.find_by_code(c.clerk).name  -%>
+              </td>
+              <td>
+                <%=button_to "选择",:controller=>"caseendlimit",:action=>"detail",:recevice_code=>c.recevice_code,:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:hant_search_1_text=>@hant_search_1_text}-%>
+              </td>
+            </tr>
+          <% i=i+1 -%>
+        <% end -%>
+      </tbody>
+      <% if @case_4.length!=0 -%>
+        <tfoot>
+          <tr>
+            <td colspan="7" align="right">
+              <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:hant_search_1_text=>@hant_search_1_text} if @case_pages.current.previous  -%>
+              <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:hant_search_1_text=>@hant_search_1_text }}) -%>
+              <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:hant_search_1_text=>@hant_search_1_text } if @case_pages.current.next  -%>
+
+              <% if @case_pages.current.previous or @case_pages.current.next -%>
+                <form action="/caseendlimit/list" method="get" onsubmit="return page_check('page_lines','page');">
+                  每页<input type=text id='page_lines' name='page_lines' value=<%=@page_lines -%> size=5 class="SingleLineInput" />条记录,第
+                  <input type=text id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number  -%> />
+                  <input type=hidden name='search_condit' value="<%=@search_condit -%>" />
+                  页
+                  <input type=hidden name='order' value="<%=@order -%>" />
+                  <input type=hidden name='hant_search_1_text' value="<%=params[:hant_search_1_text] -%>" />
+                  <input type='submit' value='确定' />
+                </form>
+              <% end -%>
+            </td>
+          </tr>
+        </tfoot>
+      <% end -%>
+    </table>
+    </body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>仲裁员绩效评价</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+  <div class="cDGray">仲裁员绩效评价 <%=link_to "返回",:action=>"list_2",:evaluate => params[:evaluate], :yyy => params[:yyy] %></div><br/>
+  <div style="color:red"><%=flash[:notice]%></div>
+    <%  form_for :remun ,:url=>{:action=>"update_2",:id => params[:id],:old_rmb=>@remun.rmb, :yyy => params[:yyy], :evaluate => params[:evaluate]} do |f| %>
+      <%
+        @rs1  = TbDictionary.find(:all, :conditions => "typ_code='9026' and state='Y' and used='Y'", :order => 'data_val', :select => "data_val,data_text").collect{|p|[p.data_text,p.data_val]}
+      %>
+      <table class="list">
+        <tr>
+          <th>仲裁员:</th>
+          <td><%=TbArbitman.find_by_code(@remun.p_code).name%></td>
+        </tr>
+        <tr>
+          <th>等级:</th>
+          <td>
+            <%= f.select(:grade, @rs1) %>
+            <div style="color:red"><%= error_message_on(:remun,:grade) %></div>
+          </td>
+        </tr>
+        <tr>
+          <th>备注:</th>
+          <td>
+            <%=f.text_area(:remark,"cols"=>'50',"rows"=>"5")%>
+            <div style="color:red"><%= error_message_on(:remun,:remark) %></div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"> <div align="center"><%=submit_tag "提交" %></div></td>
+        </tr>
+      </table>
+    <%end%>
+  </body>
+</html>

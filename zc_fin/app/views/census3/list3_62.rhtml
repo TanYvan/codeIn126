@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>结案查询</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <table><tr><td>
+          <div class="title"><span class="cBlue">结案查询</span></div>
+          <div align="left">
+            <%form_tag :url=>{:action=>"list3_62"} do%>
+              <table>
+                <tr><td align="right">结案时间：</td><td><%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+                    <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+                    至
+                    <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+                    <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+                  </td></tr>
+                <tr><td nowrap align="right">
+                    结案方式：</td>
+                  <td align="left" nowrap><%endstyle=TbDictionary.find(:all,:order=>"data_val",:conditions=>"typ_code='8117' and state='Y' and data_val<>'0003'")%>
+                    <%=select_tag(:endstyle,options_for_select(endstyle.collect{|p|[p.data_text,p.data_val]}.insert(0,["全部",'']),@endstyle))%>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="right">总案号：</td><td><%=text_field_tag(:general_code,@general_code)%></td>
+                </tr>
+                <tr>
+                  <td align="right">受案号：</td><td><%=text_field_tag(:case_code,@case_code)%></td>
+                </tr>
+                <tr>
+                  <td align="right">结案号：</td><td><%=text_field_tag(:end_code,@end_code)%></td>
+                </tr>
+                <tr>
+                  <td align="right">助理：</td><td><%=select_tag "clerk",options_for_select(@clerk_all.collect{|p|[p.name,p.code]}.insert(0,["全部",""]),@clerk)%></td>
+                </tr>
+                <tr>
+                  <td align="right">提前结案天数：</td><td><%=text_field_tag(:seday,@seday)%></td>
+                </tr>
+                <tr><td colspan="2" align="center"><%=submit_tag "查询" %></td></tr>
+              </table>
+
+            <%end%>
+            <i><%=flash[:notice]%></i>
+            <br/>
+            <br/>
+            案件数量：<%=@endcase.length%>件
+            <br/>
+            <br/>
+          </div>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr >
+                <th nowrap>
+                  结案时间
+                </th>
+                <th nowrap>
+                  结案号
+                </th>
+                <th nowrap>
+                  受案号
+                </th>
+                <th nowrap>
+                  申请人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </th>
+                <th nowrap>
+                  被申请人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </th>
+                <th nowrap>
+                  案件争议类型&nbsp;
+                </th>
+                <th nowrap>
+                  争议金额
+                </th>
+                <th nowrap>
+                  仲裁庭
+                </th>
+                <th nowrap>
+                  经办人
+                </th>
+                <th nowrap>
+                  结案方式
+                </th>
+                <th>
+                  审限或延期日期
+                </th>
+                <th>
+                  提前结案天数
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <%@arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"}%>
+              <%i=0%>
+              <%for c in @endcase%>
+                <tr class="row<%=i % 2%>">
+                  <td nowrap>
+                    <%=c.decideDate%>
+                  </td>
+                  <td nowrap>
+                    <%=c.arbitBookNum%>
+                  </td>
+                  <td nowrap>
+                    <%=link_to "#{c.case_code}",{:controller=>"every_casebase",:action=>"every_list",:recevice_code=>c.recevice_code},:target=>"_black"%>
+                  </td>
+                  <td>
+                    <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype=1")%>
+                    <%ttpp=''%>
+                    <%for tp in @tp%>
+                      <%if tp!=nil%>
+                        <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                      <%end%>
+                    <%end%>
+                    <%=ttpp%>
+                  </td>
+                  <td>
+                    <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype=2")%>
+                    <%ttpp=''%>
+                    <%for tp in @party2%>
+                      <%if tp!=nil%>
+                        <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                      <%end%>
+                    <%end%>
+                    <%=ttpp%>
+                  </td>
+                  <%@case=TbCase.find_by_recevice_code(c.recevice_code)%>
+                  <td>
+                    <%dat=TbDictionary.find(:first,:conditions=>["typ_code='0002' and data_parent=? and data_val=? and state='Y'",@case.casetype_num,@case.casetype_num2])%>
+                    <%if dat!=nil%>
+                      <%=dat.data_text%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%amount=TbCase.find_by_recevice_code(c.recevice_code).amount%>
+                    <%@amount_1 = TbCaseAmountDetail.find(:first,:conditions=>["used='Y' and recevice_code=? and partytype=1 and typ<>'0003' and currency<>'0001'",c.recevice_code])  %>
+                    <%if @amount_1!=nil%>
+                      <strong><%=SysArg.compart2(amount)%></strong>
+                    <%else%>
+                      <%=SysArg.compart2(amount)%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",c.recevice_code])%>
+                    <%if @arbit.empty?%>
+                      未组成
+                    <%else%>
+                      <%for arb in @arbit%>
+                        <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+                        <br/>
+                      <%end%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%@a=User.find_by_code(@case.clerk)%>
+                    <%if @a!=nil%>
+                      <%=@a.name%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%=TbDictionary.find(:first,:conditions=>["typ_code='8117' and state='Y' and data_val=?",c.endStyle]).data_text%>
+                  </td>
+                  <td nowrap="nowrap"><%=c.finally_limit_dat %></td>
+                  <td nowrap="nowrap">
+                    <%=c.df%>
+                  </td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>            
+          </table>
+        </td></tr></table>
+  </body>
+</html>

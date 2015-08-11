@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员选择</title>
+    <%= javascript_include_tag :defaults%>
+    <base   target="_self"/>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+
+    <div class="title"><span class="cBlue"><div  align="center">仲裁员信息</div></span></div>
+    <form action="wuser_select" method="post" name="form1">
+    姓名<input type="text" id="name" name="name" value="<%=@name%>"/>   <input type="submit"  value="查询"/>
+    </form>
+    <div id='pv_set'>
+      <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+              选择
+          </th>
+          <th nowrap>
+            编号
+          </th>
+          <th nowrap>
+            名称
+          </th>
+          <th nowrap>
+            姓名（身份证）
+          </th>
+          <th nowrap>
+            身份证号
+          </th>
+          <th nowrap>
+            手机
+          </th>
+          <th nowrap>
+            email
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @user%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%@a=c.code+",,"+c.name %>
+              <input type='button' value="选择" onclick="window.returnValue='<%=@a  %>';window.close();"/>
+            </td>
+            <td>
+              <%=h c.code %>
+            </td>
+            <td>
+              <%=h c.name %>
+            </td>
+            <td>
+              <%=h c.name_idcard %>
+            </td>
+            <td>
+              <%=h c.id_card %>
+            </td>
+            <td >
+              <%=h c.telephone %>
+            </td>
+            <td>
+              <%=h c.email %>
+            </td>
+
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <tfoot>
+      <tr>
+        <td colspan="8">
+          <%= link_to '上一页', { :page => @user_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:name=>params[:name]  } if @user_pages.current.previous %>
+          <%=pagination_links( @user_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:name=>params[:name]   }})%>
+          <%= link_to '下一页', { :page => @user_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:name=>params[:name]   } if @user_pages.current.next %>
+
+          <%if @user_pages.current.previous or @user_pages.current.next%>
+            <form action="/wuser_select/wuser_select" method="get" onsubmit="return page_check('page_lines','page');">
+              每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+              <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @user_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type=hidden name='name' value="<%=params[:name]%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </tfoot>
+    </div>
+
+  </body>
+</html>

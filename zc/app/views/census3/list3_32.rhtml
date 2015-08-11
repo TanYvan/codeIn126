@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>延期案件查询</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">延期案件查询</span></div>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+    <i><%=flash[:notice]%></i>
+    <div align="left"><%if @hant_search_1_text!=nil%>&nbsp;查询条件：<%=@hant_search_1_text%><%end%></div>
+    <div align="left">案件数量：<%=@ni.length%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          
+          <th nowrap>立案号</th>
+          <th  nowrap>申请人</th>
+          <th >被申请人</th>
+                <th nowrap>
+                  <%if @order=="clerk desc"%>
+                                       
+                    <%=link_to '助理↑',:action=>"list3_32",:order=>"clerk asc", :page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:hant_search_1_text=>@hant_search_1_text,:hant_search_1_r => @hant_search_1_r  %>
+                  <%elsif @order=="clerk asc"%>
+                    <%=link_to '助理↓',:action=>"list3_32",:order=>"clerk desc", :page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:hant_search_1_text=>@hant_search_1_text,:hant_search_1_r => @hant_search_1_r %>
+                  <%else%>
+                    <%=link_to '助理',:action=>"list3_32",:order=>"clerk asc", :page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:hant_search_1_text=>@hant_search_1_text,:hant_search_1_r => @hant_search_1_r %>
+                  <%end%>
+                </th>
+					<th nowrap>立案日期</th>
+          <th nowrap>组庭日期</th>
+          <th>仲裁庭</th>
+          <th>(原)审限日期</th>
+          <th nowrap>提出方</th>
+          <th nowrap>提出日期</th>
+          <th nowrap>延期后日期</th>
+          <th >组庭到首次开庭之间天数</th>	
+          <th >两次以上开庭的，每次开庭之间间隔天数</th>	
+          <th >最后一次开庭到仲裁庭提交裁决稿天数</th>	
+          <th >首次提交校核日期</th>	
+          <th >校核返回日期</th>	
+          <th >结案日期</th>	
+          <th >管辖权异议提出时间</th>	
+          <th >管辖权异议草稿完成时间</th>	
+          <th >管辖权异议校核完成时间</th>	
+          <th >说明</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <%@arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"}%>
+        <%for s in @case%>
+          <tr>
+            
+            <td nowrap><%=link_to "#{s.case_code}",{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>s.recevice_code},:target=>"_black"  %></td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{s.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{s.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td nowrap><% s_clerk =User.find(:first,:conditions=>["used='Y' and code=?",s.clerk])%> <%=s_clerk.name if s_clerk%></td>
+            <td nowrap><%=s.nowdate%></td>
+            <%@caseorg=TbCaseorg.find(:first,:conditions=>["used='Y' and recevice_code=?", s.recevice_code])%>            
+            <td nowrap>
+              <%if @caseorg!=nil%><%=@caseorg.orgdate%><%end%>
+            </td>
+            <td nowrap>
+              <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",s.recevice_code])%>
+              <%if @arbit.empty?%>
+                未组成
+              <%else%>
+                <%for arb in @arbit%>
+                  <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+                  <br/>
+                <%end%>
+              <%end%>
+            </td>
+
+
+            <td nowrap>
+              <%if @caseorg!=nil%><%=@caseorg.limitdate%><%end%>
+            </td>
+            <% @tb_detection=TbCasedelay.find(:all,:conditions=>["used='Y' and recevice_code=?",s.recevice_code])   %>
+            <td nowrap>
+              <%for ss in @tb_detection%>
+                <%a=TbDictionary.find(:first,:conditions=>"typ_code='8110' and state='Y' and data_val='#{ss.requestman_typ}'")%>
+                <%if a!=nil%><%=a.data_text%><br/><%end%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%for ss in @tb_detection%>
+                <%=ss.requestdate%><br/>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%for ss in @tb_detection%>
+                <%=ss.delayDate%><br/>
+              <%end%>
+            </td>
+ 
+          <td> </td>	
+          <td> </td>	
+          <td> </td>	
+          <td> </td>	
+          <td> </td>	
+          <td nowrap><%if s.decideDate!=nil%><%=s.decideDate%><%end%></td> 	
+          <td> </td>	
+          <td> </td>	
+          <td> </td>	
+          <td> </td>
+          </tr>
+        <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="11">
+          <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.previous %>
+          <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.next %>
+
+          <%if @case_pages.current.previous or @case_pages.current.next%>
+            <form action="/census3/list3_32" method="get" onsubmit="return page_check('page_lines','page');">
+              每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+              <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </tfoot>
+    </table>
+  </body>
+</html>

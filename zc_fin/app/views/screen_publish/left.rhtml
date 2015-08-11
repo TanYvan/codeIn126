@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body style="overflow-x:hidden" background="#F1F6F9"  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+    <SCRIPT language=JavaScript>
+      function t_clicked(id){
+        document.getElementById("new_id").value=id;
+        document.form1.submit();
+      }
+    </SCRIPT>
+    <%news=TbNew.find(:all,:conditions=>"used='Y' and forbidden='0001'",:order=>"create_date")%>
+    <div id="content_ny">
+      <div id="left">
+        <div id="left_sed_list">
+          <ul id="nav2">
+            <%for n in news%>
+              <li>
+                <a  onclick="t_clicked(<%=n.id%>)"><%=n.title%></a>
+              </li>
+            <%end%>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <form action="/screen_publish/right" method="post" name="form1" target="mainFrame">
+      <input type="hidden" id="new_id" name="new_id" value=""/>
+    </form>
+  </body>
+</html>

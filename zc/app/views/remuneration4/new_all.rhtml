@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>批量创建 裁决书和管辖决定等的起草和修改</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function r_s(v){
+        if (document.getElementById("remun_p_typ_id_"+v).value=='0001'){
+          document.getElementById("remun_p_id_"+v).style.display=''
+          document.getElementById("remun_p_2_id_"+v).style.display='none'
+          document.getElementById("remun_p_2_id_"+v).value=''
+        }
+        else{
+          document.getElementById("remun_p_id_"+v).style.display='none'
+          document.getElementById("remun_p_id_"+v).value=''
+          document.getElementById("remun_p_2_id_"+v).style.display=''
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  裁决书和管辖决定等的起草和修改(带<i>*</i>为必填项)   <%=link_to "返回",:action=>"list"%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :remun ,:url=>{:action=>"create_all"}  do |f|%>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+           <th nowrap>
+              事项
+            </th>
+            <th nowrap>
+              人员类型
+            </th>
+            <th nowrap>
+              人员
+            </th>
+            <th nowrap>
+              备注
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+        <%
+          user_code=TbCase.find_by_recevice_code(session[:recevice_code_1]).clerk
+          user_name=User.find_by_code(user_code).name
+          @pa=UserDuty.find_by_sql("select users.code as code,users.name as name from users,user_duties where users.used='Y' and users.states='Y'  and users.code<>'#{user_code}' and  users.code=user_duties.user_code and user_duties.duty_code='0003' order by users.name").collect{|p|[p.code,p.name]}.insert(0,[user_code,user_name]).insert(0,["",""])
+          @pb=TbCasearbitman.find_by_sql("select tb_arbitmen.code as code ,tb_arbitmen.name as name   from tb_casearbitmen ,tb_arbitmen where tb_casearbitmen.recevice_code='#{session[:recevice_code_1]}' and tb_casearbitmen.used='Y' and tb_casearbitmen.arbitman=tb_arbitmen.code order by tb_arbitmen.name" ).collect{|p|[p.code,p.name]}.insert(0,["",""])
+        %>
+        <%i=1%>
+        <%for p in @remun%>
+          <tr class="row<%=i % 2%>">
+              <input type="hidden" id="hid_id_<%=p.data_val%>" name="hid_name_<%=p.data_val%>" value="<%=p.data_val%>" />
+              <td>
+                <select id="remun_typ_id_<%=p.data_val%>" name="remun_typ_name_<%=p.data_val%>" >
+                  <%j=1%>
+                  <%chec=''%>
+                  <%for pp in @remun%>
+                    <%if j==i%>
+                      <%chec="selected='selected'" %>
+                    <%else%>
+                      <%chec='' %>
+                    <%end%>
+                    <option value="<%=pp.data_val%>" <%=chec%> ><%=pp.data_text%></option>
+                    <%j=j+1%>
+                  <%end%>
+                </select> 
+              </td>
+              <td>
+                <select id="remun_p_typ_id_<%=p.data_val%>" name="remun_p_typ_name_<%=p.data_val%>" onchange="r_s('<%=p.data_val%>');">
+                  <option value="0001">仲裁员</option>
+                  <option value="0002">助理</option>
+                </select>                                      
+              </td>
+              <td>
+                <select id="remun_p_id_<%=p.data_val%>" name="remun_p_name_<%=p.data_val%>">
+                  <%@pb.each {|pb|%>
+                    <option value="<%=pb[0]%>"><%=pb[1]%></option>
+                  <%}%>
+                </select>  
+                <select id="remun_p_2_id_<%=p.data_val%>" name="remun_p_2_name_<%=p.data_val%>"  style="display:none">
+                  <%@pa.each {|pa|%>
+                    <option value="<%=pa[0]%>"><%=pa[1]%></option>
+                  <%}%>
+                </select> 
+              </td>
+              <td>
+                <input type="text" id="remark_id_<%=p.data_val%>" name="remark_name_<%=p.data_val%>" value="" />                                     
+              </td>
+            </tr>
+            <%i=i+1%>
+        <%end%>
+        </tbody>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" ,:onclick=>"this.style.display='none'"%>
+      </div>
+    <%end%>
+  </body>
+</html>

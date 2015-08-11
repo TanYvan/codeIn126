@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>按仲裁程序查询</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">按仲裁程序查询</span></div>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <div align="left"><%if @hant_search_1_text!=nil%>查询条件：<%=@hant_search_1_text%><%end%></div>
+    <div align="left">案件数量：<%=@c_l.length%>件</div>
+    <table cellspacing="1" class="adminlist">
+      <tfoot>
+        <tr>
+          <td colspan="10">
+            <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.previous %>
+            <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.next %>
+
+            <%if @case_pages.current.previous or @case_pages.current.next%>
+              <form action="/case_query1/list_33" method="get" onsubmit="return page_check('page_lines','page');">
+                每页<input type=text name='page_lines' id='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                <input type=text name='page' id='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+      <thead>
+        <tr >
+          <th nowrap>
+            <%if @order=="right(tb_cases_case_code,7) desc"%>
+              <%=link_to '立案号↑',:action=>"list_33",:order=>"right(tb_cases_case_code,7) asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="right(tb_cases_case_code,7) asc"%>
+              <%=link_to '立案号↓',:action=>"list_33",:order=>"right(tb_cases_case_code,7) desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '立案号',:action=>"list_33",:order=>"right(tb_cases_case_code,7) asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            案件状态
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+          <th nowrap>
+            立案日期
+          </th>
+          <th nowrap>
+            结案日期
+          </th>
+          <th nowrap>
+            结案号
+          </th>
+          <th nowrap>
+            仲裁庭
+          </th>
+          <th nowrap>
+            助理
+          </th>
+          <th nowrap>
+            争议金额
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%@arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"}%>
+        <%i=0%>
+        <%for c in @case%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap>
+              <%=link_to "#{c.tb_cases_case_code}",{:controller=>'every_casebase',:action=>"every_list",:recevice_code=>"#{c.tb_cases_recevice_code}"},:target=>"_black"%>
+            </td>
+            <td>
+              <%=@state[c.tb_cases_state]%>
+            </td>
+            <td>
+              <div align="left">
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.tb_cases_recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </div>
+            </td>
+            <td>
+              <div align="left">
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.tb_cases_recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + tp.partyname + " <br>" %>
+                <%end%>
+                <%if ttpp!=''%>
+                  <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                <%end%>
+                <%=ttpp%>
+              </div>
+            </td>
+            <td nowrap>
+              <%=h TbCase.find_by_recevice_code(c.tb_cases_recevice_code).nowdate%>
+            </td>
+            <%c_end=TbCaseendbook.find(:first,:conditions=>["used='Y' and recevice_code=?",c.tb_cases_recevice_code],:order=>"id desc")%>
+            <td nowrap>
+              <%if c_end!=nil%><%=c_end.decideDate%><%end%>
+            </td>
+            <td>
+              <%=c.tb_cases_end_code%>
+            </td>
+            <td>
+              <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",c.tb_cases_recevice_code])%>
+              <%if @arbit.empty?%>
+                未组成
+              <%else%>
+                <%for arb in @arbit%>
+                  <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+                  <br/>
+                <%end%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%@a= User.find_by_code(c.tb_cases_clerk)%>
+              <%if @a!=nil%>
+                <%=@a.name%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%a= TbCase.find_by_recevice_code(c.tb_cases_recevice_code).amount%>
+              <%=SysArg.compart2(a)%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

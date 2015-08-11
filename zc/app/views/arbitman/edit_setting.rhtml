@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员相关设置</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+            <div align="center" class="cDGray">仲裁员相关设置
+      <%=link_to "返回",:action=> "edit_arbitman", :id => @tb_arbitman.id%></div>
+      <br>
+    <%form_for :tb_arbitman, :url =>{:action => "save_setting", :id => @tb_arbitman.id} do |f|%>
+       <table class="list">
+          <tr>
+            <th>是否接收开庭通知短信：</th>
+            <td><%=f.select :setting ,[['是','1'],['否','0']]%></td>
+          </tr> 
+          <tr>
+            <th>开庭时间要求：</th>
+            <td><%=f.text_field :sittingtime, :style => "width:45em" %></td>
+          </tr>
+          <tr>
+            <th>培训要求：</th>
+            <td><%=f.text_field :train, :style => "width:45em"%></td>
+          </tr>
+          <tr>
+            <th>住宿要求：</th>
+            <td><%=f.text_field :recommendation, :style => "width:45em"%></td>
+          </tr>
+          <tr>
+            <th>接收文件特别要求：</th>
+            <td><%=f.text_field :file, :style => "width:45em"%></td>
+          </tr>
+        </table>
+        <br>
+      <div align="center">
+        <%=submit_tag "确定"%>
+      </div>
+        
+    <%end%>
+  </body>
+</html>

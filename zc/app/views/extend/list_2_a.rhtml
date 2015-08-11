@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>代发报酬（本单位）</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <div align="center">
+      <input id="to_word" type="button" value='导出word' onclick="document.getElementById('to_word').style.display='none';to_word();document.getElementById('to_word').style.display='block';"/>
+    </div>
+    <br/>
+      <div style="color:red"><%=flash[:notice]%></div>
+      <div align="left"><%if @hant_search_1_text!=nil%>查询条件：<%=@hant_search_1_text%><%end%></div>
+      <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap colspan="6"><div align="center">代发报酬（本单位）</div></th>
+      </tr>
+      <tr>
+        <th nowrap>姓名</th>
+        <th nowrap>立案号</th>
+        <th nowrap>结案号</th>
+        <th nowrap>金额</th>
+        <th nowrap>应发数额</th>
+        <th nowrap>备注</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% yf_rmb = 0 %>
+          <%i=0%>
+      <% for pp in @provide_p %>
+          <% tb_arbitman = TbArbitman.find_by_code(pp.p) %>
+          <% user = User.find_by_code(pp.p) %>
+          <% tb_Remu23 = TbRemuneration23.find(pp.id_id) if pp.typ == '4' or pp.typ == '5'%>
+      <tr class="row<%=i % 2%>">
+        <td><!-- 姓名 -->
+          <%if pp.p_typ=="0001"%>
+          <%=tb_arbitman.name%>
+          <%elsif pp.p_typ=="0002" or pp.p_typ=="0003" or pp.p_typ=="0004"%>
+            <%=user.name if user%>
+          <%else%>
+          <%end%>
+        </td>
+        <td><%=pp.case_code%></td><!-- 案号 -->
+        <td><%=pp.end_code%></td><!-- 结案号 -->
+        <td><!-- 金额 -->
+          <%if pp.typ=="1" %>
+            <%=pp.yf_rmb.round%>
+            <%yf_rmb = yf_rmb + pp.yf_rmb.round%>
+          <%elsif pp.typ=="2" %>
+            <%=pp.yf_rmb%>
+            <%yf_rmb = yf_rmb + pp.yf_rmb%>
+          <%elsif pp.typ=="3"%>
+            <%=pp.yf_rmb * -1%>
+            <%yf_rmb = yf_rmb + pp.yf_rmb * -1%>
+          <%elsif pp.typ=="4" or pp.typ=="5" %>
+            <%=tb_Remu23.should_rmb%>
+            <%yf_rmb = yf_rmb + tb_Remu23.should_rmb%>
+          <%else%>
+          <%end%>
+        </td>
+        <td></td>
+        <td></td>
+      </tr>
+      <%i=i+1%>
+      <%end%> 
+      <tr>
+        <td colspan="1">合计</td>
+        <td></td>
+        <td></td>
+        <td><%=SysArg.round2f(yf_rmb)%></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="6">审批:</td>
+      </tr>
+      <tr>
+        <td colspan="4">复审：</td>
+        <td colspan="1">会计：</td>
+        <td >出纳：</td>
+      </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

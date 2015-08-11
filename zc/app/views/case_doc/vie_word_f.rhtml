@@ -1,0 +1,15 @@
+<html>
+  <head><title>word外部函</title>
+    <script language="javascript">   
+      var myDocApp =new ActiveXObject("word.Application"); 
+      myDocApp.visible = true; 
+      myDocApp.activate(); 
+      myDocApp.NormalTemplate.Saved=true;
+      var myDoc = myDocApp.documents.open("<%= @file_path%>"); 
+      myDocApp.PrintPreview 
+      window.close()
+    </script> 
+  </head>
+  <body>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+<%@f=TbDocFormat.find_by_code(pv_obj_text)%>
+
+<%if @f.obj_text=='' or  @f.obj_text==nil%>
+  选择条件:
+<%else%>
+  <%=@f.obj_text%>:
+<%end%>

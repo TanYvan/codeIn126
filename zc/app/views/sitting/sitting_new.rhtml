@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <%@arbitman = TbCasearbitman.find_by_sql(["select c.arbitman as code,a.name as name,c.arbitmantype as arbitmantype from tb_arbitmen as a,tb_casearbitmen as c where c.recevice_code=? and c.used='Y' and c.arbitman=a.code and a.used='Y' order by c.arbitmantype",session[:recevice_code]])%>
+  <head><title>添加 本会开庭信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script language="javascript">
+      function used_change(code){
+        if (document.getElementById("sitting_sittingdate").value!="" && document.getElementById("id_usedate_"+code).value==""){
+          //alert(document.getElementById("sitting_sittingdate").value);
+          var dat=new Date(document.getElementById("sitting_sittingdate").value.replace("-","/"));
+          dat.setDate(dat.getDate() - 1);
+          year= dat.getFullYear();
+          month=dat.getMonth() + 1
+          day=dat.getDate();
+          if (month<10){
+            month="0" + month
+          }
+          if (day<10){
+            day="0" + day
+          }
+          dat_t=year + "-" +  month + "-" + day;
+          document.getElementById("id_usedate_"+code).value=dat_t;
+        }
+      }
+    
+      function f_check_number(){
+        if(document.getElementById("sitting_sittingdate").value==""){
+          alert("请选择开庭日期！");
+          return false;
+        }
+        //校验入住信息的必填项目
+  <%if @arbitman!=nil%>
+
+    <%if @arbitman.length<1%>
+          alert("请选择仲裁员!");
+          return false;
+    <%end %>
+    <%for ar in @arbitman%>
+          if (document.getElementById("id_used_<%=ar.code%>").value==""){
+            alert("请选择入住情况!");
+            return false;
+          }
+          if (document.getElementById("id_used_<%=ar.code%>").value=="0002" || document.getElementById("id_used_<%=ar.code%>").value=="0003"){
+            if (document.getElementById("id_usedate_<%=ar.code%>").value==""){
+              alert("请选择入住日期！");
+              return false;
+            }
+        
+            if ( /^[0-9]*[1-9][0-9]*$/.test(document.getElementById("id_rooms_<%=ar.code%>").value) || /^[1-9]d*.d*|0.d*[1-9]d*|0?.0+|0$/.test(document.getElementById("id_rooms_<%=ar.code%>").value)){
+            }
+            else{
+              alert("请填入房间数量！");
+              return false;
+            }
+        
+            if ( /^[0-9]*[1-9][0-9]*$/.test(document.getElementById("id_days_<%=ar.code%>").value) || /^[1-9]d*.d*|0.d*[1-9]d*|0?.0+|0$/.test(document.getElementById("id_days_<%=ar.code%>").value)){
+            }
+            else{
+              alert("请填入住宿天数！");
+              return false;
+            }
+          }
+    <%end %>
+  <%end %>
+      
+      var startTime = '<%=@finally_limit_dat%>';
+      var endTime = document.getElementById("sitting_sittingdate").value
+      var aStart=startTime.split('-'); //转成数组，分别为年，月，日，下同
+      var aEnd=endTime.split('-');
+      var startDate = aStart[0]+"/" + aStart[1]+ "/" + aStart[2];
+      var endDate = aEnd[0] + "/" + aEnd[1] + "/" + aEnd[2];
+      
+      if (startTime!=''){
+        if(startDate < endDate){
+          alert("开庭日期必须小于审限日期");
+          return false;
+        }
+        return true;
+      }
+      
+    }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray" align="center">添加 本会开庭信息   <%=link_to "返回",:action=>"sitting_list"%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <div style="color:red"><%=error_message_on(:room,:sittingdate)%> <%=error_message_on(:room,:sittingplace)%> <%=error_message_on(:tb_arbitroom,:usetime)%> <%=error_message_on(:room,:open_t)%> <%=error_message_on(:room,:close_t)%></div>
+    <%form_for :room ,:url=>{:action=>"room_create",:sitting_id=>params[:sitting_id]} do |f|%>
+      <%=f.hidden_field(:sittingdate)%>
+      <%=f.hidden_field(:sittingplace)%>
+      <%=f.hidden_field(:usetime)%>
+      <%=f.hidden_field(:open_t)%>
+      <%=f.hidden_field(:close_t)%>
+    <%end%>
+<%@arbitmantype={"0001"=>"独任仲裁员","0002"=>"首席仲裁员","0003"=>"仲裁员(申)","0004"=>"仲裁员(被)"}%>
+    <%form_for :sitting ,:url=>{:action=>"sitting_create"},:html=>{:onsubmit=>"return f_check_number();"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            开庭日期:
+          </th>
+          <td>
+            <%=f.text_field(:sittingdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('sitting_sittingdate'),'yyyy-MM-dd')"/>
+            <div style="color:red"><%=error_message_on(:sitting,:sittingdate)%></div>
+          </td>
+        </tr>
+        <%=f.hidden_field(:add_typ)%>
+        <tr >
+          <th>
+            仲裁庭:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0023' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sittingplace,op,:data_val,:data_text)%>
+            <div style="color:red"><%=error_message_on(:sitting,:sittingplace)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            开庭时间:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0024' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_text")%>
+            <%=f.collection_select(:open_t,op,:data_text,:data_text)%>
+            <div style="color:red"><%=error_message_on(:sitting,:open_t)%></div>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            闭庭时间:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0024' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_text")%>
+            <%=f.collection_select(:close_t,op,:data_text,:data_text)%>
+            <div style="color:red"><%=error_message_on(:sitting,:close_t)%></div>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            通知送交申请人日期:
+          </th>
+          <td>
+            <%=f.text_field(:sendrdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('sitting_sendrdate'),'yyyy-MM-dd')" />
+            <div style="color:red"><%=error_message_on(:sitting,:sendrdate)%></div>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            通知送交申请人的方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0025' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sendrstyle,op,:data_text,:data_text)%>
+            <div style="color:red"><%=error_message_on(:sitting,:sendrstyle)%></div>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            通知送交被申请人日期:
+          </th>
+          <td>
+            <%=f.text_field(:sendbdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('sitting_sendbdate'),'yyyy-MM-dd')" />
+            <div style="color:red"><%=error_message_on(:sitting,:sendbdate)%></div>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            通知送交被申请人的方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0026' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sendbstyle,op,:data_text,:data_text)%>
+            <div style="color:red"><%=error_message_on(:sitting,:sendbstyle)%></div>
+          </td>
+        </tr>
+        <!--订房信息-->
+        <%i=1%>
+
+        <%if @arbitman!=nil%>
+          <%for p in @arbitman%>
+            <tr>
+              <th>
+                <input type="hidden" id="id_arbitman_<%=p.code%>" name="name_arbitman_<%=p.code%>" value="" />
+                <%=@arbitmantype[p.arbitmantype]%>: <%=p.name%>
+              </th>
+              <td>
+                入住情况:
+                <select id="id_used_<%=p.code%>" name="name_used_<%=p.code%>" onChange="used_change('<%=p.code%>')">
+                  <option selected="selected"></option>
+                  <option value="0001">不住</option>
+                  <option value="0002">待定</option>
+                  <option value="0003">入住</option>
+                </select>
+                <br/>
+                入住日期:
+                <input type="text" id="id_usedate_<%=p.code%>" name="name_usedate_<%=p.code%>" readonly="true"/>
+                <input type="button" value="..." onclick="SelectDate(document.getElementById('id_usedate_<%=p.code%>'),'yyyy-MM-dd')" />
+                <br/>
+                房间数量:
+                <input type="text" id="id_rooms_<%=p.code%>" name="name_rooms_<%=p.code%>" value="1" style="width: 30px"/>间
+                <br/>
+                住宿天数:
+                <input type="text" id="id_days_<%=p.code%>" name="name_days_<%=p.code%>" value="2" style="width: 30px"/>天
+                <br/>
+                详细信息:
+                <textarea id="id_descript_<%=p.code%>" name="name_descript_<%=p.code%>" value="" style=" width: 300px; height: 50px;"></textarea>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </table>
+      <br/><div align="center">
+        <%=submit_tag "提交"%>
+      </div>
+    <%end%>
+
+  </body>
+</html>

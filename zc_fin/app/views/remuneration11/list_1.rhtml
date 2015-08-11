@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>裁决书制作信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">裁决书制作信息（承担人仅限仲裁员，不含撤案，和解裁决归类为完整裁决书）</span></div><br/>
+      <div align="center" class="cDGray">
+        <%if @remun.empty?%>
+          <%=link_to  "从校核信息创建", {:action => "create_1_all"},:confirm => "您确认要批量创建吗？"%> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <%end%>
+        <%=link_to  "创建", :action => "new_1"%>
+        <div style="color:red"><%=flash[:notice]%></div>
+      </div><br/>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>裁决书类型</th>
+            <th nowrap>承担人</th>
+            <th nowrap>备注</th>
+            <th nowrap>修改</th>
+            <th nowrap>删除</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% i = 0 %>
+          <% if @remun != nil %>
+            <% for p in @remun %>
+              <tr class="row<%=i % 2%>">
+                <td>
+                  <%= TbDictionary.find(:first, :conditions => "typ_code='9022' and data_val='#{p.typ}'").data_text %>
+                </td>
+                <td>
+                  <% man = TbArbitman.find_by_code(p.p_code) %>
+                  <%= man.name if !man.blank?%>
+                </td>
+                <td>
+                  <%= p.remark %>
+                </td>
+                <td>
+                  <% if p.grade.blank?%>
+                    <%= link_to "修改",:action => "edit_1", :id => p %>
+                  <% end %>
+                </td>
+                <td>
+                  <% if p.grade.blank? %>
+                      <%= button_to "删除", {:action => "delete_1", :id => p}, :confirm => "您确认要删除吗？" %>
+                  <% end %>
+                </td>
+              </tr>
+              <% i = i + 1 %>
+            <%end%>
+        <%end%>
+        </tbody>
+      </table>
+  </body>
+</html>

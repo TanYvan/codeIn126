@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>专家解聘续聘</title>
+     <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="JavaScript">
+        function checkall() {
+            var a='';
+            if (document.getElementById("cheall").value=='t' )
+            {
+              document.getElementById("cheall").value='f';
+            }
+            else
+            {
+              a='true';
+              document.getElementById("cheall").value='t';
+            }
+            var chec = document.getElementsByName("che");
+            for(i=0; i<chec.length; i++)
+            { 
+              chec[i].checked = a;
+            }
+         }
+        function getcondi()
+        {
+            var chec = document.getElementsByName("che");
+            var a='';
+            for(i=0; i<chec.length; i++)
+            {
+                if (chec[i].checked == true)
+                    a=a+chec[i].value+',';
+            }
+            aa=a.substr(0, a.length -1 )
+            var c = document.getElementById("condi_k");
+            c.value=aa;
+            var cc = document.getElementById("condi_s");
+            cc.value=aa;
+       }
+    </script>
+  </head>
+  <body>
+      <div class="title"><span class="cBlue">在聘专家列表</span></div>
+   <br>
+<div align="center">
+  <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+</div>
+
+    <div align="center">
+      <%=link_to "增聘专家",:action =>"expert_select"%>
+        <div style="color:red">
+            <%=flash[:notice] %>
+        </div>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th>
+          <input type='checkbox' id="cheall" name="cheall" value='f' onclick = "checkall()"/>
+        </th>
+        <th nowrap>姓名</th>
+        <th nowrap>续聘</th>
+        <th nowrap>解聘</th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%if @tb_periods == nil %>
+          没有专家！
+      <%else%>
+          <%for tb_period in @tb_periods %>
+              <tr class="row<%=i % 2%>">
+                <td>
+                  <input type='checkbox' id='che' name='che' value=<%=tb_period.code%> >
+                </td>
+                <td><%=tb_period.name%></td>
+                <td><%=link_to "续聘", :action => "continuation", :id => tb_period.code, :search_condit=>@search_condit,:order=>@order,:page=>@tb_period_pages.current.number,:page_lines=>@page_lines %></td>
+                <td><%=link_to "解聘", :action => "dismiss", :id => tb_period.code, :search_condit=>@search_condit,:order=>@order,:page=>@tb_period_pages.current.number,:page_lines=>@page_lines %></td>
+              </tr>
+              <%i=i+1%>
+          <%end%>
+      <%end%>
+      </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4">
+          <%= link_to '上一页', { :page => @tb_period_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_period_pages.current.previous %>
+          <%=pagination_links( @tb_period_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @tb_period_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_period_pages.current.next %>
+
+          <%if @tb_period_pages.current.previous or @tb_period_pages.current.next%>
+            <form action="/period/list_period" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @tb_period_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='跳转' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </tfoot>
+    </table>
+    <div align="center">
+              <%form_tag({:action=>'new_continuation_many',:page=>@tb_period_pages.current.number,:page_lines=>@page_lines},{:onsubmit=>'getcondi()'}) do %>
+              <%=hidden_field_tag :condi_k ,''%>
+              <%=submit_tag '续聘所选'%>
+            <%end%>
+              <%form_tag({:action=>'new_dismiss_many',:page=>@tb_period_pages.current.number,:page_lines=>@page_lines},{:onsubmit=>'getcondi()'}) do %>
+              <%=hidden_field_tag :condi_s ,''%>
+              <%=submit_tag '解聘所选'%>
+            <%end%>
+    </div>
+  <br>
+    <hr size="1" color="#99CCFF" noshade>
+     <iframe FRAMEBORDER=0 src="/period/list_actions" noresize style="width:700px;height:400px" align=center> </iframe>
+  </body>
+</html>
+

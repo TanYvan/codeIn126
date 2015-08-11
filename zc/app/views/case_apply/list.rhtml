@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件申请信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件申请信息</span></div>
+    <div align="center">
+      <%form_tag :url=>{:action=>"list"} do%>
+        <table align="center">
+          <tr>
+            <td nowrap align="right">
+              申请编号：
+              <%=text_field_tag(:apply_code,@apply_code)%>
+              申请人：
+              <%=text_field_tag(:party_name,@party_name)%>
+              <%=hidden_field_tag(:new_url,@new_url)%>
+              <%=submit_tag "查询" %>
+            </td>
+          </tr>
+        </table>
+      <%end%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            申请编号
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @res.status == "1" && @res.dataset.size != "0"%>
+          <%for r in @res.dataset.rows %>
+            <tr class="row<%=i % 2%>">
+              <td>
+                <%=link_to r.get_data("apply_code") ,{:action=>"show_case",:apply_code => r.get_data("apply_code"),:new_url => params[:new_url] }%>
+              </td>
+              <td>
+                <%=h r.get_data("partyinfo_1")%>
+              </td>
+              <td>
+                <%=h r.get_data("partyinfo_2")%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+    <%= @page_bar%>
+  </body>
+</html>

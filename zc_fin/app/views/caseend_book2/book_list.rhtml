@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>裁决书信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">裁决书信息</div></span></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <!--
+          <th nowrap>
+            文书编号
+          </th>
+          <th nowrap>
+            标题
+          </th>
+          -->
+          <th nowrap>
+            裁决书类型
+          </th>
+          <th nowrap>
+            备注
+          </th>
+          <!--
+          <th nowrap>
+            文件名称
+          </th>
+          -->
+          <th nowrap>
+            文件日期（上传/删除）
+          </th>
+          <th nowrap>
+            文件操作
+          </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @book%>
+      <tr class="row<%=i % 2%>">
+        <!--
+        <td>
+          <%=p.book_code%>
+        </td>
+        <td>
+          <%=p.title%>
+        </td>
+        -->
+        <td>
+          <%if p.book_typ!=nil and p.book_typ!=''%>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='8120'  and  data_val='#{p.book_typ}'").data_text%>
+          <%end%>
+        </td>
+        <td>
+          <%=p.remarks%>
+        </td>
+        <!--
+        <td>
+          <% # =p.book_name%>
+        </td>
+        -->
+        <td>
+          <%if p.book_dat!=nil%>
+            <%=p.book_dat.to_s(:db)%>
+            <%if p.book_name==''%>
+              删除
+            <%else%>
+              上传
+            <%end%>
+          <%end%>
+        </td>
+        <td>
+         <%if p.book_name==''%> 
+           <%=link_to "上传",:action=>"book_upload",:id=>p,:recevice_code=>params[:recevice_code]%>
+         <%else%>
+           <%=link_to "下载" ,:action=>"book_down",:id=>p,:recevice_code=>params[:recevice_code]%>
+           <%=button_to "删除" ,{:action=>"book_destroy",:id=>p,:recevice_code=>params[:recevice_code]},:confirm=>"您确认要物理删除给文件吗？该文件删除后将无法恢复！"%>
+         <%end%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"book_edit",:id=>p,:p_id=>params[:p_id],:recevice_code=>params[:recevice_code]%>
+        </td>
+        <td>
+            <%=button_to "删除",{:action=>"book_delete",:id=>p,:p_id=>params[:p_id],:recevice_code=>params[:recevice_code]},:confirm=>"您确认要删除吗？将同时删除已上传文件！"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br>
+      <div align="center">
+      <%=link_to  "创建", :action=>"book_new",:p_id=>@id,:recevice_code=>params[:recevice_code]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+  </body>
+</html>
