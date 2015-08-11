@@ -1,0 +1,7 @@
+java.sql.SQLException: Syntax error or access violation message from server: "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '11192/,11194/,11195/) order by id' at line 1"
+   at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:2001)
+   at com.mysql.jdbc.MysqlIO.sendCommand(MysqlIO.java:1168)
+   at com.mysql.jdbc.MysqlIO.sqlQueryDirect(MysqlIO.java:1279)
+   at com.mysql.jdbc.Connection.execSQL(Connection.java:2281)
+   at com.mysql.jdbc.PreparedStatement.executeQuery(PreparedStatement.java:1634)
+   at Mes.main(Mes.java:63)

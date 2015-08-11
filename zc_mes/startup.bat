@@ -1,0 +1,1 @@
+java  -classpath .;./empp.jar;./jack.jar;./mysql-connector-java-3.0.17-ga-bin.jar  Mes 1,2
