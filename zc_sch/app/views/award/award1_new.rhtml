@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加裁决异议</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+      裁决书稿转其他仲裁员及仲裁员对裁决书反馈意见  <%=link_to "返回",:action=>"award1_list",:award_id=>params[:award_id]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :award1 ,:url=>{:action=>"award1_create",:award_id=>params[:award_id]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            类型：
+          </th>
+          <td>
+            <%=f.select(:type1,[['裁决初稿转其他仲裁员的日期','1'],['助理收到仲裁员反馈意见的日期','2']])%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            仲裁员类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0014' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:type2,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>仲裁员：</th>
+          <td>
+            <%op=TbArbitman.find_by_sql("select a.code as code,a.name as name from tb_arbitmen as a,tb_casearbitmen as b where b.recevice_code='#{session[:recevice_code]}' and b.arbitman=a.code")%>
+            <%=f.collection_select(:arbitmannum,op,:code,:name)%>
+             <i><%=error_message_on(:award1,:arbitmannum)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            提出时间:
+          </th>
+          <td>
+            <%=f.text_field(:date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award1_present_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remarks,:rows=>4)%>
+          </td>
+        </tr>       
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>在办案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/sty.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <br/>
+    <%=link_to "返回统计列表",:action=>"case_now_total",:date1=>@date1,:date2=>@date2%>
+    <div align="left">咨询案件数量：<%=@case.length%></div>
+    <br/>
+    <table class="list" width="100%">
+      <tr >
+        <th>
+          编号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+        <th nowrap>
+          咨询接待
+        </th>
+        <th nowrap>
+          办案助理
+        </th>
+      </tr>
+      <%i=0%>
+      <%for c in @case%>
+        <tr>
+          <td><%=i+1%></td>
+          <td nowrap>
+            <%=TbCase.find_by_recevice_code(c.recevice_code).receivedate%>
+          </td>
+          <td nowrap>
+            <%@ndate=TbCase.find_by_recevice_code(c.recevice_code).case_code%>
+            <%if @ndate!=""%>
+              <%=@ndate%>
+            <%else%>
+              尚未立案
+            <%end%>
+          </td>
+          <td>
+            <%=SysArg.applicant(c.recevice_code,1,4)%>
+          </td>
+          <td>
+            <%@case=TbCase.find_by_recevice_code(c.recevice_code)%>
+            <%if @case!=nil%>
+              <%=SysArg.respondent(c.recevice_code,1,4)%>
+            <%end%>
+          </td>
+          <td>
+            <%=User.find(:first,:conditions=>["used='Y' and code=?",@case.clerk_2]).name%>
+          </td>
+          <td>
+            <%user=User.find(:first,:conditions=>["used='Y' and code=?",@case.clerk])%>
+            <%if user!=nil%><%=user.name%><%end%>
+          </td>
+        </tr>
+        <%i=i+1%>
+      <%end%>
+    </table>
+  </body>
+</html>

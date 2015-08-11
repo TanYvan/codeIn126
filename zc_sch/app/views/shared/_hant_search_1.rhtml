@@ -1,0 +1,617 @@
+<%= javascript_include_tag  'WebCalendar'%>
+<script language="javascript">
+ function hant_search_1_append(search_item)
+  {
+   ////向table中追加,只能加在tbody中
+   document.getElementById("hant_search_1_val").value=document.getElementById("hant_search_1_val").value + 1;
+   var tr;
+   var td;
+   var sel;
+   var input;
+   tr=document.createElement("tr");
+   ////
+   input=document.createElement("input");
+   input.id="hant_search_1_data_type_"+document.getElementById("hant_search_1_val").value
+   input.type="hidden";
+   input.value="";
+   td=document.createElement("td")
+   td.appendChild(input);
+   tr.appendChild(td);
+   ////
+   input=document.createElement("input");
+   input.id="hant_search_1_edit_type_"+document.getElementById("hant_search_1_val").value
+   input.type="hidden";
+   input.value="";
+   td=document.createElement("td")
+   td.appendChild(input);
+   tr.appendChild(td);
+   ////
+   sel=document.createElement("select");
+   sel.id="hant_search_1_a_"+document.getElementById("hant_search_1_val").value
+   td=document.createElement("td");
+   <% for i in @hant_search_1 %>
+   op=document.createElement("option");
+   op.value='<%=i[1]%>';
+   op.text='<%=i[2]%>';
+
+   if (document.all){
+   sel.add(op);
+   }
+   else
+   {
+   sel.appendChild(op);
+   }
+
+   <%end%>
+   td.appendChild(sel);
+   tr.appendChild(td);
+   ////
+   td=document.createElement("td");
+   sel_c=document.createElement("select");
+   sel_c.id="hant_search_1_b_c_"+document.getElementById("hant_search_1_val").value
+   op=document.createElement("option");
+   op.value=" like '%";
+   op.text="包含";
+   if (document.all){
+   sel_c.add(op);
+   }
+   else
+   {
+   sel_c.appendChild(op);
+   }
+   op=document.createElement("option");
+   op.value=" like '";
+   op.text="前方一致";
+   if (document.all){
+   sel_c.add(op);
+   }
+   else
+   {
+   sel_c.appendChild(op);
+   }
+   op=document.createElement("option");
+   op.value=" = '";
+   op.text="等于";
+   if (document.all){
+   sel_c.add(op);
+   }
+   else
+   {
+   sel_c.appendChild(op);
+   }
+   op=document.createElement("option");
+   op.value=" <> '";
+   op.text="不等于";
+   if (document.all){
+   sel_c.add(op);
+   }
+   else
+   {
+   sel_c.appendChild(op);
+   }
+   td.appendChild(sel_c);
+   //
+   sel_n=document.createElement("select");
+   sel_n.id="hant_search_1_b_n_"+document.getElementById("hant_search_1_val").value
+   op=document.createElement("option");
+   op.value=" = ";
+   op.text="等于";
+   if (document.all){
+   sel_n.add(op);
+   }
+   else
+   {
+   sel_n.appendChild(op);
+   }
+   op=document.createElement("option");
+   op.value=" <> ";
+   op.text="不等于";
+   if (document.all){
+   sel_n.add(op);
+   }
+   else
+   {
+   sel_n.appendChild(op);
+   }
+   op=document.createElement("option");
+   op.value=" > ";
+   op.text="大于";
+   if (document.all){
+   sel_n.add(op);
+   }
+   else
+   {
+   sel_n.appendChild(op);
+   }
+   op=document.createElement("option");
+   op.value=" >= ";
+   op.text="大于等于";
+   if (document.all){
+   sel_n.add(op);
+   }
+   else
+   {
+   sel_n.appendChild(op);
+   }
+   op=document.createElement("option");
+   op.value=" < ";
+   op.text="小于";
+   if (document.all){
+   sel_n.add(op);
+   }
+   else
+   {
+   sel_n.appendChild(op);
+   }
+   op=document.createElement("option");
+   op.value=" <= ";
+   op.text="小于等于";
+   if (document.all){
+   sel_n.add(op);
+   }
+   else
+   {
+   sel_n.appendChild(op);
+   }
+   td.appendChild(sel_n);
+   tr.appendChild(td);
+   ////
+   td=document.createElement("td");
+   input=document.createElement("input");
+   input.id="hant_search_1_c_t_"+document.getElementById("hant_search_1_val").value;
+   input.type="text";
+   input.value="";
+   td.appendChild(input);
+   //
+   sel_s=document.createElement("select");
+   sel_s.id="hant_search_1_c_s_"+document.getElementById("hant_search_1_val").value;
+   td.appendChild(sel_s);
+   tr.appendChild(td);
+   //
+   td=document.createElement("td");
+   input=document.createElement("input");
+   input.id="hant_search_1_SelectDate_"+document.getElementById("hant_search_1_val").value;
+   input.type="button";
+   input.value="...";
+   td.appendChild(input);
+   tr.appendChild(td);
+   ////
+   td=document.createElement("td");
+   sel=document.createElement("select");
+   sel.id="hant_search_1_d_"+document.getElementById("hant_search_1_val").value;
+   op=document.createElement("option");
+   op.value=" and ";
+   op.text=" 并且 ";
+
+   if (document.all){
+   sel.add(op);
+   }
+   else
+   {
+   sel.appendChild(op);
+   }
+
+   op=document.createElement("option");
+   op.value=" or  ";
+   op.text=" 或者  ";
+   if (document.all){
+
+   sel.add(op);
+   }
+   else
+   {
+   sel.appendChild(op);
+   }
+
+   td.appendChild(sel);
+   tr.appendChild(td);
+   //
+   input=document.createElement("input");
+   input.type="hidden";
+   input.value=document.getElementById("hant_search_1_val").value;
+   input.id="hant_search_1_hid"
+   input.name="hant_search_1_hid"
+   td=document.createElement("td")
+   td.appendChild(input);
+   tr.appendChild(td);
+   //
+   var parNode = document.getElementById("hant_search_1_tbody1");
+   parNode.appendChild(tr);
+   //
+   if (search_item!=""){
+     document.getElementById("hant_search_1_a_"+document.getElementById("hant_search_1_val").value).value=search_item
+   }
+   //
+   document.getElementById("hant_search_1_SelectDate_"+document.getElementById("hant_search_1_val").value).onclick=function(){;SelectDate(document.getElementById("hant_search_1_c_t_" + this.id.substring(25,this.id.length)),'yyyy-MM-dd');} ; //单击日期选择按钮后触发
+   document.getElementById("hant_search_1_a_"+document.getElementById("hant_search_1_val").value).onchange=function(){hant_search_1_change(this);} ;//检索词修改的触发事件
+   if (document.all){
+     document.getElementById("hant_search_1_a_"+document.getElementById("hant_search_1_val").value).fireEvent("onchange");//添加后立刻出发onchange事件
+   }
+   else
+   {
+     var evt=document.createEvent('HTMLEvents');  
+     evt.initEvent('change',true,true);   
+     document.getElementById("hant_search_1_a_"+document.getElementById("hant_search_1_val").value).dispatchEvent(evt);  
+   }
+}
+
+function hant_search_1_all_s()
+{
+  var s="";
+  var hid = document.getElementsByName("hant_search_1_hid");
+  for(i=0; i<hid.length; i++)
+    {
+          if (document.getElementById("hant_search_1_data_type_" + hid[i].value).value == "char"){
+            if (document.getElementById("hant_search_1_edit_type_" + hid[i].value).value == "text"){
+                  if (document.getElementById("hant_search_1_c_t_" + hid[i].value).value !=""){
+                    if (document.getElementById("hant_search_1_b_c_" + hid[i].value).value == " = '")
+                    {
+                       s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_c_" + hid[i].value).value  + document.getElementById("hant_search_1_c_t_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                    }
+                    if (document.getElementById("hant_search_1_b_c_" + hid[i].value).value == " <> '")
+                    {
+                       s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_c_" + hid[i].value).value  + document.getElementById("hant_search_1_c_t_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                    }
+                    if (document.getElementById("hant_search_1_b_c_" + hid[i].value).value==" like '")
+                    {
+                       s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_c_" + hid[i].value).value  + document.getElementById("hant_search_1_c_t_" + hid[i].value).value + "%'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                    }
+                    if (document.getElementById("hant_search_1_b_c_" + hid[i].value).value==" like '%")
+                    {
+                       s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_c_" + hid[i].value).value  + document.getElementById("hant_search_1_c_t_" + hid[i].value).value + "%'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                    }
+                  }
+              }
+              else{
+                   if (document.getElementById("hant_search_1_c_s_" + hid[i].value).value !=""){
+                      if (document.getElementById("hant_search_1_b_c_" + hid[i].value).value == " = '")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_c_" + hid[i].value).value  + document.getElementById("hant_search_1_c_s_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_c_" + hid[i].value).value == " <> '")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_c_" + hid[i].value).value  + document.getElementById("hant_search_1_c_s_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                    }
+              }
+           }
+           else if (document.getElementById("hant_search_1_data_type_" + hid[i].value).value == "number"){
+              if (document.getElementById("hant_search_1_edit_type_" + hid[i].value).value == "text"){
+                if (document.getElementById("hant_search_1_c_t_" + hid[i].value).value !=""){
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value == " = ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value == " <> ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" > ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" >= ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" < ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" <= ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                }
+              }
+              else{
+                   if (document.getElementById("hant_search_1_c_s_" + hid[i].value).value !=""){
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value == " = ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_s_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value == " <> ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_s_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" > ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_s_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" >= ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_s_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" < ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_s_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" <= ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + document.getElementById("hant_search_1_c_s_" + hid[i].value).value  + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                    }
+                 }
+             }
+         else if (document.getElementById("hant_search_1_data_type_" + hid[i].value).value == "date"){
+              if (document.getElementById("hant_search_1_edit_type_" + hid[i].value).value == "text"){
+                if (document.getElementById("hant_search_1_c_t_" + hid[i].value).value !=""){
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value == " = ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + "'" + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + "'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value == " <> ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + "'" + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + "'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" > ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + "'" + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + "'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" >= ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + "'" + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + "'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" < ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + "'" + document.getElementById("hant_search_1_c_t_" + hid[i].value).value  + "'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                  if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" <= ")
+                  {
+                     s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value  + "'" +  document.getElementById("hant_search_1_c_t_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                  }
+                }
+              }
+              else{
+                   if (document.getElementById("hant_search_1_c_s_" + hid[i].value).value !=""){
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value == " = ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_c_s_" + hid[i].value).value + "'" +  document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value == " <> ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_c_s_" + hid[i].value).value + "'" +  document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" > ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_c_s_" + hid[i].value).value + "'" +  document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" >= ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_c_s_" + hid[i].value).value + "'" +  document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" < ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_c_s_" + hid[i].value).value + "'" +  document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                      if (document.getElementById("hant_search_1_b_n_" + hid[i].value).value==" <= ")
+                      {
+                         s=s+document.getElementById("hant_search_1_a_" + hid[i].value).value + document.getElementById("hant_search_1_b_n_" + hid[i].value).value + "'" + document.getElementById("hant_search_1_c_s_" + hid[i].value).value + "'" +  document.getElementById("hant_search_1_d_" + hid[i].value).value;
+                      }
+                    }
+                 }
+             }
+    }
+	if (s==""){
+        //alert("请输入查询条件！");
+	//return false;
+	}
+	else
+	{
+	s=s.substring(0,s.length - 5)
+	document.getElementById("hant_search_1_word").value=" ( " + s + " ) "
+	//alert(document.getElementById("hant_search_1_word").value);
+	}
+}
+
+function  hant_search_1_change(v){
+  ite=new Array(<%=@hant_search_1.size%>);
+  <%i=0;%>
+  <%for t in @hant_search_1%>
+
+    <%aa=""%>
+    <% for a in t[4]%>
+      <%aa=aa+"new Array('#{a[0]}','#{a[1]}'),"%>
+    <%end%>
+    <%
+    if (aa!="")
+      aa=aa.slice(0,aa.length - 1)
+    end
+    %>
+    <%if t[5]==nil%>
+      <%t[5]=''%>
+    <%end%>  
+    ite[<%=i%>]=new Array ('<%=t[0]%>','<%=t[1]%>','<%=t[2]%>','<%=t[3]%>',new Array(<%=aa%>),'<%=t[5]%>')
+    <%i=i+1;%>
+  <%end%>
+
+  v_n=v.id.substring(16,v.id.length)
+  for (i=0;i< <%=@hant_search_1.size%>;i++){
+    if (ite[i][1]!=v.value){
+
+    }
+    else{
+      document.getElementById("hant_search_1_data_type_" + v_n).value=ite[i][0];
+      document.getElementById("hant_search_1_edit_type_" + v_n).value=ite[i][3];
+
+      if (ite[i][0]=='char'){
+        ccc=document.getElementById("hant_search_1_b_c_" + v_n).length;
+        for (d_i=0;d_i< ccc;d_i++){
+          document.getElementById("hant_search_1_b_c_" + v_n).remove(0)
+        }
+        if (ite[i][3]=='text'){
+
+          op=document.createElement("option");
+          op.value=" like '%";
+          op.text="包含";
+
+          if (document.all){
+           document.getElementById("hant_search_1_b_c_" + v_n).add(op);
+           }
+           else
+           {
+           document.getElementById("hant_search_1_b_c_" + v_n).appendChild(op);
+           }
+
+          op=document.createElement("option");
+          op.value=" like '";
+          op.text="前方一致";
+
+          if (document.all){
+           document.getElementById("hant_search_1_b_c_" + v_n).add(op);
+           }
+           else
+           {
+           document.getElementById("hant_search_1_b_c_" + v_n).appendChild(op);
+           }
+
+          op=document.createElement("option");
+          op.value=" = '";
+          op.text="等于";
+
+          if (document.all){
+           document.getElementById("hant_search_1_b_c_" + v_n).add(op);
+           }
+           else
+           {
+           document.getElementById("hant_search_1_b_c_" + v_n).appendChild(op);
+           }
+
+          op=document.createElement("option");
+          op.value=" <> '";
+          op.text="不等于";
+
+          if (document.all){
+           document.getElementById("hant_search_1_b_c_" + v_n).add(op);
+           }
+           else
+           {
+           document.getElementById("hant_search_1_b_c_" + v_n).appendChild(op);
+           }
+
+        }
+        else{
+          op=document.createElement("option");
+          op.value=" = '";
+          op.text="等于";
+
+          if (document.all){
+           document.getElementById("hant_search_1_b_c_" + v_n).add(op);
+           }
+           else
+           {
+           document.getElementById("hant_search_1_b_c_" + v_n).appendChild(op);
+           }
+
+          op=document.createElement("option");
+          op.value=" <> '";
+          op.text="不等于";
+
+          if (document.all){
+           document.getElementById("hant_search_1_b_c_" + v_n).add(op);
+           }
+           else
+           {
+           document.getElementById("hant_search_1_b_c_" + v_n).appendChild(op);
+           }
+
+        }
+        document.getElementById("hant_search_1_b_c_" + v_n).style.display="block";
+        document.getElementById("hant_search_1_b_c_" + v_n).style.width=80
+
+        document.getElementById("hant_search_1_b_n_" + v_n).style.display="none";
+        document.getElementById("hant_search_1_b_n_" + v_n).style.width=1  
+        
+        document.getElementById("hant_search_1_SelectDate_" + v_n).style.display="none";
+        document.getElementById("hant_search_1_SelectDate_" + v_n).style.width=1
+      }
+      else if(ite[i][0]=='number'){
+        document.getElementById("hant_search_1_b_c_" + v_n).style.display="none";
+        document.getElementById("hant_search_1_b_c_" + v_n).style.width=1
+
+        document.getElementById("hant_search_1_b_n_" + v_n).style.display="block";
+        document.getElementById("hant_search_1_b_n_" + v_n).style.width=80
+
+        document.getElementById("hant_search_1_SelectDate_" + v_n).style.display="none";
+        document.getElementById("hant_search_1_SelectDate_" + v_n).style.width=1
+      }
+      else if(ite[i][0]=='date'){
+        document.getElementById("hant_search_1_b_c_" + v_n).style.display="none";
+        document.getElementById("hant_search_1_b_c_" + v_n).style.width=1
+
+        document.getElementById("hant_search_1_b_n_" + v_n).style.display="block";
+        document.getElementById("hant_search_1_b_n_" + v_n).style.width=80
+
+        document.getElementById("hant_search_1_SelectDate_" + v_n).style.display="block";
+        document.getElementById("hant_search_1_SelectDate_" + v_n).style.width=20
+      }
+
+     if (ite[i][3]=='text'){
+        ccc=document.getElementById("hant_search_1_c_s_" + v_n).length
+        for (d_i=0;d_i< ccc ;d_i++){
+          document.getElementById("hant_search_1_c_s_" + v_n).remove(0)
+        }
+        document.getElementById("hant_search_1_c_t_" + v_n).style.display="block";
+        document.getElementById("hant_search_1_c_t_" + v_n).style.width=200
+        document.getElementById("hant_search_1_c_t_" + v_n).value=ite[i][5]
+
+        document.getElementById("hant_search_1_c_s_" + v_n).style.display="none";
+        document.getElementById("hant_search_1_c_s_" + v_n).style.width=1
+        document.getElementById("hant_search_1_c_s_" + v_n).value=''
+      }
+      else{
+        document.getElementById("hant_search_1_c_t_" + v_n).style.display="none";
+        document.getElementById("hant_search_1_c_t_" + v_n).style.width=1
+        document.getElementById("hant_search_1_c_t_" + v_n).value=''
+
+        ccc=document.getElementById("hant_search_1_c_s_" + v_n).length
+        for (d_i=0;d_i< ccc ;d_i++){
+          document.getElementById("hant_search_1_c_s_" + v_n).remove(0)
+        }
+        for (f_i=0; f_i<ite[i][4].length;f_i++){
+          op=document.createElement("option");
+          op.value=ite[i][4][f_i][0];
+          op.text=ite[i][4][f_i][1];
+          //alert(ite[i][4][f_i][1]);
+
+          if (document.all){
+           document.getElementById("hant_search_1_c_s_" + v_n).add(op);
+           }
+           else
+           {
+           document.getElementById("hant_search_1_c_s_" + v_n).appendChild(op);
+           }
+
+        }
+        document.getElementById("hant_search_1_c_s_" + v_n).style.display="block";
+        document.getElementById("hant_search_1_c_s_" + v_n).style.width=200
+        document.getElementById("hant_search_1_c_s_" + v_n).value=ite[i][5]
+      }
+    }
+  }
+}
+</script>
+<input type="button" name="hant_search_1_add" value="增加" onClick="hant_search_1_append('');">
+<input type="hidden" id='hant_search_1_val' value="1" >
+  &nbsp;&nbsp;&nbsp;
+<form name="hant_search_1_form1" method="post" action= <%=@hant_search_1_page_name%> onsubmit="return hant_search_1_all_s();">
+  <input type="hidden" id="contr_r" name="contr_r" value="<%=params[:contr_r]%>" />
+  <input type="hidden" id="act_r" name="act_r" value="<%=params[:act_r]%>" />
+  <input type="hidden" id="hant_search_1_word" name="hant_search_1_word" value="" />
+  <input type="submit" name="Submit" value="查询" />
+</form>
+<div align="center">
+<table>
+  <tbody id="hant_search_1_tbody1">
+  </tbody>
+</table>
+</div>
+<script language="javascript">
+  <%if @hant_search_1_list==nil%>
+    hant_search_1_append("");
+  <%else%>
+    <%for search_1_list in @hant_search_1_list%>
+      hant_search_1_append("<%=search_1_list%>");
+    <%end%>
+  <%end%>
+</script>

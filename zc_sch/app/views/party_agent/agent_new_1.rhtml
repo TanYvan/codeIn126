@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加当事人</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+    <div class="cDGray">添加申请人的代理人信息(带<i>*</i>为必填项) <%=link_to "返回",:action=>"agent_list"%>
+    </div>
+      <div class="cRed"><%=flash[:notice]%></div>
+    <%form_for :agent ,:url=>{:action=>"agent_create"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            <i>*</i>申请人:
+          </th>
+          <td>
+            <%party=TbParty.find(:all,:conditions=>"recevice_code='#{session[:recevice_code]}' and partytype=1 and used='Y'",:order=>"id",:select=>"id,partyname")%>
+            <%=f.collection_select(:party_id,party,:id,:partyname)%>
+            <div style="color:red"><%=error_message_on(:agent,:partyname)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            <i>*</i>代理人姓名:
+          </th>
+          <td>
+            <%=f.text_field(:name)%>
+            <div style="color:red"><%=error_message_on(:agent,:name)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            身份:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0007' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:status,op,:data_val,:data_text)%>
+            <div style="color:red"><%=error_message_on(:agent,:status)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            职务:
+          </th>
+          <td>
+            <%=f.text_field(:duty)%>
+            <div style="color:red"><%=error_message_on(:agent,:duty)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            邮编:
+          </th>
+          <td>
+            <%=f.text_field(:postcode)%>
+            <div style="color:red"><%=error_message_on(:agent,:postcode)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            <i>*</i>联系人地址:
+          </th>
+          <td>
+            <%=f.text_area(:addr,:rows=>1)%>
+            <div style="color:red"><%=error_message_on(:agent,:addr)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            所在单位:
+          </th>
+          <td>
+            <%=f.text_area(:company,:rows=>1)%>
+            <div style="color:red"><%=error_message_on(:agent,:company)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            email:
+          </th>
+          <td>
+            <%=f.text_field(:email)%>
+            <div style="color:red"><%=error_message_on(:agent,:email)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            短信手机:
+          </th>
+          <td>
+            <%=f.text_field(:mobiletel)%>
+            <div style="color:red"><%=error_message_on(:agent,:mobiletel)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            除短信手机之外的其它联系方式:
+          </th>
+          <td>
+            <%=f.text_field(:tel)%>
+            <div style="color:red"><%=error_message_on(:agent,:tel)%></div>
+          </td>
+        </tr>
+      </table>
+      <div align="center"><%=submit_tag "提交" %></div>
+      <%end%>
+  </body>
+</html>

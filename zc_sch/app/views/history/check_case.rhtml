@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>期限内的案件信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">期限内的案件信息查看</span></div>
+    <br>
+    <%=link_to "返回",:action=>"tern_list"%>
+      <table class="list">
+      <tr>
+        <th nowrap>
+          咨询流水号:
+        </th>
+        <td >
+          <%=@case.recevice_code%>
+        </td>
+      </tr>
+
+      <tr >
+        <th nowrap>
+          仲裁程序:
+        </th>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0001' and state='Y' and data_val='#{@case.aribitprog_num}'").data_text%>
+        </td>
+      </tr>
+
+      <tr >
+        <th >
+          案件大类:
+        </th>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0002' and state='Y' and data_val='#{@case.casetype_num}' and data_parent=''").data_text%>
+        </td>
+      </tr>
+
+      <tr >
+        <th >
+          案件小类:
+        </th>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0002' and state='Y' and data_val='#{@case.casetype_num2}' and data_parent='#{@case.casetype_num}'").data_text%>
+        </td>
+      </tr>
+
+      <tr >
+        <th nowrap>
+          依据仲裁协议类型:
+        </th>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0003' and state='Y' and data_val='#{@case.aribitprotprog_num}'").data_text%>
+        </td>
+      </tr>
+
+      <tr >
+        <th nowrap>
+          选定的仲裁机构:
+        </th>
+        <td >
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0004' and state='Y' and data_val='#{@case.agent}'").data_text%>
+        </td>
+      </tr>
+
+      <tr >
+        <th nowrap>
+        案由:          </th>
+        <td >
+          <%=@case.casereason %>
+        </td>
+      </tr>
+
+      <tr>
+        <th nowrap>
+        仲裁协议:          </th>
+        <td >
+          <%=@case.arbitprot %>
+        </td>
+      </tr>
+
+      <tr >
+        <th nowrap>
+        收案日期:          </th>
+        <td >
+          <%=@case.receivedate %>
+        </td>
+      </tr>
+
+      <tr >
+        <th nowrap>
+          交寄方式:
+        </th>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0005' and state='Y' and data_val='#{@case.orgstyle}'").data_text%>
+        </td>
+      </tr>
+
+      <tr >
+        <th nowrap>
+          仲裁条款达成日期:
+        </th>
+        <td >
+          <%=@case.accepttime %>
+        </td>
+      </tr>
+
+      <tr >
+        <th nowrap>
+          仲裁协议类型:
+        </th>
+        <td >
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0006' and state='Y' and data_val='#{@case.aribittype}'").data_text%>
+        </td>
+      </tr>
+
+      <tr>
+        <th nowrap>
+          特殊事项说明:
+        </th>
+        <td>
+          <%=@case.special%>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

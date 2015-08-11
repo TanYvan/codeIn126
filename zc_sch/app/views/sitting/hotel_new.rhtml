@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 仲裁员订房信息</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  添加仲裁员订房信息(带<i>*</i>为必填项)    <%=link_to "返回",:action=>"hotel_list",:sitting_id=>params[:sitting_id]%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :hotel ,:url=>{:action=>"hotel_create",:sitting_id=>params[:sitting_id]}  do |f|%>
+      <table class="list"> 
+        <tr>
+          <th>
+            仲裁员:          
+           </th>
+          <td>
+            <%@arbitman_now=TbArbitmannow.find_by_sql("select distinct tb_arbitmen.code as code ,tb_arbitmen.name as name from tb_arbitmen,tb_casearbitmen where tb_casearbitmen.recevice_code='#{session[:recevice_code]}' and  tb_arbitmen.code=tb_casearbitmen.arbitman order by tb_arbitmen.name")%>
+            <%=f.collection_select(:arbitman,@arbitman_now,:code,:name)%>    
+            <div style="color:red"><%=error_message_on(:hotel,:arbitman)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            入住日期:          
+           </th>
+          <td>
+            <%=f.text_field(:usedate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('hotel_usedate'),'yyyy-MM-dd')" >    
+            <div style="color:red"><%=error_message_on(:hotel,:usedate)%></div>
+          </td>
+        </tr>
+    
+        <tr>
+          <th>
+            <i>*</i>房间数量:
+          </th>
+          <td>
+            <%=f.text_field(:rooms)%>间               
+            <div style="color:red"><%=error_message_on(:hotel,:rooms)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            <i>*</i>住宿天数:
+          </th>
+          <td>
+            <%=f.text_field(:days)%>天      
+            <div style="color:red"><%=error_message_on(:hotel,:days)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            详细信息:
+          </th>
+          <td>
+            <%=f.text_area(:descript,:rows=>4)%>        
+            <div style="color:red"><%=error_message_on(:hotel,:descript)%></div>
+          </td>
+        </tr>        
+              
+      </table><br><div align="center">
+        <%=submit_tag "提交" %>
+        </div>
+    <%end%>
+  </body>
+</html>

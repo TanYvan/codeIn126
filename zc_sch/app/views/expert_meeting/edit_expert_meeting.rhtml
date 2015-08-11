@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>修改专家会议</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">  
+    <%= javascript_include_tag  'WebCalendar'%> 
+  </head>
+  <body>
+    <br>
+    <div class="cDGray">修改专家会议(带<i>*</i>为必填项) <%=link_to "返回",:action=> "list_expert_meeting"%>
+    </div>
+    <%form_for :expert_meeting, :url => {:action => "update_expert_meeting", :id => @expert_meeting} do |f|%>
+        <table class="list">
+        <tr>
+          <th nowrap>案号:</th>
+          <td><%=TbCase.find_by_recevice_code(session[:recevice_code]).case_code %></td>
+        </tr>
+        <tr>
+          <th nowrap>申请人:</th>
+          <td><%=SysArg.applicant(session[:recevice_code],1,4)%></td>
+        </tr>
+        <tr>
+          <th nowrap>被申请人:</th>
+          <td><%=SysArg.respondent(session[:recevice_code],1,4)%></td>
+        </tr>
+        <tr>
+          <th nowrap><i>*</i>题目:</th>
+          <td><%=f.text_area :meeting_title,:rows=>2%>
+          <div style="color:red"><%=error_message_on(:expert_meeting,:meeting_title)%></div></td>
+        </tr>
+        <tr>
+          <th nowrap>时间：</th>
+          <td><%=f.text_field :dat,:readonly=>"true"%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('expert_meeting_dat'),'yyyy-MM-dd')" >
+          </td>
+        </tr><tr>
+          <th nowrap><i>*</i>会议记录人：</th>
+          <td><%=f.text_field :record_by%>
+          <div style="color:red"><%=error_message_on(:expert_meeting,:record_by)%></div></td>
+        </tr>
+        <tr>
+          <th nowrap>上传文件方式：</th>
+          <td><%=f.text_area :content, :rows =>5%>
+          <div style="color:red"><%=error_message_on(:expert_meeting,:content)%></div></td>
+        </tr>
+        <tr>
+          <th nowrap>备注：</th>
+          <td><%=f.text_area :remark, :rows =>5%>
+          <div style="color:red"><%=error_message_on(:expert_meeting,:remark)%></div></td>
+        </tr>
+      </table>
+        <div align="center"><%=submit_tag "确定"%></div>        
+    <%end%>
+  </body>
+    <hr size="1" color="#99CCFF" noshade>
+     <iframe FRAMEBORDER=0 src="/expert_meeting/list_meeting_attendant?meeting_id=<%=params[:meeting_id]%>"
+     noresize  style="width:600px;height:400px" align=center> </iframe>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员回避</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">
+    仲裁员回避
+    </div></span></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            回避者
+          </th>
+          <th nowrap>
+            身份
+          </th>
+          <th nowrap>
+            提出人
+          </th>
+          <th nowrap>
+            提出日期
+          </th>
+          <th nowrap>
+            提醒
+          </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @evite%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%if p.arbitman!=nil%>
+            <%=TbArbitman.find_by_code(p.arbitman).name%>
+          <%end%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0016' and data_val='#{p.figure}'").data_text%>
+        </td>
+        <td>
+          <%if p.requestman!=nil%>
+            <%=TbParty.find(p.requestman).partyname%>
+          <%end%>
+        </td>
+        <td>
+          <%=p.requestdate%>
+        </td>
+        <td>
+          <%=@e[p.remind]%>(<%=p.remind_reason%>) <%=link_to "设置",:action=>"remind_change",:id=>p,:org_id=>params[:org_id]%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"evite_edit",:id=>p,:org_id=>params[:org_id]%>
+        </td>
+        <td>
+            <%=link_to "删除",{:action=>"evite_delete",:id=>p,:org_id=>params[:org_id]},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+
+      </tbody>
+    </table>
+    <br>
+    <div align="center">
+      <%=link_to  "创建", :action=>"evite_new",:org_id=>params[:org_id]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+   </div>
+  </body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>反馈信息列表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%if session[:recevice_code_3]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list_3?contr_r=wind_up_case&act_r=list_feedback","mainFrame")
+       </script>
+    <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">反馈信息列表</span></div>  
+    <br>
+    <%if @tb_case==nil%>
+      <div class="p">请选择您要办理的案件</div>
+    <%end%>
+    <%=button_to "案件选择", :controller=>'case_p',:action=>"list_3",:contr_r=>"wind_up_case",:act_r=>"list_feedback"%>
+    <%if @tb_case!=nil%>
+     <br>
+     <div class="cDGray">当前案件</div>   
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <%=h @tb_case.recevice_code%>
+        </td>
+        <td>
+          <%=h @tb_case.receivedate%>
+        </td>
+        <td>
+          <%=h @tb_case.case_code%>
+        </td>
+        <td>
+          <%=h @tb_case.nowdate%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code=#{@tb_case.recevice_code}",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code=#{@tb_case.recevice_code}",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+      </tr>         
+      </tbody>
+    </table>
+    <br>     
+     <div style="color:red"><%=flash[:notice]%></div>
+    <br>    
+    <div align="center">
+      <%=link_to "增加", :action => "new_feedback"%>&nbsp;&nbsp;
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>反馈日期</th>
+        <th nowrap>反馈者姓名</th>
+        <th nowrap>反馈涉及类型</th>
+        <th nowrap>编辑</th>
+        <th nowrap>删除</th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%if @tb_messrets != nil
+          for tb_messret in @tb_messrets %>
+          <tr class="row<%=i % 2%>">
+            <td><%= tb_messret.retdate.to_s %> </td>
+            <td><%= tb_messret.refername %> </td>
+            <td><%= TbDictionary.find_arbit_type(9016,tb_messret.refer) %></td>
+            <td><%= link_to "编辑", :action => "edit_feedback", :id => tb_messret %> </td>
+            <td><%=link_to "删除",{ :action => "delete_feedback", :id => tb_messret },:confirm=>"您确认要删除吗？",:method=>"post" %></td>
+          </tr>
+      <%i=i+1%>
+      <%end%>
+      <%end%>
+      <%end%>
+      </tbody>
+    </table>             
+  </body>
+</html>
+

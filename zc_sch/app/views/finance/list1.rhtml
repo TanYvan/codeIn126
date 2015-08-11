@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>财务统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <table><tr><td>
+    <div class="title"><span class="cBlue">财务统计</span></div>
+    <%form_tag :url=>{:action=>"list1"} do%>
+      <table align="center"><tr><td nowrap align="right">
+        <tr><td nowrap align="right">
+          时间段类型：</td>
+          <td align="left" nowrap> <%=select_tag "datestyle",
+              "<option value='01' selected>立案时间段</option>
+            <option value='02' select>结案时间段</option>
+            <option value='03'>立案结案时间段</select>"%>
+        </td></tr>
+        <tr><td nowrap align="right">
+          统计时间段：</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" >
+            --
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" >
+        </td></tr>
+        <tr><td nowrap align="right">
+          助理：</td>
+          <td align="left" nowrap>
+            <%@assistant=User.find_by_sql("select users.code as code,users.name as name from users,user_duties where user_duties.duty_code='0003' and user_duties.user_code=users.code and users.used='Y' order by  users.name")%>
+            <%=select(:k,:assistant,@assistant.collect{|p|[p.name,p.code]})%>
+        </td></tr>
+        <tr><td nowrap align="right">
+          仲裁程序：</td>
+          <td align="left" nowrap><%@prog=TbDictionary.find(:all,:order=>"data_val",:conditions=>"typ_code='0001' and state='Y'")%>
+            <%=select(:j,:prog,@prog.collect{|p|[p.data_text,p.data_val]}.insert(0,["全部","1"]))%>
+        </td></tr>
+      </table>
+      <%=submit_tag "查询" %>
+    <%end%>
+    <br><br>
+    <i><%=flash[:notice]%></i>
+    <div class="cGreen">
+      <%if params[:k]==nil and params[:j]==nil%>
+      <%else%>
+        时间段类型：<%=@dispute[@datestyle]%>&nbsp;&nbsp;
+        统计时间段：<%=@date1%>至<%=@date2%>&nbsp;&nbsp;
+        助理：<%=User.find(:first,:conditions=>"used='Y' and code='#{params[:k][:assistant]}'").name%>&nbsp;&nbsp;
+        仲裁程序：<%if params[:j][:prog]=='1'%>全部
+        <%else%>
+          <%=TbDictionary.find(:first,:order=>"data_val",:conditions=>"typ_code='0001' and state='Y' and data_val='#{params[:j][:prog]}'").data_text%>
+        <%end%>
+      <%end%>
+    </div>
+    <table class="adminlist" cellspacing="1">
+      <thead>
+        <tr>
+          <th nowrap rowspan="2">案件受理号</th>
+          <th nowrap rowspan="2">总案号</th>
+          <th nowrap rowspan="2">助理</th>
+          <th nowrap colspan="3">本请求</th>
+          <th nowrap colspan="3">反请求</th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+        <tr>
+          <th nowrap>明确争议金额</th>
+          <th nowrap>不明确争议金额</th>
+          <th nowrap>无明确争议金额</th>
+          <th nowrap>明确争议金额</th>
+          <th nowrap>不明确争议金额</th>
+          <th nowrap>无明确争议金额</th>
+          <th nowrap>实收</th>
+          <th nowrap>减免</th>
+          <th nowrap>欠缴</th>
+        </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%if @case!=nil%>
+        <%for c in @case%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=c.recevice_code%></td>
+            <td nowrap><%=c.case_code%></td>
+            <td nowrap><%=User.find(:first,:conditions=>"used='Y' and code='#{c.clerk}'").name%></td>
+            <td nowrap>
+              <%@amout=TbCaseAmount.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='1' and amount_typ='0001'",:select=>"sum(rmb_money) as aa")%>
+              <%if SysArg.get_last_record(@amout)!=nil%>
+                <%=SysArg.get_last_record(@amout).aa%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%@amout=TbCaseAmount.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='1' and amount_typ='0002'",:select=>"sum(rmb_money) as aa")%>
+              <%if SysArg.get_last_record(@amout)!=nil%>
+                <%=SysArg.get_last_record(@amout).aa%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%@amout=TbCaseAmount.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='1' and amount_typ='0003'",:select=>"sum(rmb_money) as aa")%>
+              <%if SysArg.get_last_record(@amout)!=nil%>
+                <%=SysArg.get_last_record(@amout).aa%>
+              <%end%>
+            </td>
+            <td nowrap><%@amout=TbCaseAmount.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='2' and amount_typ='0001'",:select=>"sum(rmb_money) as aa")%>
+              <%if SysArg.get_last_record(@amout)!=nil%>
+                <%=SysArg.get_last_record(@amout).aa%>
+              <%end%></td>
+            <td nowrap><%@amout=TbCaseAmount.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='2' and amount_typ='0002'",:select=>"sum(rmb_money) as aa")%>
+              <%if SysArg.get_last_record(@amout)!=nil%>
+                <%=SysArg.get_last_record(@amout).aa%>
+              <%end%>
+            </td>
+            <td nowrap><%@amout=TbCaseAmount.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype='2' and amount_typ='0003'",:select=>"sum(rmb_money) as aa")%>
+              <%if SysArg.get_last_record(@amout)!=nil%>
+                <%=SysArg.get_last_record(@amout).aa%>
+              <%end%></td>
+            <td nowrap>
+              <%@recome=TbCharge.find(:all,:conditions=>"used='Y' and recevice_code='#{c.recevice_code}' and state=2",:select=>"sum(rmb_money) as dd")%>
+              <%if SysArg.get_last_record(@recome)!=nil%>
+                <%=SysArg.get_last_record(@recome).dd%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%@reduction=TbReduction.find(:all,:conditions=>"used='Y' and recevice_code='#{c.recevice_code}'",:select=>"sum(reduction_money) as ff")%>
+              <%if SysArg.get_last_record(@reduction)!=nil%>
+                <%=SysArg.get_last_record(@reduction).ff%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%@arrear=TbShouldCharge.find(:all,:conditions=>"used='Y' and recevice_code='#{c.recevice_code}'",:select=>"sum(arrears) as hh")%>
+              <%if SysArg.get_last_record(@arrear)!=nil%>
+                <%=SysArg.get_last_record(@arrear).hh%>
+              <%end%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      <%end%>
+    </table>
+  </td></tr></table>
+  </body>
+</html>

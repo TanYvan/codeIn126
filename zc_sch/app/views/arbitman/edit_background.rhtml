@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员专业背景</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">编辑仲裁员专业背景</span></div>
+    <br>
+      <div align="center"><%=link_to "返回",:action=> "edit_arbitman", :id => @tb_arbitman.id%>
+      </div><br>
+    <%form_for :tb_arbitman, :url =>{:action => "save_background",:id => @tb_arbitman.id} do |f|%>
+        <table class="list">
+          <tr>
+            <th>背景资料：</th>
+            <td><%=f.text_area :background, :rows => 4%></td>
+          </tr>
+          <tr>
+            <th>英文背景资料：</th>
+            <td><%=f.text_area :backg_en, :rows => 4%></td>
+          </tr>        
+        </table>
+         <div align="center">
+        <%=submit_tag "确定"%>
+         </div>
+    <%end%>
+  </body>
+</html>

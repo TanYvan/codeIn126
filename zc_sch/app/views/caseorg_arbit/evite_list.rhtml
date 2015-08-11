@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员回避</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员信息</span></div>
+    当前案件
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <%=h @case.recevice_code%>
+        </td>
+        <td>
+          <%=h @case.receivedate%>
+        </td>
+        <td>
+          <%=h @case.case_code%>
+        </td>
+        <td>
+          <%=h @case.nowdate%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <br>
+      <div align="center"><%=link_to "返回案件列表",:action=>"list"%></div>
+    <br>
+     <h2 class="strong">
+      <div id="link1">
+        <table align="center" bgcolor="#E1F4FF">
+          <tr><td>
+              <%= link_to "选择仲裁员",:action => "arbitman_list",:recevice_code=>@case.recevice_code,:org_id=>params[:org_id]%>
+            </td><td width="0.01px" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "仲裁员回避",:action => "evite_list",:recevice_code=>@case.recevice_code,:org_id=>params[:org_id]%>
+            </td><td width="0.01px" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "仲裁员信息披露",:action => "disc_list",:recevice_code=>@case.recevice_code,:org_id=>params[:org_id]%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "仲裁员更换",:action => "change_list",:recevice_code=>@case.recevice_code,:org_id=>params[:org_id]%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            </tr>
+        </table>
+      </div>
+    </h2>
+    <br>
+    <br>
+      <div class="cDGray">仲裁员回避</div>
+      <div align="center">
+      <%=link_to  "创建",:action=>"evite_new",:org_id=>params[:org_id],:recevice_code=>@case.recevice_code%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            提出人
+          </th>
+          <th nowrap>
+            回避者
+          </th>
+          <th nowrap>
+            转交对方当事人和仲裁庭的日期
+          </th>
+          <th nowrap>
+            提醒
+          </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @evite%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%if p.requestman!=nil%>
+            <%=TbParty.find(p.requestman).partyname%>
+          <%end%>
+        </td>
+        <td>
+          <%if p.arbitman!=nil%>
+            <%=TbArbitman.find_by_code(p.arbitman).name%>
+          <%end%>
+        </td>
+        <td>
+          <%=p.senddate%>
+        </td>
+        <td>
+          <%=@e[p.remind]%>(<%=p.remind_reason%>) <%=link_to "设置",:action=>"remind_change",:id=>p,:org_id=>params[:org_id],:recevice_code=>@case.recevice_code%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"evite_edit",:id=>p,:org_id=>params[:org_id],:recevice_code=>@case.recevice_code%>
+        </td>
+        <td>
+            <%=link_to "删除",{:action=>"evite_delete",:id=>p,:org_id=>params[:org_id],:recevice_code=>@case.recevice_code},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+
+      </tbody>
+    </table>
+  </body>
+</html>

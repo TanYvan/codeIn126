@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>添加反馈信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <%= javascript_include_tag  'WebCalendar'%>
+    <script>
+      function checkForm(){
+        if(document.getElementById("tb_messret_refername").value==""){
+          alert("请填写反馈者姓名");
+          return false;
+        }
+        if(document.getElementById("tb_messret_tel").value==""){
+          alert("请填写反馈者电话");
+          return false;
+        }
+        if(document.getElementById("tb_messret_addr").value==""){
+          alert("请填写反馈者地址");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">添加反馈信息</span></div>
+    <br>
+    <div align="center"> 
+        (带<i>*</i>为必填项) <%=link_to "返回", :action => "list_feedback"%>   
+        <%= error_messages_for 'tb_arbitman' %>       
+    </div>
+    <%form_for :tb_messret, :url => {:action => "create_feedback"},:html =>{:onsubmit=>"return checkForm();"} do |form|%>
+        <table class="list">
+          <tr>
+            <th nowrap>反馈日期：</th>
+            <td><%=form.text_field :retdate ,:readonly => "true"%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('tb_messret_retdate'),'yyyy-MM-dd')" >                                      
+            <div style="color:red"><%=error_message_on(:tb_messret,:retdate)%></div></td>
+          </tr>
+          <tr>
+            <th nowrap>反馈意见类型：</th>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='9015' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <td><%=form.collection_select(:style,op,:data_val,:data_text)%></td>         
+            <div style="color:red"><%=error_message_on(:tb_messret,:style)%></div>
+          </tr>
+          <tr>
+            <th nowrap>反馈涉及类型：</th>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='9016' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <td><%=form.collection_select(:refer,op,:data_val,:data_text)%></td>         
+            <div style="color:red"><%=error_message_on(:tb_messret,:refer)%></div>
+          </tr>
+          <tr>
+            <th nowrap>反馈信息人类型：</th>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='9017' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <td><%=form.collection_select(:refertyp,op,:data_val,:data_text)%></td>         
+            <div style="color:red"><%=error_message_on(:tb_messret,:refertyp)%></div>       
+          </tr> 
+          <tr>
+            <th nowrap><i>*</i>反馈者姓名：</th>
+            <td><%=form.text_field :refername%><i><%=error_message_on(:tb_messret,:refername)%></i></td>
+          </tr>          
+          <tr>
+            <th nowrap><i>*</i>反馈者电话：</th>
+            <td><%=form.text_field :tel%><i><%=error_message_on(:tb_messret,:tel)%></i></td>
+          </tr>
+          <tr>
+            <th nowrap><i>*</i>反馈者地址：</th>
+            <td><%=form.text_field :addr, :style => "width:45em"%><i><%=error_message_on(:tb_messret,:addr)%></i></td>
+          </tr>
+          <tr>
+            <th nowrap>描述：</th>
+            <td><%=form.text_area :content,:rows => 4%></td>
+          </tr>          
+        </table>
+        <br>
+        <div align="center">
+        <%=submit_tag "保存"%>                 
+        </div>
+    <%end%>
+  </body>
+</html>
+

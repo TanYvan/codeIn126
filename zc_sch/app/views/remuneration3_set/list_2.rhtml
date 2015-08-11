@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>案件 仲裁员仲裁报酬维护</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="title"><span class="cBlue">仲裁员仲裁报酬维护</span></div>
+<div align="center">
+  <div align="center" class="cDGray">
+    仲裁员仲裁报酬维护
+    <div style="color:red"><%=flash[:notice]%></div>
+  </div>
+  <table cellspacing="1" class="adminlist">
+  <thead>
+    <tr >
+      <th nowrap>
+        仲裁员
+      </th>
+      <th nowrap>
+        金额
+      </th>
+      <th nowrap>
+        修改
+      </th>
+      <th nowrap>
+        删除
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  <%i=0%>
+  <%for p in @remun%>
+    <tr class="row<%=i % 2%>">
+        <td>
+      <%=TbArbitman.find_by_code(p.arbitman).name%>
+      </td>
+      <td>
+        <%=p.rmb%>
+      </td>
+      <td>
+        <%if TbBonusPenalty.find(:first,:conditions=>"recevice_code='#{session[:recevice_code_2]}' and typ='0001' and p='#{p.arbitman}' and used='Y' and extend_code=''")!=nil %>
+          <%=link_to "修改",:action=>"edit_2",:id=>p%>
+        <%end%>
+      </td>
+      <td>
+        <%if TbBonusPenalty.find(:first,:conditions=>"recevice_code='#{session[:recevice_code_2]}' and typ='0001' and p='#{p.arbitman}' and used='Y' and extend_code=''")!=nil %>
+          <%=link_to "删除",{:action=>"delete_2",:id=>p},:confirm=>"您确认要删除吗？"%>
+        <%end%>
+      </td>
+    </tr>
+    <%i=i+1%>
+  <%end%>
+  </tbody>
+  </table>
+  <%if flash[:notice]!=nil%>
+    <script language="javascript">
+     parent.location.reload(); 
+    </script>
+  <%end%>
+</body>
+</html>

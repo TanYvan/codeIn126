@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改保全管理信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%>
+    <script language="javascript">
+      function getcondi()
+      {
+        var chec = document.getElementsByName("che_p");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+'、';
+        }
+        aa=a.substr(0, a.length -1 )
+        var c = document.getElementById("condi");
+        c.value=aa;
+      }
+    </script>
+  </head>
+  <body>
+    <br>
+    <div class="cDGray" align="center">
+      修改保全管理信息 <%=link_to "返回",:action=>"save_list"%>
+
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <br>
+      <%form_for :save ,:url=>{:action=>"save_update",:id=>@save.id},:html=>{:onsubmit=>"return getcondi()"}  do |f|%>
+        <table class="list">
+        <tr>
+          <th>
+            保全类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8102' and state='Y'",:order=>'data_val desc',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:typed,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            申请保全人类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8103' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:request_typ,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            申请保全人:
+          </th>
+          <td>
+            <%@op1=TbParty.find_by_sql("select id,partyname from tb_parties where tb_parties.recevice_code='#{session[:recevice_code]}' and used='Y' order by partytype,id")%>
+            <%if @op1!=nil%>
+              <%for p in @op1%>
+                <input type='checkbox' id='che' name='che_p' value=<%=p.partyname%> <%if @save.request_man.index(p.partyname)!=nil%>checked<%end%>/><%=p.partyname%><br>
+              <%end%>
+            <%end%>
+          </td>
+        </tr>
+        <!--tr>
+          <th>
+            被申请保全人类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8103' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%#=f.collection_select(:requested_typ,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            被保全人:
+          </th>
+          <td>
+            <%party=TbParty.find(:all,:conditions=>"recevice_code='#{session[:recevice_code]}'  and used='Y'",:order=>'id',:select=>"id,partyname")%>
+            <%#=f.collection_select(:requested_man,party,:id,:partyname)%>
+            <div style="color:red"><%#=error_message_on(:save,:requested_man)%></div>
+          </td>
+        </tr-->
+        <tr>
+          <th>
+            保全金额(￥):
+          </th>
+          <td>
+            <%=f.text_field(:save_money,:style=>"width:10em")%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            保全法院地区:
+          </th>
+          <td>
+            <%@area=Region.find(:all,:order=>"code")%>
+            <%=f.collection_select(:yard_area,@area,:code,:name)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            保全法院:
+          </th>
+          <td>
+            <%=f.text_area(:save_yard,:rows=>1)%>
+          </td>
+        </tr>
+        <!--tr>
+          <th>
+            保全时间段:
+          </th>
+          <td>
+            <#%=f.text_field(:start_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('save_start_date'),'yyyy-MM-dd')" >
+            至
+            <#%=f.text_field(:end_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('save_end_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr-->
+        
+        <tr>
+          <th>
+            保全申请日期:
+          </th>
+          <td>
+            <%=f.text_field(:send_time,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('save_send_time'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            保全法院裁定内容:
+          </th>
+          <td>
+            <%=f.text_area(:yard_arbitcon,:rows=>4)%>
+          </td>
+        </tr>
+      </table>
+      <div align="center"><%=hidden_field_tag :condi ,''%><%=submit_tag "提交" %></div>
+    <%end%>
+</html>

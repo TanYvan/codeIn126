@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改联系记录信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%>
+    <%= javascript_include_tag :defaults%>
+    <script language="javascript">
+      function r_s(){
+       new Ajax.Request('/contactrecord/p_set?p_typ='+document.getElementById("contactrecord_consultant").value, {asynchronous:true, evalScripts:true}); 
+       return false;
+      }
+       function checkForm(){         
+          if (document.getElementById("contactrecord_contact_problem").value==""){
+            alert("请填写咨询问题");
+            return false;
+           }
+      return true;
+      }
+    </script>
+  </head>
+  <body onload="r_s();">
+  <div class="cDGray">修改联系记录信息(带<i>*</i>为必填项) <%=link_to "返回",:action=>"contactrecord_list"%>
+  </div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :contactrecord ,:url=>{:action=>"contactrecord_update",:id=>params[:id]},:html=>{:onsubmit=>"return checkForm();"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            时间:
+          </th>
+          <td>
+            <%=f.text_field(:contact_time,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('contactrecord_contact_time'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th>
+             咨询方:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8111' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:consultant,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            咨询人姓名:
+          </th>
+          <td>
+            <div id='pv_set'>
+            <%=f.text_field(:counselor)%>
+            </div>             
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            公司:
+          </th>
+          <td>
+            <div id='pv_set'>
+            <%=f.text_field(:company)%>
+            </div>             
+          </td>
+        </tr>
+      
+        <tr>
+          <th>
+            联系地址:
+          </th>
+          <td>
+            <%=f.text_area(:addr,:rows=>1)%>
+            <div style="color:red"><%=error_message_on(:contactrecord,:addr)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            邮编:
+          </th>
+          <td>
+            <%=f.text_field(:postcode)%>
+            <div style="color:red"><%=error_message_on(:contactrecord,:postcode)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            联系电话:
+          </th>
+          <td>
+            <%=f.text_field(:tel)%>
+            <div style="color:red"><%=error_message_on(:contactrecord,:tel)%></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th>
+            接待人:
+          </th>
+          <td>
+            <%u=User.find_by_sql("select code ,name from users where code in (select user_code from user_duties where duty_code='0003') order by name")%>
+            <%=f.collection_select(:receptionist,u,:code,:name)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            内容分类:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8112' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:content_sort,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            <i>*</i>咨询的问题:
+          </th>
+          <td>
+            <%=f.text_area(:contact_problem,:rows=>4)%>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            答复内容:
+          </th>
+          <td>
+            <%=f.text_area(:answer,:rows=>4)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remarks,:rows=>4)%>
+          </td>
+        </tr>
+      </table>
+     <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+  </body>
+</html>

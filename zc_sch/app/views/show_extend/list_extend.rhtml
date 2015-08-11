@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>报酬发放信息表</title>
+  <%= javascript_include_tag "prototype" %>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+   <div class="title"><span class="cBlue">报酬发放信息列表</span></div>
+   <div align="center">
+      <%=link_to "返回",:action=> "list_extend_code",:extend_code=>@extend_code,:extend_dat=>@extend_dat,:u=>@u,:page=>params[:page],:page_lines=>params[:page_lines]%>
+   </div>
+   <div>发放编号<%=params[:id]%></div>  
+    <div style="color:red"><%=flash[:notice]%></div>
+    <!-- 查询输入项 -->
+    <%form_tag :action=>"list_extend" do %>
+      <table align="center">
+        <tr>
+          <td nowrap align="right">总案号:</td><td nowrap align="left"><%=text_field_tag(:general_code,@general_code)%></td>
+          <td nowrap align="right">立案号:</td><td nowrap align="left"><%=text_field_tag(:case_code,@case_code)%></td>
+          <td nowrap align="right">咨询号:</td><td nowrap align="left"><%=text_field_tag(:recevice_code,@recevice_code)%></td>
+        </tr>
+        <tr>
+          <td nowrap align="right">结案号:</td><td nowrap align="left"><%=text_field_tag(:end_code,@end_code)%></td>
+          <td nowrap align="right">人员类别:</td><td nowrap align="left"><%=select_tag(:p_typ,options_for_select(%w{ 未选 校核人员 助理 仲裁员 },@p_typ))%></td>
+          <td nowrap align="right">姓名:</td><td nowrap align="left"><%=text_field_tag(:p,@p)%></td>
+        </tr>        
+      </table>
+      <div align="center"><%=submit_tag "查询" %></div> 
+      <%end%> 
+  <table class="adminlist" cellspacing="1">
+    <thead>
+    <tr> 
+      <th nowrap>序号</th>
+      <th nowrap>人员类别</th>
+      <th nowrap>姓名</th>
+      <th nowrap>银行</th>
+      <th nowrap>账号</th>
+      <th nowrap>身份证号</th>
+      <th nowrap>结案号</th>
+      <th nowrap>类型</th>
+      <th nowrap>应发数额</th>
+      <th nowrap>应扣税款</th>
+      <th nowrap>实发数额</th>      
+    </tr>
+    </thead>
+      <tbody>
+        <%j=0%>
+   <%i=1%>
+   <% if @tb_extends != nil
+    for tb_extend in @tb_extends %>        
+        <tr class="row<%=j % 2%>">
+          <td nowrap><%=  i %></td>
+          <td nowrap><%if tb_extend.p_typ == '0001'%>仲裁员<%elsif tb_extend.p_typ == '0002'%>助理<%else%>校核人员<%end%></td>
+          <td nowrap><%if tb_extend.p_typ == '0001'%>
+                <%=TbArbitman.find_by_code(tb_extend.p).name%>
+              <%else%>
+                <%=User.find_by_code(tb_extend.p).name%>
+              <%end%>
+          </td>
+          <td nowrap><%=  tb_extend.bankname%></td>
+          <td nowrap><%=  tb_extend.bank_account%></td>
+          <td nowrap><%=  tb_extend.id_card%></td>
+          <td nowrap><%=  tb_extend.end_code%></td>
+          <td nowrap><%if tb_extend.typ == '1'%>报酬<%elsif tb_extend.typ == '2'%>奖励<%else%>扣减<%end%></td>
+          <td nowrap><%=  tb_extend.should_rmb%></td>
+          <td nowrap><%=  tb_extend.tax_rmb%></td>
+          <td nowrap><%=  tb_extend.extend_rmb%></td>
+        </tr>
+        <%i+=1%>
+        <%j=j+1%>
+    <%end%>    
+    <%end%>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="9">
+          <%= link_to '上一页', 
+              { :page => @extend_pages.current.previous ,
+                :general_code=>@general_code,
+                :case_code=>@case_code,
+                :recevice_code =>@recevice_code,
+                :end_code =>@end_code,
+                :p_typ => @p_typ,
+                :p => @p,
+                :page_lines=>@page_lines  } if @extend_pages.current.previous %>
+          <%=pagination_links( @extend_pages,
+              {:params=>{:general_code=>@general_code,
+                         :case_code=>@case_code,
+                :recevice_code =>@recevice_code,
+                :end_code =>@end_code,
+                :p_typ => @p_typ,
+                :p => @p,                         
+                         :page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', 
+              { :page => @extend_pages.current.next ,
+                :general_code=>@general_code,
+                :case_code=>@case_code,
+                :recevice_code =>@recevice_code,
+                :end_code =>@end_code,
+                :p_typ => @p_typ,
+                :p => @p,                
+                :page_lines=>@page_lines  } if @extend_pages.current.next %>
+
+          <%if @extend_pages.current.previous or @extend_pages.current.next%>
+            <form action="/show_extend/list_extend" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @extend_pages.current.number %> />
+              <input type=hidden name='general_code' value="<%=@general_code%>" />
+              页
+              <input type=hidden name='case_code' value="<%=@case_code%>" />
+              <input type='submit' value='跳转' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </tfoot>
+    </table>
+</body>
+</html>
+

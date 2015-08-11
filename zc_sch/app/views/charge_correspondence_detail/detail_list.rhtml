@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件应收款信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件应收款信息</span></div>
+    <br>
+    <div class="cDGray"> <%=link_to "返回案件收费明细信息列表",:action=>"list",:recevice_code=>params[:recevice_code]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            费用类型
+          </th>
+          <th nowrap>
+            交款方
+          </th>
+          <th nowrap>
+            币种
+          </th>
+          <th nowrap>
+            金额
+          </th>
+          <th nowrap>
+            汇率
+          </th>
+          <th nowrap>
+            应收费用(￥)
+          </th>
+          <th nowrap>
+            备注
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for p in @should%>
+          <tr class="row<%=i % 2%>">
+            <td><!--华南仲裁委的个性化-->
+              <%#=TbDictionary.find(:first,:conditions=>"typ_code='0031' and data_val='#{p.typ}'").data_text%>
+              <%if @aribitprog_num=='0001' or @aribitprog_num=='0002'%>
+                <%if p.typ=='0002' or p.typ=='0005'%>
+                  受理费
+                <%elsif p.typ=='0003' or p.typ=='0006'%>
+                  处理费
+                <%end%>
+              <%elsif @aribitprog_num=='0003' or @aribitprog_num=='0004'%>
+                <%if p.typ=='0002' or p.typ=='0005'%>
+                  立案费
+                <%elsif p.typ=='0003' or p.typ=='0006'%>
+                  仲裁费
+                <%end%>
+              <%else%>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='0031' and data_val='#{p.typ}'").data_text%>
+              <%end%>
+            </td>
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0032' and data_val='#{p.payment}'").data_text%>
+            </td>
+            <td>
+              <%=Money.find_by_code(p.currency).name%>
+            </td>
+            <td>
+              <%=p.f_money%>
+            </td>
+            <td>
+              <%=p.rate%>
+            </td>
+            <td>
+              <%=p.rmb_money%>
+            </td>
+            <td>
+              <%=p.remark%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

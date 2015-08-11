@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>外语语种</title>
+     <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">添加语种</span></div>
+    <br>
+      <div align="center"><%=link_to "返回",:action=> "list_language", :id => @tb_arbitman.id%></div>
+      <br>
+    <%form_for :tb_language, :url =>{:action => "create_language", :id => @tb_arbitman.id} do |f|%>
+        <table class="list">
+          <tr>
+            <th>语种:</th>
+            <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9008 and state ='Y'"], :order => :id, :select => "data_val,data_text") %>
+            <td><%=f.collection_select(:language, @types, :data_val, :data_text)%></td>            
+       
+          </tr>
+          <tr>
+            <th>语言序号:</th>
+            <td><%=f.text_field :lannum%></td>
+          </tr>
+          <tr>
+            <th>听说能力:</th>
+            <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9009 and state ='Y'"], :order => :id, :select => "data_val,data_text") %>
+            <td><%=f.collection_select(:ability, @types, :data_val, :data_text)%></td>  
+          </tr>
+          <tr>
+            <th>读写能力:</th>
+            <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9010 and state ='Y'"], :order => :id, :select => "data_val,data_text") %>
+            <td><%=f.collection_select(:literacy, @types, :data_val, :data_text)%></td>   
+          </tr>
+          <tr>
+            <th>备注:</th>
+            <td><%=f.text_area :remark,:rows=>4%></td>
+          </tr>
+        </table>
+        <div align="center">
+        <%=submit_tag "确定"%>
+        </div>
+    <%end%>
+  </body>
+</html>

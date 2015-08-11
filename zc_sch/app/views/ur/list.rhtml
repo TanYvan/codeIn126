@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>用户角色信息维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+      <div align="center" class="cBlack">
+    <%=params[:uid]%> : <%=User.find_by_code(params[:uid]).name%>
+    <br><br>
+    角色：<%=User.find_by_code(params[:uid]).role_text%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <br>
+    <table class="adminlist">
+      <thead>
+      <tr >
+          <th>
+          角色名称
+        </th>
+         <th>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <%i=0%>
+      <tbody>
+      <%for b in @urs%>
+        <tr class="row<%=i % 2%>">
+          <td >
+            <%=h Role.find_by_code(b.role_code).name%>
+          </td>
+          <td >
+            
+            <%=link_to "删除" ,{:controller=>"ur",:action=>"delete",:id=>b,:uid=>params[:uid]},:confirm=>"您确认要删除吗？",:method=>"post"%>
+            
+          </td>
+        </tr>
+        <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br/>
+    <%=link_to  "添加", :controller=>"ur",:action=>"select",:uid=>params[:uid]%>
+    <%=link_to  "返回", :controller=>"user",:action=>"list"%>
+  </body>
+</html>

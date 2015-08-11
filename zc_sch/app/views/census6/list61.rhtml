@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>基本案件统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script>
+      function checkForm(){
+        if(document.getElementById("date1").value==null && document.getElementById("date2").value==null){
+          alert("请选择统计时间！");
+          return false;
+        }
+        if(document.getElementById("date1").value>document.getElementById("date2").value){
+          alert("统计时间错误，请重新选择！");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">超审限结案时间统计</span></div>
+    <%form_tag :url=>{:action=>"list61"},:html =>{:onsubmit=>"return checkForm();"} do%>
+      <table align="center"><tr><td nowrap align="right">
+          时间段类型：</td>
+          <td align="left" nowrap> <%=select_tag "datestyle",
+              "<option value='01' selected>立案时间段</option>
+            <option value='02' select>结案时间段</option>
+            <option value='03'>立案结案时间段</select>"%>
+        </td></tr>
+        <tr><td nowrap align="right">
+          统计时间段：</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" >
+            --
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" >
+        </td></tr>
+        <tr><td nowrap align="right">
+          超出天数大于：</td>
+          <td align="left" nowrap><%=text_field_tag(:date3)%>天
+        </td></tr>
+      </table>
+      <%=submit_tag "查询" %>
+    <%end%>
+    <br><br>
+    <div class="cGreen">
+      <%if params[:k]==nil %>
+      <%else%>
+        时间段类型：<%=@dispute[@datestyle]%>&nbsp;&nbsp;
+        统计时间段：<%=@date1%>至<%=@date2%>&nbsp;&nbsp;
+        办案助理：<%=User.find(:first,:conditions=>"code='#{params[:k][:asst]}' and used='Y'").name%>&nbsp;&nbsp;
+        <%if @date3==nil or @date3==''%>
+        <%else%>
+          超出天数大于：<%=@date3%>天
+        <%end%>
+      <%end%>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>案件编号</th>
+          <th nowrap>助理</th>
+          <th nowrap>立案日期</th>
+          <th nowrap>结案日期</th>
+          <th nowrap>延期次数</th>
+          <th nowrap>最后一次延期日期</th>
+          <th nowrap>组庭后计算出<br>的审限日期</th>
+          <th nowrap>超出审限天数</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @case!=nil%>
+          <%for a in @case%>
+            <tr>
+              <td nowrap><%=a.recevice_code%></td>
+              <td nowrap><%if a.clerk!=nil%><%=User.find_by_code(a.clerk).name%><%end%></td>
+              <td nowrap><%=a.nowdate%></td>
+              <td nowrap><%=a.end_t.to_date%></td>
+              <td nowrap>
+                <%@delay1=TbCasedelay.find_by_sql("select count(id) as aa from tb_casedelays where tb_casedelays.used='Y' and tb_casedelays.recevice_code='#{a.recevice_code}'")%>
+                <%if SysArg.get_last_record(@delay1)!=nil%>
+                  <%=SysArg.get_last_record(@delay1).aa%>
+                <%end%>
+              </td>
+              <%@delay=TbCasedelay.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y'",:order=>"delayTerm")%>
+              <td nowrap>
+                <%if SysArg.get_last_record(@delay)!=nil%>
+                  <%=SysArg.get_last_record(@delay).delayDate%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%if SysArg.get_last_record(@delay)!=nil%>
+                  <%=SysArg.get_last_record(@delay).delayTerm%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%if SysArg.get_last_record(@delay)!=nil%>
+                  <%=SysArg.get_last_record(@delay).delayDate-SysArg.get_last_record(@delay).delayTerm%>
+                <%end%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

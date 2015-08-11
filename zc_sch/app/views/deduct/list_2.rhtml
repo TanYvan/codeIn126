@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件 报酬奖励、扣减信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">报酬奖励、扣减信息</span></div>
+    <div align="center" class="cDGray">
+    仲裁报酬奖励、扣减信息
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            办案人
+          </th>
+          <th nowrap>
+            姓名
+          </th>
+          <th nowrap>
+            类型
+          </th>
+          <th nowrap>
+            日期
+          </th>
+          <th nowrap>
+            金额
+          </th>
+          <th nowrap>
+            理由
+          </th>
+          <th nowrap>
+            操作
+          </th>
+      </tr>
+      </thead>
+        <tbody>
+          <%i=0%>
+      <%for p in @arbitman%>
+      <tr class="row2">
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{TbCasearbitman.find(:first,:conditions=>"recevice_code='#{p.recevice_code}' and arbitman='#{p.p}'",:order=>"arbitmantype").arbitmantype}'").data_text%>
+        </td>
+        <td>
+          <%=TbArbitman.find_by_code(p.p).name%>
+        </td>
+        <td colspan="4">
+        &nbsp;
+        </td>
+        <td >
+        <%=button_to "增加",:action=>"new_2",:typ=>'0001',:p=>p.p%>
+        </td>
+      <%i=i+1%>
+      </tr>
+      <%deduc_0001=TbDeduction.find(:all,:conditions=>"recevice_code='#{p.recevice_code}' and used='Y' and typ='0001' and p='#{p.p}'",:order=>"id") %>
+      <%for pp in deduc_0001%>
+      <tr class="row1">
+        
+        <td colspan="2">
+          &nbsp;
+        </td>
+        <td>
+          <%=@deduct_typ[pp.deduct_typ]%>
+        </td>
+        <td>
+          <%=pp.deduct_t%>
+        </td>
+        <td>
+          <%=pp.rmb%>
+        </td>
+        <td>
+          <%=h pp.reason%>
+        </td>
+        <td>
+          <%=link_to "删除",{:action=>"delete_2",:id=>pp} ,:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+
+      <%i=i+1%>
+      
+      <%end%>
+      
+      <%end%>
+      
+      <%for p in @assistant%>
+      <tr class="row2">
+        <td>
+          助理
+        </td>
+        <td>
+          <%=User.find_by_code(p.p).name%>
+        </td>
+        <td colspan="4">
+        &nbsp;
+        </td>
+        <td >
+        <%=button_to "增加",:action=>"new_2",:typ=>'0002',:p=>p.p%>
+        </td>
+        <%i=i+1%>
+      </tr>
+
+      <%deduc_0002=TbDeduction.find(:all,:conditions=>"recevice_code='#{p.recevice_code}' and used='Y' and typ='0002' and p='#{p.p}'",:order=>"id") %>
+      <%for pp in deduc_0002%>
+      <tr class="row1">
+        
+        <td colspan="2">
+         &nbsp;
+        </td>
+        <td>
+          <%=@deduct_typ[pp.deduct_typ]%>
+        </td>
+        <td>
+          <%=pp.deduct_t%>
+        </td>
+        <td>
+          <%=pp.rmb%>
+        </td>
+        <td>
+          <%=h pp.reason%>
+        </td>
+        <td>
+          <%=link_to "删除",{:action=>"delete_2",:id=>pp} ,:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      
+      <%end%>
+      
+      <%end%>
+  
+      </tbody>
+    </table>
+<div align="center" class="cDGray">
+    校核报酬扣减信息
+      </div>
+    <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            姓名
+          </th>
+          <th nowrap>
+            类型
+          </th>
+          <th nowrap>
+            日期
+          </th>
+          <th nowrap>
+            金额
+          </th>
+          <th nowrap>
+            理由
+          </th>
+          <th nowrap>
+            操作
+          </th>
+      </tr>
+      </thead>
+        <tbody>
+          <%i=0%>
+      <%for p in @jh%>
+      <tr class="row2">
+        <td>
+          <%=User.find_by_code(p.p).name%>
+        </td>
+        <td colspan="4">
+        &nbsp;
+        </td>
+        <td >
+        <%=button_to "增加",:action=>"new_2",:typ=>'0003',:p=>p.p%>
+        </td>
+      <%i=i+1%>
+      </tr>
+
+      <%deduc_0003=TbDeduction.find(:all,:conditions=>"recevice_code='#{p.recevice_code}' and used='Y' and typ='0003' and p='#{p.p}'",:order=>"id") %>
+      <%for pp in deduc_0003%>
+      <tr class="row1">
+        
+        <td>
+          
+        </td>
+        <td>
+          <%=@deduct_typ[pp.deduct_typ]%>
+        </td>
+        <td>
+          <%=pp.deduct_t%>
+        </td>
+        <td>
+          <%=pp.rmb%>
+        </td>
+        <td>
+          <%=h pp.reason%>
+        </td>
+        <td>
+          <%=link_to "删除",{:action=>"delete_2",:id=>pp} ,:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      <%end%>
+  
+      </tbody>
+    </table>  
+  </body>
+</html>

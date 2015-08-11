@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改 发文呈报</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <script language="javascript">
+      function aabb(){
+        a=window.showModalDialog('/arbitmannow_select/arbitman_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          document.getElementById("report_arbitrator").value=a
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <br>    
+    <div class="cDGray" align="center">  修改发文呈报   <%=link_to "返回",:action=>"report_list",:caseend_book_id=>params[:caseend_book_id]%>
+    (请注意：带<i>*</i>为必填项)
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :report ,:url=>{:action=>"report_update",:id=>params[:id],:caseend_book_id=>params[:caseend_book_id]}  do |f|%>
+      <table class="list">
+         <tr>
+          <th>
+            案件编号:
+          </th>
+          <td>
+            <%=session[:recevice_code]%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            结案号:
+          </th>
+          <td>
+            <%@case=TbCase.find(:first,:conditions=>"recevice_code='#{session[:recevice_code]}' and used='Y'")%>
+            <%if @case!=nil%>
+              <%=@case.end_code%>
+            <%end%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            仲裁员:
+          </th>
+          <td>
+            <%@arbitman_now=TbArbitmannow.find_by_sql("select tb_arbitmen.code as code ,tb_arbitmen.name as name from tb_arbitmen,tb_arbitmannows where tb_arbitmen.code=tb_arbitmannows.arbitman_num order by tb_arbitmen.name")%>
+            <%=f.collection_select(:arbitrator,@arbitman_now,:code,:name)%>
+            <input type="button" value="选择" onclick="aabb()">
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            助理:
+          </th>
+          <td>
+            <%@zl=User.find_by_sql("select users.code as code,users.name as name from users,user_duties as u where u.duty_code='0003' and u.user_code=users.code and users.used='Y' order by users.code")%>
+            <%=f.collection_select(:assistant,@zl,:code,:name)%>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            提交日期:
+          </th>
+          <td>
+            <%=f.text_field(:submitDate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('report_submitDate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            拟稿人:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8123' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:draftMan,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            文书总字数:
+          </th>
+          <td>
+            <%=f.text_field(:totalWords)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+           <i>*</i>仲裁员(%):
+          </th>
+          <td>
+            <%=f.text_area(:percentArbitrator,:rows=>2)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            <i>*</i>书记员(%):
+          </th>
+          <td>
+            <%=f.text_area(:percentSecretary,:rows=>2)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            电脑录入是否完成:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8124' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:finishKeyin,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            录入人:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8125' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:keyinMan,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            秘书对文书稿的意见:
+          </th>
+          <td>
+            <%=f.text_area(:advance,:rows=>5)%>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

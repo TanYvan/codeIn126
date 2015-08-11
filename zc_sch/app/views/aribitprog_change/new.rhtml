@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>案件仲裁程序变更</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function checkForm(){
+        mes='<%=@alert_mes%>';
+        before='<%=@aribitprog_change.aribitprog_before%>';
+        after=document.getElementById("aribitprog_change_aribitprog_after").value;
+        if ((before==after) || (before=='0001' && after=='0002') || (before=='0002' && after=='0001') || (before=='0003' && after=='0004') || (before=='0004' && after=='0003')){
+          
+        }
+        else{
+          if (mes!=''){
+           alert(mes);
+           return false;
+          }
+        }
+        return true; 
+      }
+    </script>
+  </head>
+  <body>
+  <div class="title"><span class="cBlue">案件仲裁程序变更</span></div>
+  <br>
+  <%=link_to "返回",:action=>"list",:recevice_code=>params[:recevice_code],:search_condit=>params[:search_condit],:order=>params[:order],:page_lines=>params[:page_lines]%>
+ 
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :aribitprog_change ,:url=>{:action=>"create",:recevice_code=>params[:recevice_code],:search_condit=>params[:search_condit],:order=>params[:order],:page_lines=>params[:page_lines]} ,:html =>{:onsubmit=>"return checkForm();"} do |f|%>
+      <table class="list">
+  
+        <tr bgcolor="white">
+          <th>
+            变更前仲裁程序:</th>
+          <td align="left" width="68%">
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0001' and data_val='#{@aribitprog_change.aribitprog_before}'").data_text%>  
+          </td>
+        </tr>
+
+        <tr bgcolor="white">
+          <th>
+          变更后仲裁程序:
+          </th>
+          <td align="left">
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0001' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:aribitprog_after,op,:data_val,:data_text)%>            
+            <div style="color:red"><%=error_message_on(:aribitprog_change,:aribitprog_after)%></div>
+          </td>
+        </tr>            
+                       
+     </table>
+        <div align="center"><%=submit_tag "提交" %></div>
+          
+            <%end%>
+              
+  </body>
+</html>

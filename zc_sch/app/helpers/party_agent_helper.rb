@@ -1,0 +1,2 @@
+module PartyAgentHelper
+end

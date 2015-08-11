@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>费用统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script>
+      function checkForm(){
+        if(document.getElementById("amout1").value==null && document.getElementById("amout2").value==null){
+          alert("请输入金额！");
+          return false;
+        }
+        if(document.getElementById("amout1").value>document.getElementById("amout2").value){
+          alert("金额输入错误，请重新输入！");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">费用统计</span></div>
+    <%form_tag :url=>{:action=>"list7"},:html =>{:onsubmit=>"return checkForm();"} do%>
+      <table align="center"><tr><td nowrap align="right">
+          时间段类型:</td>
+          <td align="left" nowrap> <%=select_tag "datestyle",
+              "<option value='01' selected>立案时间段</option>
+            <option value='02' select>结案时间段</option>
+            <option value='03'>立案结案时间段</select>"%>
+        </td></tr>
+        <tr><td nowrap align="right">
+          统计时间段:</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" >
+            --
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" >
+        </td></tr>
+        <tr><td nowrap align="right">
+          结案与否:</td>
+          <td align="left" nowrap><%=select_tag "endcase",
+              "<option value='01' selected>全部</option>
+            <option value='02' select>是</option>
+            <option value='03'>否</select>"%>
+        </td></tr>
+        <tr><td nowrap align="right">
+          争议金额类型:</td>
+          <td align="left" nowrap><%=select_tag "moneytype",
+              "<option value='01' selected>全部</option>
+            <option value='02' select>本请求</option>
+            <option value='03'>反请求</select>"%>
+        </td></tr>
+        <tr><td nowrap align="right">
+          争议金额段:</td>
+          <td align="left" nowrap><%=text_field_tag(:amout1)%>元(人民币)
+          至
+          <%=text_field_tag(:amout2)%>元(人民币)
+        </td></tr>
+      </table>
+      <%=submit_tag "查询" %>
+    <%end%>
+    <br><br>
+      <i><%=flash[:notice]%></i>
+      <div class="cGreen">
+      <%if @amout1==nil or @amout2==nil or (@amout1=='' and @amout2=='')%>
+      <%else%>
+        时间段类型:<%=@dispute[@datestyle]%>&nbsp;
+        统计时间段:<%=@date1%>至<%=@date2%>&nbsp;
+        结案与否:<%=@dispute2[@endcase]%>&nbsp;
+        争议金额类型:<%=@dispute3[@moneytype]%>&nbsp;
+        争议金额段:<%=@amout1%>至<%=@amout2%>(元)
+      <%end%>
+    </div>
+      <%if @moneytype=='01'%>
+        <table align="center" class="list">
+          <tr>
+            <th nowrap>本请求争议金额(￥)</th>
+            <th nowrap>反请求争议金额(￥)</th>
+            <th nowrap>合计争议金额(￥)</th>
+          </tr>
+          <tr>
+            <th nowrap>
+                <%if @partytype1!=nil%>
+                  <%for p1 in @partytype1%>
+                    <%=p1.aa%><br>
+                    共<%=p1.cc%>件案子
+                  <%end%>
+                <%end%>
+            </th>
+            <th nowrap>
+                <%if @partytype2!=nil%>
+                  <%for p2 in @partytype2%>
+                    <%=p2.aa%><br>
+                    共<%=p2.cc%>件案子
+                  <%end%>
+                <%end%>
+            </th>
+            <th nowrap>
+                <%if @partytype!=nil%>
+                  <%for p in @partytype%>
+                    <%=p.aa%><br>
+                    共<%=p.cc%>件案子
+                  <%end%>
+                <%end%>
+            </th>
+          </tr>
+        </table>
+      <%elsif @moneytype=='02'%>
+        <table align="center" class="list">
+          <tr>
+            <th nowrap>本请求争议金额(￥)</th>
+          </tr>
+          <tr>
+            <th nowrap>
+                <%if @partytype1!=nil%>
+                  <%for p11 in @partytype1%>
+                    <%=p11.aa%><br>
+                    共<%=p11.cc%>件案子
+                  <%end%>
+                <%end%>
+            </th>
+            </tr>
+        </table>
+      <%elsif @moneytype=='03'%>
+      <table align="center" class="list">
+          <tr>
+            <th nowrap>反请求争议金额(￥)</th>
+          </tr>
+          <tr>
+            <th nowrap>
+                <%if @partytype1!=nil%>
+                  <%for p22 in @partytype2%>
+                    <%=p22.aa%><br>
+                    共<%=p22.cc%>件案子
+                  <%end%>
+                <%end%>
+            </th>
+            </tr>
+        </table>
+      <%else%>
+      <%end%>
+  </body>
+</html>

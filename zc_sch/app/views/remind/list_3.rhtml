@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>收款记录对应信息提醒</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script src="/javascripts/check.js"></script>
+    <script language="JavaScript">
+      function checkall() {
+        var a='';
+        if (document.getElementById("cheall").value=='t' )
+          {
+            document.getElementById("cheall").value='f';
+          }
+        else
+         {
+            a='true';
+            document.getElementById("cheall").value='t';
+         }
+        var chec = document.getElementsByName("che");
+        for(i=0; i<chec.length; i++)
+          { 
+            chec[i].checked = a;
+          }
+      }
+            
+      function getcondi()
+      {
+        var chec = document.getElementsByName("che");
+        var a='';
+        for(i=0; i<chec.length; i++)
+          {
+            if (chec[i].checked == true)
+              a=a+chec[i].value+',';
+          }
+          aa=a.substr(0, a.length -1 )
+          var c = document.getElementById("condi_k");
+          c.value=aa;
+          var cc = document.getElementById("condi_s");
+          cc.value=aa;
+        }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">收款记录对应信息提醒</span></div>
+    <br>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>
+            <input type='checkbox' id="cheall" name="cheall" value='f' onclick = 'checkall()'/>
+          </th>
+          <th nowrap>
+            提醒内容
+          </th>
+          <th nowrap>
+            <%if @order=="dt1 desc"%>
+              <%=link_to '提醒时间↑',:action=>"list_3",:order=>"dt1 asc",:page=>@remind_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="dt1 asc"%>
+              <%=link_to '提醒时间↓',:action=>"list_3",:order=>"dt1 desc",:page=>@remind_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '提醒时间',:action=>"list_3",:order=>"dt1 asc",:page=>@remind_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <!--
+          <th nowrap>
+            转到相应页面
+          </th>
+          -->
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @remind!=nil%>
+              <%for p in @remind%>
+            <tr class="row<%=i % 2%>">
+              <td>
+              <input type='checkbox' id='che_k' name='che' value=<%=p.id%>>
+                     </td>
+              <td>
+                <%if p.url==nil or p.url==''%>
+                 <%=p.contents%>
+                <%else%>
+                  <a href='<%=p.url%>'><%=p.contents%></a>
+                <%end%>
+              </td>
+              <td>
+                <%=p.dt1%>
+              </td>
+              <!--
+              <td>
+            
+              </td>
+              -->
+            </tr>
+            <%i=i+1%>
+      <%end%>
+<%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4">
+            <%= link_to '上一页', { :page => @remind_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @remind_pages.current.previous %>
+            <%=pagination_links( @remind_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @remind_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @remind_pages.current.next %>
+
+            <%if @remind_pages.current.previous or @remind_pages.current.next%>
+              <form action="/remind/list_3" method="get" onsubmit="return page_check('page_lines','page');">
+                每页<input type=text id='page_lines' name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                <input type=text id='page' name='page' size=5 class="SingleLineInput" value=<%= @remind_pages.current.number %> />
+                       <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='跳转' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    <br>
+    <div align="center">
+      <%form_tag({:action=>'complete_3',:page=>@remind_pages.current.number,:page_lines=>@page_lines},{:onsubmit=>'getcondi()'}) do %>
+            <%=hidden_field_tag :condi_k ,''%>
+            <%=submit_tag '标记为完成'%>
+      <%end%>
+      <%form_tag({:action=>'delay_3',:page=>@remind_pages.current.number,:page_lines=>@page_lines},{:onsubmit=>'getcondi()'}) do %>
+            <%=hidden_field_tag :condi_s ,''%>
+            <%=submit_tag '确定延迟'%>
+      <%end%>
+    </div>
+  </body>
+</html>

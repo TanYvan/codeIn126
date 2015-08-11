@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>添加参加人员</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function add_arbitman(){
+        a=window.showModalDialog('/arbitman_session/arbitman_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          a1=a.indexOf('+',0)
+          arbitman_num =a.substr(0,a1)
+          arbitman_name=a.substr(a1+1,a.length - a1 )
+
+          document.getElementById("tb_arbitman_session_arbitman_num").value = arbitman_num
+          document.getElementById("tb_arbitman_session_arbitman_num").value= arbitman_name
+        }
+        if (a==null ||a==""){
+          document.getElementById("aa").value= "a"
+        }
+      }
+      function aabb(){
+        //var b =document.getElementById("institute");
+        a=window.showModalDialog('/arbitman_select/arbitman_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          document.getElementById("tb_arbitman_session_arbitman_num").value=a
+        }
+      }
+    </script>       
+  </head>
+  <body>
+    <div align="center" class="cDGray">添加参加人员
+    <%= link_to "返回", :action => "attend_person", :session_code => @session_code %>
+    </div>
+    <%form_for :tb_arbitman_session, :url => {:action => "create_attendant", :session_code => @session_code} do |f|%>
+        <table class="list">
+          <tr>
+            <th><i>*</i>仲裁员：</th>
+            <td>
+            <%@arbitman=TbArbitman.find(:all,:select=>"code,name")%>
+            <%=f.collection_select(:arbitman_num,@arbitman,:code,:name)%>
+            <input type="button" value="选择" onclick="aabb()">
+              </td>
+          </tr>
+          <tr>
+            <th>参与情况</th>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='9000' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <td><%=f.collection_select(:state,op,:data_val,:data_text)%></td>         
+            <div style="color:red"><%=error_message_on(:tb_arbitman_session,:state)%></div>
+          </tr>
+          <tr>
+            <th>时长：</th>
+            <td><%= f.text_field :course_hour%>小时
+            <div style="color:red"> <%=error_message_on(:tb_arbitman_session,:course_hour)%></div>
+            </td>
+          </tr>
+        </table>
+        <br>
+        <div align="center">
+        <%=submit_tag "确定"%>         
+        </div>
+
+    <%end%>
+  </body>
+</html>

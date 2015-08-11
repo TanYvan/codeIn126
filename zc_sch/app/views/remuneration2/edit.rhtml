@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改 阅卷信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%> 
+  </head>
+  <body>
+    <br>
+  <div class="cDGray">修改阅卷信息  <%=link_to "返回",:action=>"list"%></div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :remun ,:url=>{:action=>"update",:id=>params[:id]}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            仲裁员:
+          </th>
+          <td>
+            <%=TbArbitman.find_by_code(@remun.arbitman).name%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            阅读页数:
+          </th>
+          <td>
+            <%=f.text_field(:p)%>页     
+            <div style="color:red"><%=error_message_on(:remun,:h)%></div>
+          </td>
+        </tr>
+
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+            
+  </body>
+</html>

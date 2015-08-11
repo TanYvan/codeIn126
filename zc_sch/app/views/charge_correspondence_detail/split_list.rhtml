@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  
+  <head>
+    <title>收款信息拆分</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">收款信息拆分</span></div>
+    <br/>
+    <%=link_to "返回到案件收费明细信息列表",:action=>"list",:recevice_code=>params[:recevice_code]%>
+   <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>
+          收款号
+        </th>
+        <!--
+        <th nowrap>
+          付款方
+        </th>
+        -->
+        <th nowrap>
+          付款方名称
+        </th>
+        <th nowrap>
+          付款方式
+        </th>
+        <th nowrap>
+          付款时间
+        </th>        
+        <th nowrap>
+          币种
+        </th>      
+        <th nowrap>
+          金额
+        </th>
+        <th nowrap>
+          汇率
+        </th>
+        <th nowrap>
+          实收金额(￥)
+        </th>
+        <th nowrap>
+          备注
+        </th>
+        <th nowrap>
+          出纳
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <tr class="row<%=i % 2%>"> 
+        <td>
+          <%=@charge.code%>
+        </td>
+        <!-- 
+        <td>
+          <% # =TbDictionary.find(:first,:conditions=>"typ_code='0033' and data_val='#{@charge.ptyp}'").data_text%>
+          <% # = %>
+        </td>
+        -->
+        <td>
+          <%=@charge.p%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0034' and data_val='#{@charge.mode}'").data_text%>
+        </td>
+        <td>
+          <%=@charge.c_dt%>
+        </td>
+        <td>
+          <%=Money.find_by_code(@charge.currency).name%>
+        </td>
+        <td>
+          <%=@charge.f_money%>
+        </td>
+        <td>
+          <%=@charge.rate%>
+        </td>
+        <td>
+          <%=@charge.rmb_money%>
+        </td>
+        <td>
+          <%=h @charge.remark%>
+        </td>
+        <td>
+          <%=h User.find_by_code(@charge.u).name%>
+        </td>
+      </tr>          
+      </tbody>
+    </table>
+
+    <hr/>
+    <%=link_to  "添加拆分记录", :action=>"split_new",:charge_id=>params[:charge_id],:recevice_code=>params[:recevice_code]%>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>
+          收款号
+        </th>
+        <!--
+        <th nowrap>
+          付款方
+        </th>
+        -->
+        <th nowrap>
+          付款方名称
+        </th>
+        <th nowrap>
+          付款方式
+        </th>
+        <th nowrap>
+          付款时间
+        </th>
+        <th nowrap>
+          币种
+        </th>
+        <th nowrap>
+          金额
+        </th>
+        <th nowrap>
+          汇率
+        </th>
+        <th nowrap>
+          实收金额(￥)
+        </th>
+        <th nowrap>
+          备注
+        </th>
+        <th nowrap>
+          拆分人
+        </th>
+        <th nowrap>
+          拆分时间
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @split%>
+      <tr class="row<%=i % 2%>">
+        
+        <td>
+          <%=c.code%>
+        </td>
+        <!-- 
+        <td>
+          <% # =TbDictionary.find(:first,:conditions=>"typ_code='0033' and data_val='#{c.ptyp}'").data_text%>
+          <% # =%>
+        </td>
+        -->
+        <td>
+          <%=c.p%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0034' and data_val='#{c.mode}'").data_text%>
+        </td>
+        <td>
+          <%=c.c_dt%>
+        </td>
+        <td>
+          <%=Money.find_by_code(c.currency).name%>
+        </td>
+        <td>
+          <%=c.f_money%>
+        </td>
+        <td>
+          <%=c.rate%>
+        </td>
+        <td>
+          <%=c.rmb_money%>
+        </td>
+        <td>
+          <%=h c.remark%>
+        </td>
+        <td>
+          <%=h User.find_by_code(c.u).name%>
+        </td>
+        <td>
+          <%=h c.u_t.to_s(:db)%>
+        </td>
+        <td>
+          <%if c.should_id==0%>
+            <%=link_to "删除",{:action=>"split_delete",:id=>c,:recevice_code=>params[:recevice_code]},:confirm=>"您确认要删除吗？"%>
+          <%end%>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

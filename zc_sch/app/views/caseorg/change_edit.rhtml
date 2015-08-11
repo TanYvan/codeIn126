@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改 仲裁员更换</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  修改 仲裁员更换   <%=link_to "返回",:action=>"change_list",:org_id=>params[:org_id]%>  
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :change ,:url=>{:action=>"change_update",:id=>params[:id],:org_id=>params[:org_id]}  do |f|%>
+      <table class="list"> 
+        <tr>
+         <th nowrap>
+            仲裁员:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0019' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:arbitman,@arbitman_now,:code,:name)%>   
+            <div style="color:red"><%=error_message_on(:change,:arbitman)%></div>
+          </td>
+        </tr>
+        <tr>
+         <th nowrap>
+            选定或指定方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0019' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:signstyle,op,:data_val,:data_text)%>                                     
+            <div style="color:red"><%=error_message_on(:change,:signstyle)%></div>
+          </td>
+        </tr>
+        <tr>
+         <th nowrap>
+            提出更换人:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0020' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:changeman,op,:data_val,:data_text)%>                                               
+            <div style="color:red"><%=error_message_on(:change,:changeman)%></div>
+          </td>
+        </tr> 
+        <tr>
+         <th nowrap>
+            是否更换:
+          </th>
+          <td>
+            <%=f.select(:ifchangce,[["是","Y"],["否","N"]])%>    
+            <div style="color:red"><%=error_message_on(:change,:ifchangce)%></div>
+          </td>
+        </tr> 
+        <tr>
+         <th nowrap>
+            更换日期:
+          </th>
+          <td>
+            <%=f.text_field(:changedate,:size=>10)%>    
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('change_changedate'),'yyyy-MM-dd')" >
+            <div style="color:red"><%=error_message_on(:change,:changedate)%></div>
+          </td>
+        </tr>      
+        <tr>
+         <th nowrap>
+            更换理由:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0021' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:changereason,op,:data_val,:data_text)%>                                                
+            <div style="color:red"><%=error_message_on(:change,:changereason)%></div>
+          </td>
+        </tr>   
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+    
+    <hr size="1" color="#99CCFF" noshade>
+    <iframe FRAMEBORDER=0 src="/caseorg/reason_list?change_id=<%=params[:id]%>"  noresize  style="width:700px;height:250px" align=center> </iframe>
+                    
+                    
+  </body>
+</html>

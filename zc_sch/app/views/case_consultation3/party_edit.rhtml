@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改当事人</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function aa(){
+        //var b =document.getElementById("institute");
+        a=window.showModalDialog('/region_select/tree',"","dialogWidth=350px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          document.getElementById("party_area").value=a
+        }
+      }
+    </script>
+  </head>
+  <body>
+    修改申请人(带<i>*</i>为必填项) <%=link_to "返回",:action=>"party_list",:recevice_code=>params[:recevice_code]%>
+
+    <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :party ,:url=>{:action=>"party_update",:id=>params[:id],:recevice_code=>params[:recevice_code]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th nowrap>
+            是否个人:
+          </th>
+          <td align="left">
+            <%=f.select(:isperson,[["否",2],["是",1]])%>
+          </td>
+          <th>
+            类别:
+          </th>
+          <td >
+            <%=f.select(:partytype,[["申请人",1],["被申请人",2]])%>
+          </td>  
+        </tr>
+        <tr>
+          <th nowrap>
+            <i>*</i>当事人名称:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:partyname,:onkeyup=>"r_s();")%>
+            <div style="color:red"><%=error_message_on(:party,:partyname)%></div>
+          </td>
+          <th nowrap>
+            法人代表人/负责人:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:commissary)%>
+            <div style="color:red"><%=error_message_on(:party,:commissary)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            职务:
+          </th>
+          <td nowrap>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8141' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:dutyname,op,:data_val,:data_text)%>
+          </td>
+          <th nowrap>
+            联系电话:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:tel)%>
+            <div style="color:red"><%=error_message_on(:party,:tel)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            传真:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:post_tel_code)%>
+            <div style="color:red"><%=error_message_on(:party,:post_tel_code)%></div>
+          </td>
+          <th nowrap>
+            邮编:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:postcode)%>
+            <div style="color:red"><%=error_message_on(:party,:postcode)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            地区:
+          </th>
+          <td nowrap>
+            <%@area=Region.find(:all,:order=>"code")%>
+            <%=f.collection_select(:area,@area,:code,:name)%>
+            <input type="button" value="选择" onclick="aa()">
+            <div style="color:red"><%=error_message_on(:party,:area)%></div>
+          </td>
+          <th nowrap>
+            地址:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:addr)%>
+            <div style="color:red"><%=error_message_on(:party,:addr)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            email:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:email)%>
+            <div style="color:red"><%=error_message_on(:party,:email)%></div>
+          </td>
+          <th nowrap>
+            行业:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:profession)%>
+            <div style="color:red"><%=error_message_on(:party,:profession)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            短信手机:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:mobiletel)%>
+            <div style="color:red"><%=error_message_on(:party,:mobiletel)%></div>
+          </td>
+        </tr>
+      </table>
+      <%if TbCase.find_by_recevice_code(params[:recevice_code]).clerk_2==session[:user_code_2] or TbCase.find_by_recevice_code(params[:recevice_code]).clerk==session[:user_code_2]%>
+        <%=submit_tag "提交" %>
+      <%end%>
+
+    <%end%>
+
+
+  </body>
+</html>

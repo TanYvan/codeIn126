@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>收费信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">收费信息</span></div>
+    <%=link_to "返回",:action=>"list"%>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            费用类型
+          </th>
+          <th nowrap>
+            交款方
+          </th>
+          <th nowrap>
+            币种
+          </th>
+          <th nowrap>
+            金额
+          </th>
+          <th nowrap>
+            汇率
+          </th>
+          <th nowrap>
+            应收费用(￥)
+          </th>
+          <th nowrap>
+            减交(￥)
+          </th>
+          <th nowrap>
+            收款编号
+          </th>
+          <th nowrap>
+            实际收费用(￥)
+          </th>
+          <th nowrap>
+            欠交(￥)
+          </th>
+          <th nowrap>
+            备注
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for p in @charge%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0031' and data_val='#{p.typ}'").data_text%>
+            </td>
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0032' and data_val='#{p.payment}'").data_text%>
+            </td>
+            <td>
+              <%=Money.find_by_code(p.currency).name%>
+            </td>
+            <td>
+              <%=p.f_money%>
+            </td>
+            <td>
+              <%=p.rate%>
+            </td>
+            <td>
+              <%=p.rmb_money%>
+            </td>
+            <td>
+              <%=p.redu_rmb_money%>
+            </td>
+            <td>
+              <%corr=TbChargeCorr.find(:all,:conditions=>"state=2 and used='Y' and should_charge_id='#{p.id}'",:order=>"charge_id")%>
+               <%for c in corr%>
+                     <%if c.charge_id!=nil%>
+                          <%=TbCharge.find(c.charge_id).code%>(金额:<%=TbCharge.find(c.charge_id).rmb_money%>rmb)
+                     <%else%>
+                     <%end%>
+                <br/>
+              <%end%>
+            </td>
+            <td>
+              <%=p.re_rmb_money%>
+            </td>
+            <td>
+              <%qj=p.rmb_money - p.redu_rmb_money - p.re_rmb_money%>
+              <%if qj!=0%>
+                <div style="color:red"><%=qj%></div>
+              <%else%>
+                <%=qj%>
+              <%end%>
+            </td>
+            <td>
+              <%=p.remark%>
+            </td>
+          </tr>          
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    
+  </body>
+</html>

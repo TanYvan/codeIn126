@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>显示照片</title>
+    <%= javascript_include_tag  'navigator'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <link >
+  </head>
+  <body> 
+    <input type="hidden" id="navigator_type" name="navigator[type]" value="">
+    <%if @tb_photo %>
+            <div align="center">           
+              <%=image_tag("/arbitman_pic/" + @tb_photo.pic_name, :class => "bevel")%>         
+            </div>
+    <%else%>
+        <div align="center">
+          <%= "尚未上传照片" %>
+        </div>
+    <%end%>      
+  </body>
+</html>
+

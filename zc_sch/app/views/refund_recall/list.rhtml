@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>退费记录召回</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <table><tr><td>
+    <div class="title"><span class="cBlue">退费记录召回</span></div>
+    <div align="center">
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <tbody>
+      <thead>
+      <tr >
+        <th nowrap>
+          召回
+        </th>
+        <th nowrap>
+          <%if @order=="state desc"%>
+            <%=link_to '状态↑',:action=>"list",:order=>"state asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="state asc"%>
+            <%=link_to '状态↓',:action=>"list",:order=>"state desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '状态',:action=>"list",:order=>"state asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="recevice_code desc"%>
+            <%=link_to '案件咨询流水号↑',:action=>"list",:order=>"recevice_code asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="recevice_code asc"%>
+            <%=link_to '案件咨询流水号↓',:action=>"list",:order=>"recevice_code desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '案件咨询流水号',:action=>"list",:order=>"recevice_code asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>        
+          <%if @order=="case_code desc"%>
+            <%=link_to '立案号↑',:action=>"list",:order=>"case_code asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="case_code asc"%>
+            <%=link_to '立案号↓',:action=>"list",:order=>"case_code desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '立案号',:action=>"list",:order=>"case_code asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="u desc"%>
+            <%=link_to '助理↑',:action=>"list",:order=>"u asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="u asc"%>
+            <%=link_to '助理↓',:action=>"list",:order=>"u desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '助理',:action=>"list",:order=>"u asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>  
+          <%if @order=="typ desc"%>
+            <%=link_to '费用类型↑',:action=>"list",:order=>"typ asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="typ asc"%>
+            <%=link_to '费用类型↓',:action=>"list",:order=>"typ desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '费用类型',:action=>"list",:order=>"typ asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="payment desc"%>
+            <%=link_to '退款方↑',:action=>"list",:order=>"payment asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="payment asc"%>
+            <%=link_to '退款方↓',:action=>"list",:order=>"payment desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '退款方',:action=>"list",:order=>"payment asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          退款人
+        </th>
+        <th nowrap>
+          币种
+        </th>
+        <th nowrap>
+          金额
+        </th>
+        <th nowrap>
+          汇率
+        </th>
+        <th nowrap>
+          应退金额(￥)
+        </th>
+        <th nowrap>
+          减退金额(￥)
+        </th>
+        <th nowrap>
+          实退金额(￥)
+        </th>
+        <th nowrap>
+          备注
+        </th>
+        <th nowrap>
+                  <%if @order=="check2_u desc"%>
+                    <%=link_to '处长↑',:action=>"list",:order=>"check2_u asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+                  <%elsif @order=="check2_u asc"%>
+                    <%=link_to '处长↓',:action=>"list",:order=>"check2_u desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+                  <%else%>
+                    <%=link_to '处长',:action=>"list",:order=>"check2_u asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+                  <%end%>
+                </th>
+                <th nowrap>
+
+                  <%if @order=="check2_dt desc"%>
+                    <%=link_to '处长确认时间↑',:action=>"list",:order=>"check2_dt asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+                  <%elsif @order=="check2_dt asc"%>
+                    <%=link_to '处长确认时间↓',:action=>"list",:order=>"check2_dt desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+                  <%else%>
+                    <%=link_to '处长确认时间',:action=>"list",:order=>"check2_dt asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+                  <%end%>
+                </th>
+                <th nowrap>
+                  处长确认备注
+                </th>
+        <th nowrap>
+          <%if @order=="check_u desc"%>
+            <%=link_to '出纳↑',:action=>"list",:order=>"check_u asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="check_u asc"%>
+            <%=link_to '出纳↓',:action=>"list",:order=>"check_u desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '出纳',:action=>"list",:order=>"check_u asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="check_dt desc"%>
+            <%=link_to '出纳确认时间↑',:action=>"list",:order=>"check_dt asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="check_dt asc"%>
+            <%=link_to '出纳确认时间↓',:action=>"list",:order=>"check_dt desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '出纳确认时间',:action=>"list",:order=>"check_dt asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          出纳确认备注
+        </th>
+        <th nowrap>
+          招回人
+        </th>
+        <th nowrap>
+          <%if @order=="recall_dt desc"%>
+            <%=link_to '招回时间↑',:action=>"list",:order=>"recall_dt asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="recall_dt asc"%>
+            <%=link_to '招回时间↓',:action=>"list",:order=>"recall_dt desc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '招回时间',:action=>"list",:order=>"recall_dt asc",:page=>@should_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th> 
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @should%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%if p.state==2 or p.state==4%>
+          <%=button_to  "召回" ,{:action=>"recall",:id=>p,:search_condit=>@search_condit,:order=>@order,:page=>@should_pages.current.number,:page_lines=>@page_lines},:confirm=>"确信要召回该条收款记录吗？"%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if p.state==2%>
+            <div class="cGreen"><%=@state[p.state]%></div>
+          <%else%>
+            <%=@state[p.state]%>
+          <%end%>
+        </td>
+        <td>
+          <%=p.recevice_code%>
+        </td>
+        <td nowrap>
+          <%=p.case_code%>
+        </td>
+        <td>
+          <%=User.find_by_code(p.u).name%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0031' and data_val='#{p.typ}'").data_text%>
+          <%if p.typ=='0001' or p.typ=='0004'%>
+            <%=link_to  "查看明细",{:action=>"detail_list",:id=>p,:parent_id=>p,:recevice_code=>p.recevice_code},:target=>"_blank"%>
+          <%end%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0032' and data_val='#{p.payment}'").data_text%>
+        </td>
+        <td>
+          <%if p.party!=nil and p.party!=""%>
+            <%=TbParty.find(p.party).partyname%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%=Money.find_by_code(p.currency).name%>
+        </td>
+        <td nowrap>
+          <%=p.f_money%>
+        </td>
+        <td nowrap>
+          <%=p.rate%>
+        </td>
+        <td nowrap>
+          <%=p.rmb_money%>
+        </td>
+        <td>
+         <%=p.redu_rmb_money%>
+        </td>
+        <td>
+         <%=p.re_rmb_money%>
+        </td>
+        <td>
+          <%=p.remark%>
+        </td>
+        <td nowrap>
+          <%if p.check2_u!=nil and p.check2_u!=""%>
+            <%=User.find_by_code(p.check2_u).name%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if p.check2_dt!=nil%>
+           <%=p.check2_dt.to_date.to_s(:db)%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%=p.check2_remark%>
+        </td>
+        <td>
+          <%if p.check_u!=nil and p.check_u!=""%>
+            <%=User.find_by_code(p.check_u).name%>
+          <%end%>
+        </td>
+        <td>
+          <%if p.check_dt!=nil%>
+            <%=p.check_dt.to_date%>
+          <%end%>
+        </td>
+        <td>
+          <%=p.check_remark%>
+        </td>
+        <td nowrap="nowrap">
+          <%if p.recall_u!=nil and p.recall_u!=''%>
+            <%=User.find_by_code(p.recall_u).name%>
+          <%end%>
+        </td>
+        <td nowrap="nowrap">
+          <%if p.recall_dt!=nil%>
+            <%=p.recall_dt.to_s(:db)%>
+          <%end%>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+     
+      <tfoot>
+      <tr>
+        <td colspan="15">
+          <%= link_to '上一页', { :page => @should_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @should_pages.current.previous %>
+          <%=pagination_links( @should_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @should_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @should_pages.current.next %>
+
+          <%if @should_pages.current.previous or @should_pages.current.next%>
+            <form action="/refund_recall/list" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @should_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+     </tfoot>
+    </table>
+   </td></tr></table>
+  </body>
+</html>

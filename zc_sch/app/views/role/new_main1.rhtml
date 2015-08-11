@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function aa(){
+        //var b =document.getElementById("institute");
+        a=window.showModalDialog('/role/tree_1',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          a1=a.indexOf('+',0)
+          a2=a.substr(0,a1)
+          a3=a.substr(a1+1,a.length - a1 )
+
+          a4=a3.indexOf('+',0)
+          a5=a3.substr(0,a4)
+
+          a6=a3.substr(a4+1,a3.length - a4 )
+
+          document.getElementById("fast_menu_menu_id").value=a2
+          document.getElementById("fast_menu_menu_name").value=a5
+          document.getElementById("fast_menu_url").value=a6
+        }
+      }
+    </script>
+  </head>
+  <body>
+<div class="title"><span class="cBlue">快捷菜单增加</span>  角色:<%=Role.find_by_code(params[:role_code]).name%>(<%=params[:role_code]%>)</div>
+    <br>
+      <div class="cGray">
+      <%=link_to  "返回", :action=>"role_main1",:role_code=>params[:role_code]%>
+      <div style="color:red"><%=flash[:notice]%></div> 
+    <%form_for :fast_menu ,:url=>{:action=>"create_main1",:role_code=>params[:role_code],:page=>params[:page],:page_lines=>params[:page_lines]} do |f|%>
+      <table class="list">
+        <tr >
+          <th>
+            快捷菜单编码:
+          </th>
+          <td align="left">
+            <%=f.text_field :code%>
+            <div style="color:red"><%=error_message_on(:fast_menu,:code)%></div>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            快捷菜单名称:
+          </th>
+          <td align="left">
+            <%=f.text_field :name,:style=>"width:20em"%>
+
+            <div style="color:red"><%=error_message_on(:fast_menu,:name)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            对应的树形菜单名称:
+          </th>
+          <td >
+            <%=f.hidden_field :menu_id ,:style=>"width:20em",:readonly=>'yes'%>
+            <%=f.text_field :menu_name ,:style=>"width:20em",:readonly=>'yes'%>
+            <input type="button" value="选择" onclick="aa()">
+
+            <div style="color:red"><%=error_message_on(:fast_menu,:menu_name)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            url:
+          </th>
+          <td >
+            <%=f.text_field :url ,:style=>"width:20em",:readonly=>'yes'%>
+            <div style="color:red"><%=error_message_on(:fast_menu,:url)%></div>
+          </td>
+        </tr>
+      </table>
+      <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>

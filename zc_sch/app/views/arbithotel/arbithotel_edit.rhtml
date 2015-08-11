@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>预订修改</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function aabb(){
+        //var b =document.getElementById("institute");
+        a=window.showModalDialog('/arbitmannow_select/arbitman_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          document.getElementById("arbithotel_arbitman").value=a
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <br>
+  <div class="cDGray" align="center">预订信息修改(带<i>*</i>为必填项)   <%=link_to "返回",:action=>"arbithotel_list"%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :arbithotel ,:url=>{:action=>"arbithotel_update",:id=>params[:id]} do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            案件编号:
+          </th>
+          <td>
+            <%=f.text_field(:case_code)%><i><%=error_message_on(:arbithotel,:case_code)%></i>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            使用类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0029' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:usestyle,op,:data_val,:data_text)%>
+            <%=f.hidden_field(:arbitman)%>
+          </td>
+        </tr>
+        <!--
+        <tr >
+          <th>
+            仲裁员:
+          </th>
+          <td>
+            <%op=TbArbitman.find_by_sql("select code,name from tb_arbitmen,tb_arbitmannows where tb_arbitmen.code=tb_arbitmannows.arbitman_num and tb_arbitmen.used='Y' and tb_arbitmannows.used='Y'")%>
+            <%=f.collection_select(:arbitman,op,:code,:name)%>
+            <input type="button" value="选择" onclick="aabb()">
+          </td>
+        </tr>
+        -->
+        <tr>
+          <th>
+            入住日期:
+           </th>
+          <td>
+            <%=f.text_field(:usedate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('arbithotel_usedate'),'yyyy-MM-dd')" >
+            <i><%=error_message_on(:arbithotel,:usedate)%></i>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            <i>*</i>住宿天数:
+          </th>
+          <td>
+            <%=f.text_field(:days)%>天<i><%=error_message_on(:arbithotel,:days)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>房间数量
+          </th>
+          <td>
+            <%=f.text_field(:rooms)%>间<i><%=error_message_on(:arbithotel,:rooms)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            详细信息:
+          </th>
+          <td>
+            <%=f.text_area(:descript,:rows=>4)%>
+          </td>
+        </tr>
+       </table>
+        <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>
+
+

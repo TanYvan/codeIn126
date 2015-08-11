@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件列表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">发文案件列表</span></div>
+    <br>
+     <h2>与案件关联的发文处理</h2>
+    <div align="right">待处理的案件：<%=@n1%>个  </div>
+   <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+          <%if @order=="recevice_code desc"%>
+            <%=link_to '咨询流水号↑',:action=>"list1",:order=>"recevice_code asc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%elsif @order=="recevice_code asc"%>
+            <%=link_to '咨询流水号↓',:action=>"list1",:order=>"recevice_code desc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '咨询流水号',:action=>"list1",:order=>"recevice_code asc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%end%>
+          </th>
+          <th nowrap>
+          <%if @order=="receivedate desc"%>
+            <%=link_to '咨询日期↑',:action=>"list1",:order=>"receivedate asc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%elsif @order=="receivedate asc"%>
+            <%=link_to '咨询日期↓',:action=>"list1",:order=>"receivedate desc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '咨询日期',:action=>"list1",:order=>"receivedate asc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%end%>
+          </th>
+          <th nowrap>
+          <%if @order=="case_code desc"%>
+            <%=link_to '立案号↑',:action=>"list1",:order=>"case_code asc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%elsif @order=="case_code asc"%>
+            <%=link_to '立案号↓',:action=>"list1",:order=>"case_code desc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '立案号',:action=>"list1",:order=>"case_code asc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%end%>
+          </th>
+          <th nowrap>
+          <%if @order=="nowdate desc"%>
+            <%=link_to '立案日期↑',:action=>"list1",:order=>"nowdate asc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%elsif @order=="nowdate asc"%>
+            <%=link_to '立案日期↓',:action=>"list1",:order=>"nowdate desc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '立案日期',:action=>"list1",:order=>"nowdate asc",:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+          <%end%>
+          </th>
+          <th nowrap>
+           仲裁程序
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+          <th nowrap>
+            选择
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @case!=nil%>
+          <%for p in @case%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap>
+                <%=h p.recevice_code%>
+              </td>
+              <td nowrap>
+                <%=h p.receivedate%>
+              </td>
+              <td nowrap>
+                <%=h p.case_code%>
+              </td>
+              <td nowrap>
+                <%=h p.nowdate%>
+              </td>
+              <td nowrap>
+                <%@a=TbDictionary.find(:first,:conditions=>"used='Y' and typ_code='0001' and data_val='#{p.aribitprog_num}'")%>
+                <%if @a!=nil%>
+                  <%=@a.data_text%>
+                <%end%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{p.recevice_code}'",:order=>"id")%>
+                <%if @tp!=nil%>
+                  <%for tp in @tp%>
+                    <div align="left"><%=h tp.partyname%><br></div>
+                  <%end%>
+                <%end%>
+              </td>
+              <td>
+                <%@tp2=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{p.recevice_code}'",:order=>"id")%>
+                <%if @tp2!=nil%>
+                  <%for tp2 in @tp2%>
+                    <div align="left"><%=h tp2.partyname%><br></div>
+                  <%end%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%=button_to "选择",:action=>"list",:recevice_code=>p.recevice_code%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="8">
+          <%= link_to '上一页', { :page => @case_pages.current.previous ,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.previous %>
+          <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @case_pages.current.next ,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.next %>
+
+          <%if @case_pages.current.previous or @case_pages.current.next%>
+            <form action="/case_doc/list1" method="get" onsubmit="return page_check('page_lines2','page2');">
+              每页<input type=text name='page_lines' id='page_lines2' size=2 class="SingleLineInput" value=<%=@page_lines%> />条记录,第
+              <input type=text name='page' id='page2' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+     </tfoot>
+    </table>
+
+
+
+    <br>
+      <h2>与咨询关联的发文处理</h2>
+      <div align="right">待处理的案件：<%=@n2%>个  </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+          <%if @order2=="recevice_code desc"%>
+            <%=link_to '咨询流水号↑',:action=>"list1",:order=>"recevice_code asc",:page=>@case_pages2.current.number,:page_lines=>@page_lines2%>
+          <%elsif @order2=="recevice_code asc"%>
+            <%=link_to '咨询流水号↓',:action=>"list1",:order=>"recevice_code desc",:page=>@case_pages2.current.number,:page_lines=>@page_lines2%>
+          <%else%>
+            <%=link_to '咨询流水号',:action=>"list1",:order=>"recevice_code asc",:page=>@case_pages2.current.number,:page_lines=>@page_lines2%>
+          <%end%>
+          </th>
+          <th nowrap>
+          <%if @order2=="receivedate desc"%>
+            <%=link_to '咨询日期↑',:action=>"list1",:order=>"receivedate asc",:page=>@case_pages2.current.number,:page_lines=>@page_lines2%>
+          <%elsif @order2=="receivedate asc"%>
+            <%=link_to '咨询日期↓',:action=>"list1",:order=>"receivedate desc",:page=>@case_pages2.current.number,:page_lines=>@page_lines2%>
+          <%else%>
+            <%=link_to '咨询日期',:action=>"list1",:order=>"receivedate asc",:page=>@case_pages2.current.number,:page_lines=>@page_lines2%>
+          <%end%>
+          </th>
+          <th nowrap>
+           仲裁程序
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+          <th nowrap>
+            选择
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @case2!=nil%>
+          <%for p in @case2%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap>
+                <%=h p.recevice_code%>
+              </td>
+              <td nowrap>
+                <%=h p.receivedate%>
+              </td>
+              <td nowrap>
+                <%@a=TbDictionary.find(:first,:conditions=>"used='Y' and typ_code='0001' and data_val='#{p.aribitprog_num}'")%>
+                <%if @a!=nil%>
+                  <%=@a.data_text%>
+                <%end%>
+              </td>
+              <td>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{p.recevice_code}'",:order=>"id")%>
+                <%if @tp!=nil%>
+                  <%for tp in @tp%>
+                    <div align="left"><%=h tp.partyname%><br></div>
+                  <%end%>
+                <%end%>
+              </td>
+              <td>
+                <%@tp2=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{p.recevice_code}'",:order=>"id")%>
+                <%if @tp2!=nil%>
+                  <%for tp2 in @tp2%>
+                    <div align="left"><%=h tp2.partyname%><br></div>
+                  <%end%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%=button_to "选择",:action=>"list",:recevice_code=>p.recevice_code%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="8">
+          <%= link_to '上一页', { :page => @case_pages2.current.previous ,:order=>@order2,:page_lines=>@page_lines2  } if @case_pages2.current.previous %>
+          <%=pagination_links( @case_pages2,{:params=>{:search_condit=>@search_condit,:order=>@order2,:page_lines=>@page_lines2  }})%>
+          <%= link_to '下一页', { :page => @case_pages2.current.next ,:order=>@order2,:page_lines=>@page_lines2  } if @case_pages2.current.next %>
+
+          <%if @case_pages2.current.previous or @case_pages2.current.next%>
+            <form action="/case_doc/list1" method="get" onsubmit="return page_check('page_lines','page');">
+              每页<input type=text name='page_lines' id="page_lines" size=2 class="SingleLineInput" value=<%=@page_lines2%> />条记录,第
+              <input type=text name='page' id='page' size=5 class="SingleLineInput" value=<%= @case_pages2.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order2%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+     </tfoot>
+    </table>
+  </body>
+</html>

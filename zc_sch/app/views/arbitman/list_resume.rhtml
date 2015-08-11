@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>简历</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">简历列表</span></div>
+    <br>
+   <!--关于仲裁员的各种链接的-->
+        <div align="center">
+        <%=link_to "增加", :action => "new_resume", :id => @tb_arbitman.id %>&nbsp;&nbsp;
+        <%=link_to "返回", :action => "edit_arbitman", :id => @tb_arbitman.id %>
+        </div>
+        
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>起始时间</th>
+        <th nowrap>终止时间</th>
+        <th nowrap>工作单位</th>
+        <th nowrap>职务</th>
+        <th nowrap>证明人</th>
+        <th nowrap>是否与法律有关</th>
+        <th nowrap>备注</th>
+        <th nowrap>编辑</th>
+        <th nowrap>删除</th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+    <%if @tb_resumes != nil
+        for tb_resume in @tb_resumes%>
+          <tr class="row<%=i % 2%>">
+            <td><%= tb_resume.startdate%> </td>
+            <td><%= tb_resume.enddate%> </td>
+            <td><%= tb_resume.company%> </td>
+            <td><%= tb_resume.business%> </td>
+            <td><%= tb_resume.proveman%> </td>
+            <%if tb_resume.lawyerabout=='1'%>
+                <td>是 </td>
+            <%elsif tb_resume.lawyerabout=='0'%>
+                <td>否 </td>                
+            <%end%>
+            <td><%= tb_resume.remark %> </td>
+            <td><%=link_to "编辑", :action => "edit_resume", :id => tb_resume %></td>
+            <td><%=link_to "删除",{:action => "delete_resume", :id => tb_resume },:confirm => "确定删除?", :method => "post" %></td>
+          </tr>
+          <%i=i+1%>
+      <%end%>
+      <%end%>
+      </tbody>
+     <!-- <input type="hidden" name="id" value="params[:id]"> -->
+    </table>
+     
+  </body>
+</html>

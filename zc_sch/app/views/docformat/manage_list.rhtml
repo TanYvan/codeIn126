@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>选项管理</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">选项管理</span></div>
+    <div align="center" class="cGray">格式函名称:<%=@name%></div>
+     <br>
+    <div align="center">
+<%=link_to "返回",:action=>"docformat_list",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+<br>
+  <br><br>
+    <%=link_to  "创建", :action=>"m_new",:code=>@code,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+    <div style="color:red"><%=flash[:notice]%></div> </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap="nowrap">
+            格式函编码
+          </th>
+          <th nowrap="nowrap">
+            选项
+          </th>
+          <th nowrap="nowrap">
+            删除
+          </th>          
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for r in @docformatobj%>
+          <tr class="row<%=i % 2%>">
+          <td >
+            <%=h r.format_code%>
+          </td>
+          <td >
+            <%=TbDictionary.find(:first,:conditions=>["typ_code='0042' and state='Y' and data_val=?",r.obj_code]).data_text%>
+          </td>
+          <td>
+            <%=link_to "删除",:action=>"m_delete",:obj_code=>r.obj_code,:code=>@code,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+          </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件终审成功提示</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div align="center">
+      案件终审完成
+    </div>
+    <table  class="adminlist">
+      <tr>
+        <td align="right">
+          咨询号：
+        </td>
+        <td align="left">
+          <%=params[:r_code]%>
+        </td>
+      </tr>
+      <tr>
+        <td align="right">
+          结案号：
+        </td>
+        <td align="left">
+          <%=TbCase.find_by_recevice_code(params[:r_code]).end_code%>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

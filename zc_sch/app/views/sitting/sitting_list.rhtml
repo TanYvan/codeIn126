@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>开庭信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+     <%if session[:recevice_code]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list?contr_r=sitting&act_r=sitting_list","mainFrame")
+       </script>
+    <%end%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+    开庭信息
+    </span></div>
+    <%if @case==nil%>
+    <div align="center">
+      请选择您要办理的案件
+    <%end%>
+    <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"sitting",:act_r=>"sitting_list"%>
+    <%if @case!=nil%>
+     当前案件
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <%=h @case.recevice_code%>
+        </td>
+        <td>
+          <%=h @case.receivedate%>
+        </td>
+        <td>
+          <%=h @case.case_code%>
+        </td>
+        <td>
+          <%=h @case.nowdate%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+      </tr>         
+      </tbody>
+    </table>
+    <br>
+    <br>
+      <hr size="1" color="#99CCFF" noshade>
+      <div align="center" class="cDGray">
+    开庭信息    <%=link_to  "创建", :action=>"sitting_new"%>  
+      <div style="color:red"><%=flash[:notice]%></div>
+     <div align="left" class="cDGray">
+        <%=link_to "仲裁庭使用情况查看",{:controller=>"book2",:action=>"arbitroom_book"},:target=>"_blank"%>
+      </div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            开庭日期
+          </th>
+          <th nowrap>
+            仲裁庭
+          </th>
+          <th nowrap>
+            开庭时间
+          </th>
+          <th nowrap>
+            闭庭时间
+          </th>
+          <th nowrap>
+            占用时间（小时）
+          </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @sitting%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=p.sittingdate%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0023'  and  data_val='#{p.sittingplace}'").data_text%>
+        </td>
+        <td>
+          <%=p.open_t%>
+        </td>
+        <td>
+          <%=p.close_t%>
+        </td>
+        <td>
+          <%=p.usetime%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"sitting_edit",:id=>p%>
+        </td>
+        <td>
+            <%=link_to "删除",{:action=>"sitting_delete",:id=>p},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <%end%>
+  </body>
+</html>

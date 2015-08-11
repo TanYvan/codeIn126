@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 仲裁报酬奖励、扣减信息</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  添加 助理变更  <%=link_to "返回",:action=>"list"%>
+
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :change ,:url=>{:action=>"create"}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            请求提交日期:
+          </th>
+          <td align="left">
+            <%=f.text_field(:changedate,:size=>8 ,:readonly => "true")%>  
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('change_changedate'),'yyyy-MM-dd')" >                          
+            <div style="color:red"><%=error_message_on(:change,:changedate)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            变更前助理:
+          </th>
+          <td>
+          <%=User.find_by_code(TbCase.find_by_recevice_code(session[:recevice_code]).clerk).name %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            变更后助理:
+          </th>
+          <td>
+            <%@clerks=User.find_by_sql("select code,name from users where used='Y' and code in (select user_code from user_duties where duty_code='0003') order by name")%>
+            <%=f.collection_select(:afterclerk,@clerks,:code,:name)%>                                                   
+            <div style="color:red"><%=error_message_on(:change,:afterclerk)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            理由:
+          </th>
+          <td>
+            <%=f.text_area(:reason,:rows=>4)%>                                                   
+            <div style="color:red"><%=error_message_on(:change,:reason)%></div>
+          </td>
+        </tr>
+                               
+      </table>
+      <br>
+        <div align="center"><%=submit_tag "提交" %></div>
+
+    <%end%>
+  </body>
+</html>

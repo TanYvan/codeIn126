@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员参与情况</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+
+    <div class="title"><span class="cBlue">仲裁员参与情况</span></div>
+    <br>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>序号</th>
+          <th nowrap>仲裁员姓名</th>
+          <th nowrap>应参与次数</th>
+          <th nowrap>请假次数</th>
+          <th nowrap>无故不参与次数</th>
+          <th nowrap>实际参与次数</th>
+          <th nowrap>参与率(%)</th>
+          <th nowrap>时长(小时)</th>
+          <th nowrap>查看</th>
+        </tr>
+      </thead>
+      <%i=1%>
+      <%j=0%>
+      <%if @tb_arbitmen != nil
+        for tb_arbitman in @tb_arbitmen %>
+          <tr class="row<%=  j%2 %>">
+            <td><%=  i %></td>
+            <td><%=  tb_arbitman.name%></td>
+            <%  should = TbArbitmanSession.find_should_count(tb_arbitman.code)%>
+            <td><%= should %></td><!--应参与次数-->
+            <td><%= TbArbitmanSession.find_leave_count(tb_arbitman.code) %></td>      <!--请假次数-->
+            <td><%= TbArbitmanSession.find_absent_count(tb_arbitman.code) %></td>      <!--无故缺席次数-->
+            <%  attend = TbArbitmanSession.find_attend_count(tb_arbitman.code)%>
+            <td><%= attend %></td>      <!--实际参与次数-->
+            <%if should == 0 %>
+              <td>--</td>
+            <%else%>
+              <td><%= (attend*1.0)/(should*1.0)*100 %></td>      <!--参与率-->
+            <%end%>
+            <td>
+              <%@h=TbArbitmanSession.find_by_sql("select sum(course_hour) as a from tb_arbitman_sessions where tb_arbitman_sessions.arbitman_num='#{tb_arbitman.code}' and used='Y'")%>
+              <%if @h!=nil%>
+                <%for p in @h%>
+                  <%=p.a %>
+                <%end%>
+              <%end%>
+            </td>
+            <td><%=  link_to "查看", {:action => "list_session", :arbitman_id => tb_arbitman.code ,:search_condit=>@search_condit,:order=>@order,:page=>@arbitman_session_pages.current.number,:page_lines=>@page_lines}%></td>
+          </tr>
+          <%i+=1%>
+          <%j+=1%>
+        <%end%>
+      <%end%>
+      <!--翻页的处理-->
+      <tfoot>
+        <tr>
+          <td colspan="9">
+            <%= link_to '上一页', { :page => @arbitman_session_pages.current.previous ,:condi_search=>@condi_search,:order=>@order ,:page_lines=>@page_lines  } if @arbitman_session_pages.current.previous %>
+            <%=pagination_links( @arbitman_session_pages,{:params=>{:condi_search=>@condi_search,:order=>@order,:page_lines=>@page_lines}})%>
+            <%= link_to '下一页', { :page => @arbitman_session_pages.current.next ,:condi_search=>@condi_search,:order=>@order ,:page_lines=>@page_lines } if @arbitman_session_pages.current.next %>
+          
+            <%if @arbitman_session_pages.current.previous or @arbitman_session_pages.current.next%>
+              <form action="/arbitman_session/list_arbitman_session" method="get" >
+                每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                <input type=text name='page' size=5 class="SingleLineInput" value=<%= @arbitman_session_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

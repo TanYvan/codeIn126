@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <title>格式函</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript" type="text/javascript">   
+      function Submit_upload_onclick() {     
+            document.all.MyOffice.HttpInit();
+            document.all.MyOffice.HttpAddPostString("fu","<%=@fu%>");
+            document.all.MyOffice.HttpAddPostString("FileID","<%=@dc.id%>");
+            document.all.MyOffice.HttpAddPostCurrFile("FileData", "a.doc");
+            var su ="http://<%=SysArg.find_by_code('9000').val%>:<%=SysArg.find_by_code('9001').val%>/docformat/dc_update" ;   
+            document.all.MyOffice.HttpPost(su); 
+            alert("信息提交完成，请查看保存记录!")
+        }
+      function show_word() {
+        document.all.MyOffice.Open("<%=@doc_path%>",true);               
+        } 
+    </script> 
+  </head>
+  <body onload="show_word();">
+    <input id="Button1" type="Button" value="页面刷新" onclick="document.all.MyOffice.ReplaceText('abcdefg','abcdefg',0);document.all.MyOffice.ReplaceText('abcdefg','abcdefg',1)" />
+    <input id="Button2" type="Button" value="保存" onclick="Submit_upload_onclick()"/>
+    <object id="MyOffice" name = "MyOffice" style="LEFT: 0px; WIDTH: 100%; TOP: 0px; HEIGHT: 98%" classid="clsid:00460182-9E5E-11D5-B7C8-B8269041DD57" codebase="dsoframer.ocx#version=2,2,0,0" >
+    </object>   
+    
+  </body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>将到期案件查询</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <table><tr><td>
+          <div class="title"><span class="cBlue">将到期案件查询</span></div>
+          <%form_tag :url=>{:action=>"list_10"} do%>
+            <table align="center">
+              <tr>
+                <td nowrap>
+                  将到期案件时间：
+                </td>
+                <td align="right" nowrap>
+                  <%=select_tag "day1",options_for_select(@day_all,@day1)%>
+                </td>
+              </tr>
+              <tr>
+                <td align="right" nowrap>
+                  助理：
+                </td>
+                <td align="left" nowrap><%=select_tag "clerk",options_for_select(@clerk_all.collect{|p|[p.name,p.code]}.insert(0,["全部",""]),@clerk)%>
+                </td>
+              </tr>
+            </table>
+            <%=submit_tag "查询" %>
+          <%end%>
+          <br/><br/>
+          <div align="left">
+            查询条件：<%=@str1[@day1]%>  <%if @clerk!='' and @clerk!=nil%> 助理:<%=User.find_by_code(@clerk).name%> <%end%>
+          </div>
+          <div align="left">案件数量：<%=@case1.length%>件</div>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr >
+                <th nowrap>
+                  案件受理号
+                </th>
+                <th nowrap>
+                  通知日期
+                </th>
+                <th nowrap>
+                  办案助理
+                </th>
+                <th nowrap>
+                  组庭日期
+                </th>
+                <th nowrap>
+                  申请人
+                </th>
+                <th nowrap>
+                  申请人<br/>代理人
+                </th>
+                <th nowrap>
+                  被申请人
+                </th>
+                <th nowrap>
+                  被申请人<br/>代理人
+                </th>
+                <th nowrap>
+                  审限日期
+                </th>
+                <th nowrap>
+                  延期日期
+                </th>
+                <th nowrap>
+                  仲裁庭<br/>组成
+                </th>
+                <th>
+                  裁决起草人
+                </th>
+                <th nowrap>
+                  计收(申)(￥)<br/>
+                  已收(申)(￥)
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <%@arbitmantype={"0001"=>"独","0002"=>"首","0003"=>"申","0004"=>"被"}%>
+              <%i=0%>
+              <%if @case1!=nil%>
+                <%for c in @case1%>
+                  <tr class="row<%=i % 2%>">
+                    <td nowrap>
+                      <%=link_to "#{c.case_code}",{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>c.recevice_code},:target=>"_black" %>
+                    </td>
+                    <td nowrap>
+                      <%=c.nowdate%>
+                    </td>
+                    <td>
+                      <%=User.find_by_code(c.clerk).name%>
+                    </td>
+                    <td nowrap>
+                      <%caseorg=TbCaseorg.find(:all,:conditions=>"used='Y' and recevice_code='#{c.recevice_code}'",:order=>"orgdate")%>
+                      <%if PubTool.new.get_first_record(caseorg)!=nil%>
+                        <%for c_org in caseorg%>
+                          <%=c_org.orgdate%>
+                          <br/>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td>
+                      <%=SysArg.applicant(c.recevice_code,1,4)%>
+                    </td>
+                    <td>
+                      <%=SysArg.get_agent(c.recevice_code,1)%>
+                    </td>
+                    <td>
+                      <%=SysArg.respondent(c.recevice_code,1,4)%>
+                    </td>
+                    <td>
+                      <%=SysArg.get_agent(c.recevice_code,2)%>
+                    </td>
+                    <td nowrap>
+                      <%limitdate=TbCaseorg.find(:first,:conditions=>"used='Y' and recevice_code='#{c.recevice_code}'")%>
+                      <%if limitdate!=nil%>
+                        <%=limitdate.limitdate%>
+                      <%end%>
+                    </td>
+                    <td nowrap>
+                      <%@ampliation=TbCasedelay.find(:all,:conditions=>["used='Y' and recevice_code=?",c.recevice_code])%>
+                      <%for ni in @ampliation%>
+                        <%if ni!=nil%>
+                          <%=ni.delayDate%><br/>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap>
+                      <%@arbit=TbCasearbitman.find_by_sql(["select tb_casearbitmen.arbitmantype as arbitmantype,tb_arbitmen.name as name ,tb_dictionaries.data_text as arbitmansign from tb_casearbitmen,tb_arbitmen,tb_dictionaries where tb_dictionaries.typ_code='0015' and tb_casearbitmen.recevice_code=?  and tb_casearbitmen.arbitman=tb_arbitmen.code and tb_casearbitmen.arbitmansign=tb_dictionaries.data_val and tb_casearbitmen.used='Y' order by tb_casearbitmen.arbitmantype",c.recevice_code])%>
+                      <%if @arbit.empty?%>
+                        未组成
+                      <%else%>
+                        <%for arb in @arbit%>
+                          <%=@arbitmantype[arb.arbitmantype]%>:<%=arb.name%>(<%=arb.arbitmansign%>)
+                          <br/>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td>
+                      <%award1=TbAwardDetail.find_by_sql("select a.draftsman_typ as draftsman_typ,a.draftsman as draftsman from tb_award_details as a,tb_awards as aw where a.used='Y' and a.recevice_code='#{c.recevice_code}' and (a.typ='0003' or a.typ='0004') and a.recevice_code=aw.recevice_code and aw.used='Y' and a.p_id=aw.id")%>
+                      <%for aw in award1%>
+                        <%if aw.draftsman_typ=='0001'%>
+                          <%=TbArbitman.find(:first,:conditions=>["used='Y' and code=?",aw.draftsman]).name%>
+                        <%else%>
+                          <%=User.find(:first,:conditions=>["used='Y' and code=?",aw.draftsman]).name%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                    <td nowrap>
+                      <div align="left">
+                        <!--申请人  应收=应交- （应退 - 减退 ）  -->
+                        <%a_f1=TbShouldCharge.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0001' and (typ='0001' or typ='0004')",c.recevice_code])  %>
+                        <%a_f2=TbShouldRefund.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0001' and (typ='0001' or typ='0004')",c.recevice_code])%>
+                        <%a_f6=TbShouldRefund.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0001' and (typ='0001' or typ='0004')",c.recevice_code])%>
+                        <%a_f3=TbShouldRefund.sum(:redu_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0001' and (typ='0001' or typ='0004')",c.recevice_code])%>
+                        <%a_f4=TbShouldCharge.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0001' and (typ='0001' or typ='0004')",c.recevice_code])  %>
+                        <%af = a_f1.to_i - (a_f2.to_i - a_f3.to_i)%>
+                        <%a_f5=TbReduction.sum(:rmb_money,:conditions=>["used='Y' and recevice_code=? and consultant='0001' and (typ='0001' or typ='0004')",c.recevice_code])%>
+                        <%if af!=0%>应收:<%=SysArg.compart2(af)%><br/><%end%>
+                        <%if a_f4.to_i!=0%>实收:<%=SysArg.compart2(a_f4.to_i  - a_f6.to_i) %><br/><%end%>
+                        <%aff=af - (a_f4.to_i - a_f6.to_i) - a_f5.to_i%>
+                        <%if aff!=0%>欠缴:<%=SysArg.compart2(aff) %><br/><%end%>
+                        <%if a_f5.to_i!=0%>减交:<%=SysArg.compart2(a_f5.to_i) %><%end%>
+                      </div>
+                    </td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+              <%end%>
+            </tbody>
+          </table>
+        </td></tr></table>
+  </body>
+</html>

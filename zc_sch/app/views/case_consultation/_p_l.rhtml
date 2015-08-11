@@ -1,0 +1,104 @@
+<%@state={-2=>"删除",-1=>"重审",1=>"咨询",2=>"历史",3=>"不受理",4=>"立案",5=>"组庭",6=>"开庭",100=>"结案",150=>"归档申请",200=>"存档"}%>
+相关案件
+<table cellspacing="1" class="adminlist">
+<thead>
+  <tr >
+    <th nowrap>
+      咨询流水号
+    </th>
+    <th nowrap>
+      总案号
+    </th>
+    <th nowrap>
+      立案号
+    </th>
+    <th nowrap>
+      结案号
+    </th>
+    <th nowrap>
+      案件状态
+    </th>
+    <th nowrap>
+      申请人
+    </th>
+    <th nowrap>
+      被申请人
+    </th>
+    <th nowrap>
+      立案日期
+    </th>
+    <th nowrap>
+      结案日期 
+    </th>
+    <th nowrap>
+      助理
+    </th>
+    <th nowrap>
+      争议金额
+    </th>
+  </tr>
+</thead>
+<tbody>
+<%if p_l!=nil%>
+  <%i=0%>
+  <%for c in p_l%>
+    <tr class="row<%=i % 2%>">
+        <td>
+      <%=link_to "#{c.tb_cases_recevice_code}",{:controller=>'every_casebase',:action=>"every_list",:recevice_code=>"#{c.tb_cases_recevice_code}"},:target=>"_blank"%>
+      </td>
+      <td>
+        <%=c.tb_cases_general_code%>
+      </td>
+      <td>
+        <%=c.tb_cases_case_code%>
+      </td>
+      <td>
+        <%=c.tb_cases_end_code%>
+      </td>
+      <td>
+        <%=@state[c.tb_cases_state]%>
+      </td>
+      <td>
+        <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.tb_cases_recevice_code}'",:order=>"id")%>
+        <%for tp in @tp%>
+            <%=h tp.partyname%>
+          <input type="button" value="复制" onclick="cop('<%=tp.commissary%>','<%=tp.partyname%>','<%=tp.mobiletel%>','<%=tp.email%>','<%=tp.idnum%>','<%=tp.addr%>','<%=tp.tel%>','<%=tp.postcode%>','<%=tp.post_tel_code%>','<%=tp.profession%>','<%=tp.area%>','<%=tp.dutyname%>')" />
+                 <br/>
+        <%end%>
+      </td>
+  
+      <td>
+        <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.tb_cases_recevice_code}'",:order=>"id")%>
+        <%for tp in @tp%>
+            <%=h tp.partyname%>
+          <input type="button" value="复制" onclick="cop('<%=tp.commissary%>','<%=tp.partyname%>','<%=tp.mobiletel%>','<%=tp.email%>','<%=tp.idnum%>','<%=tp.addr%>','<%=tp.tel%>','<%=tp.postcode%>','<%=tp.post_tel_code%>','<%=tp.profession%>','<%=tp.area%>','<%=tp.dutyname%>')" />
+                 <br/>
+        <%end%>
+      </td>
+      <td>
+        <%=h TbCase.find_by_recevice_code(c.tb_cases_recevice_code).nowdate%>
+      </td>
+      <td>
+        <%=h TbCase.find_by_recevice_code(c.tb_cases_recevice_code).end_date%>
+      </td>
+      <td>
+        <%if c.tb_cases_clerk!=nil and c.tb_cases_clerk!=""%>
+             <%=h User.find_by_code(c.tb_cases_clerk).name%>
+        <%end%>
+      </td>
+  
+      <td>
+        <%=h TbCase.find_by_recevice_code(c.tb_cases_recevice_code).amount%>
+      </td>
+  
+    </tr>          
+    <%i=i+1%>
+
+    <%end%> 
+  
+  <%end%> 
+  
+</tbody>
+</table>
+
+

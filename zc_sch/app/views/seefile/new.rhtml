@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加档案提交记录信息</title>
+  <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  添加档案提交记录信息   <%=link_to "返回",:action=>"list"%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :seefile ,:url=>{:action=>"create"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            提交人:
+          </th>
+          <td>
+            <%@caseassistant1=UserDuty.find_by_sql("select users.code as code,users.name as name from users,user_duties where users.used='Y' and  users.code=user_duties.user_code and user_duties.duty_code='0003'  order by users.name")%>
+            <%=f.collection_select(:man,@caseassistant1,:name,:name)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            提交时间:
+          </th>
+          <td>
+            <%=f.text_field(:see_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('seefile_see_date'),'yyyy-MM-dd')">
+          </td>
+        </tr>
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remark,:rows=>5)%>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

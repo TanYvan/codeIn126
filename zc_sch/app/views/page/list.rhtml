@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <title><%= controller.action_name %></title>
+    <%= stylesheet_link_tag 'scaffold' %>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <table  width="100%"><tr><td>
+          <div class="title"><span class="cBlue">系统权限维护</span></div>
+          <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+          <p style="color: green"><%= flash[:notice] %></p>
+          <%= link_to '创建', :action => 'new' %>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th  nowrap>编码</th>
+                <th  nowrap>名称</th>
+                <th  nowrap>url</th>
+                <!--th nowrap>controllers</th>
+                <th  nowrap>actions</th>
+                <th  nowrap>状态</th-->
+                <th  nowrap>编辑</th>
+                <th  nowrap>删除</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <% for page in @pages %>
+                <tr class="row<%=i % 2%>">
+                  <!--% for column in Page.content_columns %>
+                    <td nowrap><div align="left"><#%=h page.send(column.name) %></div></td>
+                  <#% end %-->
+                  <td nowrap><div align="left"><%=h page.code %></div></td>
+                  <td nowrap><div align="left"><%=h page.name %></div></td>
+                  <td ><div align="left"><%=h page.url%></div></td>
+                  <!--td ><div align="left"><@#%=h page.controllers%></div></td>
+                  <td ><div align="left"><#%=h page.actions%></div></td>
+                  <td ><div align="left"><#%=h page.status%></div></td-->
+                  <td><%= link_to '编辑', :action => 'edit', :id => page %></td>
+                  <td><%= link_to '删除', { :action => 'destroy', :id => page }, :confirm => 'Are you sure?', :method => :post %></td>
+                </tr>
+                <%i=i+1%>
+              <% end %>
+            </tbody>
+          </table>
+    </td></tr></table>
+  </body>
+</html>

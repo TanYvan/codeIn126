@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改字典表信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+ <br>
+  <div class="cDGray" align="center">修改字典表信息   <%=link_to "返回",:action=>"dictionary_list",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :dictionary ,:url=>{:action=>"dictionary_update",:id=>@dictionary.id,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            类别编码:
+           </th>
+          <td>
+            <%=f.text_field(:typ_code)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            参数值:
+          </th>
+          <td>
+            <%=f.text_field(:data_val)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            参数显示:
+          </th>
+          <td>
+            <%=f.text_field(:data_text,:style=>"width:20em")%>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            父参数:
+          </th>
+          <td>
+            <%=f.text_field(:data_parent)%>
+          </td>
+        </tr>
+        
+        <tr >
+          <th>
+            参数状态:
+          </th>
+          <td>
+            <%=f.text_field(:state)%>
+          </td>
+        </tr>
+       </table>
+       <br>
+       <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

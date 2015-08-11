@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>专家会议纪要</title>
+    <%= javascript_include_tag "prototype" %>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">专家会议列表</span></div>
+    <br/>
+
+    <%if @case==nil%>
+      请选择您要办理的案件
+    <%end%>
+    <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"expert_meeting",:act_r=>"list_expert_meeting"%>
+    <%if @case!=nil%>
+      <br/>
+      <div class="cDGray">当前案件</div>
+
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <th nowrap>
+            咨询流水号
+          </th>
+          <th nowrap>
+            咨询日期
+          </th>
+          <th nowrap>
+            立案号
+          </th>
+          <th nowrap>
+            立案日期
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @case.recevice_code%>
+            </td>
+            <td nowrap>
+              <%=h @case.receivedate%>
+            </td>
+            <td nowrap>
+              <%=h @case.case_code%>
+            </td>
+            <td nowrap>
+              <%=h @case.nowdate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                      <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                      <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                      <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                      <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+        <br>
+          <br>
+            <hr size="1" color="#99CCFF" noshade width="98%">
+              <div align="center">
+                <%casebook=CaseBook.find(:first,:conditions=>["recevice_code=? and used='Y' and state='0001' and book_name<>'' and typ='0005'",@case.recevice_code])%>
+                <%if casebook==nil%>
+                  <%= link_to "添加专家会议", :action => "new_expert_meeting"%>
+                <%end%>
+              </div>
+              <div style="color:red"><%=flash[:notice]%></div>
+              <table class="adminlist" cellspacing="1">
+                <thead>
+                  <tr>
+                    <th nowrap>序号</th>
+                    <th nowrap>题目</th>
+                    <th nowrap>日期</th>
+                    <th nowrap>会议记录人</th>
+                    <th nowrap>内容摘要</th>
+                    <th nowrap>
+                      文件操作
+                    </th>
+                    <th nowrap>修改</th>
+                    <th nowrap>删除</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%j=0%>
+                  <%i=1%>
+                  <% if @expert_meetings != nil
+                    for expert_meeting in @expert_meetings %>
+                      <tr class="row<%=j % 2%>">
+                        <td><%=i %></td>
+                        <td><%=expert_meeting.meeting_title%></td>
+                        <td><%=expert_meeting.dat%></td>
+                        <td><%=expert_meeting.record_by%></td>
+                        <td><%=h(truncate(expert_meeting.content,20))%></td>
+                        <td>
+                          <%casebook=CaseBook.find(:first,:conditions=>["recevice_code=? and used='Y' and state='0001' and book_name<>'' and typ='0005'",@case.recevice_code])%>
+                          <%if casebook==nil%>
+                            <%=link_to "上传",:action=>"book_upload",:id=>expert_meeting,:recevice_code=>@case.recevice_code%>
+                          <%else%>
+                            <%=link_to "下载" ,:action=>"book_down",:id=>casebook.id,:recevice_code=>@case.recevice_code%>
+                            <%=link_to "删除" ,{:action=>"book_destroy",:id=>casebook.id},:confirm=>"您确认要物理删除给文件吗？该文件删除后将无法恢复！"%>
+                          <%end%>
+                        </td>
+                        <td><%=link_to "修改",{:action => "edit_expert_meeting",:id => expert_meeting} %></td>
+                        <%casebook2=CaseBook.find(:first,:conditions=>["recevice_code=? and used='Y' and state='0001' and typ='0005'",@case.recevice_code])%>
+                        <td>
+                          <%if casebook2!=nil%>
+                            <%=link_to "删除",{:action => "delete_expert_meeting",:id => expert_meeting,:casebook_id=>casebook2.id}, :confirm => "您确认要删除吗？将同时删除已上传文件！"%>
+                          <%end%>
+                        </td>
+                      </tr>
+                      <%i+=1%>
+                      <%j=j+1%>
+                    <%end%>
+                  <%end%>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="9">
+                      <%= link_to '上一页', { :page => @meeting_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @meeting_pages.current.previous %>
+                      <%=pagination_links( @meeting_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+                      <%= link_to '下一页', { :page => @meeting_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @meeting_pages.current.next %>
+
+                      <%if @meeting_pages.current.previous or @meeting_pages.current.next%>
+                        <form action="/expert_meeting/list_expert_meeting" method="get" >
+                          每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                          <input type=text name='page' size=5 class="SingleLineInput" value=<%= @meeting_pages.current.number %> />
+                          <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                          页
+                          <input type=hidden name='order' value="<%=@order%>" />
+                          <input type='submit' value='跳转' />
+                        </form>
+                      <%end%>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            <%end%>
+            </body>
+            </html>

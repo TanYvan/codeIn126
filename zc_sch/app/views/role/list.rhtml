@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>角色信息维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <SCRIPT language='JavaScript'>
+      function checkall() {
+        var a='';
+        if (document.getElementsByName("cheall").value=='t')
+        {
+          document.getElementsByName("cheall").value='f';
+        }
+        else
+        {
+          a='true';
+          document.getElementsByName("cheall").value='t';
+        }
+        var chec = document.getElementsByName("che");
+        for(i=0; i<chec.length; i++)
+        {
+          chec[i].checked = a;
+        }
+      }
+      function getcondi(){
+        var chec = document.getElementsByName("che");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+',';
+
+        }
+        aa=a.substr(0, a.length -1 )
+        var c = document.getElementById("condi_dissent");
+        c.value="("+aa+")";
+        var d= document.getElementById("condi_agree");
+        d.value="("+aa+")";
+        //alert(c.value);
+      }
+      function aa(){
+        //var b =document.getElementById("institute");
+        a=window.showModalDialog('/reviewed_c/institute_select');
+        if (a!=null)
+          document.getElementById("institute").value=a
+      }
+    </SCRIPT>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">角色信息维护</span></div>
+    <br>
+    <div style="color:red"><%=flash[:notice]%></div>    
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap="nowrap"  >
+          编码
+        </th>
+        <th nowrap="nowrap"  >
+          名称
+        </th>
+        <th nowrap="nowrap" >
+          注释
+        </th>
+        <th nowrap="nowrap" >
+          菜单
+        </th>
+        <th nowrap="nowrap" >
+          快捷菜单
+        </th>
+        <th nowrap="nowrap" >
+          编辑
+        </th>
+        <th nowrap="nowrap"  >
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for r in @roles%>
+        <tr class="row<%=i % 2%>">
+        <td >
+          <%=link_to r.code,{:action=>'role_main',:id=>r},:target=>'_self' %>
+
+        </td>
+        <td >
+          <%=h r.name%>
+        </td>
+        <td>
+          <%=h r.description%>
+
+        </td>
+        <td >
+          <%=link_to "编辑菜单",{:action=>'role_main',:id=>r},:target=>'_self' %>
+        </td>
+        <td >
+          <%=link_to "编辑快捷菜单",{:action=>'role_main1',:role_code=>r.code} %>
+        </td>
+        <td >
+          <%=link_to "编辑",{:action=>'edit',:id=>r},:target=>'_blank' %>
+        </td>
+
+        <td >
+          <%=link_to "删除" ,{:action=>'delete',:id=>r } ,:confirm=>"您确认要删除吗？",:method=>"post"%>
+        </td>
+        <%i=i+1%>
+      <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="5">
+          <%= link_to '上一页', { :page => @role_pages.current.previous  } if @role_pages.current.previous %>
+          <%=pagination_links( @role_pages)%>
+          <%= link_to '下一页', { :page => @role_pages.current.next  } if @role_pages.current.next %>
+        
+          <%if @role_pages.current.previous or @role_pages.current.next%>
+            <form action="/role/list" method="get" >
+              <input type=text name='page' value="" size="5" class="SingleLineInput" />
+              <input type='submit' value=跳转     />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+      </tfoot>
+    </table>
+    <br>
+      <div align="center">
+    <%=link_to  "创建", :action=>"new"%>
+      </div>
+  </body>
+</html>

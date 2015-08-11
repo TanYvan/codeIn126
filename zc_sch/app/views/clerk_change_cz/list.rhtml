@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件助理变更</title>
+      <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件助理变更</span></div>
+    <div align="center"><%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%></div>
+    <div style="color:red"><%=flash[:notice]%></div>
+   <table cellspacing="1" class="adminlist">      
+      <thead>
+      <tr >
+        <th nowrap>
+          <%if @order=="recevice_code desc"%>
+            <%=link_to '咨询流水号↑',:action=>"list",:order=>"recevice_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="recevice_code asc"%>
+            <%=link_to '咨询流水号↓',:action=>"list",:order=>"recevice_code desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '咨询流水号',:action=>"list",:order=>"recevice_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="ReceiveDate desc"%>
+            <%=link_to '咨询日期↑',:action=>"list",:order=>"ReceiveDate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="ReceiveDate asc"%>
+            <%=link_to '咨询日期↓',:action=>"list",:order=>"ReceiveDate desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '咨询日期',:action=>"list",:order=>"ReceiveDate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="case_code desc"%>
+            <%=link_to '立案号↑',:action=>"list",:order=>"case_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="case_code asc"%>
+            <%=link_to '立案号↓',:action=>"list",:order=>"case_code desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '立案号',:action=>"list",:order=>"case_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="nowdate desc"%>
+            <%=link_to '立案日期↑',:action=>"list",:order=>"nowdate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="nowdate asc"%>
+            <%=link_to '立案日期↓',:action=>"list",:order=>"nowdate desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '立案日期',:action=>"list",:order=>"nowdate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+        <th nowrap>
+          <%if @order=="clerk desc"%>
+            <%=link_to '助理↑',:action=>"list",:order=>"clerk asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="clerk asc"%>
+            <%=link_to '助理↓',:action=>"list",:order=>"clerk desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '助理',:action=>"list",:order=>"clerk asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          变更
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%for c in @case%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=h c.recevice_code%>
+        </td>
+        <td>
+          <%=h c.receivedate%>
+        </td>
+        <td>
+          <%=h c.case_code%>
+        </td>
+        <td>
+          <%=h c.nowdate%>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+        <td>
+          <%if c.clerk=="" or c.clerk==nil%>
+            
+          <%else%>
+            <%=User.find_by_code(c.clerk).name%>
+          <%end%>
+        </td>
+        <td>
+          <%=link_to '变更',:action=>'change_list',:case_id=>c,:search_condit=>@search_condit,:order=>@order,:page=>@case_pages.current.number,:page_lines=>@page_lines%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+      
+     <tfoot>
+      <tr>
+        <td colspan="5">
+          <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.previous %>
+          <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.next %>
+
+          <%if @case_pages.current.previous or @case_pages.current.next%>
+            <form action="/clerk_change_cz/list" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+     </tfoot>
+    </table>
+  </body>
+</html>

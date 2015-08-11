@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加案件合议信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <br>
+    <div class="cDGray" align="center">
+      添加 案件合议信息   <%=link_to "返回",:action=>"casecomment_list"%>
+
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <br>
+    <%form_for :casecomment ,:url=>{:action=>"casecomment_create"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            合议日期:
+          </th>
+          <td>
+            <%=f.text_field(:comment_date,:size=>10)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('casecomment_comment_date'),'yyyy-MM-dd')" >
+            <div style="color:red"><%=error_message_on(:casecomment,:comment_date)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            合议使用时间(小时):
+          </th>
+          <td>
+            <%=f.text_field(:use_time,:size=>4)%>
+            <i><%=error_message_on(:casecomment,:use_time)%></i>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            合议开始时间:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8101' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:noon,op,:data_text,:data_text)%>
+            <%=f.text_field(:casecomment_hour,:style=>"width:5em")%>点
+            <%=f.text_field(:casecomment_min,:style=>"width:5em")%>分
+            <i><%=error_message_on(:casecomment,:casecomment_hour)%></i>
+            <i><%=error_message_on(:casecomment,:casecomment_min)%></i>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            合议地点:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0023' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:comment_place,op,:data_val,:data_text)%>
+            <div style="color:red"><%=error_message_on(:casecomment,:comment_place)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remarks,:rows=>4)%>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员更换</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">
+    仲裁员更换
+     </div></span></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            仲裁员
+          </th>
+          <th nowrap>
+            提出更换人
+          </th>
+          <th nowrap>
+            是否更换
+          </th>
+          <th nowrap>
+            是否日期
+          </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @change%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%if p.arbitman!=nil%>
+            <%=TbArbitman.find_by_code(p.arbitman).name%>
+          <%end%>
+        </td>
+        <td>
+          <%=p.changeman%>
+        </td>
+        <td>
+          <%=@spilu[p.ifchangce]%>
+        </td>
+        <td>
+          <%=p.changedate%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"change_edit",:id=>p,:org_id=>params[:org_id]%>
+        </td>
+        <td>
+            <%=link_to "删除",{:action=>"change_delete",:id=>p,:org_id=>params[:org_id]},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br><div align="center">
+      <%=link_to  "创建", :action=>"change_new",:org_id=>params[:org_id]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+  </body>
+</html>

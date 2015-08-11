@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 案件延期信息</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  添加案件开庭延期信息(带<i>*</i>为必填项)     <%=link_to "返回",:action=>"sittingdelay_list",:sitting_id=>params[:sitting_id]%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :sittingdelay ,:url=>{:action=>"sittingdelay_create",:sitting_id=>params[:sitting_id]}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            提出日期:          
+           </th>
+          <td>
+            <%=f.text_field(:requestdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('sittingdelay_requestdate'),'yyyy-MM-dd')" >    
+            <div style="color:red"><%=error_message_on(:sittingdelay,:requestdate)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            提出人:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0030' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:requestman,op,:data_val,:data_text)%>               
+            <div style="color:red"><%=error_message_on(:sittingdelay,:requestman)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            是否同意:
+          </th>
+          <td>
+            <%=f.select(:isdelay,[['是','Y'],['否','N']])%>      
+            <div style="color:red"><%=error_message_on(:sittingdelay,:isdelay)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            <i>*</i>理由:
+          </th>
+          <td>
+            <%=f.text_area(:reason,:rows=>4)%>        
+            <div style="color:red"><%=error_message_on(:sittingdelay,:reason)%></div>
+          </td>
+        </tr>        
+               
+      </table>
+        <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

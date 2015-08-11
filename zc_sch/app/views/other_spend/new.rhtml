@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加其它费用支出</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <div class="title"><span class="cBlue">添加 其它费用支出</span></div>
+  <br>
+  <%=link_to "返回",:action=>"list",:recevice_code=>params[:recevice_code],:search_condit=>params[:search_condit],:order=>params[:order],:page_lines=>params[:page_lines]%>
+ 
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :other_spend ,:url=>{:action=>"create",:recevice_code=>params[:recevice_code],:search_condit=>params[:search_condit],:order=>params[:order],:page_lines=>params[:page_lines]}  do |f|%>
+      <table class="list">
+  
+        <tr bgcolor="white">
+          <th>
+            支出日期:          </th>
+          <td align="left" width="68%">
+            <%=f.text_field(:spenddate,:size=>8,:readonly => "true")%>  
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('other_spend_spenddate'),'yyyy-MM-dd')" >              
+            <div style="color:red"><%=error_message_on(:other_spend,:spenddate)%></div>
+          </td>
+        </tr>
+
+        <tr bgcolor="white">
+          <th>
+          费用类型:
+          </th>
+          <td align="left">
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0038' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:typ,op,:data_val,:data_text)%>            
+            <div style="color:red"><%=error_message_on(:other_spend,:typ)%></div>
+          </td>
+        </tr>      
+              
+        <tr bgcolor="white">
+          <th>
+            金额:
+          </th>
+          <td align="left">
+            <%=f.text_field(:rmb_money)%>           
+            <div style="color:red"><%=error_message_on(:other_spend,:rmb_money)%></div>
+          </td>
+        </tr>   
+         
+        <tr bgcolor="white">
+          <th>
+            备注:
+          </th>
+          <td align="left">
+            <%=f.text_area(:remark,:rows=>4)%>               
+            <div style="color:red"><%=error_message_on(:other_spend,:remark)%></div>
+          </td>
+        </tr>        
+                       
+     </table>
+        <div align="center"><%=submit_tag "提交" %></div>
+          
+            <%end%>
+              
+  </body>
+</html>

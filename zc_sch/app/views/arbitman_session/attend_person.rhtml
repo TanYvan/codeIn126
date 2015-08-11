@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>参与活动人员</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    
+    <div class="title"><span class="cBlue"><div align="center">活动参加人员</div></span></div>
+    
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>姓名</th>
+          <th nowrap>参与情况</th>
+          <th nowrap>时长</th>
+          <th nowrap>修改</th>
+          <th nowrap>删除</th>
+        </tr>        
+      </thead>
+      <tbody>
+        <%j=0%>
+        <% if @persons != nil%>
+            <% for person in @persons %>
+                <tr class="row<%=j%2%>">
+                  <%  arbitman = TbArbitman.find_by_code(person.arbitman_num) %>
+                  <td><%if arbitman != nil%><%= arbitman.name %><%end%></td>
+                  <!--从字典表中读取数据显示-->
+                  <td>
+                    <%= TbDictionary.find_arbit_type(9000,person.state)%>
+                  </td>
+                  <td>
+                    <%=person.course_hour%>
+                  </td>
+                  <td><%=link_to "修改", :action => "edit_attendant", :id => person, :session_code => @session_code %></td>
+                  <td><%=link_to "删除", :action => "delete_attendant", :id => person, :session_code => @session_code %></td>
+                </tr>
+                <%j=j+1%>
+            <%end%>        
+        <%end%>        
+      </tbody>
+    </table>
+    <br>
+    <div align="center"><%= link_to "创建", :action => "new_attendant",:session_code => @session_code %></div>
+  </body>
+</html>

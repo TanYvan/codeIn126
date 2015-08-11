@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 阅卷信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray">
+  添加阅卷信息   <%=link_to "返回",:action=>"list_2"%>
+  </div>
+ <div style="color:red"><%=flash[:notice]%></div> 
+    <%form_for :remun ,:url=>{:action=>"create_2"}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            仲裁员:
+          </th>
+          <td>
+            <%@casearbitman=TbCasearbitman.find_by_sql("select tb_arbitmen.code as code ,tb_arbitmen.Name as name   from tb_casearbitmen ,tb_arbitmen where tb_casearbitmen.recevice_code='#{session[:recevice_code_1]}' and tb_casearbitmen.used='Y' and tb_casearbitmen.arbitman=tb_arbitmen.code order by tb_arbitmen.name" )%>
+            <%=f.collection_select(:arbitman,@casearbitman,:code,:name)%>      
+            <div style="color:red"><%=error_message_on(:remun,:arbitman)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            阅读页数:
+          </th>
+          <td>
+            <%=f.text_field(:p)%>页
+            <div style="color:red"><%=error_message_on(:remun,:h)%></div>
+          </td>
+        </tr>                               
+      </table>
+      <br>
+        <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+  </body>
+</html>

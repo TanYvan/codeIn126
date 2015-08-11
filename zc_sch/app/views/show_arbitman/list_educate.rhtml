@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>教育情况</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">教育信息列表</span></div>
+    <br>
+   <!--关于仲裁员的各种链接的-->
+      <div align="center">
+      <%=link_to "返回", :action => "show_arbitman", :id => @tb_arbitman.id%>
+      </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>毕业或结业时间</th>
+        <th nowrap>所学专业</th>
+        <th nowrap>毕业院校</th>
+        <th nowrap>学历</th>
+        <th nowrap>学位</th>
+        <th nowrap>证书编号</th>
+        <th nowrap>是否法学</th>
+        <th nowrap>是否国外</th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%if @tb_educates != nil
+          for tb_educate in @tb_educates%>
+              <tr class="row<%=i % 2%>">
+                <td><%= tb_educate.graduatedate%> </td>
+                <td><%= tb_educate.specialty%> </td>
+                <td><%= tb_educate.school%> </td>
+                <td><%= TbDictionary.find_arbit_type(9006,tb_educate.studycalendar) %> </td>
+                <td><%= TbDictionary.find_arbit_type(9007,tb_educate.degree) %> </td>
+                <td><%= tb_educate.degreeletter %> </td>
+                <%if tb_educate.lawyercalendar=='1'%>
+                    <td>是 </td>
+                <%elsif tb_educate.lawyercalendar=='0'%>
+                    <td>否 </td>
+                <%else %>
+                    <td> </td>
+                <%end%>
+                <%if tb_educate.foreignlearn=='1'%>
+                    <td>是 </td>
+                <%elsif tb_educate.foreignlearn=='0'%>
+                    <td>否 </td>   
+                <%else %>
+                    <td> </td>                
+                <%end%>
+              </tr>
+              <%i=i+1%>
+          <%end%>
+      <%i=i+1%>
+      <%end%>
+      </tbody>     
+    </table>   
+  </body>
+</html>
+

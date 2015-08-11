@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改裁决书管理</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+  <div class="cDGray" align="center">修改 裁决书管理信息   <%=link_to "返回",:action=>"award_list"%>
+ 
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :award ,:url=>{:action=>"award_update",:id=>params[:id],:recevice_code=>params[:recevice_code]}  do |f|%>
+     <table class="list">
+        <tr>
+          <th nowrap>起草人：</th>
+          <td><%=f.text_area(:draftsman,:rows=>1)%></td>
+        </tr>
+        <tr >
+          <th>
+            助理收到裁决书初稿日:
+          </th>
+          <td>
+            <%=f.text_field(:recedate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_recedate'),'yyyy-MM-dd')" >
+
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            仲裁庭裁决意见:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8128' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:agree,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+       <!--tr >
+          <th rowspan="2">
+            裁决初稿转其他仲裁员日期:
+          </th>
+          <td>
+            仲裁员1:<%#op=TbArbitman.find_by_sql("select a.code as code,a.name as name from tb_arbitmen as a,tb_casearbitmen as b where b.recevice_code='#{session[:recevice_code]}' and b.arbitman=a.code")%>
+            <%#=f.collection_select(:refereeA,op,:code,:name)%>
+            日期：<%#=f.text_field(:refereeAdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_refereeAdate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <td>
+            仲裁员2:<%#op=TbArbitman.find_by_sql("select a.code as code,a.name as name from tb_arbitmen as a,tb_casearbitmen as b where b.recevice_code='#{session[:recevice_code]}' and b.arbitman=a.code")%>
+            <%#=f.collection_select(:refereeB,op,:code,:name)%>
+            日期：<%#=f.text_field(:refereeBdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_refereeBdate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+
+        <tr >
+          <th rowspan="2">
+            助理收到仲裁员反馈意见日期:
+          </th>
+          <td>
+            仲裁员1:<%#op=TbArbitman.find_by_sql("select a.code as code,a.name as name from tb_arbitmen as a,tb_casearbitmen as b where b.recevice_code='#{session[:recevice_code]}' and b.arbitman=a.code")%>
+            <%#=f.collection_select(:arbiterA,op,:code,:name)%>
+            日期：<%#=f.text_field(:arbiterAdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_arbiterAdate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <td>
+            仲裁员2:<%#op=TbArbitman.find_by_sql("select a.code as code,a.name as name from tb_arbitmen as a,tb_casearbitmen as b where b.recevice_code='#{session[:recevice_code]}' and b.arbitman=a.code")%>
+            <%#=f.collection_select(:arbiterB,op,:code,:name)%>
+            日期：<%#=f.text_field(:arbiterBdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_arbiterBdate'),'yyyy-MM-dd')" >
+          </td>
+        </tr-->
+
+        <tr >
+          <th>
+            助理收到裁决书最后稿日:
+          </th>
+          <td>
+            <%=f.text_field(:lastDate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_lastDate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+     <hr size="1" color="#99CCFF" noshade>
+    <iframe frameborder=0 src="/award/award1_list?award_id=<%=params[:id]%>"  noresize  style="width:700px;height:550px" align=center> </iframe>
+  </body>
+</html>
+

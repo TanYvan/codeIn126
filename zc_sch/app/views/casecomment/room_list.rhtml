@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>合议庭使用信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">
+    合议庭使用信息
+     </div></span></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            使用日期
+          </th>
+          <th nowrap>
+            合议庭
+          </th>
+          <th nowrap>
+            开始时间
+          </th>
+          <th nowrap>
+            结束时间
+          </th>
+          <th nowrap>
+            占用时间（小时）
+          </th>
+        <!--
+        <th nowrap>
+          修改
+        </th>
+        -->
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @room%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=p.sittingdate%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0023'  and  data_val='#{p.sittingplace}'").data_text%>
+        </td>
+        <td>
+          <%=p.open_t%>
+        </td>
+        <td>
+          <%=p.close_t%>
+        </td>
+        <td>
+          <%=p.usetime%>
+        </td>
+        <!--
+        <td>
+          <% # =link_to "修改",:action=>"room_edit",:id=>p,:sitting_id=>params[:sitting_id]%>
+        </td>
+        -->
+        <td>
+            <%=link_to "删除",{:action=>"room_delete",:id=>p,:sitting_id=>params[:sitting_id]},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br>
+      <div align="center">
+      <%=link_to  "创建", :action=>"room_new",:sitting_id=>params[:sitting_id]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+  </body>
+</html>

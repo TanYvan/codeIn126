@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 申请人仲裁请求及事实理由</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+  <div class="cDGray">添加 申请人仲裁请求及事实理由 <%=link_to "返回",:action=>"request_list"%>
+  </div>
+ <div style="color:red">
+   <div align="center"><%=flash[:notice]%></div>
+ </div>
+    <div align="center">
+      <%form_for :request ,:url=>{:action=>"request_create"}  do |f|%>
+    </div>
+    <table class="list">
+        <tr>
+          <th nowrap>
+            申请人:          </th>
+          <td nowrap>
+            <%party=TbParty.find(:all,:conditions=>"recevice_code='#{session[:recevice_code]}' and partytype=1 and used='Y'",:order=>"id",:select=>"id,partyname")%>
+            <%=f.collection_select(:party_id,party,:id,:partyname)%>         
+            <div style="color:red"><%=error_message_on(:request,:partyname)%></div>
+          </td>
+        </tr>
+        
+        <tr>
+          <th nowrap>
+            请求提交日期:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:requestdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('request_requestdate'),'yyyy-MM-dd')" >                          
+            <div style="color:red"><%=error_message_on(:request,:requestdate)%></div>
+          </td>
+        </tr>
+        
+        <tr>
+         <th nowrap>
+            提交方式:
+          </th>
+          <td nowrap>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0008' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:rsendstyle,op,:data_val,:data_text)%>         
+            <div style="color:red"><%=error_message_on(:request,:rsendstyle)%></div>
+          </td>
+        </tr>  
+         
+        <tr>
+          <th nowrap>
+            送交对方当事人日期:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:rsenddate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('request_rsenddate'),'yyyy-MM-dd')" >              
+            <div style="color:red"><%=error_message_on(:request,:rsenddate)%></div>
+          </td>
+        </tr>      
+        
+        <tr>
+          <th nowrap>
+            送交对方当事人方式:
+          </th>
+          <td nowrap>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0009' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:asendstyle,op,:data_val,:data_text)%>         
+            <div style="color:red"><%=error_message_on(:request,:asendstyle)%></div>
+          </td>
+        </tr>         
+                  
+        <tr>
+          <th nowrap>
+            仲裁请求:
+          </th>
+          <td nowrap>
+            <%=f.text_area(:request_text,:rows=>4)%>         
+            <div style="color:red"><%=error_message_on(:request,:request_text)%></div>
+          </td>
+        </tr>   
+         
+        <tr>
+          <th nowrap>
+            事实理由:
+          </th>
+          <td nowrap>
+            <%=f.text_area(:factreason,:rows=>4)%>         
+            <div style="color:red"><%=error_message_on(:request,:factreason)%></div>
+          </td>
+        </tr>
+        
+                       
+  </table>
+        <div align="center"><%=submit_tag "提交" %>
+          
+            <%end%>
+              </div>
+  </body>
+</html>

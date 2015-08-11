@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>语种</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">语种列表</span></div>
+    <br>
+    <!--关于仲裁员的各种链接的-->     
+    <div align="center">
+      <%=link_to "增加", :action => "new_language", :id => @tb_arbitman.id%>&nbsp;&nbsp;
+      <%=link_to "返回", :controller => "arbitman",:action => "edit_arbitman", :id => @tb_arbitman.id%>
+      </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>语种</th>
+        <th nowrap>语言序号</th>
+        <th nowrap>听说能力</th>
+        <th nowrap>读写能力</th>
+        <th nowrap>备注</th>
+        <th nowrap>编辑</th>
+        <th nowrap>删除</th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%if @tb_languages  != nil
+          for tb_language in @tb_languages %>
+          <tr class="row<%=i % 2%>">
+            <td><%= TbDictionary.find_arbit_type(9008,tb_language.language) %> </td>
+            <td><%= tb_language.lannum%> </td>
+            <td>
+                <%@a= TbDictionary.find(:first,:conditions=>"used='Y' and typ_code='9009' and data_val='#{tb_language.ability}' and state='Y'") %>
+                <%if @a!=nil%>
+                  <%=@a.data_text%>
+                <%end%>
+            </td>
+            <td>
+               <%@a= TbDictionary.find(:first,:conditions=>"used='Y' and typ_code='9010' and data_val='#{tb_language.literacy}' and state='Y'") %>
+                <%if @a!=nil%>
+                  <%=@a.data_text%>
+                <%end%>
+              </td>
+            <td><%= tb_language.remark%> </td>
+            <td><%= link_to "编辑", :action => "edit_language", :id => tb_language %> </td>
+            <td><%=link_to "删除",{ :action => "delete_language", :id => tb_language },:confirm=>"您确认要删除吗？",:method=>"post" %></td>
+          </tr>
+      <%i=i+1%>
+      <%end%>
+      <%end%>
+      </tbody>
+    </table>             
+  </body>
+</html>

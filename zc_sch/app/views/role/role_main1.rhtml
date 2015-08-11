@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>快捷菜单维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <SCRIPT language='JavaScript'>
+      function checkall() {
+        var a='';
+        if (document.getElementsByName("cheall").value=='t')
+        {
+          document.getElementsByName("cheall").value='f';
+        }
+        else
+        {
+          a='true';
+          document.getElementsByName("cheall").value='t';
+        }
+        var chec = document.getElementsByName("che");
+        for(i=0; i<chec.length; i++)
+        {
+          chec[i].checked = a;
+        }
+      }
+      function getcondi(){
+        var chec = document.getElementsByName("che");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+',';
+
+        }
+        aa=a.substr(0, a.length -1 )
+        var c = document.getElementById("condi_dissent");
+        c.value="("+aa+")";
+        var d= document.getElementById("condi_agree");
+        d.value="("+aa+")";
+        //alert(c.value);
+      }
+      function aa(){
+        //var b =document.getElementById("institute");
+        a=window.showModalDialog('/reviewed_c/institute_select');
+        if (a!=null)
+          document.getElementById("institute").value=a
+      }
+    </SCRIPT>
+  </head>
+  <body>
+<div class="title"><span class="cBlue">快捷菜单维护</span>  角色:<%=Role.find_by_code(params[:role_code]).name%>(<%=params[:role_code]%>)</div>
+    <br>
+      <%=link_to  "返回", :action=>"list"%>&nbsp;&nbsp;&nbsp;
+      <%=link_to  "创建", :action=>"new_main1",:role_code=>params[:role_code]%>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap="nowrap"  >
+            快捷菜单编码
+          </th>
+          <th nowrap="nowrap"  >
+            快捷菜单名称
+          </th>
+          <th nowrap="nowrap" >
+            对应的树形菜单名称
+          </th>
+          <th nowrap="nowrap" >
+            页面url
+          </th>
+          <th nowrap="nowrap" >
+            修改
+          </th>
+          <th nowrap="nowrap"  >
+            删除
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for r in @fast_pages%>
+          <tr class="row<%=i % 2%>">
+          <td >
+            <%=r.code %>
+          </td>
+          <td >
+            <%=h r.name%>
+          </td>
+          <td>
+            <%=h r.menu_name%>
+          </td>
+          <td >
+            <%=h r.url%>
+          </td>
+          <td >
+            <%=link_to "修改",{:action=>'edit_main1',:id=>r} %>
+          </td>
+
+          <td >
+            <%=link_to "删除" ,{:action=>'delete_main1',:id=>r } ,:confirm=>"您确认要删除吗？",:method=>"post"%>
+          </td>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="7">
+          <%= link_to '上一页', { :page => @tb_fast_pages.current.previous  ,:page_lines=>@page_lines  } if @tb_fast_pages.current.previous %>
+          <%=pagination_links( @tb_fast_pages,{:params=>{:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @tb_fast_pages.current.next ,:page_lines=>@page_lines  } if @tb_fast_pages.current.next %>
+
+          <%if @tb_fast_pages.current.previous or @tb_fast_pages.current.next%>
+            <form action="/role/role_main1" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @tb_fast_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

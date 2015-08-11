@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>教育培训情况</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+     <div class="title"><span class="cBlue">编辑教育信息</span></div>
+    <br>
+      <div>
+      <%=link_to "返回", :controller => "arbitman", :action=>"list_educate", :id => @tb_arbitman.id%>
+      </div>
+<%form_for :tb_educate ,:url=>{:action=>"update_educate", :id => @tb_educate.id} do |f|%>
+    <table class="list">
+      <tr>
+        <th>毕业或结业时间：</th>
+        <td><%=f.text_field :graduatedate%></td>
+      </tr>
+      <tr>
+        <th>所学专业：</th>
+        <td><%=f.text_field :specialty%></td>
+      </tr>
+      <tr>
+        <th>毕业院校：</th>
+        <td><%=f.text_field :school%></td>
+      </tr>
+      <tr>
+        <th>学历：</th>
+            <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9006 and state ='Y'"], :order => :id, :select => "data_val,data_text") %>
+            <td><%=f.collection_select(:studycalendar, @types, :data_val, :data_text)%></td>
+      </tr>
+      <tr>    <th>学位：</th>
+            <%@types = TbDictionary.find(:all, :conditions => ["typ_code = 9007 and state ='Y'"], :order => :id, :select => "data_val,data_text") %>
+            <td><%=f.collection_select(:degree, @types, :data_val, :data_text)%></td>
+      </tr>
+      <tr>
+        <th>证书编号：</th>
+        <td><%=f.text_field :degreeletter%></td>
+      </tr>
+      <tr>
+        <th>是否法学：</th>
+        <td><%=f.select :lawyercalendar,[['是','1'],['否','0']]%></td>
+        </tr>
+      <tr>
+        <th>是否国外：</th>
+        <td><%=f.select :foreignlearn,[['是','1'],['否','0']]%></td>
+      </tr>
+    </table>
+    <br>
+    <div align="center">
+    <%=submit_tag "确定" %>
+    
+    </div>
+  <%end%>
+  </body>
+</html>
+

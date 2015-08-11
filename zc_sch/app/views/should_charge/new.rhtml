@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加案件收费信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag :defaults%>
+    <script language="javascript">
+      function r_s(){
+        new Ajax.Request('/should_charge/rate_set?money_code='+document.getElementById("should_currency").value, {asynchronous:true, evalScripts:true});
+        return false;
+      }
+      function checkForm(){
+        if(document.getElementById("should_rmb_money").value==""){
+          alert("请填写应收费用");
+          return false;
+        }
+        if(document.getElementById("should_arrears").value==""){
+          alert("请填写欠缴费用");
+          return false;
+        }
+        if(document.getElementById("should_f_money").value==""){
+          alert("请填写外币金额");
+          return false;
+        }
+        return true;
+      }
+      function su(){
+        document.getElementById("should_rmb_money").value=document.getElementById("should_f_money").value * document.getElementById("should_rate").value;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">添加案件收费信息</span></div>
+    <br>(带<i>*</i>为必填项)  <%=link_to "返回",:controller=>"should_charge",:action=>"list",:recevice_code=>params[:recevice_code],:t_typ=>params[:t_typ]%>
+
+    <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :should ,:url=>{:controller=>"should_charge",:action=>"create",:recevice_code=>params[:recevice_code],:t_typ=>params[:t_typ]},:html =>{:onsubmit=>"return checkForm();"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+          费用类型: </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0031' and  data_val<>'0001' and  data_val<>'0002' and data_val<>'0003'  and  data_val<>'0005' and data_val<>'0006' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:typ,op,:data_val,:data_text)%>
+            <div style="color:red"><%=error_message_on(:should,:typ)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            交款方:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0032' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:payment,op,:data_val,:data_text)%>
+            <div style="color:red"><%=error_message_on(:should,:payment)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            币种:
+          </th>
+          <td>
+            <%m=Money.find(:all,:order=>'code',:conditions=>"used='Y'")%>
+            <%=f.collection_select(:currency,m,:code,:name,options={},html_options={:onchange=>"r_s();"})%>
+            <div style="color:red"><%=error_message_on(:should,:currency)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>金额:
+          </th>
+          <td>
+            <%=f.text_field(:f_money,:onkeyup=>"su();",:onchange=>"su();")%>
+            <div style="color:red"><%=error_message_on(:should,:f_money)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            汇率:
+          </th>
+          <td>
+            <div id='rate_set'>
+              <%=f.text_field(:rate,:readonly=>"true",:onkeyup=>"su();",:onchange=>"su();")%>
+            </div>
+            <div style="color:red"><%=error_message_on(:should,:rate)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            <i>*</i>应收费用(￥):
+          </th>
+          <td>
+            <%=f.text_field(:rmb_money,:readonly=>"true")%>
+            <div style="color:red"><%=error_message_on(:should,:rmb_money)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remark,:rows=>2)%>
+          </td>
+        </tr>
+                  
+      </table>
+      <div align="center"><%=submit_tag "提交" %></div>
+
+    <%end%>
+
+  </body>
+</html>

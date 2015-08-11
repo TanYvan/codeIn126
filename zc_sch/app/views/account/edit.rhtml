@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>工作人员帐号信息维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div align="center">
+      <%=link_to "返回",:action=> "list_account",:page=>params[:page],:page_lines=>params[:page_lines]%>
+    </div>
+    <br>
+    <%form_for :user ,:url=>{:action=>"update" ,:id=> @user.id} do |f|%>
+      <table class="list">
+
+        <tr>
+          <th>
+            用户姓名:
+          </th>
+          <td >
+            <%=@user.name%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            帐号:
+          </th>
+          <td >
+            <%=f.text_field(:bankaccount)%>
+
+            <div style="color:red"><%=error_message_on(:user,:bankaccount)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            银行:
+          </th>
+          <td >
+            <%=f.text_field(:bankname)%>
+
+            <div style="color:red"><%=error_message_on(:user,:bankname)%></div>
+          </td>
+        </tr>
+
+      </table>
+
+      <br>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员变更意见</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+    仲裁员变更意见
+      </span></div>
+    <br>
+      <div align="center">
+        <%=link_to "返回",:action=>"change_list",:recevice_code=>@case.recevice_code%>
+      &nbsp;&nbsp;&nbsp;<%=link_to  "创建", :action=>"reason_new",:change_id=>params[:change_id],:recevice_code=>@case.recevice_code%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            意见类型
+          </th>
+          <th nowrap>
+            意见内容
+          </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @reason%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0022' and data_val='#{p.reason_typ}'").data_text%>
+        </td>
+        <td>
+          <%=p.reason%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"reason_edit",:id=>p,:change_id=>params[:change_id],:recevice_code=>@case.recevice_code%>
+        </td>
+        <td>
+            <%=link_to "删除",{:action=>"reason_delete",:id=>p,:change_id=>params[:change_id],:recevice_code=>@case.recevice_code},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+
+      </tbody>
+    </table>
+  </body>
+</html>

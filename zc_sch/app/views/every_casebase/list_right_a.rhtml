@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>所有待处理案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">所有待处理案件</span></div>
+    <%=link_to "返回",:controller=>params[:p_contr_r],:action=>params[:p_act_r],:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+    <div align="right">未结案案件：<%=@n1%>个  </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            立案日期
+          </th>
+          <th nowrap>
+            立案号
+          </th>
+          <th nowrap>
+            仲裁程序
+          </th>
+          <th nowrap>
+            选择
+          </th>
+          <th nowrap>
+            发文
+          </th>
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            案件阶段
+          </th>
+          <th nowrap>
+            咨询日期
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+          <th nowrap>
+            接待助理
+          </th>
+          <th nowrap>
+            经办人
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @case%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap>
+              <%=h c.nowdate%>
+            </td>
+            <td>
+              <%=c.case_code%>
+            </td>
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text%>
+            </td>
+            <td>
+              <%=button_to "选择",:controller=>"case_p",:action=>"select",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+            </td>
+            <td>
+              <%=link_to  "发文" ,:action=>"case_doc",:recevice_code=>c.recevice_code%>
+            </td>
+            <td>
+              <%=link_to "修改",:id=>c.id,:controller=>"case_p",:action=>"select",:contr_r=>'casebase',:act_r=>'edit'%>
+            </td>
+            <td>
+              <%=@state[c.state]%>
+            </td>
+            <td nowrap>
+              <%=h c.receivedate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td nowrap>
+              <%if c.clerk_2!=nil and c.clerk_2!=""%>
+                <%=User.find_by_code(c.clerk_2).name%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%if c.clerk_2!=nil and c.clerk!=""%>
+                <%=User.find_by_code(c.clerk).name%>
+              <%end%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="12" align="right">
+            <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]} if @case_pages2.current.previous %>
+            <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  }})%>
+            <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  } if @case_pages.current.next %>
+
+            <%if @case_pages.current.previous or @case_pages.current.next%>
+              <form action="/every_casebase/list_right_a" method="get" onsubmit="return page_check('page_lines','page');">
+                每页<input type=text id='page_lines' name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                <input type=text id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type=hidden name='contr_r' value="<%=params[:contr_r]%>" />
+                <input type=hidden name='act_r' value="<%=params[:act_r]%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    <br/>
+
+
+    <div align="right">已结案未归档案件：<%=@n2%>个  </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            立案日期
+          </th>
+          <th nowrap>
+            立案号
+          </th>
+          <th nowrap>
+            仲裁程序
+          </th>
+          <th nowrap>
+            选择
+          </th>
+          <th nowrap>
+            发文
+          </th>
+          <th nowrap>
+            修改
+          </th>
+          <th nowrap>
+            案件阶段
+          </th>
+          <th nowrap>
+            咨询日期
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+          <th nowrap>
+            接待助理
+          </th>
+          <th nowrap>
+            经办人
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @case2%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap>
+              <%=c.nowdate%>
+            </td>
+            <td nowrap>
+              <%=c.case_code%>
+            </td>
+            <td nowrap>
+              <%=TbDictionary.find(:first,:conditions=>"state='Y' and data_val='#{c.aribitprog_num}' and typ_code='0001'").data_text%>
+            </td>
+            <td>
+              <%=button_to "选择",:controller=>"case_p",:action=>"select",:id=>c.id,:contr_r=>params[:contr_r],:act_r=>params[:act_r]%>
+            </td>
+            <td>
+              <%=link_to  "发文" ,:action=>"case_doc",:recevice_code=>c.recevice_code%>
+            </td>
+            <td>
+              <%=link_to "修改",:id=>c.id,:controller=>"case_p",:action=>"select",:contr_r=>'casebase',:act_r=>'edit'%>
+            </td>
+            <td>
+              <%=@state[c.state]%>
+            </td>
+            <td nowrap>
+              <%=h c.receivedate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td nowrap>
+              <%if c.clerk_2!=nil and c.clerk_2!=""%>
+                <%=User.find_by_code(c.clerk_2).name%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%if c.clerk_2!=nil and c.clerk!=""%>
+                <%=User.find_by_code(c.clerk).name%>
+              <%end%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="12" align="right">
+            <%= link_to '上一页', { :page => @case_pages2.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines2,:contr_r=>params[:contr_r],:act_r=>params[:act_r]} if @case_pages2.current.previous %>
+            <%=pagination_links( @case_pages2,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines2,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  }})%>
+            <%= link_to '下一页', { :page => @case_pages2.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines2,:contr_r=>params[:contr_r],:act_r=>params[:act_r]  } if @case_pages2.current.next %>
+
+            <%if @case_pages2.current.previous or @case_pages2.current.next%>
+              <form action="/every_casebase/list_right_a" method="get" onsubmit="return page_check('page_lines','page');">
+                每页<input type=text id='page_lines' name='page_lines' value=<%=@page_lines2%> size=5 class="SingleLineInput" />条记录,第
+                <input type=text id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages2.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type=hidden name='contr_r' value="<%=params[:contr_r]%>" />
+                <input type=hidden name='act_r' value="<%=params[:act_r]%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

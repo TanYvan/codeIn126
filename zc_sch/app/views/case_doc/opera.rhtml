@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>发文操作</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%>
+    <%= javascript_include_tag :defaults%>
+    <script language="javascript">
+      function r_s(){
+        new Ajax.Request('/case_doc/p_set?typ='+document.getElementById("doc_typ_code").value, {asynchronous:true, evalScripts:true});
+        return false;
+      }
+      function r_s_3(){
+        new Ajax.Request('/case_doc/p_set_3?typ='+document.getElementById("doc_typ_code").value+'&obj_code='+document.getElementById("doc_obj").value, {asynchronous:true, evalScripts:true});
+        return false;
+      }
+
+      function check() {
+        if (document.getElementById("che").value=='t')
+        {
+          document.getElementById("che").value='f';
+        }
+        else
+        {
+          document.getElementById("che").value='t';
+        }
+      }
+    </script>
+    <script language="javascript">
+      function aabb(){
+        a=window.showModalDialog('/case_doc/docformat_select?recevice_code=<%=params[:recevice_code]%>',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          document.getElementById("doc_typ_code").value=a;
+          r_s();
+        }
+      }
+    </script>
+  </head>
+  <body onload="r_s_3();">
+    <%if params[:check_mes]!=nil and params[:check_mes]!=""%>
+      <script language="javascript">
+        alert("<%=params[:check_mes]%>");
+      </script>
+    <%end%>
+    <div class="title"><span class="cBlue">发文操作</span></div>
+    <br>
+    <%=link_to "返回发文列表",:action=>"list",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines],:recevice_code=>@doc.recevice_code%>
+    <br>
+    <%description=TbDocFormat.find_by_code(@doc.typ_code).description%>
+    <div style="color:red">
+      <div id=pv_set> <%if description!=nil and description!=''%> 信息注意：<%=description%> <%end%>  </div>
+    </div>
+    <table class="list" width="100%">
+      <tr>
+        <th>系争合同:</th><td colspan="3"><%=@contract_name1 %></td>
+      </tr>
+      <tr>
+        <th nowrap>总案号:</th><td><%= @general_code %></td>
+        <th nowrap>受案号:</th><td><%= @case_code %></td>
+      </tr>
+      <tr>
+        <th nowrap>发文流水号:</th><td>
+          <%= @file_code %>
+        </td>
+        <th nowrap>发文函号:</th><td><%= @send_code %></td>
+      </tr>
+      <%form_for :doc ,:url=>{:action=>"update",:id=>params[:id],:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines],:recevice_code=>@recevice_code}  do |f|%>
+        <tr >
+          <th>
+            发文日期:
+          </th>
+          <td>
+            <%=f.text_field :ss_t,:readonly=>'Y',:size=>10%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('doc_ss_t'),'yyyy-MM-dd')" >
+            <div style="color:red"><%=error_message_on(:doc,:ss_t)%></div>
+          </td>
+          <th>
+            函类型:
+          </th>
+          <td align="left">
+            <%if @doc.send_u==nil%>
+              <%=f.collection_select(:typ_code,@typ,:code,:name,options={},html_options={:onchange=>"r_s();"})%>
+            <%else%>
+              <%=TbDocFormat.find_by_code(@doc.typ_code).name%>
+            <%end%>
+            <input type="button" value="选择" onclick="aabb()">
+          </td>
+        </tr>
+
+        <%op=TbDictionary.find(:all,:conditions=>"typ_code='0042' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+        <tr id='d_obj'>
+          <th>
+            <div id=pv_set_obj_text>
+              选择条件:
+            </div>
+          </th>
+          <td >
+            <div id=pv_set_2>
+              <%=f.collection_select(:obj,op,:data_val,:data_text)%>
+            </div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+          </th>
+          <td >
+            <input type='checkbox'   id='che' name='che' value='f'  onclick="check()" />重新生成内部函
+          </td>
+        </tr>
+      </table>
+      <table align="center"><tr><td width="40px" height="40px">
+            <%=submit_tag "修改" %>
+          <%end%>
+        &nbsp;&nbsp;&nbsp;</td>
+
+
+        <%if @doc.c_u==nil or @doc.c_u=='' or params[:cre]=='1'%>
+          <td width="40px" height="40px">
+            <%if SysArg.find_by_code('8020').val=='2' %>
+              <input type="button" value="生成内部函" onclick="window.open('/case_doc/opera_main?id=<%=params[:id]%>','newwindow','fullscreen=yes')"/>
+            <%else%>
+              <%=button_to "生成内部函" ,:action=>'opera_word',:id=>params[:id],:recevice_code=>@doc.recevice_code,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page]%>
+              <!--<input type="button" value="生成内部函" onclick="window.open('/case_doc/opera_word?id=<%=params[:id]%>')"/>-->
+            <%end%>
+          &nbsp;&nbsp;&nbsp; </td>
+        <%end%>
+
+        <%if @doc.c_u!=nil and @doc.c_u!=''%>
+          <td width="40px" height="40px">
+            <%if SysArg.find_by_code('8020').val=='2' %>
+              <input type="button" value="编辑内部函" onclick="window.open('/case_doc/vie_main?id=<%=params[:id]%>&recevice_code=<%=@doc.recevice_code%>','newwindow','fullscreen=yes')"/>
+            <%else%>
+              <input type="button" value="编辑内部函" onclick="window.open('/case_doc/vie_word?id=<%=params[:id]%>&recevice_code=<%=@doc.recevice_code%>')"/>
+            <%end%>
+          &nbsp; </td>
+        <%else%>
+        <%end%>
+
+
+        <%if @format.f_doc==1%>
+          <%if @doc.cf_u!=nil and @doc.cf_u!=''%>
+            <td width="40px" height="40px">
+              <%if SysArg.find_by_code('8020').val=='2' %>
+                <input type="button" value="编辑外部函" onclick="window.open('/case_doc/vie_f_main?id=<%=params[:id]%>&recevice_code=<%=@doc.recevice_code%>','newwindow','fullscreen=yes')"/>
+              <%else%>
+                <!--可修改  <input type="button" value="修改." onclick="window.open('/case_doc/vie_word_f?id=<#%=params[:id]%>')"/> -->
+                <input type="button" value="生成外部函" onclick="window.open('/case_doc/opera_word_f?id=<%=params[:id]%>&recevice_code=<%=@doc.recevice_code%>')"/>
+              <%end%>
+            &nbsp; </td>
+          <%end%>
+        <%end%>
+
+
+        <%if @format.approval==1%>
+          <%if (@doc.c_u!=nil and @doc.c_u!='')  and (@doc.call_u==nil or @doc.call_u=='')%>
+            <td width="40px" height="40px">
+              <%=button_to "报批",:action=>"approval",:id=>params[:id],:recevice_code=>@doc.recevice_code%>
+            &nbsp; &nbsp;&nbsp;</td>
+          <%end%>
+        <%end%>
+
+
+        <%if @format.approval==1%>
+          <%if (@doc.c_u!=nil and @doc.c_u!='') and (@doc.call_u!=nil and @doc.call_u!='') and (not TbDocApproval.find(:all,:conditions=>"state=3 and doc_id=#{@doc.id}").empty?)%>
+            <td width="40px" height="40px">
+              <%=button_to "重新报批",:action=>"re_approval",:id=>params[:id],:recevice_code=>@doc.recevice_code%>
+            &nbsp; &nbsp;&nbsp;</td>
+          <%end%>
+        <%end%>
+
+
+        <%if @format.f_doc==1%>
+          <%if @doc.c_u!=nil and  @doc.c_u!='' %>
+            <td width="40px" height="40px">
+              <%if @format.approval==0 and (@doc.cf_u==nil or @doc.cf_u=='')%>
+                <%if SysArg.find_by_code('8020').val=='2' %>
+                  <input type="button" value="生成外部函" onclick="window.open('/case_doc/opera_main_f?id=<%=params[:id]%>&recevice_code=<%=@doc.recevice_code%>','newwindow','fullscreen=yes')"/>
+                <%else%>
+                  <%=button_to "生成外部函" ,:action=>'opera_word_f',:id=>params[:id],:recevice_code=>@doc.recevice_code%>
+                  <!-- <input type="button" value="生成外部函" onclick="window.open('/case_doc/opera_word_f?id=<%=params[:id]%>')"/> -->
+                <%end%>
+              <%elsif @format.approval==1 and  (@doc.call_u!=nil and @doc.call_u!='') and TbDocApproval.find(:all,:conditions=>"state<>1 and doc_id=#{@doc.id}").empty? and (@doc.cf_u==nil or @doc.cf_u=='')%>
+                <%if SysArg.find_by_code('8020').val=='2' %>
+                  <input type="button" value="生成外部函" onclick="window.open('/case_doc/opera_main_f?id=<%=params[:id]%>&recevice_code=<%=@doc.recevice_code%>','newwindow','fullscreen=yes')"/>
+                <%else%>
+                  <%=button_to "生成外部函" ,:action=>'opera_word_f',:id=>params[:id],:recevice_code=>@doc.recevice_code%>
+                  <!-- <input type="button" value="生成外部函" onclick="window.open('/case_doc/opera_word_f?id=<%=params[:id]%>')"/> -->
+                <%end%>
+              <%end%>
+            &nbsp;</td>
+          <%end%>
+        <%end%>
+        <!--%if @format.f_doc==1%>
+          <#%if @doc.cf_u!=nil and @doc.send_u==nil %>
+            <td width="40px" height="40px">
+              <#%=button_to "发函",:action=>"send_to",:id=>params[:id],:recevice_code=>@doc.recevice_code%>
+            </td>
+          <#%end%>
+        <#%end%-->
+    </tr></table>
+    <div style="color:red"><%=flash[:notice_1]%></div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <br>
+    <br>
+    <br>
+    <%@applicants = TbParty.find(:all,:conditions => ["used = 'Y' and partytype = 1 and recevice_code = ?",@case.recevice_code], :order => "id")%>
+    <%if @applicants!=nil%>
+      <table class="list" width="90%">
+        <tr>
+          <th><div align="left">申请人名称</div></th>
+        </tr>
+        <%for a in @applicants%>
+          <tr>
+            <td><%=a.partyname %></td>
+          </tr>
+        <%end%>
+      </table>
+    <%end%>
+    <br>
+    <%@applicants = TbParty.find(:all,:conditions => ["used = 'Y' and partytype = 2 and recevice_code = ?",@case.recevice_code], :order => "id")%>
+    <%if @applicants!=nil%>
+      <table class="list" width="90%">
+        <tr>
+          <th><div align="left">被申请人名称</div></th>
+        </tr>
+        <%for a in @applicants%>
+          <tr>
+            <td><%=a.partyname %></td>
+          </tr>
+        <%end%>
+      </table>
+    <%end%>
+  </body>
+</html>

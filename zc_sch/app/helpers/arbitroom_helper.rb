@@ -1,0 +1,2 @@
+module ArbitroomHelper
+end

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <style>
+      strong{font-size:15px;color:#1f3a87;}
+    </style>
+  </head>
+  <body background="#86B4FF"  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+    <%@a=UserDuty.find(:first,:conditions=>["user_code=?",session[:user_code]])%>
+    <%if @a!=nil%>
+      <iframe src="/remind/list" align="center" style="LEFT:0px;WIDTH:820px;TOP:0px;HEIGHT:425px" marginWidth=0 framespacing="0" frameborder="no" border="0" bordercolor="#86B4FF">
+      </iframe>
+      <hr size="1" color="#99CCFF" noshade width="98%">
+      <%@case0=TbCase.count(:id,:conditions=>["used='Y' and clerk=? and state>=-1 and state<200 and state<>3 and state<>2",session[:user_code]])%>
+      <%@case1=TbCase.count(:id,:conditions=>["used='Y' and clerk=? and state>=4 and state<100",session[:user_code]])%>
+      <%@case2=TbCase.count(:id,:conditions=>["used='Y' and clerk=? and state=4",session[:user_code]])%>
+      <%@case3=TbCase.find_by_sql("select count(recevice_code) as nc from tb_cases where used='Y' and clerk='#{session[:user_code]}' and state=5 and recevice_code not in (select recevice_code from tb_check_staffs where used='Y')") %>
+      <%@case3=PubTool.new.get_first_record(@case3)%>
+      <%if @case3==nil%>
+        <%@case3=0%>
+      <%else%>
+        <%@case33=@case3.nc%>
+      <%end%>
+      <%@case4=TbCase.find_by_sql("select count(recevice_code) as nc from tb_cases where used='Y' and clerk='#{session[:user_code]}' and state>=4  and state<100 and recevice_code in (select recevice_code from tb_check_staffs where used='Y')") %>
+      <%@case4=PubTool.new.get_first_record(@case4)%>
+      <%if @case4==nil%>
+        <%@case44=0%>
+      <%else%>
+        <%@case44=@case4.nc%>
+      <%end%>
+      <%if @a.duty_code=='0003'%>
+        <font size="3">
+          办理案件：在办案件<strong><%=@case0%></strong>件，
+          其中<strong><%=link_to "#{@case1}",:controller=>'every_casebase',:action=>"list_right_1",:contr_r=>"welcome",:act_r=>"right"%></strong>件属于收案阶段，<strong><%=link_to "#{@case2}",:controller=>'every_casebase',:action=>"list_right_2",:contr_r=>"welcome",:act_r=>"right"%></strong>件属于组庭前阶段，<strong><%=link_to "#{@case33}",:controller=>'every_casebase',:action=>"list_right_3",:contr_r=>"welcome",:act_r=>"right"%></strong>件属于审理阶段，<strong><%=link_to "#{@case44}",:controller=>'every_casebase',:action=>"list_right_4",:contr_r=>"welcome",:act_r=>"right"%></strong>件属于待结阶段。
+        </font>
+      <%end%>
+    <%end%>
+    <!--
+      组庭前阶段（没有组庭日期的案件），审理阶段（有组庭日期，没有分配校核人员的案件，
+      待结阶段（已经录入了校核人员姓名的案件作为待结案件，注意没有组庭的案件，
+      可以直接进入到待结阶段，因为有些案件在组庭前就会撤案，可以进入待结阶段）。 
+    -->
+  </body>
+</html>

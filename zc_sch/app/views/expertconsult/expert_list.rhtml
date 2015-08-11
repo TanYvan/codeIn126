@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>专家精通专业信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">专家精通专业信息</div></span></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr>
+          <th nowrap>
+            精通专业
+          </th>
+          <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @expert%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='9012'  and  data_val='#{p.speciality}'").data_text%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"expert_edit",:id=>p,:expertconsult_id=>params[:expertconsult_id]%>
+        </td>
+        <td>
+            <%=link_to "删除",{:action=>"expert_delete",:id=>p,:expertconsult_id=>params[:expertconsult_id]},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="3">
+          <%= link_to '上一页', { :page => @expert_pages.current.previous  ,:page_lines=>@page_lines ,:expertconsult_id => @expertconsult_id } if @expert_pages.current.previous %>
+          <%=pagination_links( @expert_pages,{:params=>{:page_lines=>@page_lines }})%>
+          <%= link_to '下一页', { :page => @expert_pages.current.next ,:page_lines=>@page_lines ,:expertconsult_id => @expertconsult_id } if @expert_pages.current.next %>
+
+          <%if @expert_pages.current.previous or @expert_pages.current.next%>
+            <form action="/expertconsult/expert_list" method="get" >
+              每页<input type=text name='page_lines' size=5 class="SingleLineInput" value=<%=@page_lines%> />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @expert_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+      </tfoot>
+    </table>
+    <br>
+      <div align="center">
+      <%=link_to  "创建", :action=>"expert_new",:expertconsult_id=>params[:expertconsult_id]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+  </body>
+</html>

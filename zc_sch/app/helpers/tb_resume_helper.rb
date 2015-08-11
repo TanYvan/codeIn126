@@ -1,0 +1,2 @@
+module TbResumeHelper
+end

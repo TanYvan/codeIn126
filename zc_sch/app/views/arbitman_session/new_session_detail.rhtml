@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>添加活动</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <%= javascript_include_tag  'WebCalendar'%> 
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">添加活动</span></div>
+    <br>
+    <div align="center">
+    <%=link_to "返回", {:action => "list_session_detail",:search_condit=>params[:search_condit],
+            :order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]}%>&nbsp;&nbsp;&nbsp;
+        (请注意：带<i>*</i>为必填项)
+    </div>
+    <%form_for :session_detail, :url => {:action => "create_session_detail"} do |form|%>
+        <table class="list">
+          <tr>
+            <th><i>*</i>活动编号：</th>
+            <td><%=form.text_field :session_num%></td>
+          </tr>
+          <tr>
+            <th><i>*</i>活动名称：</th>
+            <td><%=form.text_field :session_name%></td>
+          </tr>
+          <tr>
+            <th>活动类型：</th>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='9001' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <td><%=form.collection_select(:session_type,op,:data_val,:data_text)%></td>         
+            <div style="color:red"><%=error_message_on(:session_detail,:session_type)%></div>
+          </tr>
+          <tr>
+            <th>活动开始时间：</th>
+            <td><%=form.text_field :begintime%>
+                <input type="button" value="..." onclick="SelectDate(document.getElementById('session_detail_begintime'),'yyyy-MM-dd')" >                                      
+            <div style="color:red"><%=error_message_on(:session_detail,:begintime)%></div></td>            
+          </tr>    
+          <tr>
+            <th>活动结束时间：</th>
+            <td><%=form.text_field :endtime%>
+                <input type="button" value="..." onclick="SelectDate(document.getElementById('session_detail_endtime'),'yyyy-MM-dd')" >                                      
+            <div style="color:red"><%=error_message_on(:session_detail,:endtime)%></div></td>            
+          </tr>             
+          <tr>
+            <th>活动摘要：</th>
+            <td><%=form.text_area :summary,:rows => 4%></td>
+          </tr>
+        </table>
+        <br>
+        <div align="center">
+        <%=submit_tag "保存"%>        
+        </div>
+
+    <%end%>
+  </body>
+</html>

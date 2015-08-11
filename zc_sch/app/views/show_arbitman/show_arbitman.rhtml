@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员个人信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h2 class="strong">
+      <div id="link1">
+        <table align="center" bgcolor="#E1F4FF">
+          <tr><td>
+              <%= link_to "基本情况",   :action => "show_arbitman",:id =>@tb_arbitman.id%>
+            </td><td width="0.01px" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "教育信息",   :action => "list_educate",:id =>@tb_arbitman.id%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "培训信息",   :action => "list_train",:id =>@tb_arbitman.id%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "业务专长",   :action => "list_speciality",:arbitman_num =>@tb_arbitman.id%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "简历",   :action => "list_resume",:id =>@tb_arbitman.id%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "外语语种表",   :action => "list_language",:id =>@tb_arbitman.id%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "可办理案件数",   :action => "show_caseperyear",:id =>@tb_arbitman.id%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "仲裁员专业背景",   :action => "show_background",:id =>@tb_arbitman.id%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "特别要求",   :action => "show_setting",:id =>@tb_arbitman.id%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "财务信息",   :action => "show_finance",:id =>@tb_arbitman.id%>
+          </td></tr>
+        </table>
+      </div>
+    </h2>
+    <hr size="2" color="#1f3a87" noshade width="100%">
+    <caption>
+      <%= link_to "返回" ,{:action => "list_arbitman",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines] }%>
+    </caption>
+    <div align="center">
+      <iframe FRAMEBORDER=0 src="/show_arbitman/show_photo?id=<%=params[:id]%>"
+              noresize  style="width:600px;height:200px" align=center> </iframe>
+    </div>
+    <br>
+    <table class="list">
+      <tr>
+      <th><i>*</i>仲裁员编号:</th>
+      <td><%=@tb_arbitman.code%></td>
+      <th>姓名拼音缩写:</th>
+      <td><%=@tb_arbitman.spell%></td>
+      <tr>   <th>曾用名:</th>
+        <td><%=@tb_arbitman.evername%></td>
+
+        <th><i>*</i>姓名:</th>
+      <td><%=@tb_arbitman.name%></td></tr>
+      <tr> <th>性别:</th>
+        <td><%=@tb_arbitman.sex%></td>
+        <th>出生日期:</th>
+        <td><%=@tb_arbitman.birthday%></td>
+      </tr>
+      <tr>
+        <th>所属年度:</th>
+        <td><%=@tb_arbitman.yearbelong%></td>
+        <th>民族:</th>
+        <td>
+          <%@types = TbDictionary.find(:first, :conditions => "typ_code = 9003 and state ='Y' and data_val='#{@tb_arbitman.nation}'") %>
+          <%if @types!=nil%>
+            <%=@types.data_text%>
+          <%end%>
+        </td>
+      </tr>
+      <tr><th>政治面貌:</th>
+        <td><%=@tb_arbitman.polityvisage%></td>
+        <th>称呼:</th>
+      <td><%=@tb_arbitman.salutation%></td> </tr>
+      <tr><th>单位:</th>
+        <td><%=@tb_arbitman.company%></td>
+        <th>国籍:</th>
+      <td><%=@tb_arbitman.country%></td></tr>
+      <tr> <th>居住地:</th>
+        <td><%=@tb_arbitman.city%></td>
+        <th>工作状况:</th>
+        <td><%if @tb_arbitman.work1 == '1'%>在职<%else%>非在职<%end%></td>
+      </tr>
+      <tr>
+        <th>职业分类:</th>
+        <td><%= TbDictionary.find_arbit_type(9002,@tb_arbitman.zy)%></td>
+        <th>身份证号:</th>
+        <td><%=@tb_arbitman.id_card%></td>
+      </tr>
+      <tr>
+        <th>单位电话:</th>
+        <td><%=@tb_arbitman.telo%></td>
+        <th>手机:</th>
+        <td><%=@tb_arbitman.mobiletel%></td>
+      </tr>
+      <tr>
+        <th>家庭电话:</th>
+        <td><%=@tb_arbitman.telh %></td>
+        <th>传真:</th>
+      <td><%=@tb_arbitman.fax%></td></tr>
+      <tr>  <th>E-mail:</th>
+        <td><%=@tb_arbitman.email%></td>
+
+        <th>身份类型:</th>
+        <td>
+          <%= TbDictionary.find_arbit_type(9004,@tb_arbitman.standing)%>
+      </td> </tr>
+      <tr> <th>单位类型:</th>
+        <td>
+          <%@types = TbDictionary.find(:first, :conditions => "typ_code = 9005 and state ='Y' and data_val='#{@tb_arbitman.comtype}'") %>
+          <%if @types!=nil%>
+            <%=@types.data_text%>
+          <%end%>
+        </td>
+        <th>有无高职:</th>
+        <td><%if @tb_arbitman.hightitle =='1'%>有<%else%>无<%end%></td>
+      </tr>
+      <tr>
+        <th>通讯地址:</th>
+        <td><%=@tb_arbitman.addr%></td>
+        <th>兼职情况:</th>
+        <td><%if @tb_arbitman.secjob=='h'%>在本会兼职<%else%>在其他会兼职<%end%></td>
+      </tr>
+      <tr>
+        <th>邮政编码:</th>
+        <td><%=@tb_arbitman.postcode%></td>
+        <th>职称:</th>
+      <td><%=@tb_arbitman.lawyerdate%></td></tr>
+      <tr>  <th>推荐人:</th>
+        <td><%=@tb_arbitman.lawyernum%></td>
+
+        <th>职务:</th>
+        <td><%=@tb_arbitman.title%></td>
+      </tr>
+      <tr>
+        <th>状态:</th>
+        <td><%if @now != nil%>在聘<%else%>解聘<%end%></td>
+        <th>参加工作时间:</th>
+        <td><%=@tb_arbitman.jobstart%></td>
+      </tr>
+      <tr>
+        <th>工作意愿:</th>
+        <td><%=@tb_arbitman.jobwant%></td>
+        <th>能否涉外:</th>
+        <td><%if @tb_arbitman.doforeign == '1'%>能<%else%>不能<%end%></td>
+      </tr>
+      <tr>
+        <th colspan="4"><div align="left">两年内担任法律顾问的企业名:
+        <%=@tb_arbitman.advisorycompany %></div></th>
+      </tr>
+      <tr>
+        <th colspan="4"><div align="left">主要业务成果:
+        <%=@tb_arbitman.outstanding %></div></th>
+      </tr>
+      <tr>
+        <th colspan="4"><div align="left">发表的学术成果:
+        <%=@tb_arbitman.fruit%></div></th>
+      </tr>
+      <tr>
+        <th colspan="4"><div align="left">自我评价:
+        <%=@tb_arbitman.selfvalue%></div></th>
+      </tr>
+      <tr>
+        <th colspan="4"><div align="left">工作经历:
+        <%=@tb_arbitman.workhistory%></div></th>
+      </tr>
+      <tr>
+        <th colspan="4"><div align="left">社会团体兼职情况：
+        <%=@tb_arbitman.parttime%></div></th>
+      </tr>
+      <tr>
+        <th colspan="4"><div align="left">备注:
+        <%=@tb_arbitman.remark %></div></th>
+      </tr>
+    </table>
+  </body>
+</html>

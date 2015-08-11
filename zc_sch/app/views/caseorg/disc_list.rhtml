@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员信息披露</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">
+    仲裁员信息披露
+    </div></span></div>     
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            仲裁员
+          </th>
+          <th nowrap>
+            申明签署日期
+          </th>
+          <th nowrap>
+            有无披露情形
+          </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @disc%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%if p.arbitman!=nil%>
+            <%=TbArbitman.find_by_code(p.arbitman).name%>
+          <%end%>
+        </td>
+        <td>
+          <%=p.pdate%>
+        </td>
+        <td>
+          <%=@spilu[p.spilu]%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"disc_edit",:id=>p,:org_id=>params[:org_id]%>
+        </td>
+        <td>
+            <%=link_to "删除",{:action=>"disc_delete",:id=>p,:org_id=>params[:org_id]},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+
+      </tbody>
+    </table>
+    <br>
+      <div align="center">
+      <%=link_to  "创建", :action=>"disc_new",:org_id=>params[:org_id]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+  </body>
+</html>

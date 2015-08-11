@@ -1,0 +1,667 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>争议金额</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%if session[:recevice_code]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list?contr_r=case_amount&act_r=list","mainFrame")
+      </script>
+    <%end%>
+  </head>
+  <body>
+    <table><tr><td>
+          <div class="title"><span class="cBlue">争议金额</span></div>
+          <div align="center">
+            <%if @case==nil%>
+              请选择您要办理的案件
+            <%end%>
+            <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"case_amount",:act_r=>"list"%>
+          </div>
+          <br>
+          <%if @case!=nil%>
+            当前案件
+            <table cellspacing="1" class="adminlist">
+              <thead>
+                <tr >
+                  <th nowrap>
+                    咨询流水号
+                  </th>
+                  <th nowrap>
+                    咨询日期
+                  </th>
+                  <th nowrap>
+                    立案号
+                  </th>
+                  <th nowrap>
+                    立案日期
+                  </th>
+                  <th nowrap>
+                    仲裁程序
+                  </th>
+                  <th nowrap>
+                    申请人
+                  </th>
+                  <th nowrap>
+                    被申请人
+                  </th>
+                  <th nowrap>
+                    总争议金额(￥)
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <%=h @case.recevice_code%>
+                  </td>
+                  <td>
+                    <%=h @case.receivedate%>
+                  </td>
+                  <td>
+                    <%=h @case.case_code%>
+                  </td>
+                  <td>
+                    <%=h @case.nowdate%>
+                  </td>
+                  <td>
+                    <%=TbDictionary.find(:first,:conditions=>"typ_code='0001' and data_val='#{@case.aribitprog_num}'").data_text%>
+                  </td>
+                  <td>
+                    <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+                    <%ttpp=''%>
+                    <%for tp in @tp%>
+                      <%ttpp=ttpp + tp.partyname + " <br>" %>
+                    <%end%>
+                    <%if ttpp!=''%>
+                      <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                    <%end%>
+                    <%=ttpp%>
+                  </td>
+                  <td>
+                    <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+                    <%ttpp=''%>
+                    <%for tp in @tp%>
+                      <%ttpp=ttpp + tp.partyname + " <br>" %>
+                    <%end%>
+                    <%if ttpp!=''%>
+                      <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+                    <%end%>
+                    <%=ttpp%>
+                  </td>
+                  <td>
+                    <%=@case.amount%>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr  size="1" color="#99CCFF" noshade>
+            <div class="cDGray">各项费用计算：（各项费用都是人民币）</div>
+
+            <table cellspacing="1" class="adminlist">
+              <thead>
+                <tr >
+                  <th nowrap>
+                    类别
+                  </th>
+                  <th nowrap>
+                    明确争议金额
+                  </th>
+                  <th nowrap>
+                    不明确争议金额
+                  </th>
+                  <th nowrap>
+                    无明确争议金额收费
+                  </th>
+                  <th nowrap>
+                    <%if @case.aribitprog_num=='0001' or @case.aribitprog_num=='0002'%><!--国内案件-->
+                      受理费
+                    <%else%>
+                      立案费
+                    <%end%>
+                  </th>
+                  <th nowrap>
+                    <%if @case.aribitprog_num=='0001' or @case.aribitprog_num=='0002'%><!--国内案件-->
+                      处理费
+                    <%else%>
+                      仲裁费
+                    <%end%>
+                  </th>
+                  <th nowrap>
+                    应收
+                  </th>
+                  <th nowrap>
+                    减交
+                  </th>
+                  <th nowrap>
+                    实收
+                  </th>
+                  <th nowrap>
+                    欠缴
+                  </th>
+                  <th nowrap>
+                    请求变更后<br>
+                    的费用差额
+                  </th>
+                  <th nowrap>
+                    请求变更后<br>
+                    的应收费
+                  </th>
+                  <th nowrap>
+                    请求变更后<br>
+                    的应退费
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <!--申请人费用-->
+                <tr class="row<%=0%>">
+                  <td>
+                    申请人
+                  </td>
+                  <td>
+                    <%=@applicant_definites%>
+                  </td>
+                  <td>
+                    <%=@applicant_undefinites%>
+                  </td>
+                  <%c_a=TbShouldCharge.sum("rmb_money",:conditions=>"payment='0001' and typ='0004' and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                  <%c_a_2=TbShouldRefund.sum("rmb_money",:conditions=>"payment='0001' and typ='0004' and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                  <%if c_a==nil %>
+                    <%c_a=0%>
+                  <%end%>
+                  <%if c_a_2==nil %>
+                    <%c_a_2=0%>
+                  <%end%>
+                  <td>
+                    <%=c_a - c_a_2%>
+                  </td>
+                  <td>
+                    <%c_b=TbShouldCharge.sum("rmb_money",:conditions=>"payment='0001' and (typ='0002' or typ='0005') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                    <%c_b_2=TbShouldRefund.sum("rmb_money",:conditions=>"payment='0001' and (typ='0002' or typ='0005') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                    <%if c_b==nil %>
+                      <%c_b=0%>
+                    <%end%>
+                    <%if c_b_2==nil %>
+                      <%c_b_2=0%>
+                    <%end%>
+                    <%=c_b - c_b_2%>
+                  </td>
+                  <td>
+                    <%c_c=TbShouldCharge.sum("rmb_money",:conditions=>"payment='0001' and (typ='0003' or typ='0006') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                    <%c_c_2=TbShouldRefund.sum("rmb_money",:conditions=>"payment='0001' and (typ='0003' or typ='0006') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                    <%if c_c==nil %>
+                      <%c_c=0%>
+                    <%end%>
+                    <%if c_c_2==nil %>
+                      <%c_c_2=0%>
+                    <%end%>
+                    <%=c_c - c_c_2%>
+                  </td>
+                  <%c1=TbShouldCharge.sum("rmb_money",:conditions=>"payment='0001' and (typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                  <%c2=TbShouldCharge.sum("re_rmb_money",:conditions=>"payment='0001' and (typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                  <%c3=TbShouldCharge.sum("redu_rmb_money",:conditions=>"payment='0001' and (typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                  <%if c1==nil %>
+                    <%c1=0%>
+                  <%end%>
+                  <%if c2==nil %>
+                    <%c2=0%>
+                  <%end%>
+                  <%if c3==nil %>
+                    <%c3=0%>
+                  <%end%>
+                  <td>
+                    <%=c1%>
+                  </td>
+                  <td>
+                    <%=c3%>
+                  </td>
+                  <td>
+                    <%=c2%>
+                  </td>
+                  <td>
+                    <%=c1 - c3 - c2%>
+                  </td>
+                  <%c4=TbShouldRefund.sum("rmb_money",:conditions=>"payment='0001' and (typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}' and state<>3")%>
+                  <%c5=TbShouldRefund.sum("redu_rmb_money",:conditions=>"payment='0001' and (typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}' and state<>3")%>
+                  <%c6=TbShouldRefund.sum("re_rmb_money",:conditions=>"payment='0001' and (typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}' and state<>3")%>
+                  <%if c4==nil %>
+                    <%c4=0%>
+                  <%end%>
+                  <%if c5==nil %>
+                    <%c5=0%>
+                  <%end%>
+                  <%if c6==nil %>
+                    <%c6=0%>
+                  <%end%>
+                  <td>
+                    <%=c4%>
+                  </td>
+                  <td>
+                    <%=c5%>
+                  </td>
+                  <td>
+                    <%=c6%>
+                  </td>
+                </tr>
+                <!--被申请人费用-->
+                <tr class="row<%=1%>">
+                  <td>
+                    被申请人
+                  </td>
+                  <td>
+                    <%=@respondent_definites%>
+                  </td>
+                  <td>
+                    <%=@respondent_undefinites%>
+                  </td>
+                  <%c_aa=TbShouldCharge.sum("rmb_money",:conditions=>"payment='0002' and typ='0004' and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                  <%c_aa_2=TbShouldRefund.sum("rmb_money",:conditions=>"payment='0002' and typ='0004' and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                  <%if c_aa==nil %>
+                    <%c_aa=0%>
+                  <%end%>
+                  <%if c_aa_2==nil %>
+                    <%c_aa_2=0%>
+                  <%end%>
+                  <td>
+                    <%=c_aa - c_aa_2%>
+                  </td>
+                  <td>
+                    <%c_bb=TbShouldCharge.sum("rmb_money",:conditions=>"payment='0002' and (typ='0002' or typ='0005') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                    <%c_bb_2=TbShouldRefund.sum("rmb_money",:conditions=>"payment='0002' and (typ='0002' or typ='0005') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                    <%if c_bb==nil %>
+                      <%c_bb=0%>
+                    <%end%>
+                    <%if c_bb_2==nil %>
+                      <%c_bb_2=0%>
+                    <%end%>
+                    <%=c_bb - c_bb_2%>
+                  </td>
+                  <td>
+                    <%c_cc=TbShouldCharge.sum("rmb_money",:conditions=>"payment='0002' and (typ='0003' or typ='0006') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                    <%c_cc_2=TbShouldRefund.sum("rmb_money",:conditions=>"payment='0002' and (typ='0003' or typ='0006') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                    <%if c_cc==nil %>
+                      <%c_cc=0%>
+                    <%end%>
+                    <%if c_cc_2==nil %>
+                      <%c_cc_2=0%>
+                    <%end%>
+                    <%=c_cc - c_cc_2%>
+                  </td>
+                  <%c11=TbShouldCharge.sum("rmb_money",:conditions=>"payment='0002' and (typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                  <%c22=TbShouldCharge.sum("re_rmb_money",:conditions=>"payment='0002' and (typ='0001' or typ='0004')  and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                  <%c33=TbShouldCharge.sum("redu_rmb_money",:conditions=>"payment='0002' and (typ='0001' or typ='0004')  and used='Y' and recevice_code='#{@case.recevice_code}'")%>
+                  <%if c11==nil %>
+                    <%c11=0%>
+                  <%end%>
+                  <%if c22==nil %>
+                    <%c22=0%>
+                  <%end%>
+                  <%if c33==nil %>
+                    <%c33=0%>
+                  <%end%>
+                  <td>
+                    <%=c11%>
+                  </td>
+                  <td>
+                    <%=c33%>
+                  </td>
+                  <td>
+                    <%=c22%>
+                  </td>
+                  <td>
+                    <%=c11 - c33 - c22%>
+                  </td>
+                  <%c44=TbShouldRefund.sum("rmb_money",:conditions=>"payment='0002' and (typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}' and state<>3")%>
+                  <%c55=TbShouldRefund.sum("redu_rmb_money",:conditions=>"payment='0002' and (typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}' and state<>3")%>
+                  <%c66=TbShouldRefund.sum("re_rmb_money",:conditions=>"payment='0002' and (typ='0001' or typ='0004') and used='Y' and recevice_code='#{@case.recevice_code}' and state<>3")%>
+                  <%if c44==nil %>
+                    <%c44=0%>
+                  <%end%>
+                  <%if c55==nil %>
+                    <%c55=0%>
+                  <%end%>
+                  <%if c66==nil %>
+                    <%c66=0%>
+                  <%end%>
+                  <td>
+                    <%=c44%>
+                  </td>
+                  <td>
+                    <%=c55%>
+                  </td>
+                  <td>
+                    <%=c66%>
+                  </td>
+                </tr>
+                <!--总计-->
+                <tr class="row<%=0%>">
+                  <td>
+                    总计
+                  </td>
+                  <td>
+                    <%=@applicant_definites+@respondent_definites%>
+                  </td>
+                  <td>
+                    <%=@applicant_undefinites+@respondent_undefinites%>
+                  </td>
+                  <td>
+                    <%=c_a - c_a_2 + c_aa - c_aa_2%>
+                  </td>
+                  <td>
+                    <%=c_b - c_b_2 + c_bb - c_bb_2%>
+                  </td>
+                  <td>
+                    <%=c_c - c_c_2 + c_cc - c_cc_2%>
+                  </td>
+                  <td>
+                    <%=c1 + c11%>
+                  </td>
+                  <td>
+                    <%=c3 + c33%>
+                  </td>
+                  <td>
+                    <%=c2 + c22%>
+                  </td>
+                  <td>
+                    <%=(c1 + c11) - (c3 + c33) - (c2 + c22)%>
+                  </td>
+                  <td>
+                    <%=c4 + c44%>
+                  </td>
+                  <td>
+                    <%=c5 + c55%>
+                  </td>
+                  <td>
+                    <%=c6 + c66%>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <hr size="1" color="#99CCFF" noshade>
+            <br>
+            <br>
+            <div class="cDGray">本请求（申请人的） <%=link_to  "创建", :action=>"new",:partytype=>1%> </div>
+            <table cellspacing="1" class="adminlist">
+              <thead>
+                <tr >
+                  <th nowrap>
+                    类型
+                  </th>
+                  <th nowrap>
+                    类别
+                  </th>
+                  <th nowrap>
+                    提出时间
+                  </th>
+                  <th nowrap>
+                    币种
+                  </th>
+                  <th nowrap>
+                    金额
+                  </th>
+                  <th nowrap>
+                    汇率
+                  </th>
+                  <th nowrap>
+                    金额(￥)
+                  </th>
+                  <th nowrap>
+                    金额明细
+                  </th>
+                  <th nowrap>
+                    备注
+                  </th>
+                  <th nowrap>
+                    修改
+                  </th>
+                  <th nowrap>
+                    删除
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <%amount1_i=0%>
+                <%for p in @amount1%>
+                  <%amount1_i=amount1_i + 1%>
+                  <tr class="row<%=i % 2%>">
+                    <td>
+                      <%=@typ[p.typ]%>
+                    </td>
+                    <td>
+                      <%=@amount_typ[p.amount_typ]%>
+                    </td>
+                    <td>
+                      <%=p.dt%>
+                    </td>
+                    <td>
+                      <%=Money.find_by_code(p.currency).name%>
+                    </td>
+                    <td>
+                      <%=p.f_money%>
+                    </td>
+                    <td>
+                      <%=p.rate%>
+                    </td>
+                    <td>
+                      <%=p.rmb_money%>
+                    </td>
+                    <td>
+                      <table cellspacing="1" class="adminlist">
+                        <thead>
+                          <tr >
+                            <th nowrap>
+                              币种
+                            </th>
+                            <th nowrap>
+                              金额
+                            </th>
+                            <th nowrap>
+                              汇率
+                            </th>
+                            <th nowrap>
+                              金额￥
+                            </th>
+                          </tr>
+                        <thead>
+                        <% @amount_detail=TbCaseAmountDetail.find(:all,:conditions=>"parent_id=#{p.id}",:order=>"id") %>
+                        <%for a_m in @amount_detail%>
+                        <tr >
+                          <td>
+                            <%=Money.find_by_code(a_m.currency).name%>
+                          </td>
+                          <td>
+                            <%=a_m.f_money%>
+                          </td>
+                          <td>
+                            <%=a_m.rate%>
+                          </td>
+                          <td>
+                            <%=a_m.rmb_money%>
+                          </td>
+                        </tr>
+                        <%end%>
+                      </table>
+                    </td>
+                    <td>
+                      <%=p.remark%>
+                    </td>
+                    <td>
+                      <%=link_to "修改",:action=>"edit",:id=>p,:partytype=>1,:recevice_code=>params[:recevice_code]%>
+                    </td>
+                    <td>
+                      <%if amount1_i==@amount1.length%>
+                        <%if p.typ!='0003' %>
+                          <%if TbShouldCharge.find(:all,:conditions=>"used='Y' and typ='0001' and case_amount_id=#{p.id} and re_rmb_money<>0").empty?%>
+                            <%if TbShouldCharge.find(:all,:conditions=>"used='Y' and typ='0001' and case_amount_id=#{p.id} and redu_rmb_money<>0").empty?%>
+                              <%=link_to "删除",{:action=>"delete",:id=>p,},:confirm=>"您确认要删除吗？"%>
+                            <%end%>
+                          <%end%>
+                        <%end%>
+                        <%if p.typ=='0003' %>
+                          <%if TbShouldRefund.find(:all,:conditions=>"used='Y' and typ='0001' and case_amount_id=#{p.id} and state<>1 and state<>3").empty? %>
+                            <%if TbShouldRefund.find(:all,:conditions=>"used='Y' and typ='0001' and case_amount_id=#{p.id} and state<>3 and redu_rmb_money<>0").empty? %>
+                              <%=link_to "删除",{:action=>"delete",:id=>p,},:confirm=>"您确认要删除吗？"%>
+                            <%end%>
+                          <%end%>
+                        <%end%>
+                      <%end%>
+                    </td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+              </tbody>
+
+            </table>
+            <br/>
+            <br/>
+            <hr  size="1" color="#99CCFF" noshade>
+            <div class="cDGray">反请求（被申请人的） <%=link_to  "创建", :action=>"new",:partytype=>2%> </div>
+
+            <table cellspacing="1" class="adminlist">
+              <thead>
+                <tr >
+                  <th nowrap>
+                    类型
+                  </th>
+                  <th nowrap>
+                    类别
+                  </th>
+                  <th nowrap>
+                    提出时间
+                  </th>
+                  <th nowrap>
+                    币种
+                  </th>
+                  <th nowrap>
+                    金额
+                  </th>
+                  <th nowrap>
+                    汇率
+                  </th>
+                  <th nowrap>
+                    金额(￥)
+                  </th>
+                  <th nowrap>
+                    金额明细
+                  </th>
+                  <th nowrap>
+                    备注
+                  </th>
+                  <th nowrap>
+                    修改
+                  </th>
+                  <th nowrap>
+                    删除
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <%amount2_i=0%>
+                <%if @amount2!=nil%>
+                  <%for p in @amount2%>
+                    <%amount2_i= amount2_i + 1%>
+                    <tr class="row<%=i % 2%>">
+                      <td>
+                        <%=@typ[p.typ]%>
+                      </td>
+                      <td>
+                        <%=@amount_typ[p.amount_typ]%>
+                      </td>
+                      <td>
+                        <%=p.dt%>
+                      </td>
+                      <td>
+                        <%=Money.find_by_code(p.currency).name%>
+                      </td>
+                      <td>
+                        <%=p.f_money%>
+                      </td>
+                      <td>
+                        <%=p.rate%>
+                      </td>
+                      <td>
+                        <%=p.rmb_money%>
+                      </td>
+                      <td>
+                        <table cellspacing="1" class="adminlist">
+                          <thead>
+                            <tr >
+                              <th nowrap>
+                                币种
+                              </th>
+                              <th nowrap>
+                                金额
+                              </th>
+                              <th nowrap>
+                                汇率
+                              </th>
+                              <th nowrap>
+                                金额￥
+                              </th>
+                            </tr>
+                          <thead>
+                          <% @amount_detail=TbCaseAmountDetail.find(:all,:conditions=>"parent_id=#{p.id}",:order=>"id") %>
+                          <%for a_m in @amount_detail%>
+                          <tr >
+                            <td>
+                              <%=Money.find_by_code(a_m.currency).name%>
+                            </td>
+                            <td>
+                              <%=a_m.f_money%>
+                            </td>
+                            <td>
+                              <%=a_m.rate%>
+                            </td>
+                            <td>
+                              <%=a_m.rmb_money%>
+                            </td>
+                          </tr>
+                          <%end%>
+                        </table>
+                      </td>
+                      <td>
+                        <%=p.remark%>
+                      </td>
+                      <td>
+                        <%=link_to "修改",:action=>"edit",:id=>p,:partytype=>2%>
+                      </td>
+                      <td>
+                        <%if amount2_i==@amount2.length%>
+                          <%if p.typ!='0003'%>
+                            <%if TbShouldCharge.find(:all,:conditions=>"used='Y' and case_amount_id=#{p.id} and re_rmb_money<>0").empty? %>
+                              <%if TbShouldCharge.find(:all,:conditions=>"used='Y' and case_amount_id=#{p.id} and redu_rmb_money<>0").empty? %>
+                                <%=link_to "删除",{:action=>"delete",:id=>p,},:confirm=>"您确认要删除吗？"%>
+                              <%end%>
+                            <%end%>
+                          <%end%>
+                          <%if p.typ=='0003'%>
+                            <%if TbShouldRefund.find(:all,:conditions=>"used='Y' and case_amount_id=#{p.id} and state<>1 and state<>3").empty? %>
+                              <%if TbShouldRefund.find(:all,:conditions=>"used='Y' and case_amount_id=#{p.id} and state<>3 and redu_rmb_money<>0").empty? %>
+                                <%=link_to "删除",{:action=>"delete",:id=>p,},:confirm=>"您确认要删除吗？"%>
+                              <%end%>
+                            <%end%>
+                          <%end%>
+                        <%end%>
+                      </td>
+                    </tr>
+                    <%i=i+1%>
+                  <%end%>
+                <%end%>
+              </tbody>
+            </table>
+            <br/>
+          <%end%>
+
+          <%if session[:case_code]!=nil%>
+            <hr size="1" color="#99CCFF" noshade>
+            <iframe frameborder=0 src="/should_charge/list?t_typ=1&recevice_code=<%=session[:recevice_code]%>"  noresize  style="width:100%;height:500px" align=center> </iframe>
+            <hr size="1" color="#99CCFF" noshade>
+            <iframe frameborder=0 src="/should_refund/list?t_typ=1&recevice_code=<%=session[:recevice_code]%>"  noresize  style="width:100%;height:500px" align=center> </iframe>
+          <%end%>
+    </td></tr></table>
+  </body>
+</html>

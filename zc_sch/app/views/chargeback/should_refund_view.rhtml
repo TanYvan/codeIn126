@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>对应的应退信息</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">查看 应退信息
+      <%=link_to "返回",:action=>"chargeback_list"%>
+    </div>
+    <hr size="1" color="#99CCFF" noshade>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          费用类型
+        </th>
+        <th nowrap>
+          申请方
+        </th>
+        <th nowrap>
+          币种
+        </th>
+        <th nowrap>
+          金额
+        </th>
+        <th nowrap>
+          汇率
+        </th>
+        <th nowrap>
+          请求变更后的<br>
+          费用差额(应退)
+        </th>
+        <th nowrap>
+          请求变更后的<br>
+          应收费(减退)
+        </th>
+        <th nowrap>
+          备注
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="row1">
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0031' and data_val='#{@should.typ}'").data_text%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0032' and data_val='#{@should.payment}'").data_text%>
+        </td>
+        <td>
+          <%=Money.find_by_code(@should.currency).name%>
+        </td>
+        <td>
+          <%=@should.f_money%>
+        </td>
+        <td>
+          <%=@should.rate%>
+        </td>
+        <td>
+          <%=@should.rmb_money%>
+        </td>
+        <td>
+          <%=@should.redu_rmb_money%>
+        </td>
+        <td>
+          <%=@should.remark%>
+        </td>
+      </tr>          
+      </tbody>
+    </table>
+  </body>
+</html>

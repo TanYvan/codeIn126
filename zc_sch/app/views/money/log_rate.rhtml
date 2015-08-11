@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>汇率修改记录</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+ <br>
+  <div class="cDGray" align="center"><%=@money.name%>汇率修改记录   <%=link_to "返回",:action=>"list"%></div
+<div style="color:red"><%=flash[:notice]%></div> 
+    <table class="adminlist" width="80%">
+        <thead>
+        <tr>
+          <th>
+            修改时间
+          </th>
+          <th>
+            修改人
+          </th>
+          <th>
+            汇率
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <%i=0%>
+      <%if @moneylog!=nil%>
+      <%for r in @moneylog%>
+        <tr class="row<%=i % 2%>">
+          <td>
+            <%=r.u_t.to_s(:db)%>
+          </td>
+          <td>
+            <%=User.find_by_code(r.u).name%>
+          </td>
+          <td>
+            <%=r.rate%>
+          </td>
+        </tr>
+        <%i=i+1%>
+        <%end%>
+        <%end%>
+        </tbody>
+       </table>
+  </body>
+</html>

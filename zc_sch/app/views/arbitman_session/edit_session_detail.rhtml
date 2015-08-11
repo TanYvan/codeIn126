@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>编辑活动</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+      <%= javascript_include_tag  'WebCalendar'%> 
+    <SCRIPT language='JavaScript'>
+    </SCRIPT>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">修改活动</span></div>
+    <br>    
+    <div align="center">
+    <%=link_to "返回", {:action => "list_session_detail" ,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]}%>
+    </div>
+    <%form_for :session_detail, :url => {:action => "update_session_detail" ,:id => @session_detail.id ,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]} do |form|%>
+        <table class="list">
+          <tr>
+            <th>活动名称：</th>
+            <td><%=form.text_field :session_name%></td>
+          </tr>
+          <tr>
+            <th>活动类型：</th>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='9001' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <td><%=form.collection_select(:session_type,op,:data_val,:data_text)%></td>         
+            <div style="color:red"><%=error_message_on(:session_detail,:session_type)%></div>
+          </tr>
+          <tr>
+            <th>活动开始时间：</th>
+            <td><%=form.text_field :begintime%>
+                <input type="button" value="..." onclick="SelectDate(document.getElementById('session_detail_begintime'),'yyyy-MM-dd')" >                                      
+            <div style="color:red"><%=error_message_on(:session_detail,:begintime)%></div></td>            
+          </tr>    
+          <tr>
+            <th>活动结束时间：</th>
+            <td><%=form.text_field :endtime%>
+                <input type="button" value="..." onclick="SelectDate(document.getElementById('session_detail_endtime'),'yyyy-MM-dd')" >                                      
+            <div style="color:red"><%=error_message_on(:session_detail,:endtime)%></div></td>            
+          </tr>           
+          <tr>
+            <th>活动摘要：</th>
+            <td><%=form.text_area :summary,:rows => 4%></td>
+          </tr>
+        </table>
+        <div align="center">
+        <%=submit_tag "保存"%>        
+        </div>
+        <br>
+    <%end%>
+  </body>
+  <hr size="1" color="#99CCFF" noshade>
+     <iframe FRAMEBORDER=0 src="/arbitman_session/attend_person?session_code=<%=params[:id]%>" 
+     noresize  style="width:700px;height:400px" align=center> </iframe>
+</html>
+

@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>案件 仲裁报酬奖惩信息维护</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="title"><span class="cBlue">仲裁报酬奖惩信息</span></div>
+  <div align="center" class="cDGray">
+    仲裁报酬奖惩信息
+    <div style="color:red"><%=flash[:notice]%></div>
+  </div>
+  <table cellspacing="1" class="adminlist">
+  <thead>
+    <tr >
+      <th nowrap>
+        办案人
+      </th>
+      <th nowrap>
+        姓名
+      </th>
+      <th nowrap>
+        基本报酬数额
+      </th>
+      <th nowrap>
+        基本报酬奖励比例
+      </th>
+      <th nowrap>
+        基本报酬惩罚比例
+      </th>
+      <th nowrap>
+        稿酬
+      </th>
+      <th nowrap>
+        合计
+      </th>
+      <th nowrap>
+        修改
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  <%i=0%>
+  <%for p in @arbitman%>
+    <tr class="row<%=i % 2%>">
+        <td>
+      <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{TbCasearbitman.find(:first,:conditions=>"used='Y' and recevice_code='#{p.recevice_code}' and arbitman='#{p.p}'",:order=>"arbitmantype").arbitmantype}'").data_text%>
+      </td>
+      <td>
+        <%=TbArbitman.find_by_code(p.p).name%>
+      </td>
+      <td>
+        <%=p.zc_rmb%>
+      </td>
+      <td>
+        <%=p.bonus%>%
+      </td>
+      <td>
+        <%=p.penalty%>%
+      </td>
+      <td>
+        <%=p.gc_rmb%>
+      </td>
+      <td>
+        <%=p.zc_rmb * (1 + p.bonus/100 - p.penalty/100) + p.gc_rmb%>
+      </td>
+      <td>
+        <%=link_to "修改",:action=>"edit_2",:id=>p%>
+      </td>
+    </tr>
+    <%i=i+1%>
+  <%end%>
+
+  <%for p in @assistant%>
+    <tr class="row<%=i % 2%>">
+        <td>
+      助理
+      </td>
+      <td>
+        <%=User.find_by_code(p.p).name%>
+      </td>
+      <td>
+        <%=p.zc_rmb%>
+      </td>
+      <td>
+        <%=p.bonus%>%
+      </td>
+      <td>
+        <%=p.penalty%>%
+      </td>
+      <td>
+        <%=p.gc_rmb%>
+      </td>
+      <td>
+        <%=p.zc_rmb * (1 + p.bonus/100 - p.penalty/100) + p.gc_rmb%>
+      </td>
+      <td>
+        <%if p.extend_code==''%>
+          <%=link_to "修改",:action=>"edit_2",:id=>p%>
+        <%end%>
+      </td>
+    </tr>
+    <%i=i+1%>
+  <%end%>
+
+  </tbody>
+  </table>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改当事人</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+    <div class="cDGray">修改申请人的代理人(带<i>*</i>为必填项) <%=link_to "返回",:action=>"agent_list",:recevice_code=>params[:recevice_code]%>
+    </div>
+    <div style="color:red">
+      <div align="center"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :agent,:url=>{:action=>"agent_update",:id=>params[:id],:recevice_code=>params[:recevice_code]}  do |f|%>
+     <table class="list">
+        <tr>
+          <th nowrap>
+            类型:
+          </th>
+          <td nowrap>
+            <%if @agent.partytype==1%>
+            申请人方
+            <%elsif  @agent.partytype==2%>
+              被申请人方
+            <%end%>
+          </td>
+          <th nowrap>
+            <i>*</i>申请人姓名:
+          </th>
+          <td nowrap>
+            <%=TbParty.find(@agent.party_id).partyname%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            <i>*</i>代理人姓名:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:name)%>
+            <div style="color:red"><%=error_message_on(:agent,:name)%></div>
+          </td>
+          <th nowrap>
+            身份:
+          </th>
+          <td nowrap>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0007' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:status,op,:data_val,:data_text)%>
+            <div style="color:red"><%=error_message_on(:agent,:status)%></div>
+          </td>
+        </tr>
+        <tr> 
+          <th nowrap>
+            职务:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:duty)%>
+            <div style="color:red"><%=error_message_on(:agent,:duty)%></div>
+          </td>
+          <th nowrap>
+            邮编:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:postcode)%>
+            <div style="color:red"><%=error_message_on(:agent,:postcode)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th nowrap>
+            所在单位:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:company)%>
+            <div style="color:red"><%=error_message_on(:agent,:company)%></div>
+          </td>
+          <th nowrap>
+            联系人地址:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:addr)%>
+            <div style="color:red"><%=error_message_on(:agent,:addr)%></div>
+          </td>   
+        </tr>
+
+        <tr>
+          <th nowrap>
+            email:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:email)%>
+            <div style="color:red"><%=error_message_on(:agent,:email)%></div>
+          </td>
+          <th nowrap>
+            短信手机:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:mobiletel)%>
+            <div style="color:red"><%=error_message_on(:agent,:mobiletel)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            除短信手机之外的其它联系方式:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:tel)%>
+            <div style="color:red"><%=error_message_on(:agent,:tel)%></div>
+          </td>
+          <th nowrap>
+            传真:
+          </th>
+          <td nowrap>
+            <%=f.text_field(:post_tel_code)%>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%if TbCase.find_by_recevice_code(params[:recevice_code]).clerk_2==session[:user_code] or TbCase.find_by_recevice_code(params[:recevice_code]).clerk==session[:user_code]%>
+          <%=submit_tag "提交" %>
+        <%end%>
+      </div>
+      <%end%>
+  </body>
+</html>

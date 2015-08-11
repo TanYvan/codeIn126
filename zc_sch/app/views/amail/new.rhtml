@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加案件收文信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function check() {
+        if (document.getElementById("che1").value=='t')
+        {
+          document.getElementById("che1").value='f';
+          document.getElementById("amail_material_other").style.display="";
+          document.getElementById("amail_material_other").value="";
+        }
+        else
+        {
+          document.getElementById("che1").value='t';
+          document.getElementById("amail_material_other").value="";
+          document.getElementById("amail_material_other").style.display="none";
+        }
+      }
+      function check2(){
+        if (document.getElementById("che2").value=='t'){
+          document.getElementById("che2").value='f';
+          document.getElementById("amail_submitman2").style.display="";
+          document.getElementById("amail_submitman2").value="";
+        }else{
+          document.getElementById("che2").value='t';
+          document.getElementById("amail_submitman2").value="";
+          document.getElementById("amail_submitman2").style.display="none";
+        }
+      }
+      function getcondi()
+      {
+        var chec = document.getElementsByName("che_p");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+'、';           
+        }
+        aa=a.substr(0, a.length -1 )
+        var c = document.getElementById("condi");
+        c.value=aa;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray" align="center">添加案件收文信息
+      <%=link_to "返回",:action=>"list"%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :amail,:url=>{:action=>"create"},:html=>{:onsubmit=>"return getcondi()"} do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            案件编号:
+          </th>
+          <td>
+            <%=session[:recevice_code_4]%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            录入时间:
+          </th>
+          <td>
+            <%=f.text_field(:dat,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('amail_dat'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            提交人:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8139' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:submitman,op,:data_val,:data_text)%>
+            <div style="color:red"><%=error_message_on(:amail,:submitman)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            当事人:
+          </th>
+          <td>
+            <%@op1=TbParty.find_by_sql("select id,partyname from tb_parties where tb_parties.recevice_code='#{session[:recevice_code_4]}' and used='Y' order by partytype,id")%>
+            <%if @op1!=nil%>
+              <%for p in @op1%>
+                <input type='checkbox' id='che' name='che_p' value=<%=p.partyname%> /><%=p.partyname%><br>
+              <%end%>
+            <%end%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            材料类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8138' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:materialtype,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            是否需要输入材料类型:
+          </th>
+          <td>
+            <%=f.text_field(:material_other,:style=>"width:50em",:style=>"display:none")%>
+            <input type='checkbox'   id='che1' name='che' value='t'  onclick="check()" checked/>不需要
+          </td>
+        </tr>
+        <tr>
+          <th>
+            是否第三方提交人及提交人姓名:
+          </th>
+          <td>
+            <%=f.text_field(:submitman2,:style=>"display:none")%>
+            <input type='checkbox'   id='che2' name='che2' value='t'  onclick="check2()" checked/>否
+          </td>
+        </tr>
+        <tr >
+          <th>
+            接收人:
+          </th>
+          <td>
+            <%op=User.find_by_sql("select users.code as code,users.name as name from urs,users where urs.role_code='0002' and urs.user_code=users.code")%>
+            <%=f.collection_select(:receviceman,op,:code,:name)%>
+            <div style="color:red"><%=error_message_on(:amail,:receviceman)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            收到时间:
+          </th>
+          <td>
+            <%=f.text_field(:recevicedate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('amail_recevicedate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr >
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remarks,:rows=>4)%>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=hidden_field_tag :condi ,''%>
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

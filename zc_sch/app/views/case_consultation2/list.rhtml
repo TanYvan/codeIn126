@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>当前咨询案件</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="title"><span class="cBlue">当前咨询案件</span></div>
+<a href="/case_consultation2/list" target="_blank" >新窗口中打开</a>
+<table align="center"><tr><td nowrap>
+      <%#=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+      <%=link_to  "创建", :action=>"new",:typ=>1%>&nbsp;&nbsp;&nbsp;</td><td>
+      <%=button_to "显示最新记录",:action=>"list",:typ=>'1' %>    </td><td>
+      <%=button_to "空白",:action=>"list",:typ=>'2'%>
+</td></tr></table>
+<div style="color:red"><%=flash[:notice]%></div>
+<%if @case!=nil%>
+  <table cellspacing="1" class="adminlist">
+  <thead>
+    <tr >
+      <th nowrap>
+        <%if @order=="recevice_code desc"%>
+            <%=link_to '咨询流水号↑',:action=>"list",:order=>"recevice_code asc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%elsif @order=="recevice_code asc"%>
+            <%=link_to '咨询流水号↓',:action=>"list",:order=>"recevice_code desc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%else%>
+            <%=link_to '咨询流水号',:action=>"list",:order=>"recevice_code asc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%end%>
+      </th>
+      <th nowrap>
+        申请人
+      </th>
+      <th nowrap>
+        被申请人
+      </th>
+      <th nowrap>
+        <%if @order=="ReceiveDate desc"%>
+            <%=link_to '咨询日期↑',:action=>"list",:order=>"ReceiveDate asc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%elsif @order=="ReceiveDate asc"%>
+            <%=link_to '咨询日期↓',:action=>"list",:order=>"ReceiveDate desc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%else%>
+            <%=link_to '咨询日期',:action=>"list",:order=>"ReceiveDate asc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%end%>
+      </th>
+      <th nowrap>
+        <%if @order=="recevice_code_limit_dat desc"%>
+            <%=link_to '咨询有效期↑',:action=>"list",:order=>"recevice_code_limit_dat asc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%elsif @order=="recevice_code_limit_dat asc"%>
+            <%=link_to '咨询有效期↓',:action=>"list",:order=>"recevice_code_limit_dat desc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%else%>
+            <%=link_to '咨询有效期',:action=>"list",:order=>"recevice_code_limit_dat asc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%end%>
+      </th>
+      <th nowrap>
+        <%if @order=="clerk_2 desc"%>
+            <%=link_to '咨询助理↑',:action=>"list",:order=>"clerk_2 asc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%elsif @order=="clerk_2 asc"%>
+            <%=link_to '咨询助理↓',:action=>"list",:order=>"clerk_2 desc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%else%>
+            <%=link_to '咨询助理',:action=>"list",:order=>"clerk_2 asc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%end%>
+      </th>
+      <th nowrap>
+        <%if @order=="clerk desc"%>
+            <%=link_to '办案助理↑',:action=>"list",:order=>"clerk asc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%elsif @order=="clerk asc"%>
+            <%=link_to '办案助理↓',:action=>"list",:order=>"clerk desc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%else%>
+            <%=link_to '办案助理',:action=>"list",:order=>"clerk asc",:page=>@case_pages,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+        <%end%>
+      </th>
+      <th nowrap>
+        修改
+      </th>
+      <th nowrap>
+        删除
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  <%i=0%>
+  <%for c in @case%>
+    <tr class="row<%=i % 2%>">
+        <td>
+      <%=link_to "#{c.recevice_code}",:controller=>'every_casebase',:action=>"every_list",:recevice_code=>"#{c.recevice_code}"%>
+      </td>
+      <td>
+        <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+        <%ttpp=''%>
+        <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+        <%end%>
+        <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+        <%end%>
+        <%=ttpp%>
+      </td>
+      <td>
+        <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+        <%ttpp=''%>
+        <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+        <%end%>
+        <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+        <%end%>
+        <%=ttpp%>
+      </td>
+      <td>
+        <%=h c.receivedate%>
+      </td>
+      <td>
+        <%=h c.recevice_code_limit_dat%>
+      </td>
+      <td nowrap>
+        <%if c.clerk_2!=nil and c.clerk_2!=""%>
+          <%=User.find_by_code(c.clerk_2).name%>
+        <%end%>
+      </td>
+      <td>
+        <%if c.clerk==nil or c.clerk==""%>
+            <%=link_to "指定",:action=>"clerk_select_list",:id=>c,:search_condit=>@search_condit,:order=>@order,:page=>@case_pages,:page_lines=>@page_lines%>
+        <%else%>
+            <%=link_to User.find_by_code(c.clerk).name,:action=>"clerk_select_list",:id=>c,:search_condit=>@search_condit,:order=>@order,:page=>@case_pages,:page_lines=>@page_lines%>
+        <%end%>
+      </td>
+      <td>
+        <%=link_to  "修改" ,:action=>"edit",:recevice_code=>c.recevice_code,:search_condit=>@search_condit,:order=>@order,:page=>@case_pages,:page_lines=>@page_lines%>
+      </td>
+      <td>
+        <%if c.clerk==nil or c.clerk=="" or c.clerk==session[:user_code]%>
+            <%=link_to "删除" ,{:action=>'delete',:id=>c ,:search_condit=>@search_condit,:order=>@order,:page=>@case_pages,:page_lines=>@page_lines} ,:confirm=>"您确认要删除吗？",:method=>"post"%>
+        <%end%>
+      </td>
+    </tr>
+    <%i=i+1%>
+  <%end%>
+  </tbody>
+  </table>
+<%else%>
+<%end%>
+</body>
+</html>

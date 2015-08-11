@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>添加仲裁员培训情况</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+      <div align="center">
+        <%=link_to "返回", :controller => "arbitman", :action=> "list_train", :id => @tb_arbitman.id%>
+        </div><br>
+    <%form_for :tb_train, :url => {:action => "update_train", :id => @tb_train.id} do |f|%>
+        <table class="list">
+          <tr>
+            <th>会议名称:</th>
+            <td><%=f.text_field :name%></td>
+          </tr>
+          <tr>
+            <th>会议时间:</th>
+            <td><%=f.text_field :date%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('tb_train_date'),'yyyy-MM-dd')" >                                      
+            <div style="color:red"><%=error_message_on(:tb_train,:date)%></div></td>
+          </tr>
+          <tr>
+            <th>备注:</th>
+            <td><%=f.text_area :remark%></td>
+          </tr>
+        </table>
+        <div align="center"><%=submit_tag "保存"%></div>
+        
+    <%end%>
+  </body>
+</html>

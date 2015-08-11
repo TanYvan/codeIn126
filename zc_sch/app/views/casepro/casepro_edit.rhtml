@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改示例日志</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+  <div class="cDGray" align="center">修改示例日志(带<i>*</i>为必填项)   <%=link_to "返回",:action=>"casepro_list"%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :casepro ,:url=>{:action=>"casepro_update",:id=>params[:id]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            <i>*</i>题目:
+           </th>
+          <td>
+            <%=f.text_area(:keyword,:rows=>1)%>
+            <i><%=error_message_on(:casepro,:keyword)%></i>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            咨询类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8129' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:typ,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>咨询人:
+          </th>
+          <td>
+            <%=f.text_field(:queryman)%><i><%=error_message_on(:casepro,:queryman)%></i>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            时间:
+          </th>
+          <td>
+            <%=f.text_field(:happdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('casepro_happdate'),'yyyy-MM-dd')" >
+             
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            <i>*</i>录入人:
+          </th>
+          <td>
+            <%=f.text_field(:clerk_id)%><i><%=error_message_on(:casepro,:clerk_id)%></i>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            具体内容:
+          </th>
+          <td>
+            <%=f.text_area(:content,:rows=>6)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:note,:rows=>3)%>
+          </td>
+        </tr>
+
+       </table>
+        <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

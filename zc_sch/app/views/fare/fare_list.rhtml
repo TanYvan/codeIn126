@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>案件收费快算</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件收费快算</span></div>
+    <%form_tag :action=>"fare_list" do%>
+      <table align="center"><tr><td nowrap>
+            争议金额：<%=text_field_tag(:total_money,@total_money)%>元&nbsp;&nbsp;&nbsp;
+            费用类型：
+            <%@cost_type=TbDictionary.find(:all,:order=>"data_val",:conditions=>"typ_code='8137' and state='Y'")%>
+            <%=select(:j,:cost_type,@cost_type.collect{|p|[p.data_text,p.data_val]})%>
+            <%=submit_tag "计算" %>
+        </td></tr>
+      </table>
+    <%end%>
+    <br>      
+    <%if @n==nil || @n=="" || @total_money==nil || @total_money==""%>
+      <div class="cDRed"><%=flash[:notice]%></div>
+    <%elsif @n=="0001"%>
+    <div class="cGreen"><%=TbDictionary.find(:first,:conditions=>"typ_code='8137' and state='Y' and data_val='#{@n}'").data_text%></div>
+      <table align="center" class="list" width="50%">
+        <tr><td><div align="right">争议金额(人民币)：</div></td><td><i><%=@m%></i>元</td></tr>
+        <tr><td><div align="right">案件受理费(人民币)：</div></td><td><i><%=@cost%></i>元</td></tr>
+        <tr><td><div align="right">案件处理费(人民币)：</div></td><td><i><%=@cost2%></i>元</td></tr>
+        <tr><td><div align="right">合计(人民币)：</div></td><td><i><%=@cost+@cost2%></i>元</td></tr>
+      </table>
+    <%elsif @n=="0002"%>
+    <div class="cGreen"><%=TbDictionary.find(:first,:conditions=>"typ_code='8137' and state='Y' and data_val='#{@n}'").data_text%></div>
+      <table align="center" class="list" width="50%">
+        <tr><td><div align="right">争议金额(人民币)：</div></td><td><i><%=@m%></i>元</td></tr>
+        <tr><td><div align="right">仲裁费(人民币)：</div></td><td><i><%=@cost%></i>元</td></tr>
+        <tr><td><div align="right">立案费(人民币)：</div></td><td><i><%=@cost2%></i>元</td></tr>
+        <tr><td><div align="right">合计(人民币)：</div></td><td><i><%=@cost+@cost2%></i>元</td></tr>
+      </table>
+    <%else%>
+    <div class="cGreen"><%=TbDictionary.find(:first,:conditions=>"typ_code='8137' and state='Y' and data_val='#{@n}'").data_text%></div>
+      <table align="center" class="list" width="50%">
+        <tr><td><div align="right">争议金额(人民币)：</div></td><td><i><%=@m%></i>元</td></tr>
+        <tr><td><div align="right">仲裁费(人民币)：</div></td><td><i><%=@cost%></i>元</td></tr>
+        <tr><td><div align="right">立案费(人民币)：</div></td><td><i><%=@cost2%></i>元</td></tr>
+        <tr><td><div align="right">合计(人民币)：</div></td><td><i><%=@cost+@cost2%></i>元</td></tr>
+      </table>
+    <%end%>
+  </body>
+</html>

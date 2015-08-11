@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>案件信息删除</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">案件信息删除</span></div>
+    <br>
+    <%=link_to "返回",:action=>"case_list",:order=>params[:order],:page=>params[:page],:search_condit=>params[:search_condit],:page_lines=>params[:page_lines]%>
+    <%if @case!=nil%>
+      <div class="cDGray">当前案件</div>
+    
+      <table class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              咨询流水号
+            </th>
+            <th nowrap>
+              咨询日期
+            </th>
+            <th nowrap>
+              立案号
+            </th>
+            <th nowrap>
+              立案日期
+            </th>
+            <th nowrap>
+              申请人
+            </th>
+            <th nowrap>
+              被申请人
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @case.recevice_code%>
+            </td>
+            <td>
+              <%=h @case.receivedate%>
+            </td>
+            <td>
+              <%=h @case.case_code%>
+            </td>
+            <td>
+              <%=h @case.nowdate%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                    <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                    <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp1 in @tp%>
+                    <%ttpp=ttpp + tp1.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                    <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <hr size="1" color="#99CCFF" noshade width="98%">
+      <div style="color:red"><%=flash[:notice]%></div>
+      <%form_for :case ,:url=>{:action=>"transfer",:id=>@case.id,:order=>params[:order],:page=>params[:page],:search_condit=>params[:search_condit],:page_lines=>params[:page_lines]}  do |f|%>
+        <table class="list">
+          <!--
+          <tr >
+          <th nowrap width="30%">
+          删除类型:          </th>
+          <td width="65%">
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0045' and state='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:transfer_p, op,:data_val,:data_text)%>
+          </td>
+          </tr>
+          -->
+          <tr bgcolor="white">
+            <th>
+              备注:
+            </th>
+            <td align="left">
+              <%=f.text_area(:transfer_remark,:rows=>8)%>         
+              <div style="color:red"><%=error_message_on(:case,:casename)%></div>
+              </td>
+            </tr>      
+          </table>
+          <div align="center"><%=submit_tag "提交" %></div>
+    
+        <%end%>
+        
+    
+    
+        <%end%>
+      
+        
+    </body>
+  </html>
