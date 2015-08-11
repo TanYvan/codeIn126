@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="JavaScript">
+      function showHiddeLeftFrame(){
+        var fs=window.top.document.getElementById("main");
+        fs.cols=(fs.cols=="0,*")?"200,*":"0,*";
+      }
+    </script>
+
+  </head> <!--  margin-left:0px margin-top:0px margin-right:0px margin-bottom:0px  -->
+  <body class="twoColHybLtHdr">
+    <div id="container">
+      <div id="header">
+        <h1>中国国际贸易仲裁委员会华南分会-办公管理系统</h1>
+        <div id="tool">
+          <ul>
+            <li><font color="#1f3a87"><%=session[:user_name]%></font></li>
+            <li class="tools_02"><span><%=link_to "用户信息",{:action=>"change_password"},:class=>'cBlue', :target=>'_blank'%></span></li>
+            <li class="tools_03"><span><%=link_to "注销",{:action=>"logout"},:class=>'cWhite',:target=>'_parent'%></span></li>
+          </ul>
+        </div>       
+      </div>
+      <div id="nov1" style="white-space:nowrap">
+                <%if @f!=nil%>
+                  <%for f in @f%>
+                     <%if f.url!=""%>
+                       <span><a href='/menu/tree?menu_id=<%=f.menu_id%>' target='leftFrame' onclick="window.open('<%=f.url%>','mainFrame')"><%=f.name%></a></span>
+                     <%else%>
+                       <span><a href='/menu/tree?menu_id=<%=f.menu_id%>' target='leftFrame' onclick="window.open('/welcome/right','mainFrame')"><%=f.name%></a></span>
+                     <%end%>
+                  <%end%>
+                <%end%>
+        </div>
+    </div>      
+  </body>
+</html>

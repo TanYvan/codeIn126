@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员人案统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <table width="100%"><tr><td>
+          <div class="title"><span class="cBlue">仲裁员人案统计</span></div>
+          <%form_tag :url=>{:action=>"list3_10"} do%>
+            <table align="center">
+              <tr>
+                <td nowrap align="right">时间段类型:</td>
+                <td align="left" nowrap> <%=select_tag "datestyle",
+                    "<option value='01' selected>立案时间</option>
+  <option value='02' select>组庭时间</option>
+  <option value='03' select>结案时间</option>"%></td>
+              </tr>
+              <tr><td nowrap align="right">立案时间：</td>
+                <td align="left"><%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+                  至
+                  <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+                </td></tr>
+              <tr><td colspan="2">
+                  <%=submit_tag "查询" %>
+                </td></tr>
+            </table>
+          <%end%>
+          <div align="center"><%=@state[params[:datestyle]]%>：<%=@d1%>至<%=@d2%></div>
+          <i><%=flash[:notice]%></i>
+          <div align="left">仲裁员数量：<%=@arbitman_case.length%></div>
+          <br/>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th>仲裁员姓名</th>
+                <th >案件数量</th>
+                <th  nowrap>性别</th>
+                <th   nowrap>手机</th>
+                <th   nowrap>电话</th>
+                <th   nowrap>传真</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for a in @arbitman_case%>
+                <tr class="row<%=i % 2%>">
+                  <td nowrap><%=a.name%></td>
+                  <td   nowrap>
+                    <%if params[:datestyle]=='01'%>
+                      <%a1=VArbitmanCase.count(:recevice_code,:conditions=>["nowdate>=? and nowdate<=? and code=?",@d1,@d2,a.code]) %>
+                      <%=a1%>
+                    <%elsif params[:datestyle]=='01'%>
+                      <%@cn=TbCasearbitman.find_by_sql("select count(ca.recevice_code) as cn from tb_casearbitmen as ca left join tb_caseorgs as co on ca.used='Y' and ca.recevice_code=co.recevice_code
+      and co.used='Y' and co.orgdate>='#{@d1}' and co.orgdate<='#{@d2}' inner join tb_arbitmen as a on ca.arbitman=a.code and a.code='#{a.code}'") %>
+                      <%if @cn!=nil%><%a1=PubTool.new.get_first_record(@cn).cn%><%else%><%a1=0%><%end%>
+                      <%=a1%>
+                    <%else%>
+                      <%@cn=TbCasearbitman.find_by_sql("select count(ca.recevice_code) as cn from tb_casearbitmen as ca left join tb_caseendbooks as co on ca.used='Y' and ca.recevice_code=co.recevice_code
+      and co.used='Y' and co.decideDate>='#{@d1}' and co.decideDate<='#{@d2}' inner join tb_arbitmen as a on ca.arbitman=a.code  and a.code='#{a.code}'") %>
+                      <%if @cn!=nil%><%a1=PubTool.new.get_first_record(@cn).cn%><%else%><%a1=0%><%end%>
+                      <%=a1%>
+                    <%end%>
+                  </td>
+                  <td  nowrap><%=a.sex %></td>
+                  <td   nowrap><%=a.mobiletel %></td>
+                  <td   nowrap><%=a.telh %></td>
+                  <td   nowrap><%=a.fax %></td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+          </table>
+        </td></tr></table>
+  </body>
+</html>

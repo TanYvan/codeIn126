@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>仲裁员账号维护</title>
+  <%= javascript_include_tag "prototype" %>
+  <script src="/javascripts/check.js"></script>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+   <div style="color:red"><%=flash[:notice]%></div>  
+<div class="title"><span class="cBlue">工作人员帐号信息列表</span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          用户名称
+        </th>
+        <th nowrap >
+          银行类别
+        </th>
+        <th >
+          手机号码
+        </th>
+        <th >
+          账号
+        </th>
+        <th >
+          详细开户行名称
+        </th>
+        <th >
+          身份证号
+        </th>
+        <th >
+          编辑
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%for b in @u%>
+        <tr class="row<%=i % 2%>">
+          <td>
+            <%=h b.send("name")%>
+          </td>
+          <td>
+            <%if b.bank_typ!=nil and b.bank_typ!=''%>
+              <%=@bank_typ[b.bank_typ]%>
+            <%end%>
+          </td>
+          <td><%=b.mobiletel%></td>
+          <td><%=b.bankaccount%></td>
+          <td><%=b.bankname%></td>
+          <td><%=b.id_card%></td>
+          <td>
+            <%=link_to "编辑",{:action=>'edit',:id=>b} %>
+          </td>
+        </tr>
+        <%i=i+1%>
+      <%end%>
+
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="8">
+          <%= link_to '上一页', { :page => @u_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @u_pages.current.previous %>
+          <%=pagination_links( @u_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @u_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @u_pages.current.next %>
+
+          <%if @u_pages.current.previous or @u_pages.current.next%>
+            <form action="/account/list_account_2" method="get" onsubmit="return page_check('page_lines','page');">
+              每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+              <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @u_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </tfoot>
+    </table>
+</body>
+</html>

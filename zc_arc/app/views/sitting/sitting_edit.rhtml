@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改开庭信息</title>
+  <%= javascript_include_tag  'WebCalendar'%> 
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <br/>
+  <div align="center" class="cDGray">修改开庭信息
+   <%=link_to "返回",:action=>"sitting_list"%>
+  </div>
+   <div class="cRed"><%=flash[:notice]%></div>
+   <div style="color:red"><%=error_message_on(:room,:sittingdate)%> <%=error_message_on(:room,:sittingplace)%> <%=error_message_on(:tb_arbitroom,:usetime)%> <%=error_message_on(:room,:open_t)%> <%=error_message_on(:room,:close_t)%></div>
+    <%form_for :room ,:url=>{:action=>"room_create",:sitting_id=>params[:sitting_id]}  do |f|%>
+            <%=f.hidden_field(:sittingdate)%>
+            <%=f.hidden_field(:sittingplace)%>
+            <%=f.hidden_field(:usetime)%>   
+            <%=f.hidden_field(:open_t)%>        
+            <%=f.hidden_field(:close_t)%>            
+    <%end%>
+
+      <%form_for :sitting ,:url=>{:action=>"sitting_update",:id=>params[:id],:recevice_code=>params[:recevice_code]} ,:html=>{:onsubmit=>"return f_check_number();"} do |f|%>
+    <table class="list"> 
+        <tr>
+          <th>
+            开庭日期:          
+           </th>
+          <td>
+            <%=f.text_field(:sittingdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('sitting_sittingdate'),'yyyy-MM-dd')" />
+            <div style="color:red"><%=error_message_on(:sitting,:sittingdate)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            仲裁庭:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0023' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sittingplace,op,:data_val,:data_text)%>               
+            <div style="color:red"><%=error_message_on(:sitting,:sittingplace)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            开庭时间:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0024' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_text")%>
+            <%=f.collection_select(:open_t,op,:data_text,:data_text)%>        
+            <div style="color:red"><%=error_message_on(:sitting,:open_t)%></div>
+          </td>
+        </tr>        
+        
+        <tr>
+          <th>
+            闭庭时间:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0024' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_text")%>
+            <%=f.collection_select(:close_t,op,:data_text,:data_text)%>            
+            <div style="color:red"><%=error_message_on(:sitting,:close_t)%></div>
+          </td>
+        </tr>              
+        
+        <tr >
+          <th>
+            通知送交申请人日期:
+          </th>
+          <td>
+            <%=f.text_field(:sendrdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('sitting_sendrdate'),'yyyy-MM-dd')" />
+            <div style="color:red"><%=error_message_on(:sitting,:sendrdate)%></div>
+          </td>
+        </tr>                 
+        
+        <tr>
+          <th>
+            通知送交申请人的方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0025' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sendrstyle,op,:data_text,:data_text)%>            
+            <div style="color:red"><%=error_message_on(:sitting,:sendrstyle)%></div>
+          </td>
+        </tr>                 
+                          
+        <tr >
+          <th>
+            通知送交被申请人日期:
+          </th>
+          <td>
+            <%=f.text_field(:sendbdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('sitting_sendbdate'),'yyyy-MM-dd')" />
+            <div style="color:red"><%=error_message_on(:sitting,:sendbdate)%></div>
+          </td>
+        </tr>                 
+        
+        <tr >
+          <th>
+            通知送交被申请人的方式:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0026' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sendbstyle,op,:data_text,:data_text)%>         
+            <div style="color:red"><%=error_message_on(:sitting,:sendbstyle)%></div>
+          </td>
+        </tr>                 
+      </table>
+      <br/>
+      <div align="center"><%=submit_tag "提交" %> </div>     
+      <%end%>
+      
+     <hr size="1" color="#99CCFF" noshade/>
+     <iframe frameborder=0 src="/sitting/appearman_list?sitting_id=<%=params[:id]%>"  noresize  style="width:700px;height:270px" align=center> </iframe>
+     <hr size="1" color="#99CCFF" noshade/>
+     <iframe frameborder=0 src="/sitting/book_list?p_id=<%=params[:id]%>"  noresize  style="width:700px;height:220px" align=center> </iframe>
+     <hr size="1" color="#99CCFF" noshade/>
+     <iframe frameborder=0 src="/sitting/room_list?sitting_id=<%=params[:id]%>"  noresize  style="width:700px;height:250px" align=center> </iframe>
+     <hr size="1" color="#99CCFF" noshade/>
+     <iframe frameborder=0 src="/sitting/hotel_list?sitting_id=<%=params[:id]%>"  noresize  style="width:700px;height:250px" align=center> </iframe>
+     <hr size="1" color="#99CCFF" noshade/>
+     <iframe frameborder=0 src="/sitting/sittingdelay_list?sitting_id=<%=params[:id]%>"  noresize  style="width:700px;height:220px" align=center> </iframe>
+                           
+                              
+  </body>
+</html>

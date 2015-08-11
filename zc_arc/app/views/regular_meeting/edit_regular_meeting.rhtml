@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>修改秘书处例会信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <br>
+    <div class="cDGray">修改秘书处例会信息(带<i>*</i>为必填项) <%=link_to "返回",:action=> "list_regular_meeting",:page=>params[:page],:page_lines=>params[:page_lines]%>&nbsp;&nbsp;&nbsp;
+    </div>
+    <%form_for :regular_meeting, :url => {:action => "update_regular_meeting", :id => @regular_meeting,:page=>params[:page],:page_lines=>params[:page_lines]} do |f|%>
+      <table class="list">
+        <tr>
+          <th nowrap>时间：</th>
+          <td><%=f.text_field :dat,:readonly=>"true"%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('regular_meeting_dat'),'yyyy-MM-dd')" >
+          </td>
+        </tr><tr>
+          <th nowrap><i>*</i>会议记录人：</th>
+          <td><%=f.text_field :record_by%>
+          <div style="color:red"><%=error_message_on(:regular_meeting,:record_by)%></div></td>
+        </tr>
+        <tr>
+          <th nowrap><i>*</i>具体内容：</th>
+          <td><%=f.text_area :content, :rows => 10%>
+          <div style="color:red"><%=error_message_on(:regular_meeting,:content)%></div></td>
+        </tr>
+      </table>
+      <br>
+      <div align="center"><%=submit_tag "确定"%></div>
+    <%end%>
+  </body>
+  <hr size="1" color="#99CCFF" noshade>
+  <iframe FRAMEBORDER=0 src="/regular_meeting/list_meeting_attendant/<%=params[:id]%>"
+          noresize  style="width:600px;height:400px" align=center> </iframe>
+  <hr size="1" color="#99CCFF" noshade/>
+  <iframe frameborder=0 src="/regular_meeting/book_list?p_id=<%=params[:id]%>"  noresize  style="width:700px;height:220px" align=center> </iframe>
+     
+</html>

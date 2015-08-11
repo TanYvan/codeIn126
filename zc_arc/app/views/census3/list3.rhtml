@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>按仲裁程序统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">按仲裁程序统计</span></div>
+    <%form_tag :url=>{:action=>"list3"} do%>
+      <table align="center">
+        <tr><td nowrap align="right">
+          时间段类型:</td>
+          <td align="left" nowrap> <%=select_tag "datestyle",
+              "<option value='01' selected>立案时间段</option>
+            <option value='02' select>结案时间段</option>
+            <option value='03' select>立案结案时间段</option>"%>
+        </td></tr>
+        <tr><td nowrap align="right">
+          统计时间段:</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" >
+            -
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" >
+        </td></tr>
+        <tr><td nowrap align="right">
+          结案方式:</td>
+          <td align="left" nowrap><%@endstyle=TbDictionary.find(:all,:order=>"data_val",:conditions=>"typ_code='8117' and state='Y'")%>
+            <%=select(:k,:endstyle,@endstyle.collect{|p|[p.data_text,p.data_val]})%>
+        </td></tr>
+      </table>
+      <%=submit_tag "查询" %>
+    <%end%>
+    <br><br>
+    <i><%=flash[:notice]%></i>
+    <div class="cGreen">
+      <%if params[:k]==nil %>
+      <%else%>
+        时间段类型:<%=@dispute[@datestyle]%>&nbsp;
+        统计时间段:<%=@date1%>至<%=@date2%>&nbsp;
+        结案方式:<%=TbDictionary.find(:first,:conditions=>"typ_code='8117' and state='Y' and data_val='#{params[:k][:endstyle]}'").data_text%>
+      <%end%>
+    </div>
+    <table class="list">
+      <tr>
+        <th nowrap>案件类型</th>
+        <th nowrap>0-15(天)</th>
+        <th nowrap>16-30(天)</th>
+        <th nowrap>31-60(天)</th>
+        <th nowrap>61-75(天)</th>
+        <th nowrap>76-90(天)</th>
+        <th nowrap>91-120(天)</th>
+        <th nowrap>121-150(天)</th>
+        <th nowrap>151-180(天)</th>
+        <th nowrap>181-240(天)</th>
+        <th nowrap>241-365(天)</th>
+      </tr>
+      <%for d in @case_type%>
+        <tr>
+          <th nowrap><%=d.data_text%></th>
+          <%if @type1=='01'%>
+            <%if @datestyle=='01'%><!-- #立案时间段-->
+                <%@case1=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>0 and datediff(ca.end_date,ca.nowdate)<=15 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                <%@case2=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>15 and datediff(ca.end_date,ca.nowdate)<=30 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                <%@case3=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=16 and datediff(ca.end_date,ca.nowdate)<=60 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                <%@case4=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=61 and datediff(ca.end_date,ca.nowdate)<=75 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                <%@case5=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=76 and datediff(ca.end_date,ca.nowdate)<=190 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                <%@case6=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=91 and datediff(ca.end_date,ca.nowdate)<=120 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                <% @case7=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=121 and datediff(ca.end_date,ca.nowdate)<=150 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                <%@case8=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=151 and datediff(ca.end_date,ca.nowdate)<=180 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                <%@case9=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=181 and datediff(ca.end_date,ca.nowdate)<=240 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+                <%@case10=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=241 and datediff(ca.end_date,ca.nowdate)<=365 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+           <%elsif @datestyle=='02'%> <!--#结案时间段-->
+              <%@case1=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>0 and datediff(ca.end_date,ca.nowdate)<=15 and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case2=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>15 and datediff(ca.end_date,ca.nowdate)<=30 and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case3=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=16 and datediff(ca.end_date,ca.nowdate)<=60 and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case4=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=61 and datediff(ca.end_date,ca.nowdate)<=75 and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case5=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=76 and datediff(ca.end_date,ca.nowdate)<=190 and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case6=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=91 and datediff(ca.end_date,ca.nowdate)<=120 and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case7=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=121 and datediff(ca.end_date,ca.nowdate)<=150 and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case8=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=151 and datediff(ca.end_date,ca.nowdate)<=180 and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case9=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=181 and datediff(ca.end_date,ca.nowdate)<=240 and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case10=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=241 and datediff(ca.end_date,ca.nowdate)<=365 and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+            <%elsif @datestyle=='03'%>  <!--#立案结案时间段-->
+              <%@case1=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>0 and datediff(ca.end_date,ca.nowdate)<=15 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case2=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>15 and datediff(ca.end_date,ca.nowdate)<=30 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case3=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=16 and datediff(ca.end_date,ca.nowdate)<=60 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case4=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=61 and datediff(ca.end_date,ca.nowdate)<=75 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case5=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=76 and datediff(ca.end_date,ca.nowdate)<=190 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case6=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=91 and datediff(ca.end_date,ca.nowdate)<=120 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case7=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=121 and datediff(ca.end_date,ca.nowdate)<=150 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case8=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=151 and datediff(ca.end_date,ca.nowdate)<=180 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case9=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=181 and datediff(ca.end_date,ca.nowdate)<=240 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+              <%@case10=TbCase.find(:all,:conditions=>"datediff(ca.end_date,ca.nowdate)>=241 and datediff(ca.end_date,ca.nowdate)<=365 and ca.nowdate>='#{@date1}' and ca.nowdate<='#{@date2}' and ca.end_t>='#{@date1}' and ca.end_t<='#{@date2}' and ca.state>=100 and ca.used='Y' and ca.aribitprog_num='#{d.data_val}'",:joins=>"as ca inner join tb_caseendbooks as b on ca.recevice_code=b.recevice_code and b.endStyle='#{@endstyle}' and b.used='Y'",:select=>"count(ca.id) as aa")%>
+
+            <%end%>
+          <%elsif @type1=='02'%>
+            <%if @datestyle=='01'%><!--  #立案时间段-->
+      <%@case1=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+        where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+        and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+        and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>0 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=15
+        and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case2=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=16 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=30
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case3=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=31 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=60
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case4=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=61 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=75
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case5=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=76 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=90
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case6=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=91 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=120
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case7=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=121 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=150
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case8=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=151 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=180
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case9=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=181 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=240
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case10=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=241 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=365
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+            <%elsif @datestyle=='02'%><!--  #结案时间段-->
+      <%@case1=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+        where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+        and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+        and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>0 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=15
+        and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case2=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=16 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=30
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case3=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=31 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=60
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case4=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=61 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=75
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case5=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=76 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=90
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case6=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=91 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=120
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case7=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=121 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=150
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case8=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=151 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=180
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case9=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=181 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=240
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+              <%@case10=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}' and tb_cases.aribitprog_num='#{d.data_val}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=241 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=365
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y'")%>
+            <%elsif @datestyle=='03'%><!--  #立案结案时间段-->
+      <%@case1=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+        where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+        and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}'
+        and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>0 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=15
+        and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y' and tb_cases.aribitprog_num='#{d.data_val}' ")%>
+              <%@case2=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=16 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=30
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y' and tb_cases.aribitprog_num='#{d.data_val}' ")%>
+              <%@case3=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=31 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=60
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y' and tb_cases.aribitprog_num='#{d.data_val}' ")%>
+              <%@case4=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=61 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=75
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y' and tb_cases.aribitprog_num='#{d.data_val}' ")%>
+              <%@case5=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=76 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=90
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y' and tb_cases.aribitprog_num='#{d.data_val}' ")%>
+              <%@case6=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=91 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=120
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y' and tb_cases.aribitprog_num='#{d.data_val}' ")%>
+              <%@case7=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=121 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=150
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y' and tb_cases.aribitprog_num='#{d.data_val}' ")%>
+              <%@case8=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=151 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=180
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y' and tb_cases.aribitprog_num='#{d.data_val}' ")%>
+              <%@case9=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=181 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=240
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y' and tb_cases.aribitprog_num='#{d.data_val}' ")%>
+              <%@case10=TbCase.find_by_sql("select count(tb_cases.id) as aa from tb_cases,tb_caseorgs,tb_caseendbooks
+                where tb_cases.caseorg_id_first=tb_caseorgs.id and tb_cases.recevice_code=tb_caseendbooks.recevice_code
+                and tb_cases.nowdate>='#{@date1}' and tb_cases.nowdate<='#{@date2}' and tb_cases.end_t>='#{@date1}' and tb_cases.end_t<='#{@date2}'
+                and datediff(tb_cases.end_date,tb_caseorgs.orgdate)>=241 and datediff(tb_cases.end_date,tb_caseorgs.orgdate)<=365
+                and tb_cases.state>=100 and tb_cases.used='Y' and tb_caseendbooks.endStyle='#{@endstyle}'
+                and tb_caseorgs.used='Y' and tb_caseendbooks.used='Y' and tb_cases.aribitprog_num='#{d.data_val}' ")%>
+            <%end%>
+          <%end%>
+          <td nowrap>
+<%if @case1!=nil%><%for q1 in @case1%><%=q1.aa%><%end%><%end%></td>
+          <td nowrap><%if @case2!=nil%><%for q2 in @case2%><%=q2.aa%><%end%><%end%></td>
+          <td nowrap><%if @case3!=nil%><%for q3 in @case3%><%=q3.aa%><%end%><%end%></td>
+          <td nowrap><%if @case4!=nil%><%for q4 in @case4%><%=q4.aa%><%end%><%end%></td>
+          <td nowrap><%if @case5!=nil%><%for q5 in @case5%><%=q5.aa%><%end%><%end%></td>
+          <td nowrap><%if @case6!=nil%><%for q6 in @case6%><%=q6.aa%><%end%><%end%></td>
+          <td nowrap><%if @case7!=nil%><%for q7 in @case7%><%=q7.aa%><%end%><%end%></td>
+          <td nowrap><%if @case8!=nil%><%for q8 in @case8%><%=q8.aa%><%end%><%end%></td>
+          <td nowrap><%if @case9!=nil%><%for q9 in @case9%><%=q9.aa%><%end%><%end%></td>
+          <td nowrap><%if @case10!=nil%><%for q10 in @case10%><%=q10.aa%><%end%><%end%></td>
+        </tr>
+      <%end%>
+    </table>
+  </body>
+</html>

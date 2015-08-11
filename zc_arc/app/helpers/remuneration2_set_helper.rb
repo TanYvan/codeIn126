@@ -1,0 +1,2 @@
+module Remuneration2SetHelper
+end

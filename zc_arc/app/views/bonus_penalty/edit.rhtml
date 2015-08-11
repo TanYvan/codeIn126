@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改 仲裁报酬奖惩信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <div class="title"><span class="cBlue">修改 仲裁报酬奖惩信息</span></div>
+  <div align="center">
+ <%=link_to "返回",:action=>"list"%>
+  </div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :remun ,:url=>{:action=>"update",:id=>params[:id]}  do |f|%>
+      <table class="list">
+  
+        <tr>
+          <th>
+            办案人:
+          </th>
+          <td>
+          <%if @remun.typ=='0001'%>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{TbCasearbitman.find(:first,:conditions=>"used='Y' and recevice_code='#{@remun.recevice_code}' and arbitman='#{@remun.p}'",:order=>"arbitmantype").arbitmantype}'").data_text%>
+          <%elsif @remun.typ=='0002'%>
+            助理
+          <%else%>
+          <%end%>
+        </td>
+        </tr>
+        <tr>
+          <th>
+            姓名:
+          </th>
+ 
+          <td>
+          <%if @remun.typ=='0001'%>
+            <%=TbArbitman.find_by_code(@remun.p).name%>
+          <%elsif @remun.typ=='0002'%>
+            <%=User.find_by_code(@remun.p).name%>
+          <%else%>
+          <%end%>  
+          </td>
+        </tr>
+        <tr>
+          <th>
+            基本报酬数额:
+          </th>
+          <td>
+            <%=@remun.zc_rmb%>                                        
+          </td>
+        </tr>
+        <tr>
+          <th>
+            基本报酬奖励比例:
+          </th>
+          <td>
+            <%=f.text_field(:bonus)%>                                                   
+            <div style="color:red"><%=error_message_on(:remun,:bonus)%></div>                                              
+          </td>
+        </tr>
+        <tr>
+          <th>
+            基本报酬惩罚比例:
+          </th>
+          <td>
+            <%=f.text_field(:penalty)%>                                                   
+            <div style="color:red"><%=error_message_on(:remun,:penalty)%></div>                                              
+          </td>
+        </tr>
+        <tr>
+          <th>
+            稿酬:
+          </th>
+          <td>
+            <%=@remun.gc_rmb%>                                        
+          </td>
+        </tr>
+        <tr>
+          <th>
+            奖惩原因:
+          </th>
+          <td>
+            <%=f.text_area(:reason,:rows=>4)%>                                                   
+            <div style="color:red"><%=error_message_on(:remun,:reason)%></div>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+            
+  </body>
+</html>

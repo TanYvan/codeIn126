@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员在办案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员<%=@name%>的在办案件：<%=@arbitman_case.length%>件</span></div>
+    <%=link_to "返回仲裁员人案统计列表",:action=>"list3_9"%>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案时间</th>
+          <th  nowrap>立案号</th>
+          <th  nowrap>争议金额(￥)</th>
+          <th  nowrap>办案助理</th>
+          <th  nowrap>组庭时间</th>
+          <th  nowrap>仲裁员类型</th>
+          <th  nowrap>指定方式</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for a in @arbitman_case%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=a.nowdate%></td>
+            <td nowrap><%=link_to "#{a.case_code}",{:controller=>"every_casebase",:action=>'every_list',:recevice_code=>a.recevice_code},:target=>"_black" %></td>
+            <%@case=TbCase.find_by_recevice_code(a.recevice_code)%>
+            <td nowrap><%=SysArg.compart2(@case.amount)%></td>
+            <td nowrap><%=User.find(:first,:conditions=>["used='Y' and code=?",@case.clerk]).name %></td>
+            <td nowrap>
+              <%@orgdate=TbCaseorg.find(:first,:conditions=>["used='Y' and recevice_code=?",a.recevice_code],:order=>"id desc") %>
+              <%if @orgdate!=nil%><%=@orgdate.orgdate%><%end%>
+            </td>
+            <td nowrap>
+              <%aa=TbDictionary.find(:first,:conditions=>["typ_code='0014' and state='Y' and data_val=?",a.arbitmantype]) %>
+              <%if aa!=nil%><%=aa.data_text%><%end%>
+            </td>
+            <td nowrap>
+              <%= TbDictionary.find(:first,:conditions=>["typ_code='0015' and state='Y' and used='Y' and data_val=?",a.arbitmansign]).data_text%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

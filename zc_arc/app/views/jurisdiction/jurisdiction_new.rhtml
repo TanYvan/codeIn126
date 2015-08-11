@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加管辖权异议申请信息</title>
+    <%=  javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script language="javascript">
+      function getcondi()
+      { //选择申请人
+        var chec = document.getElementsByName("che_p");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+'、';
+        }
+
+        aa=a.substr(0, a.length -1 )
+        var c = document.getElementById("condi");
+        c.value=aa;
+
+        //选择被申请人
+        var chet = document.getElementsByName("che_t");
+        var b=''
+        for(i=0; i<chet.length; i++)
+        {
+          if (chet[i].checked == true)
+            b=b+chet[i].value+'、';
+        }
+        bb=b.substr(0, b.length -1 )
+        var c2 = document.getElementById("condi");
+        c2.value=bb;
+        //不能同时选择
+        if(aa!='' && bb!=''){
+          alert("申请人和被申请人不能同时选择！");
+          return false;
+        }
+        if(aa!='' && bb==''){
+          var c = document.getElementById("condi");
+          c.value='a'+aa;
+        }else if(aa=='' && bb!=''){
+          var c2 = document.getElementById("condi");
+          c2.value='b'+bb;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray" align="center">添加管辖权异议申请信息  <%=link_to "返回",:action=>"jurisdiction_list"%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :jurisdiction ,:url=>{:action=>"jurisdiction_create"},:html=>{:onsubmit=>"return getcondi()"}  do |f|%>
+      <table class="list" width="78%">
+        <tr>
+          <th>
+            (当事人)提出人选择:
+          </th>
+          <td>
+            <%@op1=TbParty.find_by_sql("select id,partyname from tb_parties where recevice_code='#{@recevice_code}' and used='Y' and partytype=1 order by partytype,id")%>
+            <%if @op1!=nil%>
+              <%for p in @op1%>
+                <input type='checkbox' id='che' name='che_p' value="<%=p.partyname%>" /><%=p.partyname%><br/>
+              <%end%>
+            <%end%>
+            <hr size="1" color="#99CCFF" width="20%" noshade />
+            <%@op2=TbParty.find_by_sql("select id,partyname from tb_parties where recevice_code='#{@recevice_code}' and used='Y' and partytype=2 order by partytype,id")%>
+            <%if @op2!=nil%>
+              <%for p2 in @op2%>
+                <input type='checkbox' id='che' name='che_t' value="<%=p2.partyname%>" /><%=p2.partyname%><br/>
+              <%end%>
+            <%end%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            受理机构:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8133' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:registrar,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            异议类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8134' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:objection_type,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            收到日期:
+          </th>
+          <td>
+            <%=f.text_field(:request_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_request_date'),'yyyy-MM-dd')" />
+          </td>
+        </tr>
+
+        <tr>
+          <th nowrap>
+            转给对方当事人的时间:
+          </th>
+          <td>
+            <%=f.text_field(:transmit_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_transmit_date'),'yyyy-MM-dd')" />
+          </td>
+        </tr>
+
+        <tr>
+          <th nowrap>
+            是否需要听取对方当事人对异议的意见:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8128' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:view,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+        <tr>
+          <th nowrap>
+            收到对方意见的时间:
+          </th>
+          <td>
+            <%=f.text_field(:receive_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_receive_date'),'yyyy-MM-dd')" />
+          </td>
+        </tr>
+
+        <tr>
+          <th nowrap>
+            起草草稿的时间:
+          </th>
+          <td>
+            <%=f.text_field(:idea_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_idea_date'),'yyyy-MM-dd')"/>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            草稿完成时间（助理报送审查的时间）:
+          </th>
+          <td>
+            <%=f.text_field(:check_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_check_date'),'yyyy-MM-dd')"/>
+          </td>
+        </tr>
+
+        <!--tr>
+          <th nowrap>
+            草稿完成时间:
+          </th>
+          <td>
+            <#%=f.text_field(:checkout_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_checkout_date'),'yyyy-MM-dd')"/>
+          </td>
+        </tr-->
+        <tr>
+          <th nowrap>
+            草稿报总会日期:
+          </th>
+          <td>
+            <%=f.text_field(:draft_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_draft_date'),'yyyy-MM-dd')"/>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            决定作出日期:
+          </th>
+          <td>
+            <%=f.text_field(:decide_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_decide_date'),'yyyy-MM-dd')"/>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            决定转给当事人日期:
+          </th>
+          <td>
+            <%=f.text_field(:parties_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_parties_date'),'yyyy-MM-dd')"/>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            程序中止日期:
+          </th>
+          <td>
+            <%=f.text_field(:stop_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_stop_date'),'yyyy-MM-dd')"/>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            程序恢复日期:
+          </th>
+          <td>
+            <%=f.text_field(:reset_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('jurisdiction_reset_date'),'yyyy-MM-dd')"/>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            审批决定:
+          </th>
+          <td>
+            <%=f.text_area(:decide,:rows=>4)%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:special,:rows=>4)%>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=hidden_field_tag :condi ,''%>
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

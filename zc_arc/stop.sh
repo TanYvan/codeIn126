@@ -1,0 +1,1 @@
+mongrel_rails stop -P /usr/local/zc_arc/log/mongrel_pid/mongrel_3210.pid

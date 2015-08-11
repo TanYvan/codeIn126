@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员人案统计</title>
+    <script src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <table id="to_word_91"><tr><td>
+          <div align="center">仲裁员人案统计</div>
+          <table border="1" cellspacing="0" cellpadding="0">
+            <tr>
+              <th  valign="top">仲裁员姓名</th>
+              <th   valign="top">在办案件数量</th>
+              <th   valign="top">已结案件数量</th>
+              <th  valign="top">性别</th>
+              <th   valign="top">手机</th>
+              <th   valign="top">电话</th>
+              <th   valign="top">传真</th>
+            </tr>
+            <%for a in @arbitman_case%>
+              <tr>
+                <td width="103" valign="top"><%=a.name%></td>
+                <td   valign="top">
+                  <%=VArbitmanCase.count(:recevice_code,:conditions=>["state>=4 and state<100 and code=? and end_code=''",a.code]) %>
+                </td>
+                <td   valign="top">
+                  <%=VArbitmanCase.count(:recevice_code,:conditions=>["code=? and end_code<>''",a.code]) %>
+                </td>
+                <td  valign="top"><%=a.sex %></td>
+                <td   valign="top"><%=a.mobiletel %></td>
+                <td   valign="top"><%=a.telh %></td>
+                <td   valign="top"><%=a.fax %></td>
+              </tr>
+            <%end%>
+          </table>
+        </td></tr></table>
+    <script langugae="javascript">
+      to_word(document.getElementById("to_word_91"));
+      window.close();
+    </script>
+  </body>
+</html>

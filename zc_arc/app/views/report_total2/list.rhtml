@@ -1,0 +1,494 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件费用统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <style></style>
+
+  </head>
+  <body>
+    <table><tr><td>
+          <div align="left">
+            <div class="title"><span class="cBlue">案件费用统计</span></div>
+            <%form_tag ({:action=>"list"})  do %>
+              <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+              至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+              <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+              <%=submit_tag "查询" %>
+            <%end%>
+              <br/>
+            <%if @case!=nil %>
+              <br/>统计时间<%=@d1%>至<%=@d2%>，共有<%=@count%>条记录
+            </div>
+          <br/>
+            <table cellspacing="1" class="adminlist">
+              <thead>
+                <tr>
+                  <th nowrap>
+                    <%if @order=="ca_nowdate desc"%>
+                      <%=link_to '通知日期↑',:action=>"list",:order=>"ca_nowdate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="ca_nowdate asc"%>
+                      <%=link_to '通知日期↓',:action=>"list",:order=>"ca_nowdate desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '通知日期',:action=>"list",:order=>"ca_nowdate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th nowrap>
+                    <%if @order=="ca_gc desc"%>
+                      <%=link_to '总案号↑',:action=>"list",:order=>"ca_gc asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="ca_gc asc"%>
+                      <%=link_to '总案号↓',:action=>"list",:order=>"ca_gc desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '总案号',:action=>"list",:order=>"ca_gc asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th nowrap>
+                    <%if @order=="ca_cc desc"%>
+                      <%=link_to '立案号↑',:action=>"list",:order=>"ca_cc asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="ca_cc asc"%>
+                      <%=link_to '立案号↓',:action=>"list",:order=>"ca_cc desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '立案号',:action=>"list",:order=>"ca_cc asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th nowrap>
+                    <%if @order=="ca_clerk_name desc"%>
+                      <%=link_to '经办人↑',:action=>"list",:order=>"ca_clerk_name asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="ca_clerk_name asc"%>
+                      <%=link_to '经办人↓',:action=>"list",:order=>"ca_clerk_name desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '经办人',:action=>"list",:order=>"ca_clerk_name asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th>
+                    <%if @order=="je1 desc"%>
+                      <%=link_to '明确争议金额(￥,本请求)↑',:action=>"list",:order=>"je1 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="je1 asc"%>
+                      <%=link_to '明确争议金额(￥,本请求)↓',:action=>"list",:order=>"je1 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '明确争议金额(￥,本请求)',:action=>"list",:order=>"je1 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+
+                  </th>
+                  <th>
+                    <%if @order=="je2 desc"%>
+                      <%=link_to '不明确争议金额(￥,本请求)↑',:action=>"list",:order=>"je2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="je2 asc"%>
+                      <%=link_to '不明确争议金额(￥,本请求)↓',:action=>"list",:order=>"je2 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '不明确争议金额(￥,本请求)',:action=>"list",:order=>"je2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+
+                  </th>
+                  <th>
+                    <%if @order=="je3 desc"%>
+                      <%=link_to '无明确争议金额收费(￥,本请求)↑',:action=>"list",:order=>"je3 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="je3 asc"%>
+                      <%=link_to '无明确争议金额收费(￥,本请求)↓',:action=>"list",:order=>"je3 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '无明确争议金额收费(￥,本请求)',:action=>"list",:order=>"je3 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+
+                  </th>
+                  <th>
+                    <%if @order=="c_rmb_money desc"%>
+                      <%=link_to '应收(本请求)↑',:action=>"list",:order=>"c_rmb_money asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_rmb_money asc"%>
+                      <%=link_to '应收(本请求)↓',:action=>"list",:order=>"c_rmb_money desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '应收(本请求)',:action=>"list",:order=>"c_rmb_money asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th>
+                    <%if @order=="c_redu_rmb_money desc"%>
+                      <%=link_to '减交(本请求)↑',:action=>"list",:order=>"c_redu_rmb_money asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_redu_rmb_money asc"%>
+                      <%=link_to '减交(本请求)↓',:action=>"list",:order=>"c_redu_rmb_money desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '减交(本请求)',:action=>"list",:order=>"c_redu_rmb_money asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th>
+                    <%if @order=="c_re_rmb_money desc"%>
+                      <%=link_to '实收(本请求)↑',:action=>"list",:order=>"c_re_rmb_money asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_re_rmb_money asc"%>
+                      <%=link_to '实收(本请求)↓',:action=>"list",:order=>"c_re_rmb_money desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '实收(本请求)',:action=>"list",:order=>"c_re_rmb_money asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th>
+                    <%if @order=="c_c desc"%>
+                      <%=link_to '欠缴(本请求)↑',:action=>"list",:order=>"c_c asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_c asc"%>
+                      <%=link_to '欠缴(本请求)↓',:action=>"list",:order=>"c_c desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '欠缴(本请求)',:action=>"list",:order=>"c_c asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+
+
+                  <th>
+                    <%if @order=="je1_2 desc"%>
+                      <%=link_to '明确争议金额(￥,反请求)↑',:action=>"list",:order=>"je1_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="je1_2 asc"%>
+                      <%=link_to '明确争议金额(￥,反请求)↓',:action=>"list",:order=>"je1_2 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '明确争议金额(￥,反请求)',:action=>"list",:order=>"je1_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th>
+                    <%if @order=="je2_2 desc"%>
+                      <%=link_to '不明确争议金额(￥,反请求)↑',:action=>"list",:order=>"je2_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="je2_2 asc"%>
+                      <%=link_to '不明确争议金额(￥,反请求)↓',:action=>"list",:order=>"je2_2 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '不明确争议金额(￥,反请求)',:action=>"list",:order=>"je2_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th>
+                    <%if @order=="je3_2 desc"%>
+                      <%=link_to '无明确争议金额收费(￥,反请求)↑',:action=>"list",:order=>"je3_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="je3_2 asc"%>
+                      <%=link_to '无明确争议金额收费(￥,反请求)↓',:action=>"list",:order=>"je3_2 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '无明确争议金额收费(￥,反请求)',:action=>"list",:order=>"je3_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th>
+                    <%if @order=="c_rmb_money_2 desc"%>
+                      <%=link_to '应收(反请求)↑',:action=>"list",:order=>"c_rmb_money_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_rmb_money_2 asc"%>
+                      <%=link_to '应收(反请求)↓',:action=>"list",:order=>"c_rmb_money_2 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '应收(反请求)',:action=>"list",:order=>"c_rmb_money_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th>
+                    <%if @order=="c_redu_rmb_money_2 desc"%>
+                      <%=link_to '减交(反请求)↑',:action=>"list",:order=>"c_redu_rmb_money_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_redu_rmb_money_2 asc"%>
+                      <%=link_to '减交(反请求)↓',:action=>"list",:order=>"c_redu_rmb_money_2 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '减交(反请求)',:action=>"list",:order=>"c_redu_rmb_money_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th>
+                    <%if @order=="c_re_rmb_money_2 desc"%>
+                      <%=link_to '实收(反请求)↑',:action=>"list",:order=>"c_re_rmb_money_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_re_rmb_money_2 asc"%>
+                      <%=link_to '实收(反请求)↓',:action=>"list",:order=>"c_re_rmb_money_2 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '实收(反请求)',:action=>"list",:order=>"c_re_rmb_money_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th>
+                    <%if @order=="c_c_2 desc"%>
+                      <%=link_to '欠缴(反请求)↑',:action=>"list",:order=>"c_c_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%elsif @order=="c_c_2 asc"%>
+                      <%=link_to '欠缴(反请求)↓',:action=>"list",:order=>"c_c_2 desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%else%>
+                      <%=link_to '欠缴(反请求)',:action=>"list",:order=>"c_c_2 asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines,:d1=>params[:d1],:d2=>params[:d2]%>
+                    <%end%>
+                  </th>
+                  <th nowrap>
+                    案由&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  </th>
+                  <th nowrap>
+                    申请人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  </th>
+                  <th nowrap>
+                    被申请人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <%for c in @case%>
+                  <tr class="row<%=i % 2%>">
+                    <td nowrap>
+                      <%=c.ca_nowdate.to_s(:db)%>
+                    </td>
+                    <td>
+                      <%=c.ca_gc%>
+                    </td>
+                    <td nowrap>
+                      <%=c.ca_cc%>
+                    </td>
+                    <td>
+                      <%=c.ca_clerk_name%>
+                    </td>
+                    <td>
+                      <%if c.je1_f == 'Y'%>
+                        <% if c.je1.to_i!=0%>
+                          <strong><%=SysArg.compart2(c.je1.to_i)%></strong>
+                        <%else%>
+                          0
+                        <%end%>
+                      <%else%>
+                        <%=SysArg.compart2(c.je1.to_i)%>
+                      <%end%>
+                    </td>
+                    <td>
+                      <%if c.je2_f == 'Y'%>
+                        <% if c.je2.to_i!=0%>
+                          <strong><%=SysArg.compart2(c.je2.to_i)%></strong>
+                        <%else%>
+                          0
+                        <%end%>
+                      <%else%>
+                        <%=SysArg.compart2(c.je2.to_i)%>
+                      <%end%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.je3.to_i)%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.c_rmb_money.to_i)%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.c_redu_rmb_money.to_i)%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.c_re_rmb_money.to_i)%>
+                    </td>
+                    <td>
+                      <%if c.c_c_out=='Y'%>
+                        <%if c.c_c.to_i>0%>
+                          <div style="color:red"><%=SysArg.compart2(c.c_c.to_i)%></div>
+                        <%else%>
+                          0
+                        <%end%>
+                      <%else%>
+                        <%=SysArg.compart2(c.c_c.to_i)%>
+                      <%end%>
+                    </td>
+
+
+                    <td>
+                      <%if c.je1_2_f == 'Y'%>
+                        <% if c.je1_2.to_i!=0%>
+                          <strong><%=SysArg.compart2(c.je1_2.to_i)%></strong>
+                        <%else%>
+                          0
+                        <%end%>
+                      <%else%>
+                        <%=SysArg.compart2(c.je1_2.to_i)%>
+                      <%end%>
+                    </td>
+                    <td>
+                      <%if c.je2_2_f == 'Y'%>
+                        <% if c.je2_2.to_i!=0%>
+                          <strong><%=SysArg.compart2(c.je2_2.to_i)%></strong>
+                        <%else%>
+                          0
+                        <%end%>
+                      <%else%>
+                        <%=SysArg.compart2(c.je2_2.to_i)%>
+                      <%end%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.je3_2.to_i)%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.c_rmb_money_2.to_i)%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.c_redu_rmb_money_2.to_i)%>
+                    </td>
+                    <td>
+                      <%=SysArg.compart2(c.c_re_rmb_money_2.to_i)%>
+                    </td>
+                    <td>
+                      <%if c.c_c_2_out == 'Y'%>
+                        <%if c.c_c_2.to_i>0%>
+                          <div style="color:red"><%=SysArg.compart2(c.c_c_2.to_i)%></div>
+                        <%else%>
+                          0
+                        <%end%>
+                      <%else%>
+                        <%=SysArg.compart2(c.c_c_2.to_i)%>
+                      <%end%>
+                    </td>
+                    <td>
+                      <%=TbCase.find_by_recevice_code(c.ca_rc).casereason%>
+                    </td>
+                    <td>
+                      <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.ca_rc}'",:order=>"id")%>
+                      <%ttpp=''%>
+                      <%for tp in @tp%>
+                        <%ttpp=ttpp+ "【"+ tp.partyname + "】"%>
+                      <%end%>
+                      <%=ttpp%>
+                    </td>
+                    <td>
+                      <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.ca_rc}'",:order=>"id")%>
+                      <%ttpp=''%>
+                      <%for tp in @tp%>
+                        <%ttpp= ttpp + "【"+tp.partyname + "】"%>
+                      <%end%>
+                      <%=ttpp%>
+                    </td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+                <tr class="row<%=i % 2%>">
+                  <td colspan=4>
+                    合计
+                  </td>
+                  <td nowrap>
+                    <%a1=@case.sum{|cas| cas.je1}.to_i%>
+                    <%=SysArg.compart2(a1)%>
+                  </td>
+                  <td nowrap>
+                    <%a2=@case.sum{|cas| cas.je2}.to_i%>
+                    <%=SysArg.compart2(a2)%>
+                  </td>
+                  <td nowrap>
+                    <%a3=@case.sum{|cas| cas.je3}.to_i%>
+                    <%=SysArg.compart2(a3)%>
+                  </td>
+                  <td nowrap>
+                    <%a4=@case.sum{|cas| cas.c_rmb_money}.to_i%>
+                    <%=SysArg.compart2(a4)%>
+                  </td>
+                  <td nowrap>
+                    <%a5=@case.sum{|cas| cas.c_redu_rmb_money}.to_i%>
+                    <%=SysArg.compart2(a5)%>
+                  </td>
+                  <td nowrap>
+                    <%a6=@case.sum{|cas| cas.c_re_rmb_money}.to_i%>
+                    <%=SysArg.compart2(a6)%>
+                  </td>
+                  <td nowrap>
+                    <%a7=@case.sum{|cas| cas.c_c}.to_i%>
+                    <%=SysArg.compart2(a7)%>
+                  </td>
+
+
+                  <td nowrap>
+                    <%a8=@case.sum{|cas| cas.je1_2}.to_i%>
+                    <%=SysArg.compart2(a8)%>
+                  </td>
+                  <td nowrap>
+                    <%a9=@case.sum{|cas| cas.je2_2}.to_i%>
+                    <%=SysArg.compart2(a9)%>
+                  </td>
+                  <td nowrap>
+                    <%a10=@case.sum{|cas| cas.je3_2}.to_i%>
+                    <%=SysArg.compart2(a10)%>
+                  </td>
+                  <td nowrap>
+                    <%a11=@case.sum{|cas| cas.c_rmb_money_2}.to_i%>
+                    <%=SysArg.compart2(a11)%>
+                  </td>
+                  <td nowrap>
+                    <%a12=@case.sum{|cas| cas.c_redu_rmb_money_2}.to_i%>
+                    <%=SysArg.compart2(a12)%>
+                  </td>
+                  <td nowrap>
+                    <%a13=@case.sum{|cas| cas.c_re_rmb_money_2}.to_i%>
+                    <%=SysArg.compart2(a13)%>
+                  </td>
+                  <td nowrap>
+                    <%a14=@case.sum{|cas| cas.c_c_2}.to_i%>
+                    <%=SysArg.compart2(a14)%>
+                  </td>
+                  <td  colspan=3>
+
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    通知日期
+                  </td>
+                  <td>
+                    总案号
+                  </td>
+                  <td>
+                    立案号
+                  </td>
+                  <td>
+                    经办人
+                  </td>
+                  <td>
+                    明确争议金额(￥,本请求)
+                  </td>
+                  <td>
+                    不明确争议金额(￥,本请求)
+                  </td>
+                  <td>
+                    无明确争议金额收费(￥,本请求)
+                  </td>
+                  <td>
+                    应收(本请求)
+                  </td>
+                  <td>
+                    减交(本请求)
+                  </td>
+                  <td>
+                    实收(本请求)
+                  </td>
+                  <td>
+                    欠缴(本请求)
+                  </td>
+                  <td>
+                    明确争议金额(￥,反请求)
+                  </td>
+                  <td>
+                    不明确争议金额(￥,反请求)
+                  </td>
+                  <td>
+                    无明确争议金额收费(￥,反请求)
+                  </td>
+                  <td>
+                    应收(反请求)
+                  </td>
+                  <td>
+                    减交(反请求)
+                  </td>
+                  <td>
+                    实收(反请求)
+                  </td>
+                  <td>
+                    欠缴(反请求)
+                  </td>
+                  <td>
+                    案由
+                  </td>
+                  <td>
+                    申请人
+                  </td>
+                  <td>
+                    被申请人
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <tfoot>
+              <tr>
+                <td colspan="8">
+                  <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.previous %>
+                  <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+                  <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.next %>
+
+                  <%if @case_pages.current.previous or @case_pages.current.next%>
+                    <form action="/report_total2/list" method="get" onsubmit="return page_check('page_lines','page');">
+                      每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                      <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+                      <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                      页
+                      <input type=hidden name='order' value="<%=@order%>" />
+                      <input type='submit' value='确定' />
+                    </form>
+                  <%end%>
+                </td>
+              </tr>
+            </tfoot>
+          <%end%>
+        </td></tr></table>
+  </body>
+</html>

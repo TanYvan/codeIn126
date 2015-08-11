@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件 庭审、调解信息维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">庭审和调解信息维护</span></div>
+      <div align="center" class="cDGray">
+        庭审、调解信息维护
+        <%if @remun.empty?%><%=link_to  "批量创建",{:action=>"new_all_2"},:confirm=>"您确认要批量创建吗？"%> <%end%>    <%=link_to  "创建", :action=>"new_2"%>
+        <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              仲裁员类型
+            </th>
+            <th nowrap>
+              仲裁员
+            </th>
+            <th nowrap>
+              工作时间
+            </th>
+            <th nowrap>
+              备注
+            </th>
+            <th nowrap>
+              修改
+            </th>
+            <th nowrap>
+              删除
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <% if @remun !=nil %>
+                  <%for p in @remun%>
+              <tr class="row<%=i % 2%>">
+                <td>
+                  <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{p.typ}'").data_text%>
+                </td>
+                <td>
+                  <%=TbArbitman.find_by_code(p.arbitman).name%>
+                </td>
+                <td>
+                  <%=p.h%>
+                </td>
+                <td>
+                  <%=p.remark%>
+                </td>
+                <td>
+                  <%if  p.rmb==0%>
+                      <%=link_to "修改",:action=>"edit_2",:id=>p%>
+                   <%end%>
+                </td>
+                <td>
+                  <%if  p.rmb==0%>
+                      <%=button_to "删除",{:action=>"delete_2",:id=>p},:confirm=>"您确认要删除吗？"%>
+                  <%end%>
+                </td>
+              </tr>
+              <%i=i+1%>
+      <%end%>
+  <%end%>
+        </tbody>
+      </table>
+
+  <%if flash[:notice]=="批量创建成功" or flash[:notice]=="批量创建失败"%>
+    <script language="javascript">
+     parent.location.href=parent.location.href;
+     parent.location.reload(); 
+    </script>
+  <%end%>
+  </body>
+</html>

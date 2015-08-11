@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>当月业务数据统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">业务数据统计（单位：件、亿元人民币）</span></div>
+    <div align="center">
+      <%form_tag :action=>"list3_1"  do %>
+       立案时间：<%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+      <%end -%>
+    </div>
+    <table border="1" bordercolor="#000000" style="width:60%; border:1px solid #000000; border-collapse: collapse;" cellspacing="0" cellpadding="3">
+      <tr>
+        <td nowrap="nowrap" rowspan="<%=@op.length + 3%>" width="170">立案</td>
+        <td  nowrap="nowrap" colspan="2">国内 </td>
+        <th nowrap="nowrap"><%if @rep1!=0%><%=@rep1 %><%end%></th>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" rowspan="<%=@op.length + 1%>" width="150">涉外 </td>
+        <td  nowrap="nowrap">中诉中 </td>
+        <td  nowrap="nowrap"><%if @rep3!=0%><%=@rep3 %><%end%></td>
+      </tr>
+      <%for op in @op%>
+        <tr>
+          <td  nowrap="nowrap" width="210"><%=op.data_text%></td>
+          <%@rep3_op = TbCase.count(:id,:conditions=>["used='Y' and  state>=4 and state<100  and nowdate>=? and nowdate<=? and (aribitprog_num='0003' or aribitprog_num='0004' or aribitprog_num='0007' or aribitprog_num='0008') and case_type1=?",@d1,@d2,op.data_val])%>
+          <td nowrap="nowrap"><%if @rep3_op!=0%><%=@rep3_op%><%end%></td>
+        </tr>
+      <%end%>
+      <tr>
+        <td nowrap="nowrap" colspan="2">合计 </td>
+        <th  nowrap="nowrap"><%aa=@rep5_1 + @rep1%><%if aa!=0%><%=aa%><%end%></th>
+      </tr>
+      
+      <tr>
+        <td  rowspan="3">简易程序 </td>
+        <td  nowrap="nowrap" colspan="2">国内 </td>
+        <td  nowrap="nowrap"><%if @rep16!=0%><%=@rep16 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" colspan="2">涉外 </td>
+        <td  nowrap="nowrap"><%if @rep17!=0%><%=@rep17 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" colspan="2">合计 </td>
+        <th  nowrap="nowrap"><%a4=@rep16+@rep17 %><%if a4!=0%><%=a4%><%end%></th>
+      </tr>
+      <tr>
+        <td  rowspan="3">普通程序 </td>
+        <td  nowrap="nowrap" colspan="2">国内 </td>
+        <td  nowrap="nowrap"><%if @rep18!=0%><%=@rep18 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" colspan="2">涉外 </td>
+        <td  nowrap="nowrap"><%if @rep19!=0%><%=@rep19 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" colspan="2">合计 </td>
+        <th  nowrap="nowrap"><%a4=@rep18+@rep19 %><%if a4!=0%><%=a4%><%end%></th>
+      </tr>
+
+      <tr>
+        <td  rowspan="3">金融规则程序 </td>
+        <td  nowrap="nowrap" colspan="2">国内 </td>
+        <td  nowrap="nowrap"><%if @rep20!=0%><%=@rep20 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" colspan="2">涉外 </td>
+        <td  nowrap="nowrap"><%if @rep21!=0%><%=@rep21 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" colspan="2">合计 </td>
+        <th  nowrap="nowrap"><%a5=@rep20+@rep21 %><%if a5!=0%><%=a5%><%end%></th>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" rowspan="5">争议金额 </td>
+        <td  nowrap="nowrap" rowspan="2">国内 </td>
+        <td  nowrap="nowrap">本诉 </td>
+        <td  nowrap="nowrap"><%if @rep6!=0%><%=SysArg.compart2(@rep6) %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap">反诉 </td>
+        <td nowrap="nowrap"><%if @rep7!=0%><%=SysArg.compart2(@rep7) %><%end%></td>
+      </tr>
+      <tr>
+        <td nowrap="nowrap" rowspan="2">涉外 </td>
+        <td  nowrap="nowrap">本诉 </td>
+        <td  nowrap="nowrap"><%if @rep8!=0%><%=SysArg.compart2(@rep8) %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap">反诉 </td>
+        <td  nowrap="nowrap"><%if @rep9!=0%><%=SysArg.compart2(@rep9) %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" colspan="2">合计 </td>
+        <th  nowrap="nowrap"><%a2=@rep6+@rep7+@rep8+@rep9 %><%if a2!=0%><%=SysArg.compart2(a2)%><%end%></th>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" rowspan="7">结案 </td>
+        <td  nowrap="nowrap" rowspan="3">国内 </td>
+        <td  nowrap="nowrap">裁决 </td>
+        <td  nowrap="nowrap"><%if @rep10!=0%><%=@rep10 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap">撤案 </td>
+        <td  nowrap="nowrap"><%if @rep11!=0%><%=@rep11 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap">和裁 </td>
+        <td  nowrap="nowrap"><%if @rep12!=0%><%=@rep12 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" rowspan="3">涉外 </td>
+        <td  nowrap="nowrap">裁决 </td>
+        <td  nowrap="nowrap"><%if @rep13!=0%><%=@rep13 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap">撤案 </td>
+        <td  nowrap="nowrap"><%if @rep14!=0%><%=@rep14 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap">和裁 </td>
+        <td  nowrap="nowrap"><%if @rep15!=0%><%=@rep15 %><%end%></td>
+      </tr>
+      <tr>
+        <td  nowrap="nowrap" colspan="2">合计 </td>
+        <th  nowrap="nowrap"><%a3=@rep10+@rep11+@rep12+@rep13+@rep14+@rep15 %><%if a3!=0%><%=a3%><%end%></th>
+      </tr>
+    </table>
+  </body>
+</html>

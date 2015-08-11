@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>管辖权决定统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <table width="100%"><tr><td>
+          <div class="title"><span class="cBlue">管辖权决定统计</span></div>
+
+          <%form_tag :url=>{:action=>"list3_12"} do%>立案时间：
+            <%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+            至
+            <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+            <%=submit_tag "查询" %>
+          <%end%>
+          <i><%=flash[:notice]%></i>
+          <div align="left">管辖权决定数量：<%=@juri.length%>  </div>
+          <br/>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th nowrap>立案号</th>
+                 <th nowrap>立案日期</th>
+                <th nowrap>决定数</th>
+                <!--th nowrap>性别</th>
+                <th nowrap>手机</th>
+                <th nowrap>电话</th>
+                <th nowrap>传真</th-->
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for a in @juri%>
+                <tr class="row<%=i % 2%>">
+                  <td nowrap><%=a.case_code%></td>
+                  <td nowrap><%=a.nowdate%></td>
+                  <td nowrap>
+                    <%j_id=VJurion.count(:id,:conditions=>["nowdate>=? and nowdate<=? and recevice_code=?",@d1,@d2,a.recevice_code]) %>
+                    <%=link_to "#{j_id}",:action=>"list_j",:d1=>@d1,:d2=>@d2,:recevice_code=>a.recevice_code%>
+                  </td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+          </table>
+        </td></tr></table>
+  </body>
+</html>

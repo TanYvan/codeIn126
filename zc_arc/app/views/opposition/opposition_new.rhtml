@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加裁决异议</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+      裁决异议(带<i>*</i>为必填项)  <%=link_to "返回",:action=>"opposition_list",:caseend_book_id=>params[:caseend_book_id]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :opposition ,:url=>{:action=>"opposition_create",:caseend_book_id=>params[:caseend_book_id]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            <i>*</i>异议人：
+          </th>
+          <td>
+            <%=f.text_area(:presenter,:rows=>1)%>
+            <div style="color:red"><%=error_message_on(:opposition,:presenter)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            提出时间:
+          </th>
+          <td>
+            <%=f.text_field(:present_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('opposition_present_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>异议内容:
+          </th>
+          <td>
+            <%=f.text_area(:properties,:rows=>4)%>
+            <div style="color:red"><%=error_message_on(:opposition,:properties)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            征求仲裁庭意见时间:
+          </th>
+          <td>
+            <%=f.text_field(:advance_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('opposition_advance_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th>
+            仲裁庭答复时间:
+          </th>
+          <td>
+            <%=f.text_field(:reply_time,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('opposition_reply_time'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th>
+            处理意见:
+          </th>
+          <td>
+            <%=f.text_area(:opinion,:rows=>4)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            解释或说明:
+          </th>
+          <td>
+            <%=f.text_area(:translate,:rows=>4)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            回复:
+          </th>
+          <td>
+            <%=f.text_area(:revent1,:rows=>4)%>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

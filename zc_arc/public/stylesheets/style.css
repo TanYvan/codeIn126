@@ -1,0 +1,819 @@
+@charset "utf-8";
+/* Document body样式 */
+body  {
+	font-family:"宋体";
+	background-color: #F7FDFC;
+	margin: 0; /* 最好将 body 元素的边距和填充设置为 0 以覆盖不同的浏览器默认值 */
+	padding-left: 1px;
+    padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+	text-align: center; /* 在 IE 5* 浏览器中，这会将容器居中。文本随后将在 #container 选择器中设置为默认左对齐 */
+	color: #000000;
+	font: 13px "宋体";
+    margin-left: 0px;margin-top: 0px;margin-right: 0px;margin-bottom: 0px; /*页面属性*/
+}
+/* 对于*，提醒必填项的样式   niell 2009-5-18*/
+i{color:red;margin:0 5px;font-style:normal;}
+/* CSS Document 基准样式 */  
+div,form,img,ul,ol,li,dl,dt,dd {margin: 0; padding: 0; border: 0; }
+li{list-style-type:none;}
+img{vertical-align:top;}
+strong{font-weight:normal;}
+em {font-style:normal;}
+h1,h2,h3,h4,h5,h6 { margin:0; padding:0;font-size: 13px; font-weight:normal;}
+form{border:none;}
+/* Link 默认链接 */
+a:link {color: #1f3a87; text-decoration:none;font-size: 14px;font-weight:500;}
+a:visited {color: #1f3a87;text-decoration:none;font-size: 14px;font-weight:500;}
+a:hover {color: #bc2931; text-decoration:underline;font-size: 14px;font-weight:500;}
+a:active {color: #bc2931;}
+/* Color 颜色类 */
+.cRed,a.cRed:link,a.cRed:visited{ color:#f00; } /*鲜红色 */
+.cBlue,a.cBlue:link,a.cBlue:visited,a.cBlue:active{color:#1f3a87;}/*暗蓝色 */
+.cDRed,a.cDRed:link,a.cDRed:visited{ color:#bc2931;} /*暗红色 */
+.cGray,a.cGray:link,a.cGray:visited{ color: #4F544D;} /* 深灰色*/
+.cDGray,a.cDGray:link,a.cDGray:visited{ color: #666;} /* 浅灰色*/
+.cWhite,a.cWhite:link,a.cWhite:visited{ color:#fff;} /* top页面白色字体*/
+.cBlack,a.cBlack:link,a.cBlack:visited{color:#000;} /*黑色 */
+a.cBlack:hover{color:#bc2931;}
+.cGreen,a.cGreen:link,a.cGreen:visited{color:#008000;} /*绿色 */
+/* Font 字体类 */
+.fB {font-weight: bold;}
+.f12px{ font-size:13px;}
+/* 其他常用类 */
+.clear{ clear: both; font-size:1px; width:1px; height:0; visibility: hidden; }
+.clearfix:after{content:"."; display:block; height: 0; clear: both; visibility: hidden;} /* only FF */
+.hidden {display: none;}
+/* 表名标题样式 */
+.strong{font-size:15px;font-family:"宋体";color:#0000CC;}
+/* 仲裁员信息维护 修改页面导航链接属性*/
+.strong #link1 a:link{font-size:15px;font-family:"宋体";color:#0000FF; text-decoration:none;}
+.strong #link1 a:visited{font-size:15px;font-family:"宋体";color:#4F544D; text-decoration:none;}
+.strong #link1 a:hover{font-size:15px;font-family:"宋体";color:#bc2931; text-decoration:none;}
+
+/*浮动层定位问题,ralative是指相对定位，就是依据left，right，top，bottom等属性在正常文档流中偏移位置
+,1、当Position属性值为Relative时对象原来占有的位置保留，其后面的对象按原来文档流仍然保持原来的位置
+Top的值表示对象相对原位置向下偏移的距离bottom的值表示对象相对原位置向上偏移的距离两者同时存在时，只有
+Top起作用。left的值表示对象相对原位置向右偏移的距离right的值表示对象相对原位置向左偏移的距离两者同时
+存在时，只有left起作用。*/
+.relative{
+	position: relative;
+}
+/* 登录页面样式*/
+#login_top {
+	background: #1268A1;
+	height: 131px;
+}
+
+#login_content {
+	height: 482px;
+	background: url(/images/picture/login_bj_01.png) repeat-x;
+}
+#conten {
+	background: #0C0;
+	width: 771px;
+	margin-right: auto;
+	margin-left: auto;
+}/* 登录界面图像属性*/
+#login {
+	background: url(/images/picture/login_bj_03.jpg) no-repeat;
+	height: 94px;
+	width: 377px;
+	margin-right: auto;
+	margin-left: auto;
+}
+.high{
+	position: relative;
+	height: 100%;
+	background: #152753;
+}
+#comments_form {
+	width: 288px;
+	float: left;
+	padding-top: 10px;
+}
+#comments_form fieldset {
+	margin: 0px 0px 0px 100px;
+	padding: 0px;
+}
+#comments_form fieldset p {
+	margin: 5px 0px 0px;
+	padding: 0px;
+}
+#comments_form fieldset p input {
+	background: #ACC9D9;
+	border: 1px solid #153966;
+	height: 1em;
+	float: left;
+	margin-bottom: 5px;
+}
+
+#comments_form fieldset p label {
+	font-weight: bold;
+	color: #ACC9D9;
+	float: left;
+	width: 4em;
+	margin-left: 15px;
+	text-align: left;
+}
+fieldset {
+	border-style: none;
+}
+
+#commen_form {
+	width: 80px;
+	float: right;
+	padding-top: 10px;
+}
+#commen_form fieldset {
+	margin: 0px;
+	padding: 0px;
+}
+#commen_form fieldset p {
+	margin: 10px 0px 0px;
+	padding: 0px;
+}
+fieldset {
+	border-style: none;
+}/* 登录界面按钮格式*/
+.button_01{
+	background: url(/images/picture/button_01.jpg) no-repeat;
+	height: 20px;
+	width: 57px;
+	border-style: none;
+	line-height: 20px;
+	color: #ACC9D9;
+	cursor: pointer;
+	}
+/*CSS 总体布局样式*/	
+	.twoColHybLtHdr #container {
+	width: 100%;  /* 这将创建一个占据 80% 浏览器宽度的容器 */
+	background: #B0D1FF; /* 自动边距（与宽度一起）会将页面居中 */
+	border: 0px solid #01479D;
+	text-align: left; /* 这将覆盖 body 元素上的“text-align: center”。 */
+	float: left;
+	margin-top: 0;
+	margin-right: 0;
+	margin-bottom: 0;
+	margin-left: 0;
+	color: #B0D1FF; /* niell 2009-4-20 */
+} 
+
+/*CSS 头部标题样式*/	
+.twoColHybLtHdr #header {
+	background-image: url(/images/picture/main_02.jpg);
+	background-repeat: repeat-x;
+	height: 61px;
+	padding: 0px;
+	float: left;
+	width: 100%;
+} 
+.twoColHybLtHdr #header h1 {
+	margin: 0; /* 使用填充而不使用边距将可以使元素远离 div 的边缘 */
+	background-image: url(/images/picture/main_01.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	height: 55px;
+	width: 730px;
+	float: left;
+	text-indent: -9999px;
+}  /* nov1  span  用于链结导航   niel  2009-8-21*/
+.twoColHybLtHdr #nov1 {
+	background: #F7FDFC;
+    margin-top: 0;
+	height:20px;
+	padding-left: 35px;margin: 0;
+}
+.twoColHybLtHdr  #nov1 span {
+    background: #E7F5FE; 
+	line-height: 30px;
+	height: 30px;
+	margin-right: 10px;
+    font: 14px "宋体";
+}
+.twoColHybLtHdr #nov1 a:link {color: #1f3a87; text-decoration:none;font-size: 15px;}
+.twoColHybLtHdr #nov1 a:visited {color: #1f3a87;text-decoration:none;font-size: 15px;}
+.twoColHybLtHdr #nov1 a:hover {color: #bc2931; text-decoration:underline;font-size: 15px;}
+/* sidebar1 提示：
+1. 由于我们使用的是相对单位，因此最好不要在侧栏中使用填充。它将会增加符合标准的浏览器的总宽，并产生未知的实际宽度。 
+2. 由于 sidebar 值以全方 (em) 为单位，请记住侧栏的宽度将随不同的默认文本大小而变化。
+3. 如果为 div 中的元素设置左边距和右边距，则会在 div 边缘和这些元素之间产生空白，如“.twoColHybLtHdr #sidebar1 p”规则中所示。
+*/
+/*CSS 左侧二级导航栏样式*/
+.twoColHybLtHdr #sidebar1 {
+	float: left;
+	width: 165px;
+	padding-right: 0;
+	padding-bottom: 15px;
+	padding-left: 0;
+	clear: both;
+	background-color: #EBEBEB;
+	background-image: url(//images/picture/picture/main_73.jpg);
+	background-repeat: repeat-y;
+	background-position: left top;
+	height: 500px;
+}
+.twoColHybLtHdr #sidebar1 ul li{
+	background-image: url(/images/picture/main_56.jpg);
+	background-repeat: no-repeat;
+	border: 1px solid #84BBDA;
+	line-height: 21px;
+	text-align: center;
+	height: 21px;
+	width: 154px;
+	font-weight: bold;
+	font-size: 13px;
+	display: block;
+}
+.lili{
+	text-align: left;
+	height: 38px;
+	line-height: 38px;
+	display: block;
+	background-image: url(/images/picture/main_79.jpg);
+	background-repeat: no-repeat;
+	margin-top: 5px;
+	background-position: 10px;
+	padding-left: 45px;
+	margin-bottom: 5px;
+}
+.lili a{
+	display: block;
+	color: #0045A0;
+	margin-right: 10px;
+	height: 23px;
+	font-weight: normal;
+	background-position: 10px;
+}
+.lili a:hover{
+	color: #F90;	
+}
+/* mainContent 提示：
+1. mainContent 和 sidebar1 之间的空白是由 mainContent div 的左边距创建的。无论 sidebar1 div 中包含多少内容，都将保留栏空白。如果您希望在 #sidebar1 中的内容结束时，用 #mainContent div 的文本填充 #sidebar1 空白，则可以删除此左边距。
+2. 请记住，如果在 mainContent div 中放置了过宽的元素，则有可能会导致“浮动下降”（即，侧栏下面非浮动的 mainContent 区域下降）。对于混合布局（总宽基于百分比，侧栏基于全方 (em)），则可能无法计算确切的可用宽度。如果用户的文本大小大于平均值，则侧栏 div 将更宽，因此，mainContent div 中的空间将更小。您应当注意到这种限制，当客户端使用 Contribute 添加内容时尤其如此。
+3. 在下面的 Internet Explorer 条件注释中，zoom 属性用来赋予 mainContent“hasLayout”。这可能会有助于避免若干特定于 IE 的错误。
+*/
+/*CSS 主内容样式*/	
+.twoColHybLtHdr #mainContent {
+	margin-top: -10px;
+	margin-right: 8px;
+	margin-bottom: 0;
+	margin-left: 8px;
+	clear: both;
+	background-color: #FFF;
+} 
+/*CSS 页脚样式*/	
+.twoColHybLtHdr #footer {
+	background-image: url(/images/picture/main_93.jpg);
+	background-repeat: repeat-x;
+	height: 29px;
+} 
+.footer_m{
+	background-image: url(/images/picture/main_91.jpg);
+	background-repeat: no-repeat;
+	height: 29px;
+	background-position: left;
+}
+.footer_w{
+	background-image: url(/images/picture/main_94.jpg);
+	background-repeat: no-repeat;
+	height: 29px;
+	background-position: left;
+}
+.twoColHybLtHdr #footer div div{
+	background-image: url(/images/picture/main_92.jpg);
+	background-repeat: no-repeat;
+	height: 29px;
+	background-position: right;
+}
+/*top页面放置用户信息的按钮样式*/
+#tool {
+	background-image: url(/images/picture/main_05.jpg);
+	background-repeat: no-repeat;
+	float: right;
+	height: 31px;
+	width: 278px; /*281px*/
+	margin-top: 30px;
+}
+#tool ul {
+	padding-left: 40px;
+	padding-top: 5px;
+	}
+#tool ul li {
+	display: block;
+	height: 17px;
+	width: 69px;
+	float: left;
+	margin-right: 10px;
+	line-height: 17px;
+	}
+.tools_01{
+	background-image: url(/images/picture/button_02.jpg);
+	background-repeat: no-repeat;
+	color: #333;
+	}
+#tool ul .tools_01 span {
+	margin-left: 16px;
+}
+
+#tool ul .tools_02 span {
+	margin-left: 16px;
+    font: 13px "宋体";
+}
+#tool ul .tools_02 span a:link{color: #1f3a87; text-decoration:none;font-size: 13px;font-weight:500;}
+#tool ul .tools_02 span a:visited {color: #1f3a87;text-decoration:none;font-size: 13px;font-weight:500;}
+#tool ul .tools_02 span a:hover {color: #bc2931; text-decoration:underline;font-size: 13px;font-weight:500;}
+
+#tool ul .tools_03 span {
+	margin-left: 10px;
+}
+
+.tools_02{
+	background-image: url(/images/picture/button_03.jpg);
+	background-repeat: no-repeat;
+	color: #333;
+	}
+.tools_03{
+	background-image: url(/images/picture/button_04.jpg);
+	background-repeat: no-repeat;
+	color: #FFF;
+    text-align: center; /* niell 2009-4-20 */
+	}
+/*CSS 主菜单、信息提示栏样式*/
+#main_menu{
+	background-image: url(/images/picture/main_37.jpg);
+	background-repeat: repeat-x;
+	height: 35px;
+	float: left;
+	clear: both;
+	width: 100%;
+	}
+	
+#main_menu div {
+	background-image: url(/images/picture/main_36.jpg);
+	background-repeat: no-repeat;
+	height: 35px;
+	width: 100%;
+	}
+	
+#main_menu div div {
+	background-image: url(/images/picture/main_39.jpg);
+	background-repeat: no-repeat;
+	background-position: 0 0px;
+	height: 35px;
+	width: 100%;
+	line-height: 25px;
+	padding-top: 10px;
+	}
+#main_menu div div h2{
+	margin-left: 10px;
+	background-image: url(/images/picture/main_41.jpg);
+	background-repeat: no-repeat;
+	background-position: 7px;
+	padding-left: 30px;
+	font-size: 14px;
+	color: #333;
+	font-weight: bold;
+	display: block;
+	float: left;
+	
+	}
+.txt{
+	font-size: 11px;
+	color: #666;
+	}
+	
+#main_menu div div h2 span {
+	
+	}
+#main_menu div div .infor {
+	padding-left: 40px;
+	background-image: url(/images/picture/main_47.jpg);
+	background-repeat: no-repeat;
+	background-position: 30px 10px;
+	float: left;
+	}
+	
+#main_menu div div .waypath {
+	float: right;
+	margin-right: 80px;
+	padding-top: 3px;
+	}
+#main_menu div div .waypath .arrow{
+	margin-top: 7px;
+	background-image: url(/images/picture/main_44.jpg);
+	background-repeat: no-repeat;
+	margin-left: 10px;
+	padding-left: 10px;
+	}
+/*CSS 主导航栏样式*/	
+#menu{
+	height: 31px;
+	width: 100%;
+	background-image: url(/images/picture/main_07.jpg);
+	background-repeat: repeat-x;
+	}
+#menu ul{
+	float: left;
+	height: 31px;
+	padding-left: 90px;
+	}
+	
+#menu ul li{
+	float: left;
+	line-height: 31px;
+	display: block;
+	margin-right: 5px;
+	padding-right: 5px;
+	padding-left: 30px;
+	}
+	
+#menu ul li a{
+	font-size: 13px;
+	font-weight: bold;
+	color: #DEE9ED;
+	text-decoration: none;	
+	}
+	
+#menu ul li a:hover {color: #F96;} /*橘色*/
+	
+.bt_001{
+	background-image: url(/images/picture/main_12.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+.bt_002{
+	background-image: url(/images/picture/main_14.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+.bt_003{
+	background-image: url(/images/picture/main_16.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+.bt_004{
+	background-image: url(/images/picture/main_18.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+.bt_005{
+	background-image: url(/images/picture/main_20.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+	
+.bt_006{
+	background-image: url(/images/picture/main_22.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+.bt_007{
+	background-image: url(/images/picture/main_24.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+.bt_008{
+	background-image: url(/images/picture/main_26.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}	
+#while{
+	line-height: 31px;
+	background-image: url(/images/picture/main_10.jpg);
+	background-repeat: no-repeat;
+	float: right;
+	height: 31px;
+	width: 248px;
+	color: #DEE9ED;
+	padding-left: 40px;
+}
+#navigate h3{
+	float: left;
+	display: block;
+	background-image: url(/images/picture/main_59.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	color: #FFF;
+	font-weight: bold;
+	padding-left: 30px;
+}
+#navigate ul{
+	float: right;
+	height: 31px;
+	padding-right: 30px;
+	}
+	
+#navigate ul li{
+	float: right;
+	line-height: 31px;
+	display: block;
+	margin-right: 5px;
+	padding-right: 5px;
+	padding-left: 30px;
+	}
+	
+#navigate ul li a{
+	font-size: 13px;
+	font-weight: bold;
+	color: #DEE9ED;
+	text-decoration: none;	
+	}
+	
+#navigate ul li a:hover {
+	color: #F96;
+	}
+	
+.bt_009{
+	background-image: url(/images/picture/main_64.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+.bt_010{
+	background-image: url(/images/picture/main_62.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+.bt_011{
+	background-image: url(/images/picture/main_62.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+.bt_012{
+	background-image: url(/images/picture/main_66.jpg);
+	background-repeat: no-repeat;
+	background-position: 5px;
+	}
+/*main页面标题字样*/
+.title{
+	font-size: 15px;
+	line-height: 24px;
+	color: #333;
+    padding-top: 0px;
+    padding-bottom: 0px;
+	background:#E7F5FE;
+	height: 24px;
+	padding-left: 6px;
+    text-align: left;
+    vertical-align: middle;
+}
+.padding{
+	padding-left: 5px;
+    padding-right: 5px;
+}
+	/** Table 表格样式 **/
+table {font-size: 13px;}
+table.adminlist {
+	border-spacing: 1px;
+	background-color: #F7FDFC; /*#e7e7e7*/
+	color: #666;
+	width: 99%;
+	border-collapse: collapse;
+   /* font-size: 13px; */
+}
+table.adminlist td,
+table.adminlist th {
+        padding: 4px;
+        text-align: center;
+        vertical-align: middle;
+}
+table.adminlist thead th {
+	text-align: left;
+	background: #f0f0f0;
+	color: #333;
+	border-bottom: 1px solid #A7C8CD; 
+	border-left: 1px solid #A7C8CD; 
+    border: 1px solid #A7C8CD;
+    height: 12px;
+}
+table.adminlist thead a:hover { text-decoration: none; }
+
+table.adminlist thead th img { vertical-align: middle; }
+
+table.adminlist tbody th { font-weight: bold;
+    text-align: left;
+}
+
+table.adminlist tbody tr{ background-color: #fff;  text-align: left; }
+table.adminlist tbody tr.row1{background:#F9F9F9 none repeat scroll 0 0; border-top: 1px solid #fff;height: 12px;
+    text-align: left;
+}
+/*不同案件显示颜色*/
+table.adminlist tbody tr.row3{background:#FAE0AB none repeat scroll 0 0; border-top: 1px solid #fff;height: 12px;
+    text-align: left;
+}
+table.adminlist tbody tr.row3 td { background:#FAE0AB; border-top: 0px solid #FFF;
+    text-align: left;
+}
+table.adminlist tbody tr.row4{background:#FEE1E0 none repeat scroll 0 0; border-top: 1px solid #fff;height: 12px;
+    text-align: left;
+}
+table.adminlist tbody tr.row4 td { background:#FEE1E0; border-top: 0px solid #FFF;
+    text-align: left;
+}
+table.adminlist tbody tr.row1 td { background: #f9f9f9; border-top: 0px solid #FFF;
+    text-align: left;
+}
+table.adminlist tbody tr.row0:hover td,
+table.adminlist tbody tr.row1:hover td  { background-color:#FFFFDD;
+    text-align: left;
+}/*鼠标滑过变黄色*/
+
+table.adminlist tbody tr td 	   {
+	height: 10px;
+	background: #fff;
+	border: 1px solid #A7C8CD;
+    text-align: left;
+}
+
+table.adminlist tfoot tr { text-align: left;  color: #333;height: 10px; }
+table.adminlist tfoot td,th{ background-color: #F7FDFC;height: 10px; border: 0px solid #A7C8CD; text-align: center; }
+table.adminlist thead a:link { text-decoration: none;font-size:14px;
+    text-align: left;
+}
+table.adminlist td.order 		{ text-align: left; white-space: nowrap; }
+table.adminlist td.order span { float: left; display: block; width: 20px; text-align: left; }
+
+table.adminlist .pagination { display:table; padding:0;  margin:0 auto;
+    text-align: left;
+}
+/*  此定义为创建、编辑及表单填写的表的样式 niell  2009-4-21*/
+table.list{
+    background-color: #F7FDFC;
+	border-bottom: 1px solid #A7C8CD;
+	border-left: 1px solid #A7C8CD;
+    border: 1px solid #A7C8CD;
+    border-spacing: 1px;
+	color: #666;
+	border-collapse: collapse;
+    margin-left:auto;
+    margin-right:auto;
+}
+table.list tr th {
+    text-align: center;
+    color:#666;
+	border-bottom: 1px solid #A7C8CD;
+	border-left: 1px solid #A7C8CD;
+    border: 1px solid #A7C8CD;
+    height: 20px;
+    width:auto;/**/
+    background-color: #F7FDFC;
+}
+table.list tr td {
+    text-align: left;
+    width:auto;/*350px*/
+    height:15px;
+    border-bottom: 1px solid #A7C8CD;
+	border-left: 1px solid #A7C8CD;
+    border: 1px solid #A7C8CD;
+    white-space: nowrap;
+}
+/* table定义结束   niell 2009-4-21  */
+.pagination div.limit {
+	float: left;
+	height: 22px;
+	line-height: 22px;
+	margin: 0 10px;
+}
+/** table solution for global config **/
+table.noshow   		 { width: 100%; border-collapse: collapse; padding: 0; margin: 0; }
+table.noshow tr 		 { vertical-align: top; }
+table.noshow fieldset { margin: 15px 7px 7px 7px; }
+
+#editor-xtd-buttons { padding: 5px; }
+/*CSS 翻页样式*/
+div.sabrosus {
+	padding-right: 3px; padding-left: 3px; padding-bottom: 3px; margin: 3px; padding-top: 3px; text-align: center
+}
+div.sabrosus a {
+	border-right: #9aafe5 1px solid; padding-right: 5px; border-top: #9aafe5 1px solid; padding-left: 5px; padding-bottom: 2px; border-left: #9aafe5 1px solid; color: #2e6ab1; margin-right: 2px; padding-top: 2px; border-bottom: #9aafe5 1px solid; text-decoration: none;
+}
+div.sabrosus a:hover {
+	border-right: #2b66a5 1px solid; border-top: #2b66a5 1px solid; border-left: #2b66a5 1px solid; color: #000; border-bottom: #2b66a5 1px solid; background-color: #FDFEE0;
+}
+div.pagination a:active {
+	border-right: #2b66a5 1px solid; border-top: #2b66a5 1px solid; border-left: #2b66a5 1px solid; color: #000; border-bottom: #2b66a5 1px solid; background-color: #FDFEE0;
+}
+div.sabrosus span.current {
+	border-right: navy 1px solid; padding-right: 5px; border-top: navy 1px solid; padding-left: 5px; FONT-WEIGHT: bold; padding-bottom: 2px; border-left: navy 1px solid; color: #fff; margin-right: 2px; padding-top: 2px; border-bottom: navy 1px solid; background-color: #2e6ab1;
+}
+div.sabrosus span.disabled {
+	BORDER-RIGHT: #929292 1px solid; padding-right: 5px; border-top: #929292 1px solid;padding-left: 5px; padding-bottom: 2px; border-left: #929292 1px solid; color: #929292; margin-right: 2px; padding-top: 2px; border-bottom: #929292 1px solid;
+}	
+/*CSS 欢迎页样式*/
+#Lorem_1{
+	height: 480px;
+	padding: 3px;
+	margin-left: 350px;
+	background: #FFF url(/images/picture/Welcome_02.jpg) no-repeat right bottom;
+	}
+	
+#summary {
+	float: left;
+	width: 350px;
+	clear: both;
+	height: 450px;
+	background: #FFF url(/images/picture/Welcome_01.jpg) no-repeat right center;
+	padding: 20px 0 15px;
+	}
+	
+#summary p{
+	margin-right: 90px;
+	margin-left: 30px;
+	line-height: 150%;
+	font-weight: bold;
+	}
+    /*  niell 2009-4-21 字体格式设置 */
+p{
+     font-size:13px;
+     color:#000080;
+     margin-top:2px;
+}/* 下拉多选框字体样式*/
+option{
+    color:black;
+    font-size: 13px;
+}
+/*下拉列表样式 */
+select{
+    border-right: #000000 1px solid;
+    border-top: #ffffff 1px solid;
+    font-size: 13px;
+    border-left: #ffffff 1px solid;
+    color:#000000;
+    border-bottom: #000000 1px solid;
+    background-color: #f4f4f4;
+    border-top: #4F4F4F 1px solid;   /*  上边线  */
+    border-left: #4F4F4F 1px solid;   /*  左边线*/
+}
+.LineInput{
+    background: #ffffff;
+    border: 1px solid #b7b7b7;
+    color: #003366;
+    cursor: text;
+    font-family: "arial";
+    font-size: 9pt;
+    height: 18px;
+    padding: 1px;
+}
+
+/*只显一条横线的文本框*/
+.SingleLineInput{
+    border-right: #ffffff 0px solid;
+    border-top: #ffffff 0px solid;
+    font-size: 9pt;
+    border-left: #ffffff 0px solid;
+    border-bottom: #c0c0c0 1px solid;
+    background-color: #ffffff;
+}
+/*提交按钮样式*/
+input[type="submit"] {
+    padding-right:1px;                /* 内边距右*/
+    padding-left: 1px;                /* 内边距 左*/
+    font-size: 13px;                 /* 文字大小*/
+    cursor: pointer;                    /*  鼠标移上去时，变成手形*/
+    padding-top: 1px;                /* 内边距 上*/
+    padding-bottom: 0px;            /* 内边距 下*/
+    border-top: 0px solid;   /*  上边线  */
+    border-left: 0px solid;   /*  左边线*/
+    width:15px;
+    height:20px;
+}
+/*重置按钮格式*/
+input[type="button"] {
+    padding-right:1px;                /* 内边距右*/
+    padding-left: 1px;                /* 内边距 左*/
+    font-size: 13px;                 /* 文字大小*/
+    cursor: pointer;                    /*  鼠标移上去时，变成手形*/
+    color: black;                    /* 颜色黑 （表示文字颜色）*/
+    padding-top: 1px;                /* 内边距 上*/
+    padding-bottom: 0px;            /* 内边距 下*/
+    border-top: 0px solid;   /*  上边线  */
+    border-left: 0px solid;   /*  左边线*/
+}
+input[type="checkbox"]{
+    width:1em;
+    height:1.5em;
+    font-size: 9pt;
+}
+form{
+    display:inline;
+}
+/* 查询字体大小和颜色 */
+.p{
+     font-size:13px;
+     color:#000080;
+}/* 文本输入框*/
+input[type="text"]{
+    width:10em;
+    height:17px;
+}/* 文本区域*/
+input[type="text_area"]{
+   font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+    width: 35em;
+    height: 20em; 
+    overflow: auto;
+    text-align:left;
+}
+

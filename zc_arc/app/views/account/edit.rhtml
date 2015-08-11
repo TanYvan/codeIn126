@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>工作人员帐号信息维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div align="center">
+      <%=link_to "返回",:action=> "list_account_2",:page=>params[:page],:page_lines=>params[:page_lines]%>
+    </div>
+    <br/>
+    <%form_for :user ,:url=>{:action=>"update" ,:id=> @user.id} do |f|%>
+      <table class="list">
+
+        <tr>
+          <th>
+            用户姓名:
+          </th>
+          <td >
+            <%=@user.name%>
+          </td>
+        </tr><tr>
+          <th nowrap>手机:</th>
+          <td><%=@user.mobiletel%></td>
+        </tr>
+        <tr >
+          <th>
+            银行类别:
+          </th>
+          <td >
+            <%=f.select(:bank_typ,[["本地","0001"],["外地","0002"]])%>
+            <div style="color:red"><%=error_message_on(:user,:bank_typ)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            银行帐号:
+          </th>
+          <td >
+            <%=f.text_field(:bankaccount,:style=>"width:30em")%>
+            <div style="color:red"><%=error_message_on(:user,:bankaccount)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            银行名称:
+          </th>
+          <td >
+            <%=f.text_field :bankname,:style=>"width:30em"%>
+            <br/>
+            <div class="cRed">
+              <%="注意：深圳地区仲裁员请输入中行活期帐号或信用卡号，非深圳地区仲裁员请输入开户行名称及帐号或卡号"%>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            身份证号:
+          </th>
+          <td >
+            <%=f.text_field :id_card,:style=>"width:20em"%>
+          </td>
+        </tr>
+
+      </table>
+
+      <br/>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

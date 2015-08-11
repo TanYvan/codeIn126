@@ -1,0 +1,35 @@
+<table cellspacing="1" class="adminlist">
+<thead>
+  <tr >
+    <th nowrap>
+      单位名称
+    </th>
+    <th nowrap>
+      地址
+    </th>
+    
+  </tr>
+</thead>
+<tbody>
+<%if a_l!=nil%>
+  <%i=0%>
+  <%for c in a_l%>
+    <tr class="row<%=i % 2%>">
+      <td>
+        <%=h c.company%>
+        <input type="button" value="复制" onclick="cop('<%=c.company%>','<%=c.addr%>')" />
+      </td>
+      <td>
+        <%=h c.addr %>
+      </td>
+    </tr>          
+    <%i=i+1%>
+
+    <%end%> 
+  
+  <%end%> 
+  
+</tbody>
+</table>
+
+

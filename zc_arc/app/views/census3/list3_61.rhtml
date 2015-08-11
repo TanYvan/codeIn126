@@ -1,0 +1,248 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>结案查询</title>
+    <script src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <div align="center"><%=@d1%>至<%=@d2%>已结案案件</div>
+    <div align="left">案件数量：<%=@endcase.length%>件</div>
+    <table border="1" bordercolor="#000000" style="width:100%; border:1px solid #000000; border-collapse: collapse;" cellspacing="0" cellpadding="3">
+      <tr >
+        <th nowrap>
+          结案时间
+        </th>
+        <th nowrap>
+          结案号
+        </th>
+        <th nowrap>
+          受案号
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+        <th nowrap>
+          案件争议类型
+        </th>
+        <th nowrap>
+          争议金额
+        </th>
+        <th nowrap>
+          实交(申)
+        </th>
+        <th nowrap>
+          实退(申)
+        </th>
+        <th nowrap>
+          实收(申)
+        </th>
+        <th nowrap>
+          实交(被)
+        </th>
+        <th nowrap>
+          实退(被)
+        </th>
+        <th nowrap>
+          实收(被)
+        </th>
+        <th nowrap>
+          仲裁员
+        </th>
+        <th nowrap>
+          经办人
+        </th>
+        <th nowrap>
+          结案方式
+        </th>
+      </tr>
+      <%i=0%>
+      <%for c in @endcase%>
+        <tr class="row<%=i % 2%>">
+          <td nowrap>
+            <%=c.decideDate%>
+          </td>
+          <td nowrap>
+            <%=c.arbitBookNum%>
+          </td>
+          <td nowrap>
+            <%=c.case_code%>
+          </td>
+          <td>
+            <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype=1")%>
+            <%ttpp=''%>
+            <%for tp in @tp%>
+              <%if tp!=nil%>
+                <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+              <%end%>
+            <%end%>
+            <%=ttpp%>
+          </td>
+          <td>
+            <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{c.recevice_code}' and used='Y' and partytype=2")%>
+            <%ttpp=''%>
+            <%for tp in @party2%>
+              <%if tp!=nil%>
+                <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+              <%end%>
+            <%end%>
+            <%=ttpp%>
+          </td>
+          <%@case=TbCase.find_by_recevice_code(c.recevice_code)%>
+          <td nowrap>
+            <%=TbDictionary.find(:first,:conditions=>["typ_code='0002' and data_parent=? and data_val=? and state='Y'",@case.casetype_num,@case.casetype_num2]).data_text%>
+          </td>
+          <td nowrap>
+            <%amount=TbCase.find_by_recevice_code(c.recevice_code).amount%>
+            <%@amount_1 = TbCaseAmountDetail.find(:first,:conditions=>["used='Y' and recevice_code=? and partytype=1 and typ<>'0003' and currency<>'0001'",c.recevice_code])  %>
+            <%if @amount_1!=nil%>
+              <strong><%=SysArg.compart2(amount)%></strong>
+            <%else%>
+              <%=SysArg.compart2(amount)%>
+            <%end%>
+          </td>
+          <td nowrap>
+            <%a_f1=TbShouldCharge.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0001' and (typ='0001' or typ='0004')",c.recevice_code])  %>
+            <%if a_f1==nil%><%a_f1=0%><%end%>
+            <%aa=TbShouldCharge.find(:first,:conditions=>["used='Y' and recevice_code=? and payment='0001' and (typ='0001' or typ='0004') and currency<>'0001'",c.recevice_code])  %>
+            <%if aa!=nil%>
+              <strong><%=SysArg.compart2(a_f1.to_i) %></strong>
+            <%else%>
+              <%=SysArg.compart2(a_f1.to_i) %>
+            <%end%>
+          </td>
+          <td nowrap>
+            <%a_f2=TbShouldRefund.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0001' and (typ='0001' or typ='0004')",c.recevice_code])  %>
+            <%if a_f2==nil%><%a_f2=0%><%end%>
+            <%=SysArg.compart2(a_f2.to_i) %>
+          </td>
+          <td nowrap>
+            <%=SysArg.compart2(a_f1 - a_f2)%>
+          </td>
+          <!--被申请人 -->
+          <td nowrap>
+            <%a_f3=TbShouldCharge.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0002' and (typ='0001' or typ='0004')",c.recevice_code])  %>
+            <%if a_f3==nil%><%a_f3=0%><%end%>
+            <%aa=TbShouldCharge.find(:first,:conditions=>["used='Y' and recevice_code=? and payment='0002' and (typ='0001' or typ='0004') and currency<>'0001'",c.recevice_code])  %>
+            <%if aa!=nil%>
+              <strong><%=SysArg.compart2(a_f3.to_i) %></strong>
+            <%else%>
+              <%=SysArg.compart2(a_f3.to_i) %>
+            <%end%>
+          </td>
+          <td nowrap>
+            <%a_f4=TbShouldRefund.sum(:re_rmb_money,:conditions=>["used='Y' and recevice_code=? and payment='0002' and (typ='0001' or typ='0004')",c.recevice_code])  %>
+            <%if a_f4==nil%><%a_f4=0%><%end%>
+            <%=SysArg.compart2(a_f4.to_i) %>
+          </td>
+          <td nowrap>
+            <%=SysArg.compart2(a_f3 - a_f4)%>
+          </td>
+          <td nowrap>
+            <%if @case.aribitprog_num=='0002' or @case.aribitprog_num=='0004' or @case.aribitprog_num=='0006' or @case.aribitprog_num=='0008'%>
+              独:<%=SysArg.new.independent_arbitrator(c.recevice_code)%>
+            <%else%>
+              首:<%=SysArg.new.chief_arbitrator(c.recevice_code)%><br/>
+              申:<%=SysArg.new.applicant_arbitrator(c.recevice_code)%><br/>
+              被:<%=SysArg.new.respondent_arbitrator(c.recevice_code)%>
+            <%end%>
+          </td>
+          <td nowrap>
+            <%@a=User.find_by_code(@case.clerk)%>
+            <%if @a!=nil%>
+              <%=@a.name%>
+            <%end%>
+          </td>
+          <td nowrap>
+            <%=TbDictionary.find(:first,:conditions=>["typ_code='8117' and state='Y' and data_val=?",c.endStyle]).data_text%>
+          </td>
+        </tr>
+        <%i=i+1%>
+      <%end%>
+      <tr >
+        <th nowrap colspan="6">
+          合计
+        </th>
+        <th nowrap>
+          <%=SysArg.compart2(@amount_all)%>
+        </th>
+        <th nowrap>
+          <%=SysArg.compart2(@a_a1)%>
+        </th>
+        <th nowrap>
+          <%=SysArg.compart2(@a_a2)%>
+        </th>
+        <th nowrap>
+          <%=SysArg.compart2(@a_a12)%>
+        </th>
+        <th nowrap>
+          <%=SysArg.compart2(@a_r1)%>
+        </th>
+        <th nowrap>
+          <%=SysArg.compart2(@a_r2)%>
+        </th>
+        <th nowrap>
+          <%=SysArg.compart2(@a_r12)%>
+        </th>
+        <th nowrap colspan="3">
+        </th>
+      </tr>
+      <tr >
+        <th nowrap>
+          结案时间
+        </th>
+        <th nowrap>
+          结案号
+        </th>
+        <th nowrap>
+          受案号
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+        <th nowrap>
+          案件争议类型
+        </th>
+        <th nowrap>
+          争议金额
+        </th>
+        <th nowrap>
+          实交(申)
+        </th>
+        <th nowrap>
+          实退(申)
+        </th>
+        <th nowrap>
+          实收(申)
+        </th>
+        <th nowrap>
+          实交(被)
+        </th>
+        <th nowrap>
+          实退(被)
+        </th>
+        <th nowrap>
+          实收(被)
+        </th>
+        <th nowrap>
+          仲裁员
+        </th>
+        <th nowrap>
+          经办人
+        </th>
+        <th nowrap>
+          结案方式
+        </th>
+      </tr>
+    </table>
+    <script langugae="javascript">
+      to_word_2();
+      window.close();
+    </script>
+  </body>
+</html>

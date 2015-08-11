@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件选择</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+        案件选择
+      </span></div>
+    <br/>
+    <%=link_to "返回",:action=>"list"%>
+    <table cellspacing="1" class="adminlist" id="to_excel">
+      <thead>
+        <tr >
+          <th nowrap>
+            姓名
+          </th>
+          <th nowrap>
+            称谓
+          </th>
+          <th nowrap>
+            邮编
+          </th>
+          <th nowrap>
+            单位
+          </th>
+          <th nowrap>
+            电话
+          </th>
+          <th nowrap>
+            城市
+          </th>
+          <th nowrap>
+            地址
+          </th>
+          <th nowrap>
+
+          </th>
+          <th nowrap>
+
+          </th>
+          <th nowrap>
+
+          </th>
+          <th nowrap>
+            国家（地区）
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%a = 1%>
+        <%while a<@arr1.length%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap>
+              <%=@arr1[a].partyname%>
+            </td>
+            <td nowrap>
+              <%if @arr1[a].isperson==1%>
+                <%=TbDictionary.find(:first,:conditions=>["state='Y' and typ_code='8141' and data_val=?",@arr1[a].dutyname]).data_text%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%=@arr1[a].postcode%>
+            </td>
+            <td nowrap>
+              <%if @arr1[a].isperson==2%>
+                <%=@arr1[a].partyname%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%=@arr1[a].mobiletel + "     " + @arr1[a].tel%>
+            </td>
+            <td nowrap>
+              <%=Region.find_by_code(@arr1[a].area).name%>
+            </td>
+            <td nowrap>
+              <%=@arr1[a].addr%>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td nowrap>
+              <%if @arr1[a].area!='002' && @arr1[a].area!='003' && @arr1[a].area!='004' && @arr1[a].area.slice(0,3)=="001"%>
+              <%else%>
+                <%=Region.find_by_code(@arr1[a].area).name%>
+              <%end%>
+            </td>
+          </tr>
+          <%i=i+1%>
+          <%a=a+1%>
+        <%end%>
+
+        <%j=0%>
+        <%b=1%>
+        <%while b<@arr2.length%>
+          <tr class="row<%=j % 2%>">
+            <td nowrap>
+              <%=@arr2[b].name%>
+            </td>
+            <td nowrap>
+              <%=@arr2[b].duty%>
+            </td>
+            <td nowrap>
+              <%=@arr2[b].postcode%>
+            </td>
+            <td nowrap>
+              <%=@arr2[b].company%>
+            </td>
+            <td nowrap>
+              <%=@arr2[b].mobiletel%>
+            </td>
+            <td nowrap>
+
+            </td>
+            <td nowrap>
+              <%=@arr2[b].addr%>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td nowrap>
+
+            </td>
+          </tr>
+          <%j=j+1%>
+          <%b=b+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <script langugae="javascript">to_excel(document.getElementById("to_excel"));
+
+    </script>
+  </body>
+</html>

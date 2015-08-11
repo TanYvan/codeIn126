@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <title>Page: <%= controller.action_name %></title>
+    <%= stylesheet_link_tag 'scaffold' %>
+    
+  </head>
+  <body>
+    <br>
+    <div align="center">
+      权限新建
+      <br/>
+      <%= link_to '返回', :action => 'list' %>
+    </div>
+    <p align="center" style="color: green"><%= flash[:notice] %></p>
+    <div align="center">
+      <% form_tag :action => 'create' do %>
+        <%= render :partial => 'form' %>
+        <%= submit_tag "提交" %>
+      <% end %>
+    </div>
+  </body>
+</html>

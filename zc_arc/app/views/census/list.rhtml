@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>基本案件统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">基本案件统计</span></div>
+    <%form_tag :url=>{:action=>"list"} do%>
+      <table align="center"><tr><td nowrap align="right">
+            时间段类型：</td>
+          <td align="left" nowrap> <%=select_tag "datestyle",
+              "<option value='0001'selected>立案时间段</option>
+  <option value='0002' >结案时间段</option>
+  <option value='0003'>立案结案时间段</select>"%>
+
+          </td></tr>
+        <tr><td nowrap align="right">
+            统计时间段：</td>
+          <td align="left" nowrap>
+            <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" />
+            --
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" />
+          </td></tr>
+        <tr><td nowrap align="right">
+            结案与否：</td>
+          <td align="left" nowrap><%=select_tag "endcase",
+              "<option value='001' selected>全部</option>
+  <option value='01' select>是</option>
+  <option value='02'>否</select>"%>
+          </td></tr>
+        <tr><td nowrap align="right">
+            选择统计类型：</td>
+          <td align="left" nowrap><%=select_tag "censustype",
+              "<option value='01'>案件大类</option>
+  <option value='02'>案件小类</option>
+  <option value='03'>依据仲裁协议类型统计</option>
+  <option value='04' selected>总会案件分类</select>"%>
+          </td></tr>
+      </table>
+      <%=submit_tag "查询" %>
+      <input type="button" value="导出excel文档" onclick=to_excel(document.getElementById("to_excel_n")); />
+    <%end%>
+    <br/><br/>
+    <i><%=flash[:notice]%></i>
+    <div class="cGreen">
+      <%if @datestyle==nil%>
+      <%else%>
+        时间段类型：<%=@dispute[@datestyle]%>&nbsp;&nbsp;
+        统计时间段：<%=@date1%>至<%=@date2%>&nbsp;&nbsp;
+        结案与否：<%=@dispute2[@endcase]%>&nbsp;&nbsp;
+        统计类型：<%=@dispute3[@censustype]%>
+      <%end%>
+    </div>
+    <table id="to_excel_n"><tr><td>
+          <%if @censustype==nil%>
+          <%elsif @censustype=='01'%>
+            <table  width="80%"  class="list">
+              <tr bgcolor="#E6F5FF">
+                <td><div align="center">案件类型大分类</div></td>
+                <td><div align="center">数量</div></td>
+                <td><div align="center">百分数(%)</div></td>
+              </tr>
+              <%if @basecensus!=nil%>
+                <%for p in @basecensus%>
+                  <tr>
+                    <td>
+                      <div align="center">
+                        <%dat=TbDictionary.find(:first,:conditions=>"typ_code='0002' and data_val='#{p.casetype_num}' and data_parent='' and state='Y'")%>
+                        <%if dat!=nil%>
+                          <%=dat.data_text%>
+                        <%end%>
+                      </div>
+                    </td>
+                    <td><div align="center"><%=p.num%></div></td>
+                    <td><div align="center">
+                        <%if @total1!=nil%>
+                          <%=(p.num.to_f*10000/@total1.t1.to_f).round/100.0%>%
+                        <%end%>
+                      </div></td>
+                  </tr>
+                <%end%>
+              <%end%>
+            </table>
+          <%elsif @censustype=='02'%>
+            <table width="68%"  class="list">
+              <tr bgcolor="#E6F5FF">
+                <td><div align="center">案件类型小分类</div></td>
+                <td><div align="center">绝对数</div></td>
+                <td><div align="center">百分数(%)</div></td>
+              </tr>
+              <%if @basecensus2!=nil%>
+                <%for p1 in @basecensus2%>
+                  <tr>
+                    <td><div align="center">
+                        <%=TbDictionary.find(:first,:conditions=>"typ_code='0002' and data_val='#{p1.casetype_num2}' and data_parent!='' and state='Y'").data_text%>
+                      </div></td>
+                    <td><div align="center"><%=p1.num2%></div></td>
+                    <td><div align="center">
+                        <%if @total2!=nil%>
+                          <%=(p1.num2.to_f*10000/@total2.t2.to_f).round/100.00 %>%
+                        <%end%>
+                      </div></td>
+                  </tr>
+                <%end%>
+              <%end%>
+            </table>
+          <%elsif @censustype=='03'%>
+            <table  width="68%"  class="list">
+              <tr bgcolor="#E6F5FF">
+                <td><div align="center">依据仲裁协议类型</div></td>
+                <td><div align="center">绝对数</div></td>
+                <td><div align="center">百分数(%)</div></td>
+              </tr>
+              <%if @prom!=nil%>
+                <%for p3 in @prom%>
+                  <tr>
+                    <td><div align="center">
+                        <%=TbDictionary.find(:first,:conditions=>"typ_code='0003' and data_val='#{p3.aribitprotprog_num}' and state='Y'").data_text%>
+                      </div></td>
+                    <td><div align="center"><%=p3.num%></div></td>
+                    <td><div align="center">
+                        <%if @total!=nil%>
+                          <%=(p3.num.to_f*10000/@total.t1.to_f).round/100.00 %>%
+                        <%end%>
+                      </div></td>
+                  </tr>
+                <%end%>
+              <%end%>
+            </table>
+          <%elsif  @censustype=='04'%>
+            <table  width="68%"  class="list">
+              <tr bgcolor="#E6F5FF">
+                <td width="20%" ><div align="center">案件类型</div></td>
+                <td width="20%" ><div align="center">争议类型</div></td>
+                <td width="20%" ><div align="center">普通程序</div></td>
+                <td width="20%" ><div align="center">简易程序</div></td>
+                <td width="20%" ><div align="center">小计</div></td>
+              </tr>
+              <%if @prom!=nil%>
+                <%i=1%>
+                <%for p4 in @prom%>
+                  <tr>
+                    <%if i==1%>
+                      <td rowspan=<%=@prom.size%>>
+                        国内
+                      </td>
+                    <%end%>
+                    <td>
+                      <%=p4.t_casetype_num%> <%=TbDictionary.find(:first,:conditions=>"typ_code='0043' and data_val='#{p4.t_casetype_num}' and state='Y'").data_text%>
+                    </td>
+                    <td><div align="center"><%=p4.num_0001%></div></td>
+                    <td><div align="center"><%=p4.num_0002%></div></td>
+                    <td><div align="center"><%=p4.num_0001.to_i + p4.num_0002.to_i%></div></td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+                <tr>
+                  <td >
+                    小计
+                  </td>
+                  <td></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0001.to_i}%></div></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0002.to_i}%></div></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0001.to_i} + @prom.sum{|pp| pp.num_0002.to_i}%></div></td>
+                </tr>
+                <%i=1%>
+                <%for p4 in @prom%>
+                  <tr>
+                    <%if i==1%>
+                      <td rowspan=<%=@prom.size%>>
+                        涉外
+                      </td>
+                    <%end%>
+                    <td>
+                      <%=p4.t_casetype_num%> <%=TbDictionary.find(:first,:conditions=>"typ_code='0043' and data_val='#{p4.t_casetype_num}' and state='Y'").data_text%>
+                    </td>
+                    <td><div align="center"><%=p4.num_0003%></div></td>
+                    <td><div align="center"><%=p4.num_0004%></div></td>
+                    <td><div align="center"><%=p4.num_0003.to_i + p4.num_0004.to_i%></div></td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+                <tr>
+                  <td >
+                    小计
+                  </td>
+                  <td></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0003.to_i}%></div></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0004.to_i}%></div></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0003.to_i} + @prom.sum{|pp| pp.num_0004.to_i}%></div></td>
+                </tr>
+                <%i=1%>
+                <%for p4 in @prom%>
+                  <tr>
+                    <%if i==1%>
+                      <td rowspan=<%=@prom.size%>>
+                        国内金融
+                      </td>
+                    <%end%>
+                    <td>
+                      <%=p4.t_casetype_num%> <%=TbDictionary.find(:first,:conditions=>"typ_code='0043' and data_val='#{p4.t_casetype_num}' and state='Y'").data_text%>
+                    </td>
+                    <td><div align="center"><%=p4.num_0005%></div></td>
+                    <td><div align="center"><%=p4.num_0006%></div></td>
+                    <td><div align="center"><%=p4.num_0005.to_i + p4.num_0006.to_i%></div></td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+                <tr>
+                  <td >
+                    小计
+                  </td>
+                  <td></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0005.to_i}%></div></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0006.to_i}%></div></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0005.to_i} + @prom.sum{|pp| pp.num_0006.to_i}%></div></td>
+                </tr>
+                <%i=1%>
+                <%for p4 in @prom%>
+                  <tr>
+                    <%if i==1%>
+                      <td rowspan=<%=@prom.size%>>
+                        涉外金融
+                      </td>
+                    <%end%>
+                    <td>
+                      <%=p4.t_casetype_num%> <%=TbDictionary.find(:first,:conditions=>"typ_code='0043' and data_val='#{p4.t_casetype_num}' and state='Y'").data_text%>
+                    </td>
+                    <td><div align="center"><%=p4.num_0007%></div></td>
+                    <td><div align="center"><%=p4.num_0008%></div></td>
+                    <td><div align="center"><%=p4.num_0007.to_i + p4.num_0008.to_i%></div></td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+                <tr>
+                  <td >
+                    小计
+                  </td>
+                  <td></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0007.to_i}%></div></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0008.to_i}%></div></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0007.to_i} + @prom.sum{|pp| pp.num_0008.to_i}%></div></td>
+                </tr>
+                <tr>
+                  <td >
+                    总计
+                  </td>
+                  <td></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0001.to_i + pp.num_0003.to_i + pp.num_0005.to_i + pp.num_0007.to_i}%></div></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0002.to_i + pp.num_0004.to_i + pp.num_0006.to_i + pp.num_0008.to_i}%></div></td>
+                  <td><div align="center"><%=@prom.sum{|pp| pp.num_0001.to_i + pp.num_0003.to_i + pp.num_0005.to_i + pp.num_0007.to_i + pp.num_0002.to_i + pp.num_0004.to_i + pp.num_0006.to_i + pp.num_0008.to_i}%></div></td>
+                </tr>
+              <%end%>
+            </table>
+          <%end%>
+        </td></tr></table>
+  </body>
+</html>

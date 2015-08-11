@@ -1,0 +1,6 @@
+<select id="draftsman_id_<%=pv_all[0]%>" name="draftsman_name_<%=pv_all[0]%>" >
+  <option value=""></option>
+  <%for p in pv_all[1]%>
+    <option value="<%=p.code%>"><%=p.name%></option>
+  <%end%>
+</select>

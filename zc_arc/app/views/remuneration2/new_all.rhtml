@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>批量创建 阅卷信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function su(){
+        obj=document.getElementById("remun_p");
+        if ( /^[0-9]*[1-9][0-9]*$/.test(obj.value) || /^[1-9]d*.d*|0.d*[1-9]d*|0?.0+|0$/.test(obj.value) ) 
+          {     
+          }     
+          else     
+            {    
+              alert("请输入数字！");   
+              return false;    
+            }
+        var commit = document.getElementsByName("commit");
+        for(i=0; i<commit.length; i++)
+        {
+          commit[i].style.display='none';
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  批量创建阅卷信息(带<i>*</i>为必填项)   <%=link_to "返回",:action=>"list"%>
+    </div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :remun ,:url=>{:action=>"create_all"},:html=>{:onsubmit=>"return su();"}   do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            <i>*</i>页数:
+          </th>
+          <td>
+            <%=f.text_field(:p)%>小时
+            <div style="color:red"><%=error_message_on(:remun,:p)%></div>
+          </td>
+        </tr>
+                               
+      </table>
+      <br>
+        <div align="center"><%=submit_tag "提交" %></div>
+
+    <%end%>
+  </body>
+</html>

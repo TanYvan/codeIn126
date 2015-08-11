@@ -1,0 +1,27 @@
+<html>
+  <head><title>word内部函</title>
+    <script language="javascript">   
+      try
+      {
+        try
+        {
+          var myDocApp =new ActiveXObject("word.Application"); 
+          myDocApp.visible = true; 
+          myDocApp.activate(); 
+          var myDoc = myDocApp.documents.open("<%= @file_path%>");   
+          window.close()
+         }
+        catch (e)
+        { 
+          alert("由于客户端 windows api 错误导致word调用出错，请重试生成。如果还是不能解决，请重新启动计算机后再次重试。");
+        }
+      }
+      catch (e)
+      {
+       alert("word调用失败，请把浏览器的安全设置中的【ActiveX控件和插件】相关设置为启用状态。");
+      }
+    </script> 
+  </head>
+  <body>
+  </body>
+</html>

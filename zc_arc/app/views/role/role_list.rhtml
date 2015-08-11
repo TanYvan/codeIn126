@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function aa(){
+        //var b =document.getElementById("institute");
+        a=window.showModalDialog('/role/page_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          a1=a.indexOf('+',0)
+          a2=a.substr(0,a1)
+          a3=a.substr(a1+1,a.length - a1 )
+
+          a4=a3.indexOf('+',0)
+          a5=a3.substr(0,a4)
+
+          a6=a3.substr(a4+1,a3.length - a4 )
+
+          document.getElementById("r_new_url").value=a2
+          document.getElementById("r_new_controllers").value=a5
+          document.getElementById("r_new_actions").value=a6
+        }
+      }
+      function bb(){
+        //var b =document.getElementById("institute");
+        a=window.showModalDialog('/role/page_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          a1=a.indexOf('+',0)
+          a2=a.substr(0,a1)
+          a3=a.substr(a1+1,a.length - a1 )
+
+          a4=a3.indexOf('+',0)
+          a5=a3.substr(0,a4)
+
+          a6=a3.substr(a4+1,a3.length - a4 )
+
+          document.getElementById("r_url").value=a2
+          document.getElementById("r_controllers").value=a5
+          document.getElementById("r_actions").value=a6
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">角色：
+        <%if @session[:role_name]!=nil%>
+          <%=@session[:role_name] + "("+@session[:role_code]+")"%>
+        <%end%>
+    </span></div>
+    <br>
+    <div class="cGray">当前节点：<%=@rrr%>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      增加子节点
+    </div>
+    <%form_for :r_new ,:url=>{:action=>"r_create"} do |f|%>
+      <table class="list">
+        <tr >
+          <th>
+            编码:
+          </th>
+          <td align="left">
+            <%=f.text_field :code%>
+            <div style="color:red"><%=error_message_on(:r_new,:code)%></div>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            名称:
+          </th>
+          <td align="left">
+            <%=f.text_field :name,:style=>"width:20em"%>
+
+            <div style="color:red"><%=error_message_on(:r_new,:name)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            url:
+          </th>
+          <td >
+            <%=f.text_field :url ,:style=>"width:20em",:readonly=>'yes'%>
+            <input type="button" value="选择" onclick="aa()">
+
+            <div style="color:red"><%=error_message_on(:r_new,:url)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            controllers:
+          </th>
+          <td>
+            <%=f.text_field :controllers ,:style=>"width:20em",:readonly=>'yes'%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            actions:
+          </th>
+          <td >
+            <%=f.text_field :actions ,:style=>"width:20em",:readonly=>'yes'%>
+
+            <div style="color:red"><%=error_message_on(:r_new,:actions)%></div>
+          </td>
+        </tr>
+      </table>
+      <%=f.hidden_field :role_code%>
+      <div style="color:red"><%=error_message_on(:r_new,:role_code)%></div>
+      <%=f.hidden_field :parent%>
+      <div style="color:red"><%=error_message_on(:r_new,:parent)%></div>
+      <br>
+      <div align="center"><%=submit_tag "提交" %></div>
+    <%end%>
+    <hr size="2" color="#99CCFF" noshade>
+    <% if @r!=nil%>
+      <div class="cGray">修改当前节点</div>
+      <%form_for :r ,:url=>{:action=>"r_update",:id=>@r.id} do |f|%>
+        <table class="list" class="cDGray">
+
+          <tr >
+            <th>
+              编码:
+            </th>
+            <td align="left">
+              <%if @r_code_read_only=="yes"%>
+                <%=@r.code%>
+              <%else%>
+                <%=f.text_field :code%>
+              <%end%>
+              <div style="color:red"><%=error_message_on(:r,:code)%></div>
+            </td>
+          </tr>
+
+          <tr >
+            <th>
+              名称:
+            </th>
+            <td >
+              <%=f.text_field :name,:style=>"width:20em"%>
+
+              <div style="color:red"><%=error_message_on(:r,:name)%></div>
+            </td>
+          </tr>
+          <tr >
+            <th>
+               url:
+            </th>
+            <td >
+              <%=f.text_field :url ,:style=>"width:20em",:readonly=>'yes'%>
+              <input type="button" value="选择" onclick="bb()">
+              <div style="color:red"><%=error_message_on(:r,:url)%></div>
+
+            </td>
+          </tr>
+
+
+          <tr >
+            <th>
+              controllers:
+            </th>
+            <td >
+              <%=f.text_field :controllers ,:style=>"width:20em" ,:readonly=>'yes'%>
+
+              <div style="color:red"><%=error_message_on(:r,:controllers)%></div>
+            </td>
+          </tr>
+
+          <tr >
+            <th>
+              actions:
+            </th>
+            <td >
+              <%=f.text_field :actions ,:style=>"width:20em",:readonly=>'yes'%>
+            </td>
+          </tr>
+        </table>
+        <br>
+        
+        <%=f.hidden_field :role_code%>
+        <div style="color:red"><%=error_message_on(:r,:role_code)%></div>
+        <%=f.hidden_field :parent%>
+        <div style="color:red"><%=error_message_on(:r,:parent)%></div>
+     
+        <table align="center"><tr><td nowrap>  <%=submit_tag "修改" %></td>
+      <%end%>
+        <td nowrap> 
+          <%if @r_code_read_only!="yes"%> <%=button_to "删除" ,{:action=>:r_del,:id=>@r.id },:confirm=>"您确认要删除吗？"%> <%end%>
+        </td>
+        </tr>
+        </table>
+      
+    <%end%>
+  </body>
+</html>

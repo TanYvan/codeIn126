@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加裁决书管理</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+  <div class="cDGray" align="center">添加 裁决书管理信息   <%=link_to "返回",:action=>"award_list"%>
+  
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :award ,:url=>{:action=>"award_create"}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+           案件编号:
+           </th>
+          <td>
+            <%=f.text_field(:endDate)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_endDate'),'yyyy-MM-dd')" >
+
+          </td>
+        </tr>
+        <tr >
+          <th>
+            机构类别:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8127' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:collegiate,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            助理收到裁决书初稿日:
+          </th>
+          <td>
+            <%=f.text_field(:recedate)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_recedate'),'yyyy-MM-dd')" >
+
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            合议是否达成一致:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8128' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:agree,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th rowspan="2">
+            裁决书稿转其他仲裁员日期:
+          </th>
+          <td>
+            仲裁员1:<%=f.text_field(:refereeA)%>&nbsp;
+            日期：<%=f.text_field(:refereeAdate)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_refereeAdate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <td>
+            仲裁员2:<%=f.text_field(:refereeB)%>&nbsp;
+            日期：<%=f.text_field(:refereeBdate)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_refereeBdate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+
+        <tr >
+          <th rowspan="2">
+            助理收到仲裁员反馈意见日期:
+          </th>
+          <td>
+            仲裁员1:<%=f.text_field(:arbiterA)%>&nbsp;
+            日期：<%=f.text_field(:arbiterAdate)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_arbiterAdate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <td>
+            仲裁员2:<%=f.text_field(:arbiterB)%>&nbsp;
+            日期：<%=f.text_field(:arbiterBdate)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_arbiterBdate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            助理收到裁决最后稿日:
+          </th>
+          <td>
+            <%=f.text_field(:lastDate)%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('award_lastDate'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

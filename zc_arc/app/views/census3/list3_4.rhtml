@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>各开庭地案件数量统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">各开庭地案件数量统计</span></div>
+    <div align="center">
+      <%form_tag :action=>"list3_4"  do %>
+        开庭时间：<%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+      <%end -%>
+    </div>
+    <br/>
+    <table align="center" border="1" bordercolor="#000000" style=" border:1px solid #000000; border-collapse: collapse;" cellspacing="0" cellpadding="3">
+      <tr>
+        <td nowrap>开庭地</td>
+        <td nowrap>案件数量</td>
+      </tr>      
+      <tr>
+        <td nowrap>本会</td>
+        <td nowrap><%if @rep1!=0%><%=@rep1%><%end%></td>
+      </tr>
+      <%for a in @reg_ions%>
+        <%s_n=TbSitting.find_by_sql("select distinct s.recevice_code as ss from tb_sittings as s where s.used='Y' and add_typ='0002' and s.area_code='#{a.code}' and sittingdate>='#{@d1}' and sittingdate<='#{@d2}'")  %>
+        <%if s_n!=nil%>
+          <%if s_n.length!=0%>
+            <tr>
+              <td nowrap>
+                <%=a.name%>
+              </td>
+              <td nowrap>
+                <%=s_n.length%>
+              </td>
+            </tr>
+          <%end%>
+        <%end%>
+      <%end%>
+      <tr>
+        <td nowrap>统计</td>
+        <td nowrap><%rep_2=@rep1+@rep2%><%if rep_2!=0%><%=rep_2%><%end%></td>
+      </tr>
+    </table>
+  </body>
+</html>

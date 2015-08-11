@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>待发报酬信息表</title>
+  <%= javascript_include_tag "prototype" %>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  <script language='JavaScript'>
+      function checkall() {
+        var a='';
+        if (document.getElementsByName("cheall").value=='t')
+        {
+          document.getElementsByName("cheall").value='f';
+        }
+        else
+        {
+          a='true';
+          document.getElementsByName("cheall").value='t';
+        }
+        var chec = document.getElementsByName("che");
+        for(i=0; i<chec.length; i++)
+        {
+          chec[i].checked = a;
+        }
+      }
+      function getcondi(){
+        if(window.confirm('确认发放吗？')) { 
+        }
+        else{
+          return false;
+        }
+        var chec = document.getElementsByName("che");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+',';
+
+        }
+        aa=a.substr(0, a.length -1 )
+        var c = document.getElementById("condi");
+        c.value=aa;
+        
+        var commit = document.getElementsByName("commit");
+        for(i=0; i<commit.length; i++)
+        {
+          commit[i].style.display='none';
+        }
+
+      }
+    </script>
+</head>
+<body>
+   <div class="title"><span class="cBlue">待发报酬信息列表</span></div>
+   
+   <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+   </div>
+   <div align="center">
+      <%=link_to "待发报酬（全部）",{:action=> "list_extend"},:target=>"_blank"%>
+      <%=link_to "待发报酬（本地）",{:action=> "list_extend_a"},:target=>"_blank"%>
+      <%=link_to "待发报酬（外地）",{:action=> "list_extend_b"},:target=>"_blank"%>
+   </div>
+  <div style="color:red"><%=flash[:notice]%></div>
+  <table class="adminlist" cellspacing="1">
+    <thead>
+    <tr> 
+      <th  nowrap>
+        <input type='checkbox'  id='cheall' name='cheall' value='f'  onclick="checkall()"/>
+      </th>
+      <th nowrap>人员类别</th>
+      <th nowrap>姓名</th>
+      <th nowrap>银行类别</th>
+      <th nowrap>银行</th>
+      <th nowrap>账号</th>
+      <th nowrap>身份证号</th>
+      <th nowrap>立案号</th>
+      <th nowrap>类型</th>
+      <th nowrap>应发数额</th>
+      <th nowrap>应扣税款</th>
+      <th nowrap>实发数额</th>  
+      <th nowrap>取消待发</th>  
+    </tr>
+    </thead>
+      <tbody>
+        <%j=0%>
+   <%i=1%>
+   <% if @tb_extends != nil
+    for tb_extend in @tb_extends %>        
+        <tr class="row<%=j % 2%>">
+          <td>
+          <input type='checkbox'  id='che' name='che' value='<%=tb_extend.id%>'>
+         </td>
+          <td nowrap><%=@p_typ2[tb_extend.p_typ]%></td>
+          <td nowrap>
+             <%=tb_extend.p_name%>
+          </td>
+          <td>
+            <%if tb_extend.bank_typ!=nil and tb_extend.bank_typ!=''%>
+              <%=@bank_typ[tb_extend.bank_typ]%>
+            <%end%>
+          </td>
+          <td nowrap><%=  tb_extend.bankname%></td>
+          <td nowrap><%=  tb_extend.bank_account%></td>
+          <td nowrap><%=  tb_extend.id_card%></td>
+          <td nowrap><%=  tb_extend.case_code%></td>
+          <td nowrap>
+           <%if tb_extend.typ=='4' or tb_extend.typ=='5'%>
+             <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{TbRemuneration23.find_by_extend_id(tb_extend.id).typ}'").data_text%>
+           <%else%>
+             <%=@typ2[tb_extend.typ]%>
+           <%end%>
+          </td>
+          <td nowrap><%=  tb_extend.should_rmb%></td>
+          <td nowrap><%=  tb_extend.tax_rmb%></td>
+          <td nowrap><%=  tb_extend.extend_rmb%></td>
+          <td nowrap><%=button_to "取消待发",{:action=>"recall",:id=>tb_extend,:search_condit=>@search_condit,:page=>@extend_pages.current.number},:confirm=>"确信要召回该条待发记录吗？"%></td>
+        </tr>
+        <%i+=1%>
+        <%j=j+1%>
+    <%end%>    
+    <%end%>
+    </tbody>
+  </table>
+  <%form_tag({:action=>'extend_do'},{:onsubmit=>'return getcondi()'}) do %>
+       发放备注：<%=text_field_tag :remark,'',:size=>'100'%>
+       <%=hidden_field_tag :condi,''%>
+       <br/>
+       <%=submit_tag '发放'%>
+   <%end%>
+</body>
+</html>
+

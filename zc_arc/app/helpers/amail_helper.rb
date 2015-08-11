@@ -1,0 +1,2 @@
+module AmailHelper
+end

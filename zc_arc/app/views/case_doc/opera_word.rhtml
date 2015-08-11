@@ -1,0 +1,86 @@
+<html>
+  <head><title>word生成内部函</title>
+    <script language="javascript">
+      try
+      {
+        var myDocApp =new ActiveXObject("word.Application");
+        try
+        {
+          myDocApp.visible = true;
+          myDocApp.activate();
+
+          var myDoc = myDocApp.documents.open("<%=@file_path%>");
+<%if @head_1==1%>
+        myDocApp.Selection.InsertFile("<%=@head_path%>");
+<%end%>
+      //myDoc.save();
+      myDocApp.Selection.Find.ClearFormatting();
+      myDocApp.Selection.Find.Replacement.ClearFormatting();
+
+      var str = "<%=@format_letter_str%>";
+      var arr_of_rp = str.split(";;;");
+      for (rp in arr_of_rp){
+        var records = arr_of_rp[rp].split(",,,");
+        
+        if (records[1].length <= 200){
+          myDocApp.Selection.Find.Execute(records[0], false,false, false, false, false, true, 1, true, records[1], 2);
+        }
+        else{
+          var rec=records[1];
+          var rec2='';
+          while (rec.length > 200){
+            rec2=rec2+rec.slice(0,200) + records[0] + ":::";
+            rec=rec.slice(200); 
+          }
+          rec2=rec2 + rec;
+          var rec2s = rec2.split(":::");
+          for (re in rec2s){
+            myDocApp.Selection.Find.Execute(records[0], false,false, false, false, false, true, 1, true, rec2s[re], 2);
+          }
+
+        }
+
+      }
+
+<%if @head_1==1%>
+        var str_2 = "<%=@format_letter_head1_str%>";
+        var arr_of_rp_2 = str_2.split(";;;");
+        for (rp in arr_of_rp_2){
+          var records = arr_of_rp_2[rp].split(",,,");
+          //  if (records[1] != "no"){
+          myDocApp.Selection.Find.Execute(records[0], false,false, false, false, false, true, 1, true, records[1], 2);
+          // }
+
+        }
+<%end%>  
+      myDoc.save();
+      //window.close()
+    }
+    catch (e)
+    {
+      alert("由于客户端 windows api 错误导致word调用出错，请重试生成。如果还是不能解决，请重新启动计算机后再次重试。");
+    }
+
+
+
+  }
+  catch (e)
+  {
+    alert("word调用失败，请把浏览器的安全设置中的【ActiveX控件和插件】相关设置为启用状态。");
+  }
+
+
+
+    </script>
+  </head>
+  <body>
+    正在打开word文档。。。。。。。。。。。。。。
+    <form id="form1" action="" method="post" name="form1" target="_self">
+    </form>
+    <script language="javascript">
+      document.getElementById("form1").action="/case_doc/opera?id=<%=params[:id]%>&recevice_code=<%=params[:recevice_code]%>&search_condit=<%=params[:search_condit]%>&order=<%=params[:order]%>&page=<%=params[:page]%>";
+      document.getElementById("form1").submit();
+    </script>
+    <%#=@format_letter_str%>
+  </body>
+</html>

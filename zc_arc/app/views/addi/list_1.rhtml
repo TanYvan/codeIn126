@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件选择</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script language="JavaScript">
+      function checkall() {
+        var a='';
+        if (document.getElementById("cheall").value=='t' )
+        {
+          document.getElementById("cheall").value='f';
+        }
+        else
+        {
+          a='true';
+          document.getElementById("cheall").value='t';
+        }
+        var chec = document.getElementsByName("che");
+        for(i=0; i<chec.length; i++)
+        {
+          chec[i].checked = a;
+        }
+      }
+
+      function getcondi()
+      {
+        var chec = document.getElementsByName("che");
+        var a='';
+        for(i=0; i<chec.length; i++)
+        {
+          if (chec[i].checked == true)
+            a=a+chec[i].value+',';
+        }
+        aa=a.substr(0, a.length -1 )
+        var c = document.getElementById("condi_k");
+        c.value=aa;
+        var cc = document.getElementById("condi_s");
+        cc.value=aa;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">
+        案件选择
+    </span></div>
+    <br/>
+    <%=link_to "返回",:action=>"list"%>
+    <table cellspacing="1" class="adminlist" id="to_excel">
+      <thead>
+        <tr >
+          <th>
+            <input type='checkbox' id='cheall' name='cheall' value='f' onclick = "checkall()"  />
+          </th>
+          <th nowrap>
+            姓名
+          </th>
+          <th nowrap>
+            称谓
+          </th>
+          <th nowrap>
+            邮编
+          </th>
+          <th nowrap>
+            单位
+          </th>
+          <th nowrap>
+            电话
+          </th>
+          <th nowrap>
+            城市
+          </th>
+          <th nowrap>
+            地址
+          </th>
+          <th nowrap>
+
+          </th>
+          <th nowrap>
+
+          </th>
+          <th nowrap>
+
+          </th>
+          <th nowrap>
+            国家（地区）
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for p in @party%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <input type='checkbox' id='che' name='che' value="a<%=p.id%>" />
+            </td>
+            <td nowrap>
+              <%=p.partyname%>
+            </td>
+            <td nowrap>
+              <%if p.isperson==1%>
+                <%=TbDictionary.find(:first,:conditions=>["state='Y' and typ_code='8141' and data_val=?",p.dutyname]).data_text%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%=p.postcode%>
+            </td>
+            <td nowrap>
+              <%if p.isperson==2%>
+                <%=p.partyname%>
+              <%end%>
+            </td>
+            <td nowrap>
+              <%= p.mobiletel + "  " + p.tel%>
+            </td>
+            <td nowrap>
+              <%=Region.find_by_code(p.area).name%>
+            </td>
+            <td nowrap>
+              <%=p.addr%>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td nowrap>
+              <%if p.area!='002' and p.area!='003' and p.area!='004' and p.area.slice(0,3)=="001"%>
+                
+              <%else%>
+                <%=Region.find_by_code(p.area).name%>
+              <%end%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+
+        <%j=0%>
+        <%for a in @tbagent%>
+          <tr class="row<%=j % 2%>">
+            <td>
+              <input type='checkbox' id='che' name='che' value="b<%=a.id%>" />
+            </td>
+            <td nowrap>
+              <%=a.name%>
+            </td>
+            <td nowrap>
+              <%=a.duty%>
+            </td>
+            <td nowrap>
+              <%=a.postcode%>
+            </td>
+            <td nowrap>
+              <%=a.company%>
+            </td>
+            <td nowrap>
+              <%=a.mobiletel+ "  " + a.tel%>
+            </td>
+            <td nowrap>
+
+            </td>
+            <td nowrap>
+              <%=a.addr%>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td nowrap>
+
+            </td>
+          </tr>
+          <%j=j+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <table align="center">
+      <tr>
+        <td>
+              <%form_tag({:action=>'list_2'},{:onsubmit=>'getcondi()'},:target=>"_black") do %>
+              <%=hidden_field_tag :condi_k ,''%>
+              <%=submit_tag '生成Excel文档'%>
+            <%end%>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

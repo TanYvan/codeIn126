@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>中外籍仲裁员数量统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">中外籍仲裁员数量统计</span></div>
+    <div align="center">
+      <%form_tag :action=>"list3_5"  do %>
+        仲裁员选择日期：<%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+      <%end -%>
+    </div>
+    <br/>
+    <table align="center" border="1" bordercolor="#000000" style=" border:1px solid #000000; border-collapse: collapse;" cellspacing="0" cellpadding="3">
+      <tr>
+        <td nowrap>仲裁员籍别</td>
+        <td nowrap>仲裁员数量</td>
+      </tr>
+        <tr>
+          <td nowrap>
+            国内
+          </td>
+          <td nowrap>
+            <%=@i%>
+          </td>
+        </tr>
+      <tr>
+          <td nowrap>
+            国外以及香港、澳门、台湾地区
+          </td>
+          <td nowrap>
+            <%=@j%>
+          </td>
+        </tr>
+      <tr>
+          <td nowrap>
+             合计
+          </td>
+          <td nowrap>
+            <%=@j + @i%>
+          </td>
+        </tr>
+    </table>
+  </body>
+</html>

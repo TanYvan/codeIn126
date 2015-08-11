@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>适用规则项目统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">适用规则项目统计</span></div>
+    <div align="center">
+      <%form_tag :action=>"list3_2"  do %>
+        立案日期：<%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+      <%end -%>
+    </div>
+    <br/>
+    <table align="center" border="1" bordercolor="#000000" style=" border:1px solid #000000; border-collapse: collapse;" cellspacing="0" cellpadding="3">
+      <tr>
+        <td nowrap="nowrap">适用规则项目</td>
+        <td nowrap>案件数量 </td>
+      </tr>
+      <%for a in @ap_rule%>
+        <tr>
+          <td nowrap>
+            <%=a.data_text%>
+          </td>
+          <td nowrap>
+            <%=TbCase.count(:id,:conditions=>["used='Y' and app_rules=? and nowdate>=? and nowdate<=?",a.data_val,@d1,@d2])  %>
+          </td>
+        </tr>
+      <%end%>
+      <tr>
+        <td nowrap="nowrap">合计</td>
+        <td nowrap><%=@ap_num%> </td>
+      </tr>
+    </table>
+  </body>
+</html>

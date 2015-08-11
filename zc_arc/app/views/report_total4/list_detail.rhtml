@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>裁决案件办案平均时间</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">裁决案件办案平均时间</span></div>
+    <table  cellspacing="1" class="adminlist">
+        <tr>
+          <th colspan="9">
+            <%=@typ_t[@typ]%>: <%=@d1%>至<%=@d2%>办案平均时间
+          </th>
+        </tr>
+        <tr>
+          <td >
+            立案号
+          </td>
+          <td nowrap>
+            总案号
+          </td>
+          <td nowrap>
+            结案号
+          </td>
+          <td nowrap>
+            申请人
+          </td>
+          <td nowrap>
+            被申请人
+          </td>
+          <td nowrap>
+            立案时间
+          </td>
+          <td nowrap>
+            组庭时间
+          </td>
+          <td nowrap>
+            开庭时间
+          </td>
+          <td nowrap>
+            结案时间
+          </td>
+        </tr>
+        <%for c in @case%>
+          <tr >
+            <td >
+              <%=c.case_code%>
+            </td>
+            <td>
+              <%=c.general_code%>
+            </td>
+            <td>
+              <%=c.end_code%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%ttpp=ttpp + tp.partyname + " <br>" %>
+              <%end%>
+              <%if ttpp!=''%>
+                <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+              <%end%>
+              <%=ttpp%>
+            </td>
+            <td>
+              <%=c.nowdate.to_s %>
+            </td>
+            <td>
+              <%=c.orgdate.to_s %>
+            </td>
+            <td>
+              <%=c.sittingdate.to_s %>
+            </td>
+            <td>
+              <%=c.decideDate.to_s %>
+            </td>
+          </tr>
+        <%end%>
+      </table>  
+  </body>
+</html>

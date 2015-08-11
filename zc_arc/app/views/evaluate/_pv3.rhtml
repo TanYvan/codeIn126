@@ -1,0 +1,11 @@
+<%#=select(:evaluate_arbitman,pv3.collect{|p|[p.name,p.code]})%>
+
+<select id ="evaluate_arbitman_id_<%=pv3[0]%>">
+  <%for p in pv3[1]%>
+    <option value=<%=p.code%>>
+      <%=p.name%>
+    </option>
+  <%end%>
+</select>
+
+

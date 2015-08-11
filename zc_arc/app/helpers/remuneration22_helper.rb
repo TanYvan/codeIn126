@@ -1,0 +1,2 @@
+module Remuneration22Helper
+end

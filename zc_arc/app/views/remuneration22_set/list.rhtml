@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>案件 仲裁员和助理的其它办案报酬</title>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  <%if session[:recevice_code_2]==nil%>
+    <script language="javascript">
+      window.open("/case_p/list_2?contr_r=remuneration22_set&act_r=list","mainFrame")
+    </script>
+  <%end%>
+</head>
+<body>
+<div class="title"><span class="cBlue">仲裁员和助理的其它办案报酬</span></div>
+<div align="center">
+  <%if @case==nil%>
+    请选择您要办理的案件
+  <%end%>
+  <%=button_to "案件选择", :controller=>'case_p',:action=>"list_2",:contr_r=>"remuneration22_set",:act_r=>"list"%>
+  <br>
+  <%if @case!=nil%>
+    当前案件
+  </div>
+  <table cellspacing="1" class="adminlist">
+    <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <%=h @case.recevice_code%>
+        </td>
+        <td>
+          <%=h @case.receivedate%>
+        </td>
+        <td>
+          <%=h @case.case_code%>
+        </td>
+        <td>
+          <%=h @case.nowdate%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+      </tr>         
+    </tbody>
+  </table>
+  <br>
+  <br>
+  <hr size="1" color="#99CCFF" noshade>
+  <br>
+  <div align="center" class="cDGray">
+    仲裁员和助理的其它办案报酬
+    <div style="color:red"><%=flash[:notice]%></div>
+  </div>
+  <table cellspacing="1" class="adminlist">
+  <thead>
+    <tr >
+      <th nowrap>
+        人员类型
+      </th>
+      <th nowrap>
+        人员
+      </th>
+      <th nowrap>
+        事项
+      </th>
+      <th nowrap>
+        工作量
+      </th>
+      <th nowrap>
+        金额
+      </th>
+      <th nowrap>
+        类别和档次
+      </th>
+      <th nowrap>
+        备注
+      </th>
+      <th nowrap>
+        修改
+      </th>
+      <th nowrap>
+        删除
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  <%i=0%>
+  <%for p in @remun%>
+    <tr class="row<%=i % 2%>">
+      <td>
+        <%=@p_typ[p.p_typ]%>
+      </td>
+      <td>
+        <%if p.p_typ=='0001'%>
+            <%=TbArbitman.find_by_code(p.p).name%>
+        <%else%>
+            <%=User.find_by_code(p.p).name%>
+        <%end%>
+      </td>
+      <td>
+        <%=TbDictionary.find(:first,:conditions=>"typ_code='0049' and data_val='#{p.obj_typ}'").data_text%>
+      </td>
+      <td>
+        <%=p.obj_num%>
+      </td>
+      <td>
+        <%=p.rmb%>
+      </td>
+      <td>
+        <%=p.grade%>
+      </td>
+      <td>
+        <%=p.remark%>
+      </td>
+      <td>
+        <%if TbBonusPenalty.find(:first,:conditions=>"recevice_code='#{session[:recevice_code_2]}' and typ='#{p.p_typ}' and p='#{p.p}' and used='Y' and extend_code=''")!=nil %>
+          <%=link_to "修改",:action=>"edit",:id=>p%>
+        <%end%>
+      </td>
+      <td>
+        <%if TbBonusPenalty.find(:first,:conditions=>"recevice_code='#{session[:recevice_code_2]}' and typ='#{p.p_typ}' and p='#{p.p}' and used='Y' and extend_code=''")!=nil %>
+          <%=button_to "删除",{:action=>"delete",:id=>p},:confirm=>"您确认要删除吗？"%>
+        <%end%>
+      </td>
+    </tr>
+    <%i=i+1%>
+  <%end%>
+  </tbody>
+  </table>
+<%end%>
+</body>
+</html>

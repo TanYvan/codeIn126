@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员人案统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <table width="100%"><tr><td>
+          <div class="title"><span class="cBlue">仲裁员人案统计</span></div>
+          <br/>
+          <div align="left">仲裁员数量：<%=@arbitman_case.length%>  </div>
+          <br/>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th >仲裁员姓名</th>
+                <th>在办案<br/>件数量</th>
+                <th>已结案<br/>件数量</th>
+                <th  nowrap>性别</th>
+                <th   nowrap>手机</th>
+                <th   nowrap>电话</th>
+                <th   nowrap>传真</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for a in @arbitman_case%>
+                <tr class="row<%=i % 2%>">
+                  <td nowrap><%=a.name%></td>
+                  <td   nowrap>
+                    <%a1=VArbitmanCase.count(:recevice_code,:conditions=>["state>=4 and state<100 and code=? and end_code=''",a.code]) %>
+                    <%if a1!=0%>
+                      <%=link_to "#{a1}",:action=>"list3_a1",:code=>a.code%>
+                    <%else%>
+                      <%=a1%>
+                    <%end%>
+                  </td>
+                  <td nowrap>
+                    <%a2=VArbitmanCase.count(:recevice_code,:conditions=>["code=? and end_code<>''",a.code]) %>
+                    <%if a2!=0%>
+                      <%=link_to "#{a2}",:action=>"list3_a2",:code=>a.code%>
+                    <%else%>
+                      <%=a2%>
+                    <%end%>
+                  </td>
+                  <td  nowrap><%=a.sex %></td>
+                  <td   nowrap><%=a.mobiletel %></td>
+                  <td   nowrap><%=a.telh %></td>
+                  <td   nowrap><%=a.fax %></td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+          </table>
+        </td></tr></table>
+    <div align="center">
+      <%form_tag({:action=>'list3_91'},:target=>"_black") do %>
+        <%=submit_tag '生成word文档'%>
+      <%end%>
+    </div>
+
+  </body>
+</html>

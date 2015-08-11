@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>当事人</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">当事人</div></span></div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          是否个人
+        </th>
+        <th nowrap>
+          类别
+        </th>
+        <th nowrap>
+          法定代表人/负责人
+        </th>
+        <th nowrap>
+          名称
+        </th>
+        <th nowrap>
+          联系地址
+        </th>
+        <th nowrap>
+          联系电话
+        </th>
+       <th nowrap>
+          email
+        </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @party%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%if p.isperson!=nil%>
+            <%=@isperson[p.isperson]%>
+          <%end%>
+        </td>
+        <td>
+          <%if p.partytype==1%>
+            申请人
+          <%else%>
+            被申请人
+          <%end%>
+        </td>
+        <td>
+          <%=p.commissary%>
+        </td>
+        <td>
+          <%=p.partyname%>
+        </td>
+        <td>
+          <%=p.addr%>
+        </td>
+        <td>
+          <%=p.tel%>
+        </td>
+        <td>
+          <%=p.email%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"party_edit",:id=>p,:recevice_code=>params[:recevice_code]%>
+        </td>
+        <td>
+          <%if TbCase.find_by_recevice_code(params[:recevice_code]).clerk_2==session[:user_code_2] or TbCase.find_by_recevice_code(params[:recevice_code]).clerk==session[:user_code_2]%>
+            <%=button_to "删除",{:action=>"party_delete",:id=>p,:recevice_code=>params[:recevice_code]},:confirm=>"您确认要删除吗？"%>
+          <%end%>
+        </td>
+      </tr>
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <br>
+    <%if TbCase.find_by_recevice_code(params[:recevice_code]).clerk_2==session[:user_code_2] or TbCase.find_by_recevice_code(params[:recevice_code]).clerk==session[:user_code_2]%>
+       <%=link_to  "创建", :action=>"party_new",:recevice_code=>params[:recevice_code]%>
+    <%end%>
+    <div style="color:red"><%=flash[:notice]%></div>
+  </body>
+</html>

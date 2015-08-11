@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>争议金额统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">争议金额统计</span></div>
+    <div align="center">
+      <%form_tag ({:action=>"list"})  do %>
+          <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+    <%end %>
+    </div>
+    <%if @typ!=nil %>
+      <table  cellspacing="1" class="adminlist">
+        <tr>
+          <th colspan="10">
+            立案时间：<%=@d1%>至<%=@d2%>争议金额统计
+          </th>
+        </tr>
+        <tr>
+          <td >
+            仲裁类型
+          </td>
+          <td nowrap>
+            总争议金额
+          </td>
+          <td nowrap>
+            1千万以下
+          </td>
+          <td nowrap>
+            1千万-5千万之间
+          </td>
+          <td nowrap>
+            5千万以上
+          </td>
+        </tr>
+        <%for typ in @typ%>
+          <tr >
+            <td >
+              <%=typ.data_text%>
+            </td>
+            <td>
+              <%a=TbCase.sum("amount",:conditions=>"used='Y' and  state>=4 and aribitprog_num='#{typ.data_val}' and nowdate>='#{@d1}' and nowdate<='#{@d2}'")%>
+              <%if a==nil%>
+                <%a=0%>
+              <%else%>
+                <%=SysArg.compart2(a.to_f)%>
+              <%end%>
+              <%#=link_to "#{SysArg.compart2(a)}",:action=>"every_case",:aribitprog_num=>typ.data_val,:d1=>@d1,:d2=>@d2%>
+            </td>
+            <td>
+              <%b=TbCase.count("used='Y' and  state>=4  and amount<10000000  and aribitprog_num='#{typ.data_val}' and nowdate>='#{@d1}' and nowdate<='#{@d2}'")%>
+              <%if b==nil%>
+                <%b=0%>
+              <%end%>
+              <%#=b%>
+              <%=link_to "#{SysArg.compart2(b)}",:action=>"every_case1",:aribitprog_num=>typ.data_val,:d1=>@d1,:d2=>@d2%>
+            </td>
+            <td>
+              <%c=TbCase.count("used='Y' and  state>=4  and amount>=10000000 and amount<50000000 and aribitprog_num='#{typ.data_val}' and nowdate>='#{@d1}' and nowdate<='#{@d2}'")%>
+              <%if c==nil%>
+                <%c=0%>
+              <%end%>
+              <%#=c%>
+              <%=link_to "#{SysArg.compart2(c)}",:action=>"every_case2",:aribitprog_num=>typ.data_val,:d1=>@d1,:d2=>@d2%>
+            </td>
+            <td>
+              <%d=TbCase.count("used='Y' and  state>=4  and amount>=50000000 and aribitprog_num='#{typ.data_val}' and nowdate>='#{@d1}' and nowdate<='#{@d2}'")%>
+              <%if d==nil%>
+                <%d=0%>
+              <%end%>
+              <%=link_to "#{SysArg.compart2(d)}",:action=>"every_case3",:aribitprog_num=>typ.data_val,:d1=>@d1,:d2=>@d2%>
+            </td>
+          </tr>
+        <%end%>
+        <tr>
+          <td nowrap>
+            总计
+          </td>
+          <td>
+              <%a=TbCase.sum("amount",:conditions=>"used='Y' and  state>=4 and nowdate>='#{@d1}' and nowdate<='#{@d2}'")%>
+              <%if a==nil%>
+                <%#a=0%>
+              <%end%>
+              <%=SysArg.compart2(a)%>
+            </td>
+            <td>
+              <%b=TbCase.count("used='Y' and  state>=4  and amount<10000000  and nowdate>='#{@d1}' and nowdate<='#{@d2}'")%>
+              <%if b==nil%>
+                <%b=0%>
+              <%end%>
+              <%=b%>
+            </td>
+            <td>
+              <%c=TbCase.count("used='Y' and  state>=4  and amount>=10000000 and amount<50000000  and nowdate>='#{@d1}' and nowdate<='#{@d2}'")%>
+              <%if c==nil%>
+                <%c=0%>
+              <%end%>
+              <%=c%>
+            </td>
+            <td>
+              <%d=TbCase.count("used='Y' and  state>=4  and amount>=50000000   and nowdate>='#{@d1}' and nowdate<='#{@d2}'")%>
+              <%if d==nil%>
+                <%d=0%>
+              <%end%>
+              <%=d%>
+            </td>
+        </tr>
+      </table>
+    <%end%>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件发文</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <table>
+      <tr><td nowrap align="right">案件咨询号:</td><td nowrap align="left"><%=@doc.recevice_code%></td></tr>
+      <tr><td nowrap align="right">文件编号:</td><td nowrap align="left"><%=@doc.file_code%></td></tr>
+      <tr><td nowrap align="right">函件类型:</td><td nowrap align="left"><%=TbDocFormat.find_by_code(@doc.typ_code).name%></td></tr>
+    </table>
+    <table><tr><td nowrap>
+          <div class="title"><span class="cBlue">文件保存记录</span></div>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr >
+                <th nowrap>
+                  文件名称
+                </th>
+                <th nowrap>
+                  版本号
+                </th>
+                <th nowrap>
+                  保存人
+                </th>
+                <th nowrap>
+                  保存时间
+                </th>
+                <th nowrap>
+                  文件类型
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for p in @change%>
+                <tr class="row<%=i % 2%>">
+                  <td>
+                    <%=p.file_name%>
+                  </td>
+                  <td>
+                    <%=p.num%>
+                  </td>
+                  <td>
+                    <%if p.u!=nil and p.u!=''%>
+                      <%=User.find_by_code(p.u).name%>
+                    <%end%>
+                  </td>
+                  <td>
+                    <%=p.t.to_s(:db)%>
+                  </td>
+                  <td>
+                    <%=@fff[p.fff]%>
+                  </td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+          </table>
+    </td></tr></table>
+  </body>
+</html>

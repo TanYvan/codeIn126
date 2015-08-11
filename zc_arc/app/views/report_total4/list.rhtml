@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>裁决案件办案平均时间统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">裁决案件办案平均时间统计</span></div>
+    <div align="center">
+      <%form_tag ({:action=>"list"})  do %>
+        <%=select_tag(:typ,options_for_select([["立案时间","1"],["结案时间","2"]],@typ))%>
+          <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+    <%end %>
+    </div>
+    <%if @zl!=nil%>
+      <%pt=PubTool.new%>
+      <table  cellspacing="1" class="adminlist">
+        <tr>
+          <th colspan="10">
+            <%=@typ_t[@typ]%>: <%=@d1%>至<%=@d2%>办案平均时间统计
+          </th>
+        </tr>
+        <tr>
+          <td >
+            名称
+          </td>
+          <td nowrap>
+            案件数量
+          </td>
+          <td nowrap>
+            立案－组庭
+          </td>
+          <td nowrap>
+            组庭－开庭
+          </td>
+          <td nowrap>
+            开庭－结案
+          </td>
+          <td nowrap>
+            组庭－结案
+          </td>
+          <td nowrap>
+            立案－结案
+          </td>
+        </tr>
+        <%for zl in @zl%>
+          <tr >
+            <td >
+              <%=link_to zl.name,{:action=>"list_detail",:zl=>zl.code,:typ=>@typ,:d1=>@d1,:d2=>@d2},:target=>"_blank"%>
+            </td>
+            <td>
+              <%=zl.c%>
+            </td>
+            <td>
+              <%=pt.round_2(zl.d1.to_f / zl.c.to_i)%>
+            </td>
+            <td>
+              <%=pt.round_2(zl.d2.to_f / zl.c.to_i)%>
+            </td>
+            <td>
+              <%=pt.round_2(zl.d3.to_f / zl.c.to_i) %>
+            </td>
+            <td>
+              <%=pt.round_2(zl.d4.to_f / zl.c.to_i) %>
+            </td>
+            <td>
+              <%=pt.round_2(zl.d5.to_f / zl.c.to_i) %>
+            </td>
+          </tr>
+        <%end%>
+          <tr>
+            <td colspan='2'>
+              平均
+            </td>
+            <%ccc=@zl.sum{|z| z.c.to_i}%>
+            <td nowrap>
+              <%=pt.round_2(@zl.sum{|z| z.d1.to_f} / ccc)%>
+            </td>
+            <td nowrap>
+              <%=pt.round_2(@zl.sum{|z| z.d2.to_f} / ccc)%>
+            </td>
+            <td nowrap>
+              <%=pt.round_2(@zl.sum{|z| z.d3.to_f} / ccc)%>
+            </td>
+            <td nowrap>
+              <%=pt.round_2(@zl.sum{|z| z.d4.to_f} / ccc)%>
+            </td>
+            <td nowrap>
+              <%=pt.round_2(@zl.sum{|z| z.d5.to_f} / ccc)%>
+            </td>
+          </tr>
+      </table>
+    <%end%>
+  </body>
+</html>

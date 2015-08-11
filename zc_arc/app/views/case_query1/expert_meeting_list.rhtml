@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>专家会议纪要</title>
+  <%= javascript_include_tag "prototype" %>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+   <div class="title"><span class="cBlue">专家会议列表</span></div>
+   <br>
+
+  <table class="adminlist" cellspacing="1">
+    <thead>
+    <tr> 
+      <th nowrap>题目</th>
+      <th nowrap>日期</th>
+      <th nowrap>会议记录人</th>
+      <th nowrap>内容摘要</th>
+    </tr>
+    </thead>
+      <tbody>
+   <% if @expert_meetings != nil
+    for expert_meeting in @expert_meetings %>        
+        <tr >
+          <td><%=expert_meeting.meeting_title%></td>
+          <td><%=expert_meeting.dat%></td>
+          <td><%=expert_meeting.record_by%></td>
+          <td><%=h(truncate(expert_meeting.content,20))%></td>
+        </tr>
+        
+        <tr >
+          <td colspan=4>
+            <%@meeting_attendant=MeetingAttendant.find(:all,:conditions=>["used='Y' and meeting_id=?",expert_meeting.id],:order=>"expert_code")%>
+            <%if @meeting_attendant!=nil%>
+              <table cellspacing="1" class="adminlist">
+                <thead>
+                  <tr>
+                    <th nowrap>专家编号</th>
+                    <th nowrap>姓名</th>
+                  </tr>        
+                </thead>
+                <% for meeting_attedant in @meeting_attendant %>
+                  <tr >
+                    <td><%= meeting_attedant.expert_code %></td>
+                    <td><%= TbExpertconsult.find_by_code(meeting_attedant.expert_code).name  %></td>
+                  </tr>
+                <%end%> 
+              </table>
+            <%end%>
+          </td>
+        </tr>
+        <tr >
+          <td colspan=4><hr/></td>
+        </tr>
+    <%end%>    
+    <%end%>
+    </tbody>
+    </table>
+</body>
+</html>

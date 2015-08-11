@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 合议庭使用信息</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  添加合议庭使用信息(带<i>*</i>为必填项)  <%=link_to "返回",:action=>"room_list",:sitting_id=>params[:sitting_id]%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :room ,:url=>{:action=>"room_create",:sitting_id=>params[:sitting_id]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            使用日期:          
+           </th>
+          <td>
+            <%=f.text_field(:sittingdate,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('room_sittingdate'),'yyyy-MM-dd')" >    
+            <div style="color:red"><%=error_message_on(:room,:sittingdate)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            合议庭:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0023' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:sittingplace,op,:data_val,:data_text)%>               
+            <div style="color:red"><%=error_message_on(:room,:sittingplace)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            开始时间:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0024' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:open_t,op,:data_text,:data_text)%>        
+            <div style="color:red"><%=error_message_on(:room,:open_t)%></div>
+          </td>
+        </tr>        
+        
+        <tr>
+          <th>
+            结束时间:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0024' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:close_t,op,:data_text,:data_text)%>            
+            <div style="color:red"><%=error_message_on(:room,:close_t)%></div>
+          </td>
+        </tr>        
+      </table>
+      <br><div align="center">
+        <%=submit_tag "提交" %>
+        </div>
+    <%end%>
+  </body>
+</html>

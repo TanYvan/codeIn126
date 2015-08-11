@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员回避件数</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <table width="100%"><tr><td>
+          <div class="title"><span class="cBlue">仲裁员回避件数</span></div>
+
+          <%form_tag :url=>{:action=>"list3_13"} do%>立案时间：
+            <%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+            至
+            <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+            <%=submit_tag "查询" %>
+          <%end%>
+          <i><%=flash[:notice]%></i>
+          <div align="left">仲裁员回避件数：<%=@vevite.length%>  </div>
+          <br/>
+          <table cellspacing="1" class="adminlist">
+            <thead>
+              <tr>
+                <th nowrap>立案号</th>
+                <th nowrap>立案日期</th>
+                <th nowrap>仲裁员类型及名称</th>
+                <th nowrap>选定方式</th>
+                <th>提出人类型</th>
+                <th >提出人名称</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%for a in @vevite%>
+                <tr class="row<%=i % 2%>">
+                  <td nowrap><%=a.case_code%></td>
+                  <td nowrap><%=a.nowdate%></td>
+                  <%@casearbitman=TbCasearbitman.find(:first,:conditions=>["arbitman=?",a.arbitman]) %>
+                  <td nowrap>
+                    <%=TbDictionary.find(:first,:conditions=>["state='Y' and typ_code='0014' and data_val=?",@casearbitman.arbitmantype]).data_text%>:
+                    <%=TbArbitman.find(:first,:conditions=>["used='Y' and code=?",a.arbitman]).name%>
+                  </td>
+                  <td nowrap>
+                    <%arbitmansign=@casearbitman.arbitmansign%>
+                    <%@a=TbDictionary.find(:first,:conditions=>["state='Y' and typ_code='0015' and data_val=?",arbitmansign])%>
+                    <%if @a!=nil%><%=@a.data_text%><%end%>
+                  </td>
+                  <td nowrap><%if a.submitman=='0001'%>申请人<%else%>被申请人<%end%> </td>
+                  <td nowrap> <%=a.requestman%></td>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+            </tbody>
+          </table>
+        </td></tr></table>
+  </body>
+</html>

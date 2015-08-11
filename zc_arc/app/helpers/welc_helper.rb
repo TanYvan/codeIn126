@@ -1,0 +1,2 @@
+module WelcHelper
+end

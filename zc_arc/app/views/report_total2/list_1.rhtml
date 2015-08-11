@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>仲裁员费用情况</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员费用情况</span></div>
+    <div align="center">
+      <%form_tag :action=>"list_1"  do %>
+        开庭时间：<%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+      <%end -%>
+    </div>
+    <br/>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            <%if @order=="decideDate desc"%>
+              <%=link_to '结案时间↑',:action=>"list_1",:order=>"decideDate asc",:page=>@casearbitman_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="decideDate asc"%>
+              <%=link_to '结案时间↓',:action=>"list_1",:order=>"decideDate desc",:page=>@casearbitman_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '结案时间',:action=>"list_1",:order=>"decideDate asc",:page=>@casearbitman_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            立案号
+          </th>
+          <th nowrap>
+            结案号
+          </th>
+          <th nowrap>
+            仲裁类型
+          </th>
+          <th nowrap>
+            仲裁员姓名
+          </th>
+          <th nowrap>
+            费用
+          </th>
+          <th nowrap>
+            助理姓名
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%tbe=0%>
+        <%i=0%>
+        <%for a in @casearbitman%>
+        <tr class="row<%=i%2%>">
+            <td nowrap>
+              <%=a.decideDate%>
+            </td>
+            <% c=TbCase.find_by_recevice_code(a.recevice_code) %>
+            <td nowrap>
+              <%=c.case_code%>
+            </td>
+            <td nowrap>
+              <%=a.arbitBookNum%>
+            </td>
+            <td nowrap>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{a.arbitmantype}'").data_text%>
+            </td>
+            <td nowrap>
+              <%=TbArbitman.find_by_code(a.arbitman).name%>
+            </td>
+            <td nowrap>
+              <%te=TbExtend.sum(:should_rmb,:conditions=>"used='Y' and t_extend_code<>'' and recevice_code='#{a.recevice_code}' and p_typ='0001' and p='#{a.arbitman}'") %>
+              <%if te==nil
+                te=0
+              end%>
+              <%=te%>
+              <%tbe=tbe + te%>
+            </td>
+            <td nowrap>
+              <%=User.find_by_code(c.clerk).name %>
+            </td>
+          </tr>
+        <%i=i+1%>
+        <%end%>
+          <tr>
+            <td colspan='5'>
+              费用合计
+            </td>
+            <td colspan='2'>
+              <%=tbe%>
+            </td>
+         </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

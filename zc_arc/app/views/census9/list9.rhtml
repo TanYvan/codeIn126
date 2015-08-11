@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>仲裁厅使用统计</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    
+    <div class="title"><span class="cBlue">仲裁厅使用统计</span></div>
+    <table align="left">
+    <%form_tag :url=>{:action=>"list9"} do%>
+     <tr><td nowrap>
+            仲裁庭：<%@room=TbDictionary.find(:all,:conditions=>"typ_code='0023' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_text,data_val")%>
+            <%=select(:j,:room,@room.collect{|p|[p.data_text,p.data_val]}.insert(00,["全部","01"]))%>
+            起始日期：<%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" >
+            终止日期：<%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" >
+        </td></tr>
+        <tr><td nowrap><%=submit_tag "查询" %></td></tr>
+      
+    <%end%>
+    </table>
+    
+<br/>
+<br/>
+<br/>
+<br/>
+  
+    <i><%=flash[:notice]%></i>
+    <%if params[:j]!=nil %>
+    <div class="cGreen" align="left">
+        仲裁庭：<%if params[:j][:room]=='01'%>全部
+        <%else%>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0023' and state='Y' and data_val='#{params[:j][:room]}'").data_text%>&nbsp;&nbsp;
+        <%end%>
+        起始日期：<%=@date1%>&nbsp;&nbsp;
+        终止日期：<%=@date2%>
+      </div>
+      <%if params[:j][:room]=='01'%>
+        <table class="list">
+          <tr>
+            <th nowrap>仲裁庭</th>
+            <%if @sittingroom!=nil%>
+              <%for s1 in @sittingroom%>
+                <th colspan="<%=@style1.size%>" nowrap><%=s1.data_text%></th>
+              <%end%>
+            <%end%>
+          </tr>
+          <tr bgcolor="#E6F5FF">
+            <th nowrap>使用类型</th>
+            <%for s in @sittingroom%>
+              <%for s2 in @style1%>
+                <td nowrap><div align="center"><%=s2.data_text%></div></td>
+              <%end%>
+            <%end%>
+          </tr>
+          <tr>
+            <th nowrap>使用时间(小时)</th>
+            <%for s in @sittingroom%>
+              <%for s2 in @style1%>
+                <%@arbitroom=TbArbitroom.find_by_sql("select sum(usetime) as t1 from tb_arbitrooms where
+                  tb_arbitrooms.sittingdate>='#{@date1}' and tb_arbitrooms.sittingdate<='#{@date2}' and
+                  tb_arbitrooms.sittingplace='#{s.data_val}' and tb_arbitrooms.usestyle='#{s2.data_val}'
+                  and used='Y'")%>
+                <td nowrap>
+                  <%if SysArg.get_last_record(@arbitroom)!=nil%>
+                    <%=SysArg.get_last_record(@arbitroom).t1%>
+                  <%end%>
+                </td>
+              <%end%>
+            <%end%>
+          </tr>
+          <tr>
+            <th nowrap>使用次数</th>
+            <%for s11 in @sittingroom%>
+              <%for s22 in @style1%>
+                <%@arbitroom=TbArbitroom.find_by_sql("select count(id) as c1 from tb_arbitrooms where
+                  tb_arbitrooms.sittingdate>='#{@date1}' and tb_arbitrooms.sittingdate<='#{@date2}' and
+                  tb_arbitrooms.sittingplace='#{s11.data_val}' and tb_arbitrooms.usestyle='#{s22.data_val}'
+                  and used='Y'")%>
+                <td nowrap>
+                  <%if SysArg.get_last_record(@arbitroom)!=nil%>
+                    <%=SysArg.get_last_record(@arbitroom).c1%>
+                  <%end%>
+                </td>
+              <%end%>
+            <%end%>
+          </tr>
+        </table>
+      <%elsif params[:j][:room]!='01'%>
+        <table class="list">
+          <tr>
+            <th nowrap>仲裁庭</th>
+            <th colspan="<%=@style1.size%>" nowrap><%=TbDictionary.find(:first,:conditions=>"typ_code='0023' and state='Y' and data_val='#{params[:j][:room]}'").data_text%></th>
+          </tr>
+          <tr bgcolor="#E6F5FF">
+            <%@sittingroom1=TbDictionary.find(:all,:conditions=>"typ_code='0023' and state='Y' and data_val='#{params[:j][:room]}'",:select=>"data_text,data_val")%>
+            <th nowrap>使用类型</th>
+            <%for s in @sittingroom1%>
+              <%for s2 in @style1%>
+                <td nowrap><div align="center"><%=s2.data_text%></div></td>
+              <%end%>
+            <%end%>
+          </tr>
+          <tr>
+            <th nowrap>使用时间(小时)</th>
+            <%for s in @sittingroom1%>
+              <%for s2 in @style1%>
+                <%@arbitroom=TbArbitroom.find_by_sql("select sum(usetime) as t1 from tb_arbitrooms where
+                  tb_arbitrooms.sittingdate>='#{@date1}' and tb_arbitrooms.sittingdate<='#{@date2}' and
+                  tb_arbitrooms.sittingplace='#{s.data_val}' and tb_arbitrooms.usestyle='#{s2.data_val}'
+                  and used='Y'")%>
+                <td nowrap>
+                  <%if SysArg.get_last_record(@arbitroom)!=nil%>
+                    <%=SysArg.get_last_record(@arbitroom).t1%>
+                  <%end%>
+                </td>
+              <%end%>
+            <%end%>
+          </tr>
+          <tr>
+            <th nowrap>使用次数</th>
+            <%for s11 in @sittingroom1%>
+              <%for s22 in @style1%>
+                <%@arbitroom=TbArbitroom.find_by_sql("select count(id) as c1 from tb_arbitrooms where
+                  tb_arbitrooms.sittingdate>='#{@date1}' and tb_arbitrooms.sittingdate<='#{@date2}' and
+                  tb_arbitrooms.sittingplace='#{s11.data_val}' and tb_arbitrooms.usestyle='#{s22.data_val}'
+                  and used='Y'")%>
+                <td nowrap>
+                  <%if SysArg.get_last_record(@arbitroom)!=nil%>
+                    <%=SysArg.get_last_record(@arbitroom).c1%>
+                  <%end%>
+                </td>
+              <%end%>
+            <%end%>
+          </tr>
+        </table>
+      <%else%>
+      <%end%>
+    <%else%>
+    <%end%>
+    
+    
+  </body>
+</html>

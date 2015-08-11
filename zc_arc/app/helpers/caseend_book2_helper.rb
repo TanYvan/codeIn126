@@ -1,0 +1,2 @@
+module CaseendBook2Helper
+end

@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>本地待发报酬清单</title>
+  <%= javascript_include_tag "prototype" %>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  <script src="/javascripts/pub.js"></script>
+  <script language="javascript">
+      function str_fill_s(s,n){
+        var a=n - str_get_length(s);
+        var i=1;
+        while (i<=a){
+          s=" " + s;
+          i=i+1;
+        }
+        return s;
+      }
+     
+      function str_fill_e(s,n){
+        var a=n - str_get_length(s);
+        var i=1;
+        while (i<=a){
+          s=s + " ";
+          i=i+1;
+        }  
+        return s;
+      }
+
+      function str_get_length(s){
+        var   l   =   0;   
+  
+        for(i=0;i<s.length;i++)   
+        if  (s.substr(i,1).charCodeAt()>1000)   l+=2;  else  l++;   
+     
+        return l
+      }
+
+      function to_txt(){
+        alert("开始导出!");
+        try
+       {
+        var fso = new ActiveXObject("Scripting.FileSystemObject");
+         try
+         {
+           var f = fso.createtextfile("d:\\BAOCHOU_<%=Time.now.to_date.to_s(:db)%>.PRN",true);
+           <%for tb_e in @tb_extends %> 
+             a="<%=tb_e.p_name%>"
+             a=str_fill_e(a,8)
+             b="<%=tb_e.bank_account%>"
+             b=str_fill_e(b,25)
+             c="<%=tb_e.extend_rmb%>"
+             c=str_fill_s(c,7)
+             d=a  + b + c
+             f.WriteLine(d);
+           <%end%>
+           f.close();
+           alert("导出完成!，导出文件为d:\\BAOCHOU_<%=Time.now.to_date.to_s(:db)%>.PRN");
+          }
+          catch (e)
+          {
+            alert("由于客户端 windows api 错误导致word调用出错，请重试生成。如果还是不能解决，请重新启动计算机后再次重试。");
+           }
+        }
+        catch (e)
+        {
+          alert("word调用失败，请把浏览器的安全设置中的【ActiveX控件和插件】相关设置为启用状态。");
+        }
+        }
+
+  </script>
+
+</head>
+<body>
+  <input  id='to_txt' type='button' value='导出到文本文件' onclick="to_txt();"/>
+  <input  id='to_word' type='button' value='导出word' onclick="document.getElementById('to_word').style.display='none';document.getElementById('to_txt').style.display='none';to_word();document.getElementById('to_word').style.display='block';document.getElementById('to_txt').style.display='block';"/>
+  <br/>
+  <div>中国国际经济贸易委员会华南分会</div>  
+  <div>本地待发报酬清单</div>  
+  <table class="adminlist" cellspacing="1">
+    <thead>
+    <tr> 
+      <th nowrap>序号</th>
+      <th nowrap>姓名</th>
+      <th nowrap>账号</th>
+      <th nowrap>开户行名称</th>
+      <th nowrap>金额（元）</th> 
+    </tr>
+    </thead>
+    <tbody>
+    <%i=1%>
+    <% if @tb_extends != nil%>
+      <%for tb_extend in @tb_extends %>        
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=  i %></td>
+            <td nowrap><%=tb_extend.p_name%></td>
+            <td nowrap><%=  tb_extend.bank_account%></td>
+            <td nowrap><%=  tb_extend.bankname%></td>
+            <td nowrap><%=  tb_extend.extend_rmb%></td>
+          </tr>
+          <%i=i+1%>
+      <%end%>    
+    <%end%>
+    <tr> 
+      <td colspan="3">合计</td>
+      <td colspan="2"><%=@tb_extends.sum{|tb_extend| tb_extend.extend_rmb}.to_f%></td> 
+    </tr>
+    </tbody>
+    </table>
+</body>
+</html>
+

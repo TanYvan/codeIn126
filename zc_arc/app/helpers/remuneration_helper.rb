@@ -1,0 +1,2 @@
+module RemunerationHelper
+end

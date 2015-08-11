@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  
+  <head>
+    <title>收款信息拆分</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">收款信息拆分</span></div>
+<%=link_to "返回",:action=>"list",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+   <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>
+          收款号
+        </th>
+        <!--
+        <th nowrap>
+          付款方
+        </th>
+        -->
+        <th nowrap>
+          付款方名称
+        </th>
+        <th nowrap>
+          付款方式
+        </th>
+        <th nowrap>
+          付款时间
+        </th>
+        <th nowrap>
+          实收费用(￥)
+        </th>
+        <th nowrap>
+          币种
+        </th>
+        <th nowrap>
+          汇率
+        </th>
+        <th nowrap>
+          外币金额
+        </th>
+        <th nowrap>
+          备注
+        </th>
+        <th nowrap>
+          出纳
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <tr class="row<%=i % 2%>"> 
+        <td>
+          <%=@charge.code%>
+        </td>
+        <!-- 
+        <td>
+          <% # =TbDictionary.find(:first,:conditions=>"typ_code='0033' and data_val='#{@charge.ptyp}'").data_text%>
+          <% # = %>
+        </td>
+        -->
+        <td>
+          <%=@charge.p%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0034' and data_val='#{@charge.mode}'").data_text%>
+        </td>
+        <td>
+          <%=@charge.c_dt%>
+        </td>
+        <td>
+          <%=@charge.rmb_money%>
+        </td>
+        <td>
+          <%=Money.find_by_code(@charge.currency).name%>
+        </td>
+        <td>
+          <%=@charge.rate%>
+        </td>
+        <td>
+          <%=@charge.f_money%>
+        </td>
+        <td>
+          <%=h @charge.remark%>
+        </td>
+        <td>
+          <%=h User.find_by_code(@charge.u).name%>
+        </td>
+      </tr>          
+      </tbody>
+    </table>
+    <hr/>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>
+          状态
+        </th>
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          助理
+        </th>
+        <th nowrap>
+          助理确认时间
+        </th>
+        <th>
+          收款号
+        </th>
+        <!--
+        <th nowrap>
+          付款方
+        </th>
+        -->
+        <th nowrap>
+          付款方名称
+        </th>
+        <th nowrap>
+          付款方式
+        </th>
+        <th nowrap>
+          付款时间
+        </th>
+        <th nowrap>
+          实收费用(￥)
+        </th>
+        <th nowrap>
+          币种
+        </th>
+        <th nowrap>
+          汇率
+        </th>
+        <th nowrap>
+          外币金额
+        </th>
+        <th nowrap>
+          备注
+        </th>
+        <th nowrap>
+          拆分人
+        </th>
+        <th nowrap>
+          拆分时间
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @split%>
+      <tr class="row<%=i % 2%>">
+        <td nowrap>
+          <%if c.state==3%>
+            <i><%=@state[c.state]%></i>
+          <%elsif c.state==2%>
+            <div class="cGreen"><%=@state[c.state]%></div>
+          <%else%>
+            <%=@state[c.state]%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%=c.recevice_code%>
+        </td>
+        <td nowrap>
+          <%if c.clerk!=''%>
+            <%=User.find_by_code(c.clerk).name%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%if c.check_dt!=nil%>
+            <%=c.check_dt.to_s(:db)%>
+          <%end%>
+        </td>
+        <td>
+          <%=c.code%>
+        </td>
+        <!-- 
+        <td>
+          <% # =TbDictionary.find(:first,:conditions=>"typ_code='0033' and data_val='#{c.ptyp}'").data_text%>
+          <% # =%>
+        </td>
+        -->
+        <td>
+          <%=c.p%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0034' and data_val='#{c.mode}'").data_text%>
+        </td>
+        <td>
+          <%=c.c_dt%>
+        </td>
+        <td>
+          <%=c.rmb_money%>
+        </td>
+        <td>
+          <%=Money.find_by_code(c.currency).name%>
+        </td>
+        <td>
+          <%=c.rate%>
+        </td>
+        <td>
+          <%=c.f_money%>
+        </td>
+        <td>
+          <%=h c.remark%>
+        </td>
+        <td>
+          <%=h User.find_by_code(c.u).name%>
+        </td>
+        <td>
+          <%=c.u_t.to_s(:db)%>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

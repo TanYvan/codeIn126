@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>合同签订日期</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">合同签订信息</div></span></div>
+    
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          签订日期
+        </th>
+        <th nowrap>
+          合同编号及名称
+        </th>
+       <th nowrap>
+          备注
+        </th>
+       <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @con%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=p.contractdate%>
+        </td>
+        <td>
+          <%=p.pactname%>
+        </td>
+        <td>
+          <%=p.note%>
+        </td>        
+        <td>
+          <%=link_to "修改",:action=>"con_edit",:id=>p,:recevice_code=>params[:recevice_code]%>
+        </td>
+        <td>
+          <%if TbCase.find_by_recevice_code(params[:recevice_code]).clerk_2==session[:user_code] or TbCase.find_by_recevice_code(params[:recevice_code]).clerk==session[:user_code]%>
+            <%=button_to "删除",{:action=>"con_delete",:id=>p,:recevice_code=>params[:recevice_code]},:confirm=>"您确认要删除吗？"%>
+          <%end%>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <br><div align="center">
+    <%if TbCase.find_by_recevice_code(params[:recevice_code]).clerk_2==session[:user_code] or TbCase.find_by_recevice_code(params[:recevice_code]).clerk==session[:user_code]%>
+      <%=link_to  "创建", :action=>"con_new",:recevice_code=>params[:recevice_code]%>
+    <%end%>
+    <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>用户信息维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">用户信息管理</span></div>
+    <div align="center">
+    <%=render :partial=>'shared/hant_search_1', :object=>@t%>
+    <%=link_to  "创建", :action=>"new"%></div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table id='tt' cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          <%if @order=="code desc"%>
+            <%=link_to '用户名↑',:action=>"list",:order=>"code asc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="code asc"%>
+            <%=link_to '用户名↓',:action=>"list",:order=>"code desc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '用户名',:action=>"list",:order=>"code asc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="name desc"%>
+            <%=link_to '用户名称↑',:action=>"list",:order=>"name asc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="name asc"%>
+            <%=link_to '用户名称↓',:action=>"list",:order=>"name desc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '用户名称',:action=>"list",:order=>"name asc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="spell desc"%>
+            <%=link_to '拼音缩写↑',:action=>"list",:order=>"spell asc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="spell asc"%>
+            <%=link_to '拼音缩写↓',:action=>"list",:order=>"spell desc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '拼音缩写',:action=>"list",:order=>"spell asc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap >
+          用户角色
+        </th>
+        <th nowrap >
+          用户职责
+        </th>
+        <th nowrap >
+          <%if @order=="states desc"%>
+            <%=link_to '状态↑',:action=>"list",:order=>"states asc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="states asc"%>
+            <%=link_to '状态↓',:action=>"list",:order=>"states desc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '状态',:action=>"list",:order=>"states asc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap >
+          <%if @order=="ord desc"%>
+            <%=link_to '顺序号↑',:action=>"list",:order=>"ord asc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="ord asc"%>
+            <%=link_to '顺序号↓',:action=>"list",:order=>"ord desc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '顺序号',:action=>"list",:order=>"ord asc",:page=>@user_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          编辑
+        </th>
+        <th nowrap >
+          修改密码
+        </th>
+        <th nowrap >
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%for b in @users%>
+        <tr class="row<%=i % 2%>">
+          <td>
+            <%=h b.send("code")%>
+          </td>
+          <td>
+            <%=h b.send("name")%>
+          </td>
+          <td>
+            <%=h b.send("spell")%>
+          </td>
+          <td>
+            <div style="text-align: left"><%=h b.send("role_text")%><br>
+            <%=link_to '编辑角色' ,:controller=>'ur',:action=>'list',:uid=>b.code%>
+            </div>
+          </td>
+          <td>
+            <div style="text-align: left"><%=h b.send("duty_text")%><br>
+            <%=link_to '编辑职责' ,:controller=>'duty',:action=>'list',:uid=>b.code%>
+            </div>
+          </td>
+          <td>
+            <%=h b.send("states")%>
+          </td>
+          <td >
+            <%=h b.send("ord")%>
+          </td>
+
+          <td>
+            <%=link_to "编辑",{:action=>'edit',:id=>b} %>
+          </td>
+
+          <td>
+            <%=link_to "修改密码",{:action=>'change_password',:id=>b},:target=>'_blank' %>
+          </td>
+
+          <td>
+            <%=button_to "删除" ,{:action=>'delete',:id=>b } ,:confirm=>"您确认要删除吗？",:method=>"post"%>
+          </td>
+
+        </tr>
+        <%i=i+1%>
+      <%end%>
+
+      </tbody>
+    </table>
+    <table >
+      <tr>
+        <td>
+          <%= link_to '上一页', { :page => @user_pages.current.previous ,:search_condit=>@search_condit,:order=>@order ,:page_lines=>@page_lines } if @user_pages.current.previous %>
+          <%=pagination_links( @user_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines }})%>
+          <%= link_to '下一页', { :page => @user_pages.current.next ,:search_condit=>@search_condit,:order=>@order ,:page_lines=>@page_lines} if @user_pages.current.next %>
+        </td>
+        <td>
+          <%if @user_pages.current.previous or @user_pages.current.next%>
+            <form action="/user/list" method="get" >
+              <input type=text name='page_lines' value="<%=@page_lines%>" size=5 class="SingleLineInput" />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='跳转' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

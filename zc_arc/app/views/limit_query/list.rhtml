@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>审限到期列表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">审限到期列表</span></div>
+    <hr size="1" color="#99CCFF" noshade>
+    今天 - 3天
+    <%@case=@case_now_3%>
+    <table cellspacing="1" class="adminlist">     
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+         审限时间
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @case%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=c.recevice_code%>
+        </td>
+        <td>
+          <%=h c.receivedate%>
+        </td>
+        <td>
+          <%=h c.case_code%>
+        </td>
+        <td>
+          <%=h c.nowdate%>
+        </td>
+        <td>
+          <%if c.finally_limit_dat!=nil%>
+            <%=h c.finally_limit_dat.to_s(:db)%>
+          <%end%>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <hr size="1" color="#99CCFF" noshade>
+    3天 - 5天
+    <%@case=@case_3_5%>
+    <table cellspacing="1" class="adminlist">     
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+         审限时间
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @case%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=c.recevice_code%>
+        </td>
+        <td>
+          <%=h c.receivedate%>
+        </td>
+        <td>
+          <%=h c.case_code%>
+        </td>
+        <td>
+          <%=h c.nowdate%>
+        </td>
+        <td>
+          <%if c.finally_limit_dat!=nil%>
+            <%=h c.finally_limit_dat.to_s(:db)%>
+          <%end%>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <hr size="1" color="#99CCFF" noshade>
+    5天 - 15天
+    <%@case=@case_5_15%>
+    <table cellspacing="1" class="adminlist">     
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+         审限时间
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @case%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=c.recevice_code%>
+        </td>
+        <td>
+          <%=h c.receivedate%>
+        </td>
+        <td>
+          <%=h c.case_code%>
+        </td>
+        <td>
+          <%=h c.nowdate%>
+        </td>
+        <td>
+          <%if c.finally_limit_dat!=nil%>
+            <%=h c.finally_limit_dat.to_s(:db)%>
+          <%end%>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    <hr size="1" color="#99CCFF" noshade>
+    15天 - 30天
+    <%@case=@case_15_30%>
+    <table cellspacing="1" class="adminlist">     
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+         审限时间
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @case%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=c.recevice_code%>
+        </td>
+        <td>
+          <%=h c.receivedate%>
+        </td>
+        <td>
+          <%=h c.case_code%>
+        </td>
+        <td>
+          <%=h c.nowdate%>
+        </td>
+        <td>
+          <%if c.finally_limit_dat!=nil%>
+            <%=h c.finally_limit_dat.to_s(:db)%>
+          <%end%>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+    
+  </body>
+</html>

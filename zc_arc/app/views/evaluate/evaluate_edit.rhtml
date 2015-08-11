@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>仲裁员评价</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+    <%= javascript_include_tag :defaults%>
+    <script type="text/javascript">
+      function r_s(){
+        new Ajax.Request('/evaluate/p_set?p_typ='+document.getElementById("evaluate_parent_val").value, {asynchronous:true, evalScripts:true});
+        return false;
+      }
+      function check_score(){
+        var regu =/^\-?[1-9]?[0-9]$/;
+        var a=document.getElementById("evaluate_score").value;
+        if (a!=""){
+          if(!regu.test(a)){
+            alert("请输入正确的分数(负号为英文状态下的)");
+            return false;
+          }
+          return true;
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="cDGray" align="center">修改仲裁员评价信息
+      <%=link_to "返回",:action=>"evaluate_list",:recevice_code=>params[:recevice_code]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :evaluate ,:url=>{:action=>"evaluate_update",:id=>params[:id],:recevice_code=>params[:recevice_code]},:html =>{:onsubmit=>"return check_score();"}  do |f|%>
+      <table bgcolor="#A7C8CD" border="1" cellspacing="1">
+        <tr>
+          <th nowrap>
+             仲裁员姓名:
+          </th>
+          <td align="left" bgcolor="#F7FDFC">
+            <%=TbArbitman.find_by_code(@evaluate.arbitman).name%>
+          </td>
+        </tr>
+
+        <tr>
+          <th >
+            评价阶段:
+          </th>
+          <td align="left" bgcolor="#F7FDFC">
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='8160' and data_val='#{@evaluate.parent_val}' and state='Y' and used='Y'").data_text%>
+          </td>
+        </tr>
+
+        <tr>
+          <th nowrap>
+            评价内容:
+          </th>
+          <td align="left" bgcolor="#F7FDFC">
+            <div id='pv_set'>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='8160' and data_val='#{@evaluate.data_val}' and state='Y' and used='Y'").data_text%>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            评分:
+          </th>
+          <td align="left" bgcolor="#F7FDFC">
+            <%=f.text_field :score%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            备注:
+          </th>
+          <td align="left" bgcolor="#F7FDFC">
+            <%=f.text_area :remark,:rows=>4%>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

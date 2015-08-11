@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>添加用户角色</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+      <div align="center" class="cBlack">
+    <%=User.find_by_code(params[:uid]).code%>:<%=User.find_by_code(params[:uid]).name%><br><br>
+    角色：<%=User.find_by_code(params[:uid]).role_text%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <br>
+    <table class="adminlist" cellspacing="1">
+      <thead>
+      <tr><th>
+          角色名称
+        </th>
+        <th>
+          添加
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%for r in @roles%>
+        <tr class="row<%=i % 2%>">
+          <td>
+            <%=h r.name%>
+          </td>
+          <td>
+            <%=button_to "添加" ,:controller=>"ur",:action=>"add",:uid=>params[:uid],:rid=>r.code%>
+          </td>
+        </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br>
+    <%=link_to  "返回", :controller=>"ur",:action=>"list",:uid=>params[:uid]%>
+  </body>
+</html>

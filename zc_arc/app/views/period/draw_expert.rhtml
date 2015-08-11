@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>增聘专家</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+       <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">增聘专家</span></div>
+    <br>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <div align="center"><%= link_to "返回", :action => "expert_select"%></div>
+    <br>
+    <%form_for :tb_period_logs, :url => {:action => "period_create",:code => params[:code],:page=>params[:page],:page_lines=>params[:page_lines]} do |f|%>
+      <table class="list">
+        <tr>
+          <th>专家编号:</th>
+          <td><%=@expertconsult.code %>
+          </td>
+        </tr>
+        <tr>
+          <th>专家姓名:</th>
+          <td><%=@expertconsult.name %>
+        </tr>
+        <tr>
+          <th>届:</th>
+          <td><%=f.text_field :period%>
+          <div style="color:red"><%=error_message_on(:tb_period_logs,:period)%></div></td>
+        </tr>
+        <tr>
+          <th>增聘时间:</th>
+          <td><%=f.text_field(:dt,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('tb_period_logs_dt'),'yyyy-MM-dd')" >
+          <i><%=error_message_on(:tb_period_logs,:dt)%></i></td>
+        </tr>
+        <tr>
+          <th>增聘理由:</th>
+          <td><%=f.text_area :reason ,:rows =>3 %>
+          <div style="color:red"><%=error_message_on(:tb_period_logs,:reason)%></div></td>
+        </tr>
+         </table>
+        <br>
+        <div align="center">
+          <div><%=submit_tag '确定'%></div>
+        </div>
+    <%end%>
+  </body>
+</html>

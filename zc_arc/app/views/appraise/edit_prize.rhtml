@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>修改案外评价</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function add_arbitman(){
+        a=window.showModalDialog('/appraise/arbitman_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          a1=a.indexOf('+',0)
+          arbitman_num =a.substr(0,a1)
+          arbitman_name=a.substr(a1+1,a.length - a1 )
+
+          document.getElementById("tb_prize_arbitmanname").value = arbitman_num
+          document.getElementById("tb_prize_arbitmanname").value= arbitman_name
+        }
+        if (a==null ||a==""){
+          document.getElementById("aa").value= "a"
+        }
+      }
+      
+      function add_clerk(){
+        a=window.showModalDialog('/appraise/arbitman_select',"","dialogWidth=1000px;dialogHeight=600px;resizable=1");
+        if (a!=null){
+          a1=a.indexOf('+',0)
+          arbitman_num =a.substr(0,a1)
+          arbitman_name=a.substr(a1+1,a.length - a1 )
+
+          document.getElementById("tb_prize_clerk_id").value= arbitman_name
+        }
+        if (a==null ||a==""){
+          document.getElementById("aa").value= "a"
+        }
+      }      
+    </script>       
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">编辑仲裁员案外评价</span></div>
+    <br>
+      <div align="center">
+    <%= link_to "返回", {:action => "list_prize",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines] } %>
+    </div><br>
+    <%form_for :tb_prize, :url => {:action => "update_prize", :id => @tb_prize ,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines] } do |f|%>
+        <table class="list">
+          <tr>
+            <th><i>*</i>仲裁员姓名:</th>
+            <td><%= f.text_field :arbitmanname ,:size=>30 ,:readonly=>'yes'%><input type="button" value="选择仲裁员" onclick="add_arbitman()"></td>            
+          </tr>
+          <tr>
+            <th>评价内容:</th>
+            <td><%= f.text_area :note,:rows => 3  %></td> 
+          </tr>  
+          <tr>
+            <th>记录添加人:</th>
+            <td><%= f.text_field :clerk_id ,:size=>30 ,:readonly=>'yes'%><input type="button" value="选择添加者" onclick="add_clerk()"></td> 
+          </tr>           
+        </table>
+        <br>
+      <div align="center">
+        <%= submit_tag "确定" %>
+      </div>
+    <%end%>
+  </body>
+</html>
+

@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>上传照片</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+    <div align="center">上传照片</div>
+    <br>     
+    <div>
+      <%=link_to "返回", :action => "edit_photo", :id => params[:id]%>
+    </div>
+    <table class="list">
+          <tr>
+            <th>仲裁员头像上传:</th>
+            <td><%=form_tag({:action => "upload_file", :id => params[:id]}, :multipart => true)%>
+                <%=file_field("photo","file")%>
+                <%=submit_tag '上传照片'%>
+            </td>
+          </tr>      
+    </table>
+  </body>
+</html>
+

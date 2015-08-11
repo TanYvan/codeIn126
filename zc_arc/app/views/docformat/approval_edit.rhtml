@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加格式函副本信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+ <br>
+  <div class="cDGray" align="center">添加格式函副本信息   <%=link_to "返回",:action=>"approval_list",:format_code=>params[:format_code],:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :approval ,:url=>{:action=>"approval_update",:id=>params[:id],:format_code=>params[:format_code],:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            审批人:
+           </th>
+          <td>
+            <%=f.collection_select(:a_u,User.find(:all,:conditions=>"used='Y' and states='Y'",:select=>"code,name",:order=>"name"),:code,:name)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            审批时限:
+          </th>
+          <td>
+            <%=f.text_field(:a_d)%>天
+          </td>
+        </tr>
+       </table>
+       <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

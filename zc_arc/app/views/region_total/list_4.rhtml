@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>国内各省当事人统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">国内各省当事人统计</span></div>
+    <div align="center">
+      <%form_tag ({:action=>"list_4"})  do %>
+          <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+    <%end %>
+    </div>
+    <%if @re!=nil%>
+      <%pt=PubTool.new%>
+      <table  cellspacing="1" class="adminlist">
+        <tr>
+          <th colspan="10">
+            立案时间: <%=@d1%>至<%=@d2%>国内各省当事人统计
+          </th>
+        </tr>
+        <tr>
+          <td >
+            地区名称
+          </td>
+          <td nowrap>
+            当事人数量
+          </td>
+        </tr>
+        <%for re in @re%>
+          <tr >
+            <td>
+              <%=re.name%>
+            </td>
+            <td>
+              <%=re.c%>
+            </td>
+          </tr>
+        <%end%>
+        <%for re_2 in @re_2%>
+          <tr >
+            <td>
+              中国内地
+            </td>
+            <td>
+              <%=re_2.c%>
+            </td>
+          </tr>
+        <%end%>
+        <tr >
+          <td>
+            合计
+          </td>
+          <td>
+            <%=@re.sum{|r| r.c.to_i} + @re_2.sum{|r| r.c.to_i}%>
+          </td>
+        </tr>
+      </table>
+    <%end%>
+  </body>
+</html>

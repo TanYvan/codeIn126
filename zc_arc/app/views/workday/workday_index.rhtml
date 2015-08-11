@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>工作日首页面</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">工作日管理</span></div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <br>
+    <div align="center"><span class="cBlue">生成指定年度工作日记录</span></div>
+    <%form_tag :action=> "insertday" do  %>
+      <table class="list">
+        <tr>
+          <th>年度:</th>
+          <td><%=text_field_tag(:year1,@year1)%></td>
+        </tr>
+      </table>
+      <div align="center"><%=submit_tag "确定"%></div>
+    <%end%>
+    <br>
+    <!-- 查询出某个年度的月份记录-->
+    <br>
+    <div align="center"><span class="cBlue">指定年度</span></div>
+    <%form_tag :action=>'workday_index' do %>
+      <table class="list">
+        <tr>
+          <th>年度:</th>
+          <td><%=text_field_tag(:year2,@year2)%></td>
+        </tr>
+      </table>
+      <div align="center"><%=submit_tag "查询" %></div>
+    <%end%>
+    <table class="adminlist">
+      <thead>
+        <th nowrap>年度</th>
+        <th nowrap>月份</th>
+        <th nowrap>查看</th>
+        <th nowrap>日历表查看</th>
+      </thead>
+      <tbody>
+        <%if @year_months != nil%>
+          <%for year_month in @year_months%>
+            <tr>
+              <td><%= @year2 %></td>
+              <td><%= year_month.data_text %></td>
+              <td><%=link_to "查看", :action => "list_workday", :year => @year2, :month => year_month.data_val %></td>
+              <td><%=link_to "日历表查看", :action => "list_month", :year => @year2, :month => year_month.data_val %></td>
+            </tr>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

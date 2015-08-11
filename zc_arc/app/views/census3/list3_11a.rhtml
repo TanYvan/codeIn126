@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>与代理人有关的案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">与代理人（律师事务所）<%=params[:name]%>有关的案件：<%=@arbitman_case1.length%>件</span></div>
+    <%=link_to "返回",:action=>"list3_11",:d1=>params[:d1],:d2=>params[:d2],:datestyle=>params[:datestyle]%>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th  nowrap>立案日期</th>
+          <th  nowrap>立案号</th>
+          <th  nowrap>结案日期</th>
+          <th  nowrap>结案号</th>
+          <th  nowrap>代理人</th>
+          <th  nowrap>助理</th>
+          <th  nowrap>仲裁员组成</th>
+          <th  nowrap>双方当事人信息</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for a in @arbitman_case1%>
+          <tr class="row<%=i % 2%>">
+            <td nowrap><%=a.nowdate%></td>
+            <td nowrap><%=a.case_code %></td>
+            <%@caseendbook=TbCaseendbook.find_by_id(a.caseendbook_id_last)%>
+            <td nowrap><%if @caseendbook!=nil%><%=@caseendbook.decideDate %><%end%></td>
+            <td nowrap><%=a.end_code %></td>
+            <td nowrap><%=a.name %></td>
+            <td nowrap><%=User.find(:first,:conditions=>["used='Y' and code=?",a.clerk]).name %></td>
+            <td nowrap>
+              <%if a.aribitprog_num=='0002' or a.aribitprog_num=='0004' or a.aribitprog_num=='0006' or a.aribitprog_num=='0008'%>
+                独:<%=SysArg.new.independent_arbitrator(a.recevice_code)%>
+              <%else%>
+                首:<%=SysArg.new.chief_arbitrator(a.recevice_code)%><br/>
+                申:<%=SysArg.new.applicant_arbitrator(a.recevice_code)%><br/>
+                被:<%=SysArg.new.respondent_arbitrator(a.recevice_code)%>
+              <%end%>
+            </td>
+            <td>
+              <%@tp=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=1")%>
+              <%ttpp=''%>
+              <%for tp in @tp%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              申请人：<%=ttpp%>
+
+              <%@party2=TbParty.find(:all,:conditions=>"recevice_code='#{a.recevice_code}' and used='Y' and partytype=2")%>
+              <%ttpp=''%>
+              <%for tp in @party2%>
+                <%if tp!=nil%>
+                  <%ttpp=ttpp +"["+ tp.partyname + "]" %>
+                <%end%>
+              <%end%>
+              被申请人：<%=ttpp%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

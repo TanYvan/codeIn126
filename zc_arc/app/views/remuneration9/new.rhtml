@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 助理发文量维护</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  添加 助理发文量维护   <%=link_to "返回",:action=>"list"%>
+
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :remun ,:url=>{:action=>"create"}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            助理:
+          </th>
+          <td>
+            <%@caseassistant1=UserDuty.find_by_sql("select users.code as code,users.name as name from users,user_duties where users.used='Y' and users.states='Y' and  users.code=user_duties.user_code and user_duties.duty_code='0003' order by users.name")%>
+            
+            <%=f.collection_select(:assistant,@caseassistant1,:code,:name)%>
+            <div style="color:red"><%=error_message_on(:remun,:assistant)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap width="30%">
+            类型:
+          </th>
+          <td width="65%">
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0048' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:page_typ, op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr >
+          <th nowrap>
+            数量:
+          </th>
+          <td >
+            <%=f.text_field :page_num%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_field(:remark,:size=>50)%>                                      
+            <div style="color:red"><%=error_message_on(:remun,:remark)%></div>
+          </td>
+        </tr> 
+      </table>
+      <br>
+        <div align="center"><%=submit_tag "提交" %></div>
+
+    <%end%>
+  </body>
+</html>

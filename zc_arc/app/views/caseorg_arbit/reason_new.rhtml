@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 仲裁员变更意见信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script language="javascript">
+      function checkForm(){
+        if(document.getElementById("reason_reason").value==""){
+          alert("请填写意见信息");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <div align="center" class="cDGray">
+  添加仲裁员变更意见信息(带<i>*</i>为必填项) <%=link_to "返回",:action=>"reason_list",:change_id=>params[:change_id],:recevice_code=>params[:recevice_code]%>
+  
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :reason ,:url=>{:action=>"reason_create",:change_id=>params[:change_id],:recevice_code=>params[:recevice_code]},:html=>{:onsubmit=>"return checkForm();"}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            意见类型:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0022' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:reason_typ,op,:data_val,:data_text)%>                                     
+            <div style="color:red"><%=error_message_on(:reason,:reason_typ)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>意见信息:
+          </th>
+          <td>
+            <%=f.text_area(:reason,:rows=>4)%>                                                
+            <div style="color:red"><%=error_message_on(:reason,:reason)%></div>
+          </td>
+        </tr>         
+      </table>
+      <br><div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

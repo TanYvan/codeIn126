@@ -1,0 +1,2 @@
+module AmountTotalHelper
+end

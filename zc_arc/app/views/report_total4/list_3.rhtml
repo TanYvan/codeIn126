@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>平均结案时间统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title" align="center"><span class="cBlue">平均结案时间统计</span></div>
+    <div align="center">
+      <%form_tag ({:action=>"list_3"})  do %>
+        <%=select_tag(:typ,options_for_select([["立案时间","1"],["结案时间","2"]],@typ))%>
+          <%=text_field_tag(:d1,@d1,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+        至<%=text_field_tag(:d2,@d2,:readonly=>"yes")%>
+        <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+        <%=submit_tag "查询" %>
+    <%end %>
+    </div>
+    <%if @zl!=nil%>
+      <%pt=PubTool.new%>
+      <table  cellspacing="1" class="adminlist">
+        <tr>
+          <th colspan="10">
+            <%=@typ_t[@typ]%>: <%=@d1%>至<%=@d2%>办案平均时间统计
+          </th>
+        </tr>
+        <tr>
+          <td >
+            名称
+          </td>
+          <td nowrap>
+            案件数量
+          </td>
+          <td nowrap>
+            仲裁类型
+          </td>
+          <td nowrap>
+            立案－结案
+          </td>
+        </tr>
+        <%for zl in @zl%>
+          <tr >
+            <td >
+              <%=zl.name%>
+            </td>
+            <td>
+              <%=zl.c%>
+            </td>
+            <td>
+              <%=TbDictionary.find(:first,:conditions=>"typ_code='0001' and data_val='#{zl.aribitprog_num}'").data_text%>
+            </td>
+            <td>
+              <%=pt.round_2(zl.d5.to_f / zl.c.to_i) %>
+            </td>
+          </tr>
+        <%end%>
+          <tr>
+            <td colspan='3'>
+              平均
+            </td>
+            <%ccc=@zl.sum{|z| z.c.to_i}%>
+            
+            <td nowrap>
+              <%=pt.round_2(@zl.sum{|z| z.d5.to_f} / ccc)%>
+            </td>
+          </tr>
+      </table>
+    <%end%>
+  </body>
+</html>

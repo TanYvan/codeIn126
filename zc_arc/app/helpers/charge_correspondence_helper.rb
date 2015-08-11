@@ -1,0 +1,2 @@
+module ChargeCorrespondenceHelper
+end

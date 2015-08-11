@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>案件基本情况</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">基本情况</span></div>
+    <div align="center">
+
+      <%if @case!=nil%>
+        当前案件
+      </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr >
+            <th nowrap>
+              咨询流水号
+            </th>
+            <th nowrap>
+              咨询日期
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%=h @case.recevice_code%>
+            </td>
+            <td>
+              <%=h @case.receivedate%>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br/>
+      <br/>
+      <hr size="1" color="#99CCFF" noshade />
+      <div align="center" class="cDGray">
+        案件基本情况信息
+        <%if @case.state==280%>
+          （历史数据导入）
+        <%end%>
+      </div>
+      <table class="list">
+        <tr>
+          <th>咨询流水号:</th>
+          <td><%=@case.recevice_code%></td>
+        </tr>
+        <tr>
+          <th>总案号:</th>
+          <td><%=@case.general_code%></td>
+        </tr>
+        <tr>
+          <th>立案号:</th>
+          <td><%=@case.case_code%></td>
+        </tr>
+        <tr>
+          <th>结案号:</th>
+          <td><%if @case.end_code=="" or @case.end_code==nil%>
+              该案件暂未结案
+            <%else%>
+              <%=@case.end_code%>
+            <%end%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            仲裁员组成：
+          </th>
+          <td>
+            <%=@arr1%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            助理：
+          </th>
+          <td>
+            <%=@zl%>
+          </td>
+        </tr>
+        <tr>
+          <th nowrap>
+            督办人：
+          </th>
+          <td>
+             <%
+                 superintendent = Superintendent.find(:all,:order=>'id',:conditions=>"used='Y' and recevice_code='#{@case.recevice_code}'")
+             %>
+             <% for su in superintendent %>
+              <%=User.find_by_code(su.user_code).name%>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <th>争议类别：</th>
+          <td><%=@case.casetype_num2%></td>
+        </tr>
+        <tr>
+          <th>仲裁协议类型：</th>
+          <td><%=@pro_tp%>
+          </td>
+        </tr>
+        <tr>
+          <th>仲裁类型：</th>
+          <td>
+            <%=@arbit_tp%>
+          </td>
+        </tr>
+        <tr>
+          <th>主体类型：</th>
+          <td>
+            <%@a=TbDictionary.find(:first,:conditions=>"typ_code='8140' and state='Y' and data_val='#{@case.case_type1}'")%>
+            <%if @ca!=nil%>
+              <%=@a.data_text%>
+            <%end%>
+          </td>
+        </tr>
+        <tr>
+          <th>仲裁条款达成日期：</th>
+          <td><%=@case.accepttime%>
+          </td>
+        </tr>
+        <tr>
+          <th>审理方式：</th>
+          <td><%if @case.trial_typ!=nil %>  <%= TbDictionary.find(:first,:conditions=>"typ_code='0046'  and  data_val='#{@case.trial_typ}' and state='Y'").data_text %> <%end%></td>
+        </tr>
+        <tr>
+          <th>案件类别：</th>
+          <td></td>
+        </tr>
+        <tr>
+          <th>结案方式：</th>
+          <td><%= @endstyle %></td>
+        </tr>
+        <tr>
+          <th>受理日期：</th>
+          <td><%=@case.accepttime%></td>
+        </tr>
+        <tr>
+          <th>组庭日期：</th>
+          <td><%=@orgdate%></td>
+        </tr>
+        <%@case_dely=TbCasedelay.find(:first,:conditions=>["used='Y' and recevice_code=?",@case.recevice_code],:order=>"id")%>
+        <tr>
+          <th>审限日期：</th>
+          <td><%if @case_dely!=nil%><%=@case_dely.delayTerm %><%end%></td>
+        </tr>
+        <%@n1=TbCasedelay.count(:id,:conditions=>["used='Y' and recevice_code=?",@case.recevice_code],:order=>"id")%>
+        <tr>
+          <th>延期次数：</th>
+          <td><%=@n1 %></td>
+        </tr>
+        <tr>
+          <th>最后一次延期后日期：</th>
+          <td><%=@case.finally_limit_dat  %></td>
+        </tr>
+        <tr>
+          <th>结案日期：</th>
+          <td><%=@case.end_date%></td>
+        </tr>
+        <tr>
+          <th>是否结案：</th>
+          <td>
+            <%if @case.end_code=="" or @case.end_code==nil%>
+              该案件未结案
+            <%else%>
+              该案件已经结案
+            <%end%>
+          </td>
+        </tr>
+        <tr>
+          <th>选定的仲裁机构：</th>
+          <td><%= @arbit_agent %></td>
+        </tr>
+        <tr>
+          <th>案由：</th>
+          <td><%=@case.casereason  %></td>
+        </tr>
+        <tr>
+          <th>仲裁协议内容：</th>
+          <td><%=@case.arbitprot%></td>
+        </tr>
+        <tr>
+          <th>特殊事项说明：</th>
+          <td><%=@case.special%></td>
+        </tr>
+        <tr>
+          <th>申请人地区：</th>
+          <td><%=@area1%></td>
+        </tr>
+        <tr>
+          <th>被申请人地区：</th>
+          <td><%=@area2%></td>
+        </tr>
+      </table>
+    <%end%>
+    <br/>
+  </body>
+</html>

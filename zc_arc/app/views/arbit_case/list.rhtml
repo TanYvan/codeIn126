@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>仲裁员办案情况查询</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">仲裁员办案情况查询</span></div>
+    <%form_tag :url=>{:action=>"list"} do%>
+      <div align="center">
+        仲裁员姓名：<%=text_field_tag(:name)%>
+        <%=submit_tag "查询" %>
+      </div>
+    <%end%>
+    <br><br>
+    <div class="cGreen">
+      <%if @name!=nil && @name!=''%>
+        仲裁员姓名：<%=@name%>
+      <%else%>
+      <%end%>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr>
+          <th nowrap>案件编号</th>
+          <th nowrap>选定方式</th>
+          <th nowrap>申请人</th>
+          <th nowrap>被申请人</th>
+          <th nowrap>申请方代理人</th>
+          <th nowrap>被申请方代理人</th>
+          <th nowrap>其它仲裁员及选定方式</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @case!=nil%>
+          <%for q in @case%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap>
+                <%=q.recevice_code%>
+              </td>
+              <td nowrap>
+                <%@a=TbDictionary.find(:first,:conditions=>"typ_code='0015' and state='Y' and data_val='#{q.arbitmansign}'")%>
+                <%if @a!=nil%>
+                  <%=@a.data_text%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%@a=TbParty.find(:first,:conditions=>"recevice_code='#{q.recevice_code}' and partytype=1 and used='Y'")%>
+                <%if @a!=nil%>
+                  <%=@a.partyname%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%@a=TbParty.find(:first,:conditions=>"recevice_code='#{q.recevice_code}' and used='Y' and partytype=2")%>
+                <%if @a!=nil%>
+                  <%=@a.partyname%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%@a=TbAgent.find(:first,:conditions=>"recevice_code='#{q.recevice_code}' and partytype=1 and used='Y'")%>
+                <%if @a!=nil%>
+                  <%=@a.name%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <%@a=TbAgent.find(:first,:conditions=>"recevice_code='#{q.recevice_code}' and partytype=2 and used='Y'")%>
+                <%if @a!=nil%>
+                  <%=@a.name%>
+                <%end%>
+              </td>
+              <td nowrap>
+                <div align="left">
+                  <%@a=TbCasearbitman.find_by_sql("select a.name as name,c.arbitmansign as arbitmansign from tb_arbitmen as a,
+                    tb_casearbitmen as c where c.recevice_code='#{q.recevice_code}'  and a.used='Y' and c.used='Y' and 
+                    a.code=c.arbitman and c.arbitman!='#{q.code}'")%>
+                  <%if @a!=nil%>
+                    <%for p in @a%>
+                      <%=p.name%>:
+                      <%@a=TbDictionary.find(:first,:conditions=>"typ_code='0015' and state='Y' and data_val='#{p.arbitmansign}'")%>
+                      <%if @a!=nil%>
+                        <%=@a.data_text%>
+                      <%end%>
+                      <br>
+                    <%end%>
+                  <%end%>
+                </div>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

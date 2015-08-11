@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>补正、更正裁决数</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">补正、更正裁决数</span></div>
+    <%form_tag :url=>{:action=>"list3_14"} do%>
+      <table align="center">
+        <tr>
+          <td nowrap align="right">裁决书类型:</td>
+          <td align="left" nowrap> <%=select_tag "datestyle",
+              "<option value='01' selected>补正裁决书</option>
+  <option value='02' select>更正裁决书</option>"%></td>
+        </tr>
+        <tr><td nowrap align="right">立案时间：</td>
+          <td align="left"><%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+            至
+            <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+          </td></tr>
+        <tr><td colspan="2">
+            <%=submit_tag "查询" %>
+          </td></tr>
+      </table>
+    <%end%>
+    <i><%=flash[:notice]%></i>
+    <%if @datestyle=='01'%>
+      <div align="left">&nbsp;<%=@state[@datestyle]%>，案件数量：<%=@casebook1.length%>  </div>
+      <br/>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>立案号</th>
+            <th nowrap>立案日期</th>
+            <th nowrap>次数</th>
+            <th nowrap>助理</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for a in @casebook1%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap><%=a.case_code%></td>
+              <td nowrap><%=a.nowdate%></td>
+              <td nowrap>
+                <%a1=VCasebook.count(:id,:conditions=>["recevice_code=? and book_typ='0005' and nowdate>=? and nowdate<=?",a.recevice_code,@d1,@d2])%>
+                <%=a1%>
+              </td>
+              <td nowrap><%=User.find(:first,:conditions=>["used='Y' and code=?",a.clerk]).name %></td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+      </table>
+    <%else%>
+      <br/>
+      <div align="left"><%=@state[@datestyle]%>，案件数量：<%=@casebook2.length%>  </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+          <tr>
+            <th nowrap>立案号</th>
+            <th nowrap>立案日期</th>
+            <th nowrap>次数</th>
+            <th nowrap>助理</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%i=0%>
+          <%for a in @casebook2%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap><%=a.case_code%></td>
+              <td nowrap><%=a.nowdate%></td>
+              <td nowrap>
+                <%a2=VCasebook.count(:id,:conditions=>["recevice_code=? and book_typ='0004' and nowdate>=? and nowdate<=?",a.recevice_code,@d1,@d2])%>
+                <%=a2%>
+              </td>
+              <td nowrap><%=User.find(:first,:conditions=>["used='Y' and code=?",a.clerk]).name %></td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        </tbody>
+      </table>
+    <%end%>
+  </body>
+</html>

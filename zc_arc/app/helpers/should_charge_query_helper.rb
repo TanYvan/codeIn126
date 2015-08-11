@@ -1,0 +1,2 @@
+module ShouldChargeQueryHelper
+end

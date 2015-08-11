@@ -1,0 +1,1 @@
+nohup mongrel_rails start -d -e development  -c /usr/local/zc_arc  -p 3210 -P /usr/local/zc_arc/log/mongrel_pid/mongrel_3210.pid &

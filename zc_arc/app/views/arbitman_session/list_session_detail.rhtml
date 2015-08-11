@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>活动列表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">活动列表</span></div>
+    <br>
+    <div align="center"><%= link_to "添加活动", :action => "new_session_detail" %></div>
+    <%if @session_detail_pages==nil%>
+        <table align="center">
+          <tr>
+            <td>没有记录</td>
+          </tr>
+        </table>
+    <%else%>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>序号</th>
+        <th nowrap>活动名称</th>
+        <th nowrap>活动类型</th>
+        <th nowrap>应参与人数</th>
+        <th nowrap>实际参与人数</th>
+        <th nowrap>参与率(%)</th>
+        <th nowrap>活动开始时间</th>
+        <th nowrap>活动结束时间</th>
+        <th nowrap>修改</th>
+        <th nowrap>删除</th>
+      </tr>        
+      </thead>
+      <%j=0%>
+      <%i=1%>
+      <%if @session_details != nil
+          for session in @session_details%>
+              
+              <tr class="row<%=  j%2 %>">
+                <td><%=  i %></td> 
+                <td><%=  session.session_name %></td>
+                <td><%=  TbDictionary.find(:first,:conditions=>["typ_code='9001' and data_val=?",session.session_type]).data_text%></td>
+                <%person_num = TbArbitmanSession.find(:all, :conditions =>["session_code = ? and used = 'Y'",session.session_num])%>
+                <td><%if person_num != nil%><%=person_num.size%><%else%><%=  %><%end%></td>      <!--应参与人数对应的数据库字段-->
+                <%person_attend = TbArbitmanSession.find(:all, :conditions =>["session_code = ? and used = 'Y' and state = '0001'",session.session_num])%>          
+                <td><%if person_attend != nil%><%=person_attend.size%><%else%><%=  %><%end%></td>     <!--实际参与人数对应的数据库字段-->
+                <%if person_num.size != 0%>
+                <td><%= (person_attend.size*100).to_f/person_num.size.to_f %></td>      <!--参与率对应的数据库字段-->
+                <%else%>
+                <td><%= "--" %></td>
+                <%end%>
+                <td><%=  session.begintime%></td>      <!--活动开始时间对应的数据库字段-->
+                <td><%=  session.endtime%></td>      <!--活动结束时间对应的数据库字段-->
+                <td><%=  link_to "修改", {:action => "edit_session_detail", :id => session.session_num,:search_condit=>@search_condit,:order=>@order,:page=>@session_detail_pages.current.number,:page_lines=>@page_lines} %></td>
+                <td><%=  link_to "删除", {:action => "delete_session_detail", :id => session.session_num,:search_condit=>@search_condit,:order=>@order,:page=>@session_detail_pages.current.number,:page_lines=>@page_lines},:confirm => "确定删除?", :method => "post" %></td>
+              </tr>
+              <%i+=1%>
+              <%j+=1%>
+          <%end%>
+      <%end%>
+    </table>
+    <!--翻页的处理-->
+    <table  align="center"> 
+      <tr>
+        <td>
+          <%= link_to '上一页', { :page => @session_detail_pages.current.previous ,:condi_search=>@condi_search,:order=>@order ,:page_lines=>@page_lines  } if @session_detail_pages.current.previous %>
+          <%=pagination_links( @session_detail_pages,{:params=>{:condi_search=>@condi_search,:order=>@order,:page_lines=>@page_lines}})%>
+          <%= link_to '下一页', { :page => @session_detail_pages.current.next ,:condi_search=>@condi_search,:order=>@order ,:page_lines=>@page_lines } if @session_detail_pages.current.next %> 
+        </td>
+        <td>
+          <%if @session_detail_pages.current.previous or @session_detail_pages.current.next%>
+            <form action="/arbitman_session/list_session_detail" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @session_detail_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </table>
+    <%end%>
+  </body>
+</html>
+

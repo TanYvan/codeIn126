@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>某年的工作日列表</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+        <div class="title"><span class="cBlue"><%= params[:year] %>年<%= @month %>月工作日列表</span></div>
+        <div style="color:red"><%=flash[:notice]%></div>  
+    <div align="center"> 
+        <%=link_to "返回", :action => "workday_index", :year => params[:year]%>
+    </div>        
+        <br>
+    <table class="adminlist">
+      <thead>
+        <th nowrap>月份</th>
+        <th nowrap>日期</th>
+        <th nowrap>星期几</th>
+        <th nowrap>是否工作日</th>
+        <th nowrap>编辑</th>
+      </thead>
+      <tbody>
+         <% if @workdays_months != nil
+         for workdays_month in @workdays_months%>
+        <tr>
+          <td><%= workdays_month.month %></td>
+          <td><%= workdays_month.date %></td>
+          <td><%= workdays_month.weekday %></td>
+          <%if workdays_month.isworkday == '1'%>
+             <td>是</td> 
+             <td><%=button_to "设置为节假日", :action => "unset_date",:date => workdays_month.date %></td>
+          <%else%>
+              <td>否</td>
+              <td><%=button_to "设置为工作日", :action => "set_date",:date => workdays_month.date %></td>
+          <%end%>
+        </tr>
+      </tbody>
+      <%end%>
+    </table>
+    <%end%>
+  </body>
+</html>
+

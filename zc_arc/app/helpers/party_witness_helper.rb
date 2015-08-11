@@ -1,0 +1,2 @@
+module PartyWitnessHelper
+end

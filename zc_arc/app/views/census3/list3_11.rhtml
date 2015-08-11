@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>当事人次数统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+          <div class="title"><span class="cBlue">当事人次数统计</span></div>
+          <%form_tag :url=>{:action=>"list3_11"} do%>
+            <table align="center">
+              <tr>
+                <td nowrap align="right">当事人类型:</td>
+                <td align="left" nowrap> <%=select_tag "datestyle",
+                    "<option value='01' selected>代理人（律师事务所）</option>
+  <option value='02' select>当事人</option>
+  <option value='03' select>当事人＋代理人（律师事务所）</option>"%></td>
+              </tr>
+              <tr><td nowrap align="right">立案时间：</td>
+                <td align="left"><%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+                  至
+                  <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+                </td></tr>
+              <tr><td colspan="2">
+                  <%=submit_tag "查询" %>
+                </td></tr>
+            </table>
+          <%end%>
+          <div align="center"><%=@state[params[:datestyle]]%>：<%=@d1%>至<%=@d2%></div>
+          <i><%=flash[:notice]%></i>
+          <%if params[:datestyle]=='01'%><!--代理人-->
+            <div align="left">律师事务所数量：<%=@arbitman_case1.length%>  </div>
+            <table cellspacing="1" class="adminlist">
+              <thead>
+                <tr>
+                  <th nowrap>律师事务所名称</th>
+                  <th nowrap>出现次数</th>
+                  <th nowrap>手机</th>
+                  <th nowrap>电话号码</th>
+                  <th nowrap>传真</th>
+                  <th nowrap>地址</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <%for a in @arbitman_case1%>
+                  <tr class="row<%=i % 2%>">
+                    <td nowrap><%=a.company%></td>
+                    <td nowrap>
+                      <%a_id=VAgent.count(:id,:conditions=>["nowdate>=? and nowdate<=? and company=?",@d1,@d2,a.company],:order=>"recevice_code")%>
+                      <%=link_to "#{a_id}",:action=>"list3_11a",:d1=>@d1,:d2=>@d2,:name=>a.company,:datestyle=>@datestyle%>
+                    </td>
+                    <td nowrap><%=a.mobiletel %> </td>
+                    <td nowrap><%=a.tel %> </td>
+                    <td nowrap><%=a.post_tel_code %> </td>
+                    <td nowrap><%=a.addr %> </td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+              </tbody>
+            </table>
+          <%elsif params[:datestyle]=='02'%>
+            <div align="left">当事人数量：<%=@arbitman_case2.length%>  </div>
+            <table cellspacing="1" class="adminlist">
+              <thead>
+                <tr>
+                  <th nowrap>当事人姓名</th>
+                  <th nowrap>出现次数</th>
+                  <th nowrap>手机</th>
+                  <th nowrap>电话号码</th>
+                  <th nowrap>传真</th>
+                  <th nowrap>地址</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <%for a in @arbitman_case2%>
+                  <tr class="row<%=i % 2%>">
+                    <td nowrap><%=a.partyname%></td>
+                    <td nowrap>
+                      <%p_id=VParty.count(:id,:conditions=>["nowdate>=? and nowdate<=? and partyname=?",@d1,@d2,a.partyname],:order=>"recevice_code")%>
+                      <%=link_to "#{p_id}",:action=>"list3_11b",:d1=>@d1,:d2=>@d2,:name=>a.partyname,:datestyle=>@datestyle%>
+                    </td>
+                    <td nowrap><%=a.mobiletel %> </td>
+                    <td nowrap><%=a.tel %> </td>
+                    <td nowrap><%=a.post_tel_code %> </td>
+                    <td nowrap><%=Region.find(:first,:conditions=>["code=?",a.area]).name %> </td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+              </tbody>
+            </table>
+          <%else%>
+            <div align="left">律师事务所数量：<%=@arbitman_case1.length%>  </div>
+            <table cellspacing="1" class="adminlist">
+              <thead>
+                <tr>
+                  <th nowrap>律师事务所名称</th>
+                  <th nowrap>出现次数</th>
+                  <th nowrap>手机</th>
+                  <th nowrap>电话号码</th>
+                  <th nowrap>传真</th>
+                  <th nowrap>地址</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <%for a in @arbitman_case1%>
+                  <tr class="row<%=i % 2%>">
+                    <td nowrap><%=a.company%></td>
+                    <td nowrap>
+                      <%a_id=VAgent.count(:id,:conditions=>["nowdate>=? and nowdate<=? and company=?",@d1,@d2,a.company],:order=>"recevice_code")%>
+                      <%=link_to "#{a_id}",:action=>"list3_11a",:d1=>@d1,:d2=>@d2,:name=>a.company,:datestyle=>@datestyle%>
+                    </td>
+                    <td nowrap><%=a.mobiletel %> </td>
+                    <td nowrap><%=a.tel %> </td>
+                    <td nowrap><%=a.post_tel_code %> </td>
+                    <td nowrap><%=a.addr %> </td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+              </tbody>
+            </table>
+            <br/>
+            <div align="left">&nbsp;当事人数量：<%=@arbitman_case2.length%></div>
+            <table cellspacing="1" class="adminlist">
+              <thead>
+                <tr>
+                  <th nowrap>当事人姓名</th>
+                  <th nowrap>出现次数</th>
+                  <th nowrap>手机</th>
+                  <th nowrap>电话号码</th>
+                  <th nowrap>传真</th>
+                  <th nowrap>地址</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <%for a in @arbitman_case2%>
+                  <tr class="row<%=i % 2%>">
+                    <td nowrap><%=a.partyname%></td>
+                    <td nowrap>
+                      <%p_id=VParty.count(:id,:conditions=>["nowdate>=? and nowdate<=? and partyname=?",@d1,@d2,a.partyname],:order=>"recevice_code")%>
+                      <%=link_to "#{p_id}",:action=>"list3_11b",:d1=>@d1,:d2=>@d2,:name=>a.partyname,:datestyle=>@datestyle%>
+                    </td>
+                    <td nowrap><%=a.mobiletel %> </td>
+                    <td nowrap><%=a.tel %> </td>
+                    <td nowrap><%=a.post_tel_code %> </td>
+                    <td nowrap><%=Region.find(:first,:conditions=>["code=?",a.area]).name %> </td>
+                  </tr>
+                  <%i=i+1%>
+                <%end%>
+              </tbody>
+            </table>
+          <%end%>
+  </body>
+</html>

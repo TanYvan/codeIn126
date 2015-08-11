@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改单位检测</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <div class="cDGray" align="center">修改单位检测(带<i>*</i>为必填项)  <%=link_to "返回",:action=>"detection_list"%></div>
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :detection ,:url=>{:action=>"detection_update",:id=>params[:id],:recevice_code=>params[:recevice_code]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            提出时间:
+           </th>
+          <td>
+            <%=f.text_field(:make_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_make_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th>
+            提出方:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8113' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:advance,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            仲裁庭决定情况:
+          </th>
+          <td>
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='8109' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:arbitration_decision,op,:data_val,:data_text)%>
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            <i>*</i>机构单位:
+          </th>
+          <td>
+           <%=f.text_field(:etectiond,:style=>"width:20em")%> <i><%=error_message_on(:detection,:eteciond) %></i>
+           <div style="color:red"><%=error_message_on(:detection,:etectiond)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            （审计或鉴定）合同签订时间:
+          </th>
+          <td>
+            <%=f.text_field(:contract_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_contract_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+
+        <tr >
+          <th>
+            结论做出时间:
+          </th>
+          <td>
+            <%=f.text_field(:conclusion_date,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_conclusion_date'),'yyyy-MM-dd')" >
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <i>*</i>费用(￥):
+          </th>
+          <td>
+            <%=f.text_field(:cost)%>元
+            <div style="color:red"><%=error_message_on(:detection,:cost)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            备注:
+          </th>
+          <td>
+            <%=f.text_area(:remarks,:rows=>4)%>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            仲裁庭决定时间:
+           </th>
+          <td>
+            <%=f.text_field(:arbitral_decision_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_arbitral_decision_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            确定范围及推荐机构时间:
+           </th>
+          <td>
+            <%=f.text_field(:definite_organization_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_definite_organization_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            联系机构的时间:
+           </th>
+          <td>
+            <%=f.text_field(:contact_organization_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_contact_organization_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            机构报价时间:
+           </th>
+          <td>
+            <%=f.text_field(:organization_price_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_organization_price_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            确定机构时间:
+           </th>
+          <td>
+            <%=f.text_field(:definite_org_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_definite_org_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            送交审批时间:
+           </th>
+          <td>
+            <%=f.text_field(:send_pproval_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_send_pproval_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            审批时间:
+           </th>
+          <td>
+            <%=f.text_field(:pproval_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_pproval_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            通知缴费时间:
+           </th>
+          <td>
+            <%=f.text_field(:billing_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_billing_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            收到费用时间:
+           </th>
+          <td>
+            <%=f.text_field(:fees_received_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_fees_received_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            和机构签约时间:
+           </th>
+          <td>
+            <%=f.text_field(:agency_contract_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_agency_contract_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            合同规定的完成委托事项的时间:
+           </th>
+          <td>
+            <%=f.text_field(:provision_completion_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_provision_completion_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            初稿完成时间:
+           </th>
+          <td>
+            <%=f.text_field(:sketch_completion_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_sketch_completion_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            转给当事人时间:
+           </th>
+          <td>
+            <%=f.text_field(:trans_party_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_trans_party_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            收到当事人评论的时间:
+           </th>
+          <td>
+            <%=f.text_field(:get_comment_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_get_comment_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+        <tr>
+          <th>
+            报告作出时间:
+           </th>
+          <td>
+            <%=f.text_field(:report_made_t,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('detection_report_made_t'),'yyyy-MM-dd')" >            
+          </td>
+        </tr>
+       </table>
+     <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+     <%end%>
+  </body>
+</html>

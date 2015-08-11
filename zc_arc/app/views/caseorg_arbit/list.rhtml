@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">  
+  <head>
+    <title>办理案件选择</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">办理案件选择</span></div>
+    <div align="center">
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+    <%@caseA= TbCase.find_by_sql("select count(id)  as a1 from tb_cases  where used='Y'  and  clerk='#{session[:user_code]}' and file_submit_u='' and state>=4 and  state<150  and  state<>2  and  state<>3")%>
+    <%@case0=TbCase.count(:id,:conditions=>["used='Y' and clerk=? and state>=4 and state<100 and state<>2  and state<>3 and caseendbook_id_first is null",session[:user_code]])%>
+    <%@case2=TbCase.count(:id,:conditions=>["used='Y' and clerk=? and state=4 and caseendbook_id_first is null",session[:user_code]])%>
+    <%@case3=TbCase.find_by_sql("select count(id) as nc from tb_cases where used='Y' and clerk='#{session[:user_code]}' and state>=4 and state<100 and caseendbook_id_first is null and caseorg_id_first is not null and recevice_code not in (select recevice_code from tb_check_staffs where used='Y'  and typ='0001')") %>
+    <%@case3=PubTool.new.get_first_record(@case3)%>
+    <%if @case3==nil%>
+      <%@case3=0%>
+    <%else%>
+      <%@case33=@case3.nc%>
+    <%end%>
+    <%@case4=TbCase.find_by_sql("select count(id) as nc from tb_cases where used='Y' and clerk='#{session[:user_code]}' and state>=4 and caseendbook_id_first is null and state<100 and recevice_code in (select recevice_code from tb_check_staffs where used='Y'  and typ='0001')") %>
+    <%@case4=PubTool.new.get_first_record(@case4)%>
+    <%if @case4==nil%>
+      <%@case44=0%>
+    <%else%>
+      <%@case44=@case4.nc%>
+    <%end%>
+    <%@case55=TbCase.count(:id,:conditions=>["used='Y' and caseendbook_id_first is not null and file_submit_u='' and clerk=?",session[:user_code]])%>
+    <div align="left" style="font-size:14px;">
+      &nbsp;&nbsp;&nbsp;办理案件：<%=link_to "#{PubTool.new.get_first_record(@caseA).a1}件待处理案件",:controller=>'every_casebase',:action=>"list_right_a",:contr_r=>"caseorg_arbit",:act_r=>"list"%>，在办案件<strong><%=@case0%></strong>件，
+      其中<strong><%=link_to "#{@case2}件属于组庭前阶段",:controller=>'every_casebase',:action=>"list_right_2",:contr_r=>"caseorg_arbit",:act_r=>"list"%>，<%=link_to "#{@case33}件属于审理阶段",:controller=>'every_casebase',:action=>"list_right_3",:contr_r=>"caseorg_arbit",:act_r=>"list"%>，<%=link_to "#{@case44}件属于待结阶段",:controller=>'every_casebase',:action=>"list_right_4",:contr_r=>"caseorg_arbit",:act_r=>"list"%>，<%=link_to "#{@case55}件属于已结未终审阶段",:controller=>'every_casebase',:action=>"list_right_5",:contr_r=>"caseorg_arbit",:act_r=>"list"%></strong>。
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+   <table cellspacing="1" class="adminlist">     
+      <thead>
+      <tr >
+        <th nowrap>
+          <%if @order=="tb_cases_recevice_code desc"%>
+            <%=link_to '咨询流水号↑',:action=>"list",:order=>"tb_cases_recevice_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_cases_recevice_code asc"%>
+            <%=link_to '咨询流水号↓',:action=>"list",:order=>"tb_cases_recevice_code desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '咨询流水号',:action=>"list",:order=>"tb_cases_recevice_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_cases_case_code desc"%>
+            <%=link_to '立案号↑',:action=>"list",:order=>"tb_cases_case_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_cases_case_code asc"%>
+            <%=link_to '立案号↓',:action=>"list",:order=>"tb_cases_case_code desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '立案号',:action=>"list",:order=>"tb_cases_case_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+          <%if @order=="tb_cases_nowdate desc"%>
+            <%=link_to '立案日期↑',:action=>"list",:order=>"tb_cases_nowdate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%elsif @order=="tb_cases_nowdate asc"%>
+            <%=link_to '立案日期↓',:action=>"list",:order=>"tb_cases_nowdate desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%else%>
+            <%=link_to '立案日期',:action=>"list",:order=>"tb_cases_nowdate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+          <%end%>
+        </th>
+        <th nowrap>
+         选择
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for c in @case%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=link_to "#{c.tb_cases_recevice_code}",:controller=>'every_casebase',:action=>"every_list",:recevice_code=>"#{c.tb_cases_recevice_code}"%>
+        </td>
+        <td>
+          <%=h c.tb_cases_case_code%>
+        </td>
+        <td>
+          <%=h c.tb_cases_nowdate%>
+        </td>
+        <td>
+          <%=button_to "选择",:action=>"arbitman_list",:case_code=>c.tb_cases_case_code,:recevice_code=>c.tb_cases_recevice_code,:general_code=>c.tb_cases_general_code%>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.tb_cases_recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+        <td>
+          <div align="left">
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.tb_cases_recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+          </div>
+        </td>
+      </tr>          
+      <%i=i+1%>
+        <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="6" align="right">
+          <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.previous %>
+          <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.next %>
+
+          <%if @case_pages.current.previous or @case_pages.current.next%>
+            <form action="/caseorg_arbit/list" method="get" onsubmit="return page_check('page_lines','page');">
+              每页<input type=text id='page_lines' name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text id='page' name='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+     </tfoot>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>咨询工作日志查询</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">咨询工作日志查询</span></div>
+    <%form_tag :url=>{:action=>"list_12",:order=>@order,:page=>@casepro_pages.current.number,:page_lines=>@page_lines} do%>
+      <table align="center"><tr><td nowrap>
+            统计时间自<%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" />
+            至
+            <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" />
+            &nbsp;&nbsp;&nbsp;<%=submit_tag "查询" %>
+          </td></tr>
+      </table>
+    <%end%>
+    <i><%=flash[:notice]%></i>
+    <br/>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            <%if @order=="happdate desc"%>
+              <%=link_to '咨询日期↑',:action=>"list_12",:order=>"happdate asc",:page=>@casepro_pages.current.number,:page_lines=>@page_lines%>
+            <%elsif @order=="happdate asc"%>
+              <%=link_to '咨询日期↓',:action=>"list_12",:order=>"happdate desc",:page=>@casepro_pages.current.number,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '咨询日期',:action=>"list_12",:order=>"happdate asc",:page=>@casepro_pages.current.number,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap="nowrap">
+            咨询类型
+          </th>
+          <th nowrap="nowrap">
+            系争合同争议性质
+          </th>
+          <th nowrap="nowrap">
+            申请人信息及联系方式
+          </th>
+          <th nowrap="nowrap">
+            接待人姓名
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%if @casepro!=nil%>
+          <%for c in @casepro%>
+            <tr class="row<%=i % 2%>">
+              <td nowrap>
+                <%=c.happdate%>
+              </td>
+              <td nowrap>
+                <%=TbDictionary.find(:first,:conditions=>"typ_code='8129'  and  data_val='#{c.typ}'").data_text%>
+              </td>
+              <td>
+                <%=c.keyword%>
+              </td>
+              <td>
+                <%=h c.app1%>
+              </td>
+              <td>
+                <%=User.find(:first,:conditions=>["used='Y' and code=?",c.clerk_id]).name%>
+              </td>
+            </tr>
+            <%i=i+1%>
+          <%end%>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5">
+            <%= link_to '上一页', { :page => @casepro_pages.current.previous ,:order=>@order,:page_lines=>@page_lines  } if @casepro_pages.current.previous %>
+            <%=pagination_links( @casepro_pages,{:params=>{:order=>@order,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @casepro_pages.current.next ,:order=>@order,:page_lines=>@page_lines  } if @casepro_pages.current.next %>
+
+            <%if @casepro_pages.current.previous or @casepro_pages.current.next%>
+              <form action="/case_query1/list_12" method="get" onsubmit="return page_check('page_lines','page');">
+                每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+                <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @casepro_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@casepro_pages.current.number%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

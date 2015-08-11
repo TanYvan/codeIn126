@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>字典表管理</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">字典表管理</span></div>
+    <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+      <div align="center"><%=link_to  "创建", {:action=>"dictionary_new",:search_condit=>@search_condit,:page=>@dictionary_pages.current.number,:page_lines=>@page_lines}%>
+      <div style="color:red"><%=flash[:notice]%></div> </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap="nowrap">
+          类别编码
+        </th>
+        <th nowrap="nowrap">
+          参数值
+        </th>
+        <th nowrap="nowrap">
+         参数显示
+        </th>
+        <th nowrap="nowrap">
+         父参数
+        </th>
+        <th nowrap="nowrap">
+          参数状态
+        </th>
+        <th nowrap="nowrap">
+          编辑
+        </th>
+        <th nowrap="nowrap">
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%if @dictionary!=nil%>
+      <%for r in @dictionary%>
+        <tr class="row<%=i % 2%>">
+        <td >
+          <%=h r.typ_code%>
+        </td>
+        <td >
+          <%=h r.data_val%>
+        </td>
+        <td>
+          <%=r.data_text%>
+        </td>
+        <td>
+          <%=r.data_parent%>
+        </td>
+        <td>
+          <%=h r.state%>
+        </td>
+        <td >
+          <%=link_to "编辑",{:action=>'dictionary_edit',:id=>r,:search_condit=>@search_condit,:page=>@dictionary_pages.current.number,:page_lines=>@page_lines}%>
+        </td>
+        <td >
+          <%=button_to "删除" ,{:action=>'dictionary_delete',:id=>r,:search_condit=>@search_condit,:page=>@dictionary_pages.current.number,:page_lines=>@page_lines},:confirm=>"您确认要删除吗？"%>
+        </td>
+        <%i=i+1%>
+      <%end%>
+      <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="7">
+          <%= link_to '上一页', { :page => @dictionary_pages.current.previous  ,:search_condit=>@search_condit,:page_lines=>@page_lines  } if @dictionary_pages.current.previous %>
+          <%=pagination_links( @dictionary_pages,{:params=>{:search_condit=>@search_condit,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @dictionary_pages.current.next ,:search_condit=>@search_condit,:page_lines=>@page_lines  } if @dictionary_pages.current.next %>
+
+          <%if @dictionary_pages.current.previous or @dictionary_pages.current.next%>
+            <form action="/dictionary/dictionary_list" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @dictionary_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>

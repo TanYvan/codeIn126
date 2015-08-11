@@ -1,0 +1,8 @@
+<%@f=TbDocFormat.find_by_code(pv_2)%>
+
+<%if @f.obj==0%>
+  
+<%else%>
+  <%@fo=TbDocFormatObj.find_by_sql("select tb_dictionaries.data_text as data_text ,tb_dictionaries.data_val as data_val from tb_doc_format_objs,tb_dictionaries where tb_dictionaries.used='Y' and  tb_dictionaries.typ_code='0042' and tb_doc_format_objs.used='Y' and tb_doc_format_objs.format_code='#{@f.code}' and tb_doc_format_objs.obj_code=tb_dictionaries.data_val order by tb_dictionaries.data_val")%>
+  <%=select(:doc,:obj,@fo.collect{|p|[p.data_text,p.data_val]})%>
+<%end%>

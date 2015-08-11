@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <title>前台查询案件基本信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script src="/javascripts/check.js"></script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">前台查询案件基本信息</span></div>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+    </div>
+    <div style="color:red"><%=flash[:notice]%></div>
+    <table cellspacing="1" class="adminlist">
+      <tfoot>
+        <tr>
+          <td colspan="6">
+            <%= link_to '上一页', { :page => @case_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.previous %>
+            <%=pagination_links( @case_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+            <%= link_to '下一页', { :page => @case_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @case_pages.current.next %>
+
+            <%if @case_pages.current.previous or @case_pages.current.next%>
+              <form action="/case_query1/list_101" method="get" onsubmit="return page_check('page_lines','page');">
+                每页<input type=text name='page_lines' id='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+                <input type=text name='page' id='page' size=5 class="SingleLineInput" value=<%= @case_pages.current.number %> />
+                <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+                页
+                <input type=hidden name='order' value="<%=@order%>" />
+                <input type='submit' value='确定' />
+              </form>
+            <%end%>
+          </td>
+        </tr>
+      </tfoot>
+      <thead>
+        <tr >
+          <th nowrap>
+            <%if @order=="tb_cases_nowdate desc"%>
+              <%=link_to '通知日期↓',:action=>"list_101",:order=>"tb_cases_nowdate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="tb_cases_nowdate asc"%>
+              <%=link_to '通知日期↑',:action=>"list_101",:order=>"tb_cases_nowdate desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '通知日期',:action=>"list_101",:order=>"tb_cases_nowdate asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="tb_cases_nowdate desc"%>
+              <%=link_to '总案号↓',:action=>"list_101",:order=>"tb_cases_general_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="tb_cases_nowdate asc"%>
+              <%=link_to '总案号↑',:action=>"list_101",:order=>"tb_cases_general_code desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '总案号',:action=>"list_101",:order=>"tb_cases_general_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="tb_cases_case_code desc"%>
+              <%=link_to '受案号↑',:action=>"list_101",:order=>"tb_cases_case_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="tb_cases_case_code asc"%>
+              <%=link_to '受案号↓',:action=>"list_101",:order=>"tb_cases_case_code desc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '受案号',:action=>"list_101",:order=>"tb_cases_case_code asc",:page=>@case_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            经办人
+          </th>
+          <th nowrap>
+            申请人
+          </th>
+          <th nowrap>
+            被申请人
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @case%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%if c.tb_cases_nowdate!=nil%>
+                <%=h c.tb_cases_nowdate.to_s(:db)%>
+              <%end%>
+            </td>
+            <td>
+              <%=c.tb_cases_general_code%>
+            </td>
+            <td>
+              <%=c.tb_cases_case_code%>
+            </td>
+            <td>
+              <%=h User.find_by_code(c.tb_cases_clerk).name%>
+            </td>
+            <td nowrap>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.tb_cases_recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp +"【" +tp.partyname + "】" %>
+                <%end%>
+                <%=ttpp%>
+            </td>
+            <td nowrap>
+                <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{c.tb_cases_recevice_code}'",:order=>"id")%>
+                <%ttpp=''%>
+                <%for tp in @tp%>
+                  <%ttpp=ttpp + "【" +tp.partyname +  "】" %>
+                <%end%>
+                <%=ttpp%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <%if session[:recevice_code]==nil%>
+      <script language="javascript">
+        window.open("/case_p/list?contr_r=caseorg_arbit&act_r=arbitman_list","mainFrame")
+       </script>
+    <%end%>
+  </head>
+  <body>    
+    <div class="title"><span class="cBlue">仲裁员信息</span></div>
+    <div align="center">
+    <%if @case==nil%>
+      请选择您要办理的案件
+    <%end%>
+    <%=button_to "案件选择", :controller=>'case_p',:action=>"list",:contr_r=>"caseorg_arbit",:act_r=>"arbitman_list"%>
+    </div>
+  <%if @case!=nil%>
+    当前案件
+    <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr >
+        <th nowrap>
+          咨询流水号
+        </th>
+        <th nowrap>
+          咨询日期
+        </th>
+        <th nowrap>
+          立案号
+        </th>
+        <th nowrap>
+          立案日期
+        </th>
+        <th nowrap>
+          仲裁程序
+        </th>
+        <th nowrap>
+          申请人
+        </th>
+        <th nowrap>
+          被申请人
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <%=h @case.recevice_code%>
+        </td>
+        <td>
+          <%=h @case.receivedate%>
+        </td>
+        <td>
+          <%=h @case.case_code%>
+        </td>
+        <td>
+          <%=h @case.nowdate%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>["state='Y' and typ_code='0001' and data_val=?",@case.aribitprog_num]).data_text%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br/>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+        <td>
+          <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=2 and recevice_code='#{@case.recevice_code}'",:order=>"id")%>
+          <%ttpp=''%>
+          <%for tp in @tp%>
+            <%ttpp=ttpp + tp.partyname + " <br/>" %>
+          <%end%>
+          <%if ttpp!=''%>
+            <%ttpp=ttpp.slice(0,ttpp.length - 5) %>
+          <%end%>
+          <%=ttpp%>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <br/>
+      <!--<div align="center"><%=link_to "返回案件列表",:action=>"list"%></div>-->
+    <br/>
+     <h2 class="strong">
+      <div id="link1">
+        <table align="center" bgcolor="#E1F4FF">
+          <tr><td>
+              <%= link_to "选择仲裁员",:action => "arbitman_list",:recevice_code=>@case.recevice_code,:org_id=>params[:org_id]%>
+            </td><td width="0.01px" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "仲裁员回避",:action => "evite_list",:recevice_code=>@case.recevice_code,:org_id=>params[:org_id]%>
+            </td><td width="0.01px" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "仲裁员信息披露",:action => "disc_list",:recevice_code=>@case.recevice_code,:org_id=>params[:org_id]%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            <td>
+              <%= link_to "仲裁员更换",:action => "change_list",:recevice_code=>@case.recevice_code,:org_id=>params[:org_id]%>
+            </td><td width="0.01" bgcolor="#56A8FA" height="2"></td>
+            </tr>
+        </table>
+      </div>
+    </h2>
+    <br/>
+      <br/>
+    <div align="center">
+      <div class="cDGray">选择仲裁员</div>
+      <%=link_to  "创建", :action=>"arbitman_new",:org_id=>params[:org_id],:recevice_code=>@case.recevice_code%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr >
+          <th nowrap>
+            类型
+          </th>
+          <th nowrap>
+            仲裁员
+          </th>
+          <th nowrap>
+            指定方式
+          </th>
+          <th nowrap>
+            地区
+          </th>
+          <th nowrap>
+            开支费用
+          </th>
+          <th nowrap>
+            手机
+          </th>
+          <th nowrap>
+            电话号码
+          </th>
+          <th nowrap>
+            传真
+          </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @arbitman%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{p.arbitmantype}'").data_text%>
+        </td>
+          <%arbitman=TbArbitman.find_by_code(p.arbitman)%>
+        <td>
+          <%=arbitman.name%>
+        </td>
+        <td>
+          <%=TbDictionary.find(:first,:conditions=>"typ_code='0015' and data_val='#{p.arbitmansign}'").data_text%>
+        </td>
+        <td nowrap>
+          <%@area_code=TbArbitman.find(:first,:conditions=>["used='Y' and code=?",p.arbitman])%>
+          <%if @area_code!=nil%>
+            <%@region=Region.find_by_code(@area_code.area_code)%>
+            <%if @region!=nil%>
+              <%=@region.name%>
+            <%end%>
+          <%end%>
+        </td>
+        <td nowrap>
+          <%=p.currency%><%=p.f_money.to_i%>元
+        </td>
+        <td nowrap>
+          <%=arbitman.mobiletel%>
+        </td>
+        <td nowrap>
+          <%=arbitman.telh%>
+        </td>
+        <td nowrap>
+          <%=arbitman.fax%>
+        </td>
+        <td>
+            <%=button_to "删除",{:action=>"arbitman_delete",:id=>p,:org_id=>params[:org_id],:recevice_code=>@case.recevice_code},:confirm=>"您确认要删除吗？"%>
+        </td>
+      <%i=i+1%>
+      </tr>
+      <%end%>
+
+    
+      <%end%>
+      </tbody>
+    </table>
+  </body>
+</html>

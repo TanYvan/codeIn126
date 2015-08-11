@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>已发送短信提醒信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script src="/javascripts/check.js"></script>
+    <script language="JavaScript">
+      function checkall() {
+        var a='';
+        if (document.getElementById("cheall").value=='t' )
+          {
+            document.getElementById("cheall").value='f';
+          }
+        else
+         {
+            a='true';
+            document.getElementById("cheall").value='t';
+         }
+        var chec = document.getElementsByName("che");
+        for(i=0; i<chec.length; i++)
+          { 
+            chec[i].checked = a;
+          }
+      }
+            
+      function getcondi()
+      {
+        var chec = document.getElementsByName("che");
+        var a='';
+        for(i=0; i<chec.length; i++)
+          {
+            if (chec[i].checked == true)
+              a=a+chec[i].value+',';
+          }
+          aa=a.substr(0, a.length -1 )
+          var c = document.getElementById("condi_k");
+          c.value=aa;
+        }
+    </script>
+  </head>
+  <body>
+    <div class="title"><span class="cBlue">已发送短信提醒信息</span></div>
+    <div align="center">
+      <%=render :partial=>'shared/hant_search_1', :object=>@hant_search_1_page_name%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <table cellspacing="1" class="adminlist">
+      <thead>
+        <tr >
+          <th nowrap>
+            <%if @order=="p_name desc"%>
+              <%=link_to '姓名↑',:action=>"list",:order=>"p_name asc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="p_name asc"%>
+              <%=link_to '姓名↓',:action=>"list",:order=>"p_name desc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '姓名',:action=>"list",:order=>"p_name asc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="mobiletel desc"%>
+              <%=link_to '手机号↑',:action=>"list",:order=>"mobiletel asc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="mobiletel asc"%>
+              <%=link_to '手机号↓',:action=>"list",:order=>"mobiletel desc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '手机号',:action=>"list",:order=>"mobiletel asc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="contents desc"%>
+              <%=link_to '内容↑',:action=>"list",:order=>"contents asc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="contents asc"%>
+              <%=link_to '内容↓',:action=>"list",:order=>"contents desc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '内容',:action=>"list",:order=>"contents asc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="c_t desc"%>
+              <%=link_to '消息产生时间↑',:action=>"list",:order=>"c_t asc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="c_t asc"%>
+              <%=link_to '消息产生时间↓',:action=>"list",:order=>"c_t desc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '消息产生时间',:action=>"list",:order=>"c_t asc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            <%if @order=="send_t desc"%>
+              <%=link_to '消息送时间↑',:action=>"list",:order=>"send_t asc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%elsif @order=="send_t asc"%>
+              <%=link_to '消息产生时间↓',:action=>"list",:order=>"send_t desc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%else%>
+              <%=link_to '消息产生时间',:action=>"list",:order=>"send_t asc",:page=>@sms_pages.current.number,:search_condit=>@search_condit,:page_lines=>@page_lines%>
+            <%end%>
+          </th>
+          <th nowrap>
+            发送人
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+        <%for c in @sms%>
+          <tr class="row<%=i % 2%>">
+            <td>
+              <%=c.p_name%>
+            </td>
+            <td>
+              <%=c.mobiletel%>
+            </td>
+            <td>
+              <%=c.contents%>
+            </td>
+            <td nowrap>
+              <%=h c.c_t.to_s(:db)%>
+            </td>
+            <td nowrap>
+              <%=h c.send_t.to_s(:db)%>
+            </td>
+            <td nowrap>
+              <%=h User.find_by_code(c.send_u).name%>
+            </td>
+          </tr>
+          <%i=i+1%>
+        <%end%>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="8">
+          <%= link_to '上一页', { :page => @sms_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @sms_pages.current.previous %>
+          <%=pagination_links( @sms_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @sms_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @sms_pages.current.next %>
+
+          <%if @sms_pages.current.previous or @sms_pages.current.next%>
+            <form action="/sms_alert/list" method="get" onsubmit="return page_check('page_lines','page');">
+              每页<input type=text id="page_lines" name='page_lines' size=2 class="SingleLineInput" value=<%=@page_lines%>  />条记录,第
+              <input type="text" id='page' name='page' size=5 class="SingleLineInput" value=<%= @sms_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='确定' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </tfoot>
+    </table>
+  </body>
+</html>

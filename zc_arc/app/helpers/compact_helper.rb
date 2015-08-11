@@ -1,0 +1,2 @@
+module CompactHelper
+end

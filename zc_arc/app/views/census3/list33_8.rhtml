@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>当事人统计</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <script src="/javascripts/check.js"></script>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <table><tr><td>
+          <div class="title"><span class="cBlue">当事人统计</span></div>
+          <div align="center" style="display:  inline">
+            <%form_tag :url=>{:action=>"list3_8"} do%>
+                    立案时间：<%=text_field_tag(:d1,@d1,:readonly=>"true")%>
+                    <input type="button" value="..." onclick="SelectDate(document.getElementById('d1'),'yyyy-MM-dd')" />
+                    至
+                    <%=text_field_tag(:d2,@d2,:readonly=>"true")%>
+                    <input type="button" value="..." onclick="SelectDate(document.getElementById('d2'),'yyyy-MM-dd')" />
+                    &nbsp;&nbsp;&nbsp;<%=submit_tag "查询" %>                  
+            <%end -%>
+          </div>
+          <div align="center" style=" display:  inline">
+            <%form_tag({:action=>'list33_81',:d1=>@d1,:d2=>@d2},:target=>"_black") do %>
+              <%=submit_tag '生成word文档'%>
+            <%end%>
+          </div>
+          <i><%=flash[:notice]%></i>
+          <br/>          
+          <table border="1" cellspacing="0" cellpadding="0">
+            <tr>
+              <td  valign="center">缔约方的地域分布  仲裁条款选定的仲裁机构</td>
+              <td   valign="left">至少一方为深圳市</td>
+              <td   valign="left">至少一方为广东其他地区（除深圳市以外）</td>
+              <td  valign="left">至少一方为香港地区</td>
+              <td   valign="left">双方都是广东以外地区</td>
+              <td   valign="left">双方都是外国</td>
+              <td   valign="left">一方为广东以外地区，另一方为外国</td>
+              <td  valign="left">合计</td>
+            </tr>
+            <%n_a1=0%>
+            <%n_b1=0%>
+            <%n_c1=0%>
+            <%n_d1=0%>
+            <%n_e1=0%>
+            <%n_f1=0%>
+            <%for a in @agent%>
+              <tr>
+                <td width="103" valign="left"><%=a.data_text%></td>
+                <td valign="left">
+                  <%a1=PartyRegion.sum("r1", :conditions => ["nowdate>=? and nowdate<=? and agent=?", @d1, @d2,a.data_val ])%>
+                  <%if a1!=nil && a1!=0%>
+                    <%=link_to "#{a1}",{:action=>"list33_8a",:agent=>a.data_val,:d1=>@d1,:d2=>@d2,:r=>"r1"},:target=>"_black"%>
+                    <%n_a1=n_a1 + a1%>
+                  <%else%>
+                    &nbsp;
+                    <%a1=0
+                    n_a1=n_a1 + 0%>
+                  <%end%>
+                </td>
+                <td valign="left">
+                  <%b1=PartyRegion.sum("r2", :conditions => ["nowdate>=? and nowdate<=? and agent=?", @d1, @d2,a.data_val ]) %>
+                  <%if b1!=nil && b1!=0%>
+                    <%n_b1=n_b1 + b1%>
+                    <%=link_to "#{b1}",{:action=>"list33_8a",:agent=>a.data_val,:d1=>@d1,:d2=>@d2,:r=>"r2"},:target=>"_black"%>
+                  <%else%>
+                    &nbsp;
+                    <%b1=0
+                    n_b1=n_b1 + 0%>
+                  <%end%>
+                </td>
+                <td valign="left">
+                  <%c1=PartyRegion.sum("r3", :conditions => ["nowdate>=? and nowdate<=? and agent=?", @d1, @d2,a.data_val ]) %>
+                  <%if c1!=nil && c1!=0%>
+                    <%n_c1=n_c1 + c1%>
+                    <%=link_to "#{c1}",{:action=>"list33_8a",:agent=>a.data_val,:d1=>@d1,:d2=>@d2,:r=>"r3"},:target=>"_black"%>
+                  <%else%>
+                    &nbsp;
+                    <%c1=0
+                    n_c1=n_c1 + 0%>
+                  <%end%>
+                </td>
+                <td valign="left">
+                  <%d1=PartyRegion.sum("r4", :conditions => ["nowdate>=? and nowdate<=? and agent=?", @d1, @d2,a.data_val ]) %>
+                  <%if d1!=nil && d1!=0%>
+                    <%n_d1=n_d1 + d1%>
+                    <%=link_to "#{d1}",{:action=>"list33_8a",:agent=>a.data_val,:d1=>@d1,:d2=>@d2,:r=>"r4"},:target=>"_black"%>
+                  <%else%>
+                    &nbsp;
+                    <%d1=0
+                    n_d1=n_d1 + 0%>
+                  <%end%>
+                </td>
+                <td valign="left">
+                  <%e1=PartyRegion.sum("r5", :conditions => ["nowdate>=? and nowdate<=? and agent=?", @d1, @d2,a.data_val ]) %>
+                  <%if e1!=nil && e1!=0%>
+                    <%n_e1=n_e1 + e1%>
+                    <%=link_to "#{e1}",{:action=>"list33_8a",:agent=>a.data_val,:d1=>@d1,:d2=>@d2,:r=>"r5"},:target=>"_black"%>
+                  <%else%>
+                    &nbsp;
+                    <%e1=0
+                    n_e1=n_e1 + 0%>
+                  <%end%>
+                </td>
+                <td valign="left">
+                  <%f1=PartyRegion.sum("r6", :conditions => ["nowdate>=? and nowdate<=? and agent=?", @d1, @d2,a.data_val ]) %>
+                  <%if f1!=nil && f1!=0%>
+                    <%n_f1=n_f1 + f1%>
+                    <%=link_to "#{f1}",{:action=>"list33_8a",:agent=>a.data_val,:d1=>@d1,:d2=>@d2,:r=>"r6"},:target=>"_black"%>
+                  <%else%>
+                    &nbsp;
+                    <%f1=0
+                    n_f1=n_f1 + 0%>
+                  <%end%>
+                </td>
+                <td valign="left"><%=a1 + b1 + c1 + d1 + e1 + f1 %></td>
+              </tr>
+            <%end%>
+
+            <tr>
+              <td width="103" valign="left">合计 </td>
+              <td   valign="left"><%=n_a1 %></td><!--SysArg.get_pn_1(@d1, @d2)-->
+              <td   valign="left"><%=n_b1 %></td>
+              <td  valign="left"><%=n_c1 %></td>
+              <td   valign="left"><%=n_d1 %></td>
+              <td   valign="left"><%=n_e1 %></td>
+              <td   valign="left"><%=n_f1 %></td>
+              <td  valign="left">&nbsp; </td>
+            </tr>
+            <!--tr>
+              <td width="568" colspan="8" valign="left" align="left">
+                  &nbsp;&nbsp;其他包括：<br/>
+                  北京中国国际经济贸易仲裁委员会（1）；<br/>
+                  中国国际经济贸易仲裁委员会广东省分会（3）；<br/>
+                  通过国际商业仲裁机构在深圳仲裁（1）；<br/>
+                  中国深圳国际经济贸易仲裁委员会（1）；<br/>
+                  中国国际经济贸易仲裁委员会深圳外贸委员会（1）；<br/>
+                  中国国际商事仲裁院深圳分院（1）。</td>
+            </tr-->
+          </table>          
+        </td></tr></table>
+  </body>
+</html>

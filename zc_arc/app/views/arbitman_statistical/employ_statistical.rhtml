@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员聘用统计</title>
+     <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">    
+  </head>  
+  <body> 
+      <div class="title"><span class="cBlue">仲裁员聘用统计</span></div>
+        <div style="color:red"><%=flash[:notice]%></div>
+     <table cellspacing="1" class="adminlist">
+      <thead>
+      <tr>
+        <th nowrap>年度</th>
+        <th nowrap>仲裁员总数</th>
+        <th nowrap>续聘人数</th>
+        <th nowrap>增聘人数</th>
+        <th nowrap>大陆仲裁员</th>
+        <th nowrap>香港仲裁员</th>
+        <th nowrap>澳门仲裁员</th>
+        <th nowrap>台湾仲裁员</th>
+        <th nowrap>外籍仲裁员（港澳台之外）</th>
+        <th nowrap>总数</th>        
+      </tr>
+      </thead>
+      <tbody>
+        <%i=0%>
+      <%if @years != nil  
+          for year in @years %>                  
+              <tr class="row<%=i % 2%>">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>     
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>    
+                <td></td>
+                <td></td>                 
+              </tr>
+              <%i=i+1%>
+          <%end%>
+      <%end%>
+      </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="9">
+          <%= link_to '上一页', { :page => @tb_arbitman_expire_log_pages.current.previous ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_arbitman_expire_log_pages.current.previous %>
+          <%=pagination_links( @tb_arbitman_expire_log_pages,{:params=>{:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', { :page => @tb_arbitman_expire_log_pages.current.next ,:search_condit=>@search_condit,:order=>@order,:page_lines=>@page_lines  } if @tb_arbitman_expire_log_pages.current.next %>
+
+          <%if @tb_arbitman_expire_log_pages.current.previous or @tb_arbitman_expire_log_pages.current.next%>
+            <form action="/arbitmannow/list_actions" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @tb_arbitman_expire_log_pages.current.number %> />
+              <input type=hidden name='search_condit' value="<%=@search_condit%>" />
+              页
+              <input type=hidden name='order' value="<%=@order%>" />
+              <input type='submit' value='跳转' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </tfoot>      
+    </table>   
+  </body>
+</html>
+
+

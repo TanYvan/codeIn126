@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>修改格式函信息</title>
+    <%= javascript_include_tag  'WebCalendar'%>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <br>
+    <div class="cDGray" align="center">修改格式函信息   <%=link_to "返回",:action=>"docformat_list",:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+    </div>
+    <%form_for :docformat ,:url=>{:action=>"docformat_update",:id=>@docformat.id,:search_condit=>params[:search_condit],:order=>params[:order],:page=>params[:page],:page_lines=>params[:page_lines]}  do |f|%>
+      <table class="list">
+        <tr>
+          <th>
+            格式函编码:
+          </th>
+          <td>
+            <%=f.text_field(:code)%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            格式函名称:
+          </th>
+          <td>
+            <%=f.text_field(:name,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            拼音缩写:
+          </th>
+          <td>
+            <%=f.text_field(:spell,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <th >
+            仲裁程序:
+          </th>
+          <td >
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0041' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:aribitprog_num, op,:data_val,:data_text)%>
+            <div style="color:red"><%=error_message_on(:docformat,:aribitprog_num)%></div>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            选项名称:
+          </th>
+          <td>
+            <%=f.text_field(:obj_text,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            是否需要接收人选项:
+          </th>
+          <td>
+            <%=f.select("obj",[["否",0],["是",1]]) %>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            格式函路径:
+          </th>
+          <td>
+            <%=f.text_field(:path,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            函数名称:
+          </th>
+          <td>
+            <%=f.text_field(:sub_code,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            检测函数名称:
+          </th>
+          <td>
+            <%=f.text_field(:check_sub_code,:style=>"width:20em")%>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            是否使用:
+          </th>
+          <td>
+            <%=f.select("used",[["使用","Y"],["停用","N"]]) %>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            是否加内部函抬头:
+          </th>
+          <td>
+            <%=f.select("head_1",[["是",1],["否",0]]) %>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            是否加发文编号:
+          </th>
+          <td>
+            <%=f.select("send_code",[["是",1],["否",0]]) %>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            是否需要审批:
+          </th>
+          <td>
+            <%=f.select("approval",[["审批",1],["不审批",0]]) %>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            是否生成外部函:
+          </th>
+          <td>
+            <%=f.select("f_doc",[["不生成外部函",0],["生成外部函",1]]) %>
+          </td>
+        </tr>
+        <tr >
+          <th>
+            说明:
+          </th>
+          <td>
+            <%=f.text_area("description",:rows=>8) %>
+          </td>
+        </tr>
+      </table>
+      <div align="center">
+        <%=submit_tag "提交" %>
+      </div>
+    <%end%>
+  </body>
+</html>

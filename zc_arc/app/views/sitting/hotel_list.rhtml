@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>仲裁员订房信息</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="title"><span class="cBlue"><div align="center">
+    仲裁员订房信息
+    </div></span></div>
+      <table cellspacing="1" class="adminlist">
+        <thead>
+        <tr>
+          <th nowrap>
+            仲裁员
+          </th>
+          <th nowrap>
+            入住时间
+          </th>
+          <th nowrap>
+            房间数量
+          </th>
+          <th nowrap>
+            住宿天数
+          </th>
+        <th nowrap>
+          修改
+        </th>
+        <th nowrap>
+          删除
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <%i=0%>
+      <%for p in @hotel%>
+      <tr class="row<%=i % 2%>">
+        <td>
+          <%if p.arbitman!=nil%>
+            <%=TbArbitman.find_by_code(p.arbitman).name%>
+          <%end%>
+        </td>
+        <td>
+          <%=p.usedate%>
+        </td>
+        <td>
+          <%=p.rooms%>
+        </td>
+        <td>
+          <%=p.days%>
+        </td>
+        <td>
+          <%=link_to "修改",:action=>"hotel_edit",:id=>p,:sitting_id=>params[:sitting_id]%>
+        </td>
+        <td>
+            <%=button_to "删除",{:action=>"hotel_delete",:id=>p,:sitting_id=>params[:sitting_id]},:confirm=>"您确认要删除吗？"%>
+        </td>
+      </tr>
+      <%i=i+1%>
+      <%end%>
+      </tbody>
+    </table>
+    <br><div align="center">
+      <%=link_to  "创建", :action=>"hotel_new",:sitting_id=>params[:sitting_id]%>
+      <div style="color:red"><%=flash[:notice]%></div>
+      </div>
+  </body>
+</html>

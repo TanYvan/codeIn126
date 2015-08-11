@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>咨询立案案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+    <%= javascript_include_tag  'WebCalendar'%>
+  </head>
+  <body>
+    <table border="0" width="100%"><tr><td>
+          <div class="title"><span class="cBlue">咨询、立案案件统计</span></div>
+          <%form_tag :url=>{:action=>"case_now_total"} do%>
+            <table align="center">
+              <tr><td nowrap align="right">
+                  咨询时间段:</td>
+                <td align="left" nowrap>
+                  <%=text_field_tag(:date1,@date1,:readonly=>"true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('date1'),'yyyy-MM-dd')" />
+                  -
+                  <%=text_field_tag(:date2,@date2,:readonly=>"true")%>
+                  <input type="button" value="..." onclick="SelectDate(document.getElementById('date2'),'yyyy-MM-dd')" />
+                </td></tr>
+            </table>
+            <%=submit_tag "查询" %>
+          <%end%>
+          <br/>
+          <div style="color:red"><%=flash[:notice]%></div>
+          <table cellspacing="1" class="list" width="40%">
+            <thead>
+              <tr >
+                <th nowrap>
+                  <%if @order=="users.name desc"%>
+                    <%=link_to '助理↑',:action=>"case_now_total",:order=>"users.name asc",:search_condit=>@search_condit%>
+                  <%elsif @order=="users.name asc"%>
+                    <%=link_to '助理↓',:action=>"case_now_total",:order=>"users.name desc",:search_condit=>@search_condit%>
+                  <%else%>
+                    <%=link_to '助理',:action=>"case_now_total",:order=>"users.name asc",:search_condit=>@search_condit%>
+                  <%end%>
+                </th>
+                <th nowrap>
+                  <%if @order=="count(users.code) desc"%>
+                    <%=link_to '数量↑',:action=>"case_now_total",:order=>"count(users.code) asc",:search_condit=>@search_condit%>
+                  <%elsif @order=="count(users.code) asc"%>
+                    <%=link_to '数量↓',:action=>"case_now_total",:order=>"count(users.code) desc",:search_condit=>@search_condit%>
+                  <%else%>
+                    <%=link_to '数量',:action=>"case_now_total",:order=>"count(users.code) asc",:search_condit=>@search_condit%>
+                  <%end%>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%cc_nn=0%>
+              <%for c in @case%>
+                <tr class="row<%=i % 2%>">
+                  <th>
+                    <%=c.clerk_name%>
+                  </th>
+                  <th>
+                    <%=link_to c.num,:action=>"list_everyone",:user_code=>c.users_code,:date1=>@date1,:date2=>@date2%>
+                  </th>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+              <tr class="row<%=i % 2%>">
+                <th>
+                  合计
+                </th>
+                <th>
+                   <%=@case.sum{|cas| cas.num.to_i}%>
+                </th>
+              </tr>
+            </tbody>
+          </table>
+        </td></tr></table>
+  </body>
+</html>

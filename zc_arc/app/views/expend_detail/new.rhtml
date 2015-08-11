@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加代收代支费用支出</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <div class="title"><span class="cBlue">添加审计、鉴定等费用</span></div>
+  <br>
+  <%=link_to "返回",:action=>"list",:recevice_code=>params[:recevice_code],:search_condit=>params[:search_condit],:order=>params[:order],:page_lines=>params[:page_lines]%>
+ 
+ <div style="color:red"><%=flash[:notice]%></div>
+    <%form_for :expend_detail ,:url=>{:action=>"create",:recevice_code=>params[:recevice_code],:search_condit=>params[:search_condit],:order=>params[:order],:page_lines=>params[:page_lines]}  do |f|%>
+      <table class="list">
+  
+        <tr>
+          <th>
+            时间:          </th>
+          <td align="left" width="68%">
+            <%=f.text_field(:expend_date,:size=>8,:readonly => "true")%>   
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('expend_detail_expend_date'),'yyyy-MM-dd')" >  
+            <div style="color:red"><%=error_message_on(:expend_detail,:expend_date)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            费用类别:
+          </th>
+          <td align="left">
+            <%op=TbDictionary.find(:all,:conditions=>"typ_code='0035' and state='Y' and used='Y'",:order=>'data_val',:select=>"data_val,data_text")%>
+            <%=f.collection_select(:typ,op,:data_val,:data_text)%>         
+            <div style="color:red"><%=error_message_on(:expend_detail,:typ)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            支付对象:
+          </th>
+          <td align="left">
+            <%=f.text_field(:expend_object,:style=>"width:20em")%>
+            <div style="color:red"><%=error_message_on(:expend_detail,:expend_object)%></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>
+            金额:
+          </th>
+          <td align="left">
+            <%=f.text_field(:rmb_money)%>           
+            <div style="color:red"><%=error_message_on(:expend_detail,:rmb_money)%></div>
+          </td>
+        </tr>   
+         
+        <tr>
+          <th>
+            备注:
+          </th>
+          <td align="left">
+            <%=f.text_area(:remark,:rows=>4)%>               
+            <div style="color:red"><%=error_message_on(:expend_detail,:remark)%></div>
+          </td>
+        </tr>        
+                       
+     </table>
+        <div align="center"><%=submit_tag "提交" %></div>
+          
+            <%end%>
+              
+  </body>
+</html>

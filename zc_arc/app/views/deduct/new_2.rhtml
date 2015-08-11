@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>添加 仲裁报酬奖励、扣减信息</title>
+    <%= javascript_include_tag  'WebCalendar'%> 
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="cDGray" align="center">
+  添加 仲裁报酬奖励、扣减信息  <%=link_to "返回",:action=>"list_2"%>
+
+ <div style="color:red"><%=flash[:notice]%></div>
+ </div>
+    <%form_for :remun ,:url=>{:action=>"create_2",:typ=>params[:typ],:p=>params[:p]}  do |f|%>
+      <table class="list">  
+        <tr>
+          <th>
+            办案人:
+          </th>
+          <td>
+          <%if params[:typ]=='0001'%>
+            <%=TbDictionary.find(:first,:conditions=>"typ_code='0014' and data_val='#{TbCasearbitman.find(:first,:conditions=>"recevice_code='#{session[:recevice_code_2]}' and arbitman='#{params[:p]}'",:order=>"arbitmantype").arbitmantype}'").data_text%>
+          <%elsif params[:typ]=='0002'%>
+            助理
+          <%elsif params[:typ]=='0003'%>
+            校核人员
+          <%else%>
+          <%end%>
+        </td>
+        </tr>
+        <tr>
+          <th>
+            姓名:
+          </th>
+          <td>
+          <%if params[:typ]=='0001'%>
+            <%=TbArbitman.find_by_code(params[:p]).name%>
+          <%elsif params[:typ]=='0002'%>
+            <%=User.find_by_code(params[:p]).name%>
+          <%elsif params[:typ]=='0003'%>
+            <%=User.find_by_code(params[:p]).name%>
+          <%else%>
+          <%end%>  
+          </td>
+        </tr>
+        <tr>
+          <th>
+            类型:
+          </th>
+          <td>
+            <%=f.select(:deduct_typ,[['扣减','0002'],['奖励','0001']])%>                                                   
+            <div style="color:red"><%=error_message_on(:remun,:deduct_typ)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            金额:
+          </th>
+          <td>
+            <%=f.text_field(:rmb)%>                                                   
+            <div style="color:red"><%=error_message_on(:remun,:rmb)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            请求提交日期:
+          </th>
+          <td align="left">
+            <%=f.text_field(:deduct_t,:size=>10)%>  
+            <input type="button" value="..." onclick="SelectDate(document.getElementById('remun_deduct_t'),'yyyy-MM-dd')" >                          
+            <div style="color:red"><%=error_message_on(:remun,:deduct_t)%></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            理由:
+          </th>
+          <td>
+            <%=f.text_area(:reason,:rows=>4)%>                                                   
+            <div style="color:red"><%=error_message_on(:remun,:reason)%></div>
+          </td>
+        </tr>
+                               
+      </table>
+      <br>
+        <div align="center"><%=submit_tag "提交" %></div>
+
+    <%end%>
+  </body>
+</html>

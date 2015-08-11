@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>报酬发放信息表（全部）</title>
+  <%= javascript_include_tag "prototype" %>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  <script src="/javascripts/pub.js"></script>
+</head>
+<body>
+  <input id="to_word" type="button" value='导出word' onclick="document.getElementById('to_word').style.display='none';to_word();document.getElementById('to_word').style.display='block';"/>
+  <br/>
+  <%=@title%>
+  <table class="adminlist" cellspacing="1">
+    <thead>
+    <tr> 
+      <!--
+      <th nowrap>序号</th>
+      <th nowrap>人员类别</th>
+      -->
+      <th nowrap>姓名</th>
+      <!--
+      <th nowrap>银行类别</th>
+      <th nowrap>银行</th>
+      <th nowrap>账号</th>
+      <th nowrap>身份证号</th>
+      -->
+      <th nowrap>受案号</th>
+      <th nowrap>类型</th>
+      <th nowrap>酬金额</th>
+      <th nowrap>扣税数</th>
+      <th nowrap>实发数</th>      
+    </tr>
+    </thead>
+      <tbody>
+        <%j=0%>
+   <%i=1%>
+   <% if @tb_extends != nil
+    for tb_extend in @tb_extends %>        
+        <tr class="row<%=j % 2%>">
+          <!--
+          <td nowrap><%=  i %></td>
+          <td nowrap><%=@p_typ2[tb_extend.p_typ]%></td>
+          -->
+          <td nowrap>
+             <%=tb_extend.p_name%>
+          </td>
+          <!--
+          <td>
+            <%if tb_extend.bank_typ!=nil and tb_extend.bank_typ!=''%>
+              <%=@bank_typ[tb_extend.bank_typ]%>
+            <%end%>
+          </td>
+          <td nowrap><%=  tb_extend.bankname%></td>
+          <td nowrap><%=  tb_extend.bank_account%></td>
+          <td nowrap><%=  tb_extend.id_card%></td>
+          -->
+          <td nowrap><%=  tb_extend.case_code%></td>
+          <td nowrap>
+             <%if tb_extend.typ=='4' or tb_extend.typ=='5'%>
+               <%=TbDictionary.find(:first,:conditions=>"typ_code='0050' and data_val='#{TbRemuneration23.find_by_extend_id(tb_extend.id).typ}'").data_text%>
+             <%else%>
+               <%=@typ2[tb_extend.typ]%>
+             <%end%>
+          </td>
+          <td nowrap><%=  tb_extend.should_rmb%></td>
+          <td nowrap><%=  tb_extend.tax_rmb%></td>
+          <td nowrap><%=  tb_extend.extend_rmb%></td>
+        </tr>
+        <%i+=1%>
+        <%j=j+1%>
+    <%end%>    
+    <%end%>
+        <tr>
+          <td colspan="3">合计</td>
+          <td><%=@tb_extends.sum{|t| t.should_rmb}%></td>
+          <td><%=@tb_extends.sum{|t| t.tax_rmb}%></td>
+          <td><%=@tb_extends.sum{|t| t.extend_rmb}%></td> 
+        </tr>
+        <tr>
+          <td>审批:</td>
+          <td>会计：</td>
+          <td>复审：</td>
+          <td colspan="3">出纳：</td> 
+        </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="9">
+          <%= link_to '上一页', 
+              { :page => @extend_pages.current.previous ,
+                :general_code=>@general_code,
+                :case_code=>@case_code,
+                :recevice_code =>@recevice_code,
+                :end_code =>@end_code,
+                :p_typ => @p_typ,
+                :p => @p,
+                :page_lines=>@page_lines  } if @extend_pages.current.previous %>
+          <%=pagination_links( @extend_pages,
+              {:params=>{:general_code=>@general_code,
+                         :case_code=>@case_code,
+                :recevice_code =>@recevice_code,
+                :end_code =>@end_code,
+                :p_typ => @p_typ,
+                :p => @p,                         
+                         :page_lines=>@page_lines  }})%>
+          <%= link_to '下一页', 
+              { :page => @extend_pages.current.next ,
+                :general_code=>@general_code,
+                :case_code=>@case_code,
+                :recevice_code =>@recevice_code,
+                :end_code =>@end_code,
+                :p_typ => @p_typ,
+                :p => @p,                
+                :page_lines=>@page_lines  } if @extend_pages.current.next %>
+
+          <%if @extend_pages.current.previous or @extend_pages.current.next%>
+            <form action="/t_extend/list_extend" method="get" >
+              每页<input type=text name='page_lines' value=<%=@page_lines%> size=5 class="SingleLineInput" />条记录,第
+              <input type=text name='page' size=5 class="SingleLineInput" value=<%= @extend_pages.current.number %> />
+              <input type=hidden name='general_code' value="<%=@general_code%>" />
+              页
+              <input type=hidden name='case_code' value="<%=@case_code%>" />
+              <input type='submit' value='跳转' />
+            </form>
+          <%end%>
+        </td>
+      </tr>
+    </tfoot>
+    </table>
+</body>
+</html>
+

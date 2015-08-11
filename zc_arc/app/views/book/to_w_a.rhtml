@@ -1,0 +1,400 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>仲裁庭月表查看</title>
+    <script src="/javascripts/pub.js"></script>
+  </head>
+  <body>
+    <table  id="to_word_b" align="center"><tr><td>
+          <div align="center">
+            <%if @book==1%>
+              <%if @year!=nil or @year!=""%>
+                <%=@year%>年<%=@month.to_i%>月
+              <%else%>
+              <%end%>
+                <%=@room%>预订情况
+            </div>
+          <table border="1" cellpadding="0" cellspacing="0" style="font-size: 12px">
+              <tr bgcolor="#f0f0f0">
+                <td width="170px">星期一</td>
+                <td width="170px">星期二</td>
+                <td width="170px">星期三</td>
+                <td width="170px">星期四</td>
+                <td width="170px">星期五</td>
+                <td  width="80">星期六</td>
+                <td  width="80">星期日</td>
+              </tr>
+              <tr bgcolor="#F9F9F9">
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[1]!=nil%> <%=@arr1[1]%><%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[2]!=nil%> <%=@arr1[2]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[3]!=nil%> <%=@arr1[3]%><%else%> &nbsp; <%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[4]!=nil%> <%=@arr1[4]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[5]!=nil%> <%=@arr1[5]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[6]!=nil%> <%=@arr1[6]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[7]!=nil%> <%=@arr1[7]%> <%else%> &nbsp;<%end%></td>
+              </tr>
+              <tr bgcolor="#ffffff">
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[1]!=nil %>
+                    <%=@arr2[1]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[2]!=nil %>
+                    <%=@arr2[2]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[3]!=nil %>
+                    <%=@arr2[3]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[4]!=nil %>
+                    <%=@arr2[4]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[5]!=nil %>
+                    <%=@arr2[5]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[6]!=nil %>
+                    <%=@arr2[6]%>
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[7]!=nil %>
+                    <%=@arr2[7]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+              </tr>
+
+              <tr bgcolor="#F9F9F9">
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[8]!=nil%> <%=@arr1[8]%><%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[9]!=nil%> <%=@arr1[9]%><%else%> &nbsp; <%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[10]!=nil%> <%=@arr1[10]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[11]!=nil%> <%=@arr1[11]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[12]!=nil%> <%=@arr1[12]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[13]!=nil%> <%=@arr1[13]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[14]!=nil%> <%=@arr1[14]%> <%else%> &nbsp;<%end%></td>
+              </tr>
+              <tr bgcolor="#ffffff">
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[8]!=nil %>
+                    <%=@arr2[8]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%></td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[9]!=nil %>
+                    <%=@arr2[9]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top"  style="color: #3C3C3C">
+                  <%if @arr2[10]!=nil %>
+                    <%=@arr2[10]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[11]!=nil %>
+                    <%=@arr2[11]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[12]!=nil %>
+                    <%=@arr2[12]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[13]!=nil %>
+                    <%=@arr2[13]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[14]!=nil %>
+                    <%=@arr2[14]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+              </tr>
+              <tr bgcolor="#F9F9F9">
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[15]!=nil%> <%=@arr1[15]%><%else%> &nbsp; <%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[16]!=nil%> <%=@arr1[16]%><%else%> &nbsp; <%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[17]!=nil%> <%=@arr1[17]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[18]!=nil%> <%=@arr1[18]%><%else%> &nbsp; <%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[19]!=nil%> <%=@arr1[19]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[20]!=nil%> <%=@arr1[20]%><%else%> &nbsp; <%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[21]!=nil%> <%=@arr1[21]%><%else%> &nbsp; <%end%></td>
+              </tr>
+              <tr bgcolor="#ffffff">
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[15]!=nil %>
+                    <%=@arr2[15]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[16]!=nil %>
+                    <%=@arr2[16]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[17]!=nil %>
+                    <%=@arr2[17]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[18]!=nil %>
+                    <%=@arr2[18]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[19]!=nil %>
+                    <%=@arr2[19]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[20]!=nil %>
+                    <%=@arr2[20]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[21]!=nil %>
+                    <%=@arr2[21]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+              </tr>
+              <tr bgcolor="#F9F9F9">
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[22]!=nil%> <%=@arr1[22]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[23]!=nil%> <%=@arr1[23]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[24]!=nil%> <%=@arr1[24]%><%else%> &nbsp; <%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[25]!=nil%> <%=@arr1[25]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[26]!=nil%> <%=@arr1[26]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[27]!=nil%> <%=@arr1[27]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[28]!=nil%> <%=@arr1[28]%> <%else%> &nbsp;<%end%></td>
+              </tr>
+              <tr bgcolor="#ffffff">
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[22]!=nil %>
+                    <%=@arr2[22]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[23]!=nil %>
+                    <%=@arr2[23]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[24]!=nil %>
+                    <%=@arr2[24]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[25]!=nil %>
+                    <%=@arr2[25]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[26]!=nil %>
+                    <%=@arr2[26]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[27]!=nil %>
+                    <%=@arr2[27]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[28]!=nil %>
+                    <%=@arr2[28]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+              </tr>
+              <tr bgcolor="#F9F9F9">
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[29]!=nil%> <%=@arr1[29]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[30]!=nil%> <%=@arr1[30]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[31]!=nil%> <%=@arr1[31]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[32]!=nil%> <%=@arr1[32]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[33]!=nil%> <%=@arr1[33]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[34]!=nil%> <%=@arr1[34]%> <%else%> &nbsp;<%end%></td>
+                <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[35]!=nil%> <%=@arr1[35]%> <%else%> &nbsp;<%end%></td>
+              </tr>
+              <tr bgcolor="#ffffff">
+
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[29]!=nil %>
+                    <%=@arr2[29]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[30]!=nil %>
+                    <%=@arr2[30]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[31]!=nil %>
+                    <%=@arr2[31]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[32]!=nil %>
+                    <%=@arr2[32]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[33]!=nil %>
+                    <%=@arr2[33]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[34]!=nil %>
+                    <%=@arr2[34]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+                <td valign="top" style="color: #3C3C3C">
+                  <%if @arr2[35]!=nil %>
+                    <%=@arr2[35]%>
+                  <%else%>
+                    &nbsp;
+                  <%end%>
+                </td>
+              </tr>
+              <%if @arr1[35]!=nil%>
+                <tr bgcolor="#F9F9F9">
+                  <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[36]!=nil%> <%=@arr1[36]%> <%else%> &nbsp;<%end%></td>
+                  <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[37]!=nil%> <%=@arr1[37]%> <%else%> &nbsp;<%end%></td>
+                  <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[38]!=nil%> <%=@arr1[38]%><%else%> &nbsp; <%end%></td>
+                  <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[39]!=nil%> <%=@arr1[39]%> <%else%> &nbsp;<%end%></td>
+                  <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[40]!=nil%> <%=@arr1[40]%><%else%> &nbsp; <%end%></td>
+                  <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[41]!=nil%> <%=@arr1[41]%> <%else%> &nbsp;<%end%></td>
+                  <td  style="color:#5B5B5B; text-align: center;"><%if @arr1[42]!=nil%> <%=@arr1[42]%> <%else%> &nbsp;<%end%></td>
+                </tr>
+                <tr bgcolor="#ffffff">
+
+                  <td valign="top" style="color: #3C3C3C">
+                    <%if @arr2[36]!=nil %>
+                      <%=@arr2[36]%>
+                    <%else%>
+                      &nbsp;
+                    <%end%>
+                  </td>
+                  <td valign="top" style="color: #3C3C3C">
+                    <%if @arr2[37]!=nil %>
+                      <%=@arr2[37]%>
+                    <%else%>
+                      &nbsp;
+                    <%end%>
+                  </td>
+                  <td valign="top" style="color: #3C3C3C">
+                    <%if @arr2[38]!=nil %>
+                      <%=@arr2[38]%>
+                    <%else%>
+                      &nbsp;
+                    <%end%>
+                  </td>
+                  <td valign="top" style="color: #3C3C3C">
+                    <%if @arr2[39]!=nil %>
+                      <%=@arr2[39]%>
+                    <%else%>
+                      &nbsp;
+                    <%end%>
+                  </td>
+                  <td valign="top" style="color: #3C3C3C">
+                    <%if @arr2[40]!=nil %>
+                      <%=@arr2[40]%>
+                    <%else%>
+                      &nbsp;
+                    <%end%>
+                  </td>
+                  <td valign="top" style="color: #3C3C3C">
+                    <%if @arr2[41]!=nil %>
+                      <%=@arr2[41]%>
+                    <%else%>
+                      &nbsp;
+                    <%end%>
+                  </td>
+                  <td valign="top" style="color: #3C3C3C">
+                    <%if @arr2[42]!=nil %>
+                      <%=@arr2[42]%>
+                    <%else%>
+                      &nbsp;
+                    <%end%>
+                  </td>
+                </tr>
+              <%else%>
+              <%end%>
+            </table>
+          <%else%>
+            <i><%=flash[:notice]%></i>
+          <%end%>
+        </td></tr></table>
+    <script langugae="javascript">to_word_2(document.getElementById("to_word_b"));
+      window.close();
+    </script>
+  </body>
+</html>

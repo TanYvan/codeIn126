@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">  
+  <head>
+    <title>在办案件</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <table border="0" width="100%"><tr><td>
+          <div class="title"><span class="cBlue">在办案件统计</span></div>
+          <div style="color:red"><%=flash[:notice]%></div>
+          <table cellspacing="1" class="list" width="40%">
+            <thead>
+              <tr >
+                <th nowrap>
+                  <%if @order=="users.name desc"%>
+                    <%=link_to '助理↑',:action=>"case_now_clerk2_total",:order=>"users.name asc",:search_condit=>@search_condit%>
+                  <%elsif @order=="users.name asc"%>
+                    <%=link_to '助理↓',:action=>"case_now_clerk2_total",:order=>"users.name desc",:search_condit=>@search_condit%>
+                  <%else%>
+                    <%=link_to '助理',:action=>"case_now_clerk2_total",:order=>"users.name asc",:search_condit=>@search_condit%>
+                  <%end%>
+                </th>
+                <th nowrap> 
+                  <%if @order=="count(tb_cases.clerk) desc"%>
+                    <%=link_to '数量↑',:action=>"case_now_clerk2_total",:order=>"count(tb_cases.clerk) asc",:search_condit=>@search_condit%>
+                  <%elsif @order=="count(tb_cases.clerk) asc"%>
+                    <%=link_to '数量↓',:action=>"case_now_clerk2_total",:order=>"count(tb_cases.clerk) desc",:search_condit=>@search_condit%>
+                  <%else%>
+                    <%=link_to '数量',:action=>"case_now_clerk2_total",:order=>"count(tb_cases.clerk) asc",:search_condit=>@search_condit%>
+                  <%end%>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <%cc_nn=0%>
+              <%for c in @case%>
+                <tr class="row<%=i % 2%>">
+                  <th>
+                    <%=c.clerk_name%>
+                  </th>
+                  <th>
+                    <%=link_to "#{c.n}",:action=>"list_every",:user_code=>c.clerk_code%>
+                    <%cc_nn=cc_nn + c.n.to_i%>
+                  </th>
+                </tr>
+                <%i=i+1%>
+              <%end%>
+              <tr class="row<%=i % 2%>">
+                  <th>
+                    合计
+                  </th>
+                  <th>
+                    <%=h cc_nn%>
+                  </th>
+                </tr>
+            </tbody>
+          </table>
+    </td></tr></table>
+  </body>
+</html>
