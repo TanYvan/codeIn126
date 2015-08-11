@@ -1,0 +1,30 @@
+1 views/case_doc/opera:line 239 新增打印信封按钮
+ <%=button_to "打印邮件信封",:action=>"print",:recevice_code=>@recevice_code,:target=>"_blank"%>
+2 case_doc_controller:新增print batch_insert action
+
+3 在views/case_doc/新增print.rhtml、batch_insert.rhtml
+
+4 新增表tb_mailers及Model:tb_mailer.rb => TbMailer
+
+5 新增表tb_addrs及Model:tb_addr.rb => TbAddr
+ 
+
+ <select name="detail1" > 
+           				 <option value="仲裁申请受理通知书">仲裁申请受理通知书</option>
+    							 <option value="仲裁通知">仲裁通知</option>
+    							 <option value="财产保全申请">财产保全申请</option>
+    							 <option value="预缴反请求费用通知">预缴反请求费用通知</option>
+    							 <option value="预缴实际开支费用通知">预缴实际开支费用通知</option>
+    							 <option value="证据保全申请">证据保全申请</option>
+    							 <option value="组庭通知">组庭通知</option>
+    							 <option value="开庭通知">开庭通知</option>
+    							 <option value="仲裁庭组成及开庭通知">仲裁庭组成及开庭通知</option>
+    							 <option value="仲裁员声明书">仲裁员声明书</option>
+    							 <option value="书面审理通知">书面审理通知</option>
+    							 <option value="裁决书">裁决书</option>
+    							 <option value="延期裁决决定">延期裁决决定</option>
+    							 <option value="补缴仲裁费用通知">补缴仲裁费用通知</option>
+    							 <option value="庭审要点与调解确认书">庭审要点与调解确认书</option>
+    							 <option value="结案感谢函">结案感谢函</option>
+    							 <option value="报酬预通知函">报酬预通知函</option>
+            </select> 
