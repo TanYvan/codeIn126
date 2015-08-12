@@ -80,7 +80,6 @@
       <br/>
       <br/>
       <hr size="1" color="#99CCFF" noshade/>
-      <%=button_to "发文",:controller=>"case_doc",:action=>"list",:recevice_code=>@case.recevice_code%>
       <div align="center" class="cDGray">
         案件基本情况信息
         <%if @case.state==280%>

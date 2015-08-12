@@ -355,7 +355,7 @@
         </table>       
           <%=submit_tag "提交" %>
       <%end%>
-					<%=button_to "发文",:controller=>"case_doc",:action=>"list",:recevice_code=>@case.recevice_code%><b>（请确定修改部分已做保存）</b>
+
       <hr size="1" color="#99CCFF" noshade/>
 
       <iframe FRAMEBORDER=0 src="/case_consultation/con_list?recevice_code=<%=@case.recevice_code%>"  noresize  style="width:700px;height:240px" align=center> </iframe>
