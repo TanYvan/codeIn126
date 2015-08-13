@@ -1,0 +1,14 @@
+1 zc_sch项目中，在目录config/environment.rb末尾新增
+	
+@@task_state=0
+
+require 'rubygems'
+require 'rufus/scheduler'
+scheduler = Rufus::Scheduler.start_new
+scheduler.every("20s") do
+  $task_a=Task_a.new
+  $task_a.t_a
+end
+
+
+2 在app/models/tast_a.rb(Class:Tast_a)新增相关定时任务
