@@ -37,9 +37,15 @@
         <%i=0%>
         <%for c in @case%>
           <tr class="row<%=i % 2%>">
+          <%if @role_code =='0021' %>
+             <td>
+              <%=TbCase.find_by_recevice_code(c.recevice_code).case_code %>
+            </td>
+            <% else %>
             <td>
               <%=link_to "#{TbCase.find_by_recevice_code(c.recevice_code).case_code}",{:controller=>'every_casebase',:action=>"every_list",:recevice_code=>"#{c.recevice_code}"},:target=>"_blank"%>
             </td>
+             <% end %>
             <td>
               <%@tp=TbParty.find(:all,:conditions=>"used='Y' and partytype=1 and recevice_code='#{c.recevice_code}'",:order=>"id")%>
               <%ttpp=''%>
@@ -67,9 +73,16 @@
                 <%=User.find_by_code(c.c_u).name%>
               <%end%>
             </td>
+            
+             <%if @role_code =='0021' %>
+             <td>
+              <%=c.send_code %>
+            </td>
+            <% else %>
             <td>
               <%=link_to c.send_code,{:action=>"opera",:id=>c,:recevice_code=>c.recevice_code},:target=>"_blank"%>
             </td>
+            <% end %>
             <td>
               <%=c.send_serial_code %>
             </td>
