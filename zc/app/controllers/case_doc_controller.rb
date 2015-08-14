@@ -887,6 +887,10 @@ class CaseDocController < ApplicationController
       c = c + @search_condit
     end
     @case_pages,@case=paginate(:tb_docs,:order=>@order,:conditions=>c,:per_page=>@page_lines.to_i)
+    
+    #查出登录用户的角色role_code
+   	@clerk =session[:user_code]
+    @role_code = Ur.find_by_user_code(@clerk).role_code
   end
 
   private
