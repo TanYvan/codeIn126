@@ -1,0 +1,144 @@
+1、在聘仲裁员数量：
+第一种：SELECT
+	count(*)
+FROM
+	(
+		SELECT
+			tb_arbitmannows.arbitman_num AS arbitman_num,
+			tb_arbitmen.id AS id,
+			tb_arbitmen. NAME AS NAME,
+			tb_arbitmen.age AS age,
+			tb_arbitmen.spell AS spell,
+			tb_arbitmen.country AS country,
+			tb_arbitmen.role_code AS role_code,
+			tb_arbitmen.area_code AS area_code,
+			tb_arbitmen.name_idcard AS name_idcard,
+			tb_arbitmen.name_idcard_en AS name_idcard_en,
+			tb_arbitmen.special AS special,
+			tb_arbitmen.special_en AS special_en,
+			tb_arbitmen.country_en AS country_en,
+			tb_arbitmen.city AS city,
+			tb_arbitmen.city_en AS city_en,
+			tb_arbitmen.area_type AS area_type
+		FROM
+			tb_arbitmen,
+			tb_arbitmannows
+		WHERE
+			tb_arbitmen.used = 'Y'
+		AND tb_arbitmannows.used = 'Y'
+		AND tb_arbitmen. CODE = tb_arbitmannows.arbitman_num
+		ORDER BY
+			tb_arbitmen. NAME ASC
+	) AS my_table
+	
+	
+第二种：	SELECT
+	count(tb_arbitmannows.id) AS ccc
+FROM
+	tb_arbitmen,
+	tb_arbitmannows
+WHERE
+	tb_arbitmen.used = 'Y'
+AND tb_arbitmannows.used = 'Y'
+AND tb_arbitmen. CODE = tb_arbitmannows.arbitman_num
+	
+	
+	
+	
+2、在聘仲裁员基本信息：
+SELECT
+	tb_arbitmannows.arbitman_num AS arbitman_num,
+	tb_arbitmen.id AS id,
+	tb_arbitmen. NAME AS NAME,
+	tb_arbitmen.age AS age,
+	tb_arbitmen.spell AS spell,
+	tb_arbitmen.country AS country,
+	tb_arbitmen.role_code AS role_code,
+	tb_arbitmen.area_code AS area_code,
+	tb_arbitmen.name_idcard AS name_idcard,
+	tb_arbitmen.name_idcard_en AS name_idcard_en,
+	tb_arbitmen.special AS special,
+	tb_arbitmen.special_en AS special_en,
+	tb_arbitmen.country_en AS country_en,
+	tb_arbitmen.city AS city,
+	tb_arbitmen.city_en AS city_en,
+	tb_arbitmen.area_type AS area_type
+FROM
+	tb_arbitmen,
+	tb_arbitmannows
+WHERE
+	tb_arbitmen.used = 'Y'
+AND tb_arbitmannows.used = 'Y'
+AND tb_arbitmen. CODE = tb_arbitmannows.arbitman_num
+ORDER BY
+	tb_arbitmen. NAME ASC
+
+
+
+3、仲裁员基本信息表（存在没有在聘的情况）： SELECT count(*) AS count_all FROM tb_arbitmen WHERE (used='Y') 	
+
+4、正在办案及已办过案的仲裁员数： SELECT count(*) FROM report_arbitman_cases ORDER BY a1 desc,name asc
+
+
+5、在聘仲裁员（没有办过案子的）
+
+SELECT
+			 
+			tb_arbitmannows.arbitman_num AS arbitman_num,
+	tb_arbitmen.id AS id,
+	tb_arbitmen. NAME AS NAME,
+	tb_arbitmen.age AS age,
+	tb_arbitmen.spell AS spell,
+	tb_arbitmen.country AS country,
+	tb_arbitmen.role_code AS role_code,
+	tb_arbitmen.area_code AS area_code,
+	tb_arbitmen.name_idcard AS name_idcard,
+	tb_arbitmen.name_idcard_en AS name_idcard_en,
+	tb_arbitmen.special AS special,
+	tb_arbitmen.special_en AS special_en,
+	tb_arbitmen.country_en AS country_en,
+	tb_arbitmen.city AS city,
+	tb_arbitmen.city_en AS city_en,
+	tb_arbitmen.area_type AS area_type
+			 
+		FROM
+			tb_arbitmen,
+			tb_arbitmannows
+		WHERE
+			tb_arbitmen.used = 'Y'
+		AND tb_arbitmannows.used = 'Y'
+		AND tb_arbitmen. CODE = tb_arbitmannows.arbitman_num
+		AND tb_arbitmen. NAME not IN (
+			SELECT
+			 
+			tb_arbitmen. NAME AS NAME
+			 
+		FROM
+			tb_arbitmen,
+			tb_arbitmannows
+		WHERE
+			tb_arbitmen.used = 'Y'
+		AND tb_arbitmannows.used = 'Y'
+		AND tb_arbitmen. CODE = tb_arbitmannows.arbitman_num
+		AND tb_arbitmen. NAME IN (
+			SELECT
+				NAME
+			FROM
+				report_arbitman_cases
+			ORDER BY
+				a1 DESC,
+				NAME ASC
+		)
+		ORDER BY
+			tb_arbitmen. NAME ASC
+ 
+		)
+		ORDER BY
+			tb_arbitmen. NAME ASC
+ 
+  
+
+
+
+		
+ 
